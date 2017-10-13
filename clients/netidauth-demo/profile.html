@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>OAuth Profile</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <h1 id="display-name">OAuth Profile</h1>
+        <pre><code id="profile-data"></code></pre> 
+    </div>
+    <!--fetch polyfill-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"></script>
+    <script>
+        fetch("http://localhost:4000/v1/oauth/profile", {credentials: "include"})
+            .then(function(resp) {
+                return resp.json();
+            })
+            .then(function(profile) {
+                document.getElementById("display-name").textContent = profile.displayName;
+                document.getElementById("profile-data").textContent = JSON.stringify(profile, undefined, 4);
+            })
+            .catch(function(err) {
+                console.error(err);
+                alert(err);
+            })
+    </script>
+</body>
+</html>
