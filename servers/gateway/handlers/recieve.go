@@ -21,4 +21,5 @@ func recieve(r *http.Request, v interface{}) error {
 	if err := decoder.Decode(v); err != nil {
 		return fmt.Errorf("error decoding JSON: %v", err)
 	}
+	return nil
 }

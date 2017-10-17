@@ -4,5 +4,8 @@ import (
 	"time"
 )
 
-// DefaultSessionDuration is the default time that a session will be valid for
-const DefaultSessionDuration = time.Hour
+// Defines general constants for operations related to authentication
+const (
+	DefaultSessionDuration = time.Hour
+	BCryptDefaultCost      = 13
+)

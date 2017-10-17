@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
 
@@ -12,7 +13,7 @@ import (
 type AuthContext struct {
 	SessionKey    string
 	SessionsStore sessions.Store
-	DB            *sql.DB
+	DB            *models.Database
 }
 
 // NewAuthContext Creates a new auth context with the given information
@@ -20,6 +21,6 @@ func NewAuthContext(sessionKey string, sessionStore sessions.Store, database *sq
 	return &AuthContext{
 		SessionKey:    sessionKey,
 		SessionsStore: sessionStore,
-		DB:            database,
+		DB:            models.NewDatabase(database),
 	}
 }

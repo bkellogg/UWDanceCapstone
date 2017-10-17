@@ -6,29 +6,32 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 )
 
-func (ctx *AuthContext) TestHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("success!"))
-}
-
 // UserSignUpHandler handles requests for user sign ups
 func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "requests to /api/v1/users must be POST", http.StatusMethodNotAllowed)
 		return
 	}
-	signUpRequest := &models.SignUpRequest{}
-	if err := recieve(r, signUpRequest); err != nil {
+	newUser := &models.NewUserRequest{}
+	if err := recieve(r, newUser); err != nil {
 		http.Error(w, "error decoding request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if signUpRequest.Password != signUpRequest.PasswordConf {
-		http.Error(w, "passwords did not match", http.StatusBadRequest)
+	user, err := newUser.ToUser()
+	if err != nil {
+		http.Error(w, "error creating user: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// TODO: Ensure that accounts with duplicate usernames cannot be created
-	// TODO: Ensure that accounts with  duplicate emails cannot be created
+	if err = ctx.DB.InsertNewUser(user); err != nil {
+		http.Error(w, "error inserting user: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	// TODO: Replace with Stored Procedure
+	if err = respond(w, user, http.StatusCreated); err != nil {
+		http.Error(w, "error responding with user: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
 }

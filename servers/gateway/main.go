@@ -40,7 +40,7 @@ func main() {
 
 	standardMux := http.NewServeMux()
 
-	standardMux.HandleFunc(constants.TestPath, authContext.TestHandler)
+	standardMux.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
 
 	log.Printf("Gateway listening at %s...\n", addr)
 	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, standardMux))
@@ -79,13 +79,15 @@ func ensureUsersTableOrExit(db *sql.DB, dbName string) {
 	_, err := db.Exec("SELECT 1 FROM Users LIMIT 1")
 	if err != nil {
 		log.Println(dbName + ".Users does not exist; creating...")
+		// Temp DB Structure
 		_, err := db.Exec(`CREATE TABLE Users (
 									UserID INT AUTO_INCREMENT PRIMARY KEY,
 									UserName VARCHAR(25) NOT NULL,
 									FirstName VARCHAR(50) NOT NULL,
 									LastName VARCHAR(50) NOT NULL,
-									PassHash VARCHAR(50) NOT NULL,
-									Role INT NOT NULL
+									Email VARCHAR(100) NOT NULL,
+									PassHash BINARY(60) NOT NULL,
+									Role VARCHAR(3) NOT NULL
 								)`)
 		if err != nil {
 			log.Fatal("error creating Users table: " + err.Error())
