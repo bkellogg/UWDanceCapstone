@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
-
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
@@ -13,14 +11,14 @@ import (
 type AuthContext struct {
 	SessionKey    string
 	SessionsStore sessions.Store
-	DB            *models.Database
+	Database      *models.Database
 }
 
 // NewAuthContext Creates a new auth context with the given information
-func NewAuthContext(sessionKey string, sessionStore sessions.Store, database *sql.DB) *AuthContext {
+func NewAuthContext(sessionKey string, sessionStore sessions.Store, database *models.Database) *AuthContext {
 	return &AuthContext{
 		SessionKey:    sessionKey,
 		SessionsStore: sessionStore,
-		DB:            models.NewDatabase(database),
+		Database:      database,
 	}
 }

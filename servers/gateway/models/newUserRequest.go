@@ -27,7 +27,8 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 		UserName:  u.UserName,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
-		Role:      constants.UserDefaultRole,
+		Email:     u.Email,
+		Role:      string(constants.UserDefaultRole),
 	}
 	return user, user.SetPassword(u.Password)
 }

@@ -18,13 +18,23 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	ok, err := ctx.Database.ContainsUser(newUser)
+	if err != nil {
+		http.Error(w, "error looking up user in database: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		http.Error(w, "user already exists with that email or username", http.StatusBadRequest)
+		return
+	}
+
 	user, err := newUser.ToUser()
 	if err != nil {
 		http.Error(w, "error creating user: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if err = ctx.DB.InsertNewUser(user); err != nil {
+	if err = ctx.Database.InsertNewUser(user); err != nil {
 		http.Error(w, "error inserting user: "+err.Error(), http.StatusInternalServerError)
 		return
 	}

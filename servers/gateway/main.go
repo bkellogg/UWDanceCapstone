@@ -12,6 +12,7 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/handlers"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
 
@@ -31,10 +32,12 @@ func main() {
 	redisAddr := getRequiredENVOrExit("REDISADDR", "")
 
 	// Open connections to the databases
-	db := openMySQLConnectionOrExit("root", mySQLPass, mySQLAddr, mySQLDBName)
+	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
+	if err != nil {
+		log.Fatalf("error connecting to database: %v", err)
+	}
+	defer db.DB.Close()
 	redis := sessions.NewRedisStore(nil, constants.DefaultSessionDuration, redisAddr)
-
-	ensureUsersTableOrExit(db, mySQLDBName)
 
 	authContext := handlers.NewAuthContext(sessionKey, redis, db)
 
@@ -60,7 +63,7 @@ func getRequiredENVOrExit(env, def string) string {
 }
 
 // opens a connection to the mysql database with the given credentials
-// fatally logs if there was an error opening the connection
+// exits the process if there was an error opening the connection
 func openMySQLConnectionOrExit(user, password, addr, dbName string) *sql.DB {
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", user, password, addr, dbName))
 	if err != nil {
