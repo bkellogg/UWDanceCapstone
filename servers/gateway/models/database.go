@@ -23,6 +23,7 @@ func NewDatabase(user, password, addr, dbName string) (*Database, error) {
 	}
 	if err = db.Ping(); err != nil {
 		fmt.Println("unable to ping database...will attempt 3 more times.")
+		// TODO: Fix this broken shit
 		for i := 3; i > 0; i-- {
 			time.Sleep(time.Second * 3)
 			if err = db.Ping(); err != nil {
@@ -57,12 +58,16 @@ func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, error) {
 // and populates the ID field of the user
 func (store *Database) InsertNewUser(user *User) error {
 	// TODO: Replace this with stored procedure
-	_, err := store.DB.Exec(`INSERT INTO Users (UserName, FirstName, LastName, Email, PassHash, Role) VALUES (` +
-		`'` + user.UserName + `', '` + user.FirstName + `', '` + user.LastName + `', '` + user.Email + `', '` + string(user.PassHash) + `', '` + string(user.Role) + `')`)
+	//_, err := store.DB.Exec(`INSERT INTO Users (UserName, FirstName, LastName, Email, PassHash, Role) VALUES (` +
+	//	`'` + user.UserName + `', '` + user.FirstName + `', '` + user.LastName + `', '` + user.Email + `', '` + string(user.PassHash) + `', '` + string(user.Role) + `')`)
+
+	_, err := store.DB.Exec(`INSERT INTO Users (UserName, FirstName, LastName, Email, PassHash, Role) VALUES (?, ?, ?, ?, ?, ?)`,
+		user.UserName, user.FirstName, user.LastName, user.Email, string(user.PassHash), string(user.Role))
 	if err != nil {
 		return err
 	}
 	var userID int
+	// TODO: This is not a safe way to do this.
 	if err = store.DB.QueryRow(`SELECT LAST_INSERT_ID()`).Scan(&userID); err != nil {
 		return err
 	}
