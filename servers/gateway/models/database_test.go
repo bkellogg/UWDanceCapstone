@@ -36,6 +36,9 @@ func TestInsertNewUser(t *testing.T) {
 		if err := db.InsertNewUser(c.User); err != nil {
 			t.Fatalf("%s failed with error %v", c.Name, err)
 		}
+		if c.User.ID == 0 {
+			t.Fatalf("expected user to have an ID after insert")
+		}
 	}
 }
 

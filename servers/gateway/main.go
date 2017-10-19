@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -37,13 +36,15 @@ func main() {
 		log.Fatalf("error connecting to database: %v", err)
 	}
 	defer db.DB.Close()
+	ensureUsersTableOrExit(db.DB, mySQLDBName)
+
 	redis := sessions.NewRedisStore(nil, constants.DefaultSessionDuration, redisAddr)
 
 	authContext := handlers.NewAuthContext(sessionKey, redis, db)
 
 	standardMux := http.NewServeMux()
-
 	standardMux.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
+	standardMux.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 
 	log.Printf("Gateway listening at %s...\n", addr)
 	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, standardMux))
@@ -62,22 +63,10 @@ func getRequiredENVOrExit(env, def string) string {
 	return ""
 }
 
-// opens a connection to the mysql database with the given credentials
-// exits the process if there was an error opening the connection
-func openMySQLConnectionOrExit(user, password, addr, dbName string) *sql.DB {
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s", user, password, addr, dbName))
-	if err != nil {
-		log.Fatal("error opening connection to mysql: " + err.Error())
-	}
-	err = db.Ping()
-	if err != nil {
-		log.Fatal("error opening connection to mysql: " + err.Error())
-	}
-	return db
-}
-
 // ensure that the given sql db has a Users table
 // fatally logs if there was an error creating the table
+// This function is here to speed up testing with auth during
+// development. Will come out later
 func ensureUsersTableOrExit(db *sql.DB, dbName string) {
 	_, err := db.Exec("SELECT 1 FROM Users LIMIT 1")
 	if err != nil {
