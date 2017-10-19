@@ -3,6 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"fmt"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 	"golang.org/x/crypto/bcrypt"
@@ -68,12 +70,12 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 
 	// Get the user from the database corresponding to the given email
 	user, err := ctx.Database.GetUserByEmail(signInRequest.Email)
-	if err != nil && e {
+	if err != nil {
 		http.Error(w, "error performing database lookup: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if user == nil {
-		// don't reveal which part of the credentials are invalid
+		dummyAuthenticate()
 		http.Error(w, "invalid credentials", http.StatusUnauthorized)
 		return
 	}
@@ -95,4 +97,12 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 		http.Error(w, "error responding with user: "+err.Error(), http.StatusBadRequest)
 		return
 	}
+}
+
+// performs a dummy authentication to mimic a real authentication to
+// prevent timing attacks
+func dummyAuthenticate() {
+	fmt.Println("dummy auth called")
+	hash, _ := bcrypt.GenerateFromPassword([]byte("DUMMYAUTHENTICATE"), constants.BCryptDefaultCost)
+	bcrypt.CompareHashAndPassword(hash, []byte("WRONGPASSWORD"))
 }

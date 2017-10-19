@@ -75,8 +75,9 @@ func (store *Database) InsertNewUser(user *User) error {
 // TODO: Test this
 func (store *Database) GetUserByID(id int) (*User, error) {
 	// TODO: Replace with stored procedure
-	result := store.DB.QueryRow(`SELECT * FROM Users U WHERE U.UserID = ` + strconv.Itoa(id))
 	user := &User{}
+	err := store.DB.QueryRow(`SELECT * FROM Users U WHERE U.UserID = `+strconv.Itoa(id)).Scan(
+		&user.ID, &user.UserName, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role)
 	if err == sql.ErrNoRows {
 		err = nil
 	}
