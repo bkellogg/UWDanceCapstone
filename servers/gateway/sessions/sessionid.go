@@ -27,8 +27,6 @@ var ErrInvalidID = errors.New("Invalid Session ID")
 //using `signingKey` as the HMAC signing key. An error is returned only
 //if there was an error generating random bytes for the session ID
 func NewSessionID(signingKey string) (SessionID, error) {
-	//TODO: if `signingKey` is zero-length, return InvalidSessionID
-	//and an error indicating that it may not be empty
 	if len(signingKey) == 0 {
 		return InvalidSessionID, errors.New("signingKey must have a length greater than 0")
 	}
