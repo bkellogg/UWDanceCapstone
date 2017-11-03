@@ -28,13 +28,13 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 	if userAlreadyExists {
-		http.Error(w, "user already exists with that email or username", http.StatusBadRequest)
+		http.Error(w, "user already exists with that email", http.StatusBadRequest)
 		return
 	}
 
 	user, err := newUser.ToUser()
 	if err != nil {
-		http.Error(w, "error creating user: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "error validating user: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -82,9 +82,8 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 
 	// Compare the passwords to check if they match. If they do, then the sign in is valid
 	// If they don't, then reject the signin request.
-	if err = bcrypt.CompareHashAndPassword(user.PassHash, []byte(signInRequest.Password)); err != nil {
-		http.Error(w, "invalid credentials", http.StatusUnauthorized)
-		return
+	if err = user.Authenticate(signInRequest.Password); err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 	}
 
 	state := sessions.NewSessionState(user)

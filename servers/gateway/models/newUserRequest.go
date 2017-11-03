@@ -9,7 +9,6 @@ import (
 // NewUserRequest defines the structure of a request for
 // a new user sign up
 type NewUserRequest struct {
-	UserName     string `json:"userName"`
 	FirstName    string `json:"firstName"`
 	LastName     string `json:"lastName"`
 	Email        string `json:"email"`
@@ -24,7 +23,6 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 		return nil, err
 	}
 	user := &User{
-		UserName:  u.UserName,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Email:     u.Email,
@@ -37,9 +35,6 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 // be turned into a user, otherwise returns an error stating
 // why it cannot be.
 func (u *NewUserRequest) isReadyForUser() error {
-	if len(u.UserName) == 0 {
-		return errors.New("new user username must exist")
-	}
 	if len(u.FirstName) == 0 {
 		return errors.New("new user first name must exist")
 	}

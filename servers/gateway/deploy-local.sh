@@ -1,7 +1,8 @@
+#!/usr/bin/env bash
 set -e
 
 deployAPI () {
-    cd /Users/Brendan/Documents/go/src/github.com/BKellogg/UWDanceCapstone/servers/gateway
+    cd $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway
 	echo >&2 "building gateway executable..."
 	GOOS=linux go build
 
@@ -30,6 +31,7 @@ deployAPI () {
 
 		echo >&2 "starting redis..."
 		docker run -d \
+		-p 6379:6379 \
 		--name redis \
 		--network dance-net \
 		redis
@@ -38,7 +40,7 @@ deployAPI () {
 		 -p 3306:3306 \
         -e MYSQL_ROOT_PASSWORD=$MYSQLPASS \
         -e MYSQL_DATABASE=DanceDB \
-        -v /Users/Brendan/Documents/go/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/mysql:/var/lib/mysql \
+        -v $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/mysql:/var/lib/mysql \
         --name mysql \
         --network dance-net \
         mysql
@@ -53,14 +55,16 @@ deployAPI () {
 	-p 4000:4000 \
 	-v /Users/Brendan/Documents/go/src/github.com/BKellogg/UWDanceCapstone/servers/gateway:/Users/Brendan/Documents/go/src/github.com/BKellogg/UWDanceCapstone/servers/gateway:ro \
 	-e ADDR=:4000 \
-	-e TLSKEY=/Users/Brendan/Documents/go/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/privkey.pem \
-	-e TLSCERT=/Users/Brendan/Documents/go/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/fullchain.pem \
+	-e TLSKEY=$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/privkey.pem \
+	-e TLSCERT=$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/fullchain.pem \
 	-e REDISADDR=redis:6379 \
 	-e MYSQLADDR=$MYSQLADDR \
     -e MYSQLPASS=$MYSQLPASS \
     -e MYSQLDBNAME=DanceDB \
 	-e SESSIONKEY=$(uuidgen) \
 	brendankellogg/dancegateway
+
+	go clean
 
 }
 

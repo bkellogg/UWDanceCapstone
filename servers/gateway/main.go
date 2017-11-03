@@ -55,7 +55,8 @@ func main() {
 func getRequiredENVOrExit(env, def string) string {
 	if envVal := os.Getenv(env); len(envVal) != 0 {
 		return envVal
-	} else if len(def) != 0 {
+	}
+	if len(def) != 0 {
 		log.Printf("no value for %s, defaulting to %s\n", env, def)
 		return def
 	}
@@ -74,7 +75,6 @@ func ensureUsersTableOrExit(db *sql.DB, dbName string) {
 		// Temp DB Structure
 		_, err := db.Exec(`CREATE TABLE Users (
 									UserID INT AUTO_INCREMENT PRIMARY KEY,
-									UserName VARCHAR(25) NOT NULL,
 									FirstName VARCHAR(50) NOT NULL,
 									LastName VARCHAR(50) NOT NULL,
 									Email VARCHAR(100) NOT NULL,
