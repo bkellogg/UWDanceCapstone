@@ -19,6 +19,7 @@ func NewDatabase(user, password, addr, dbName string) (*Database, error) {
 	connectionInfo := mysql.Config{
 		User:      user,
 		Passwd:    password,
+		Net:       "tcp",
 		Addr:      addr,
 		DBName:    dbName,
 		ParseTime: true,

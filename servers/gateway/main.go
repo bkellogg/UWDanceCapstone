@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -36,7 +35,6 @@ func main() {
 		log.Fatalf("error connecting to database: %v", err)
 	}
 	defer db.DB.Close()
-	ensureUsersTableOrExit(db.DB, mySQLDBName)
 
 	redis := sessions.NewRedisStore(nil, constants.DefaultSessionDuration, redisAddr)
 
@@ -62,28 +60,4 @@ func getRequiredENVOrExit(env, def string) string {
 	}
 	log.Fatalf("no value for %s and no default set. Please set a value for %s\n", env, env)
 	return ""
-}
-
-// ensure that the given sql db has a Users table
-// fatally logs if there was an error creating the table
-// This function is here to speed up testing with auth during
-// development. Will come out later
-func ensureUsersTableOrExit(db *sql.DB, dbName string) {
-	_, err := db.Exec("SELECT 1 FROM Users LIMIT 1")
-	if err != nil {
-		log.Println(dbName + ".Users does not exist; creating...")
-		// Temp DB Structure
-		_, err := db.Exec(`CREATE TABLE Users (
-									UserID INT AUTO_INCREMENT PRIMARY KEY,
-									FirstName VARCHAR(50) NOT NULL,
-									LastName VARCHAR(50) NOT NULL,
-									Email VARCHAR(100) NOT NULL,
-									PassHash BINARY(60) NOT NULL,
-									Role VARCHAR(3) NOT NULL
-								)`)
-		if err != nil {
-			log.Fatal("error creating Users table: " + err.Error())
-		}
-		log.Printf("successfully created %s.Users\n", dbName)
-	}
 }
