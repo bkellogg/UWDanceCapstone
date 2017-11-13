@@ -1,5 +1,4 @@
 # Current APIs
-___
 
 ## New User Signup
 ### **POST** to */api/v1/users*
@@ -20,9 +19,9 @@ None required
 ### Responses
 
 #### 201 Created - When user signup was successful
-###### Response Headers:
-**Authorization:** Contains the current user's session id
-###### Response Body:
+##### Response Headers:
+- **Authorization:** Contains the current user's session id
+##### Response Body:
 
 		{
 			id: <id>,
@@ -33,17 +32,17 @@ None required
 			role: <role>
 		}
 		
-###### 400 Bad Request - When request failed because of supplied information
+##### 400 Bad Request - When request failed because of supplied information
 - email already exists in system
 - password was less than 6 characters
 - passwords didn't match
 - any field was empty
 - server given non JSON body
 
-###### 405 Method Not Allowed - Server rejected the request method
+##### 405 Method Not Allowed - Server rejected the request method
 - If the request method to this resource was not POST
 
-###### 500 Internal Server Error - When request failed because of a server error
+##### 500 Internal Server Error - When request failed because of a server error
 - Database look up failed
 - Unable to store the new user
 - Unable to create the new session
@@ -52,7 +51,7 @@ None required
 ___
 
 ## New User Signin
-###**POST** to */api/v1/sessions*
+### **POST** to */api/v1/sessions*
 
 #### Request Headers:
 None required
@@ -64,12 +63,12 @@ None required
 		password: "<password>"
 	}
 
-#### Responses
+### Responses
 
 #### 200 OK - When user signin was successful
-###### Response Headers:
-**Authorization:** Contains the current user's session id
-###### Response Body:
+##### Response Headers:
+- **Authorization:** Contains the current user's session id
+##### Response Body:
 
 		{
 			id: <id>,
