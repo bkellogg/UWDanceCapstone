@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"fmt"
+
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"

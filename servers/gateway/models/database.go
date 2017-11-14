@@ -1,10 +1,12 @@
 package models
 
-import "database/sql"
 import (
+	"database/sql"
 	"errors"
-	"github.com/go-sql-driver/mysql"
+	"log"
 	"strconv"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 // Database defines a sql database struct
@@ -66,6 +68,9 @@ func (store *Database) GetUserByID(id int) (*User, error) {
 	if err != nil {
 		user = nil
 	}
+	if err == sql.ErrNoRows {
+		err = nil
+	}
 	return user, err
 }
 
@@ -79,6 +84,9 @@ func (store *Database) GetUserByEmail(email string) (*User, error) {
 		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role)
 	if err != nil {
 		user = nil
+	}
+	if err == sql.ErrNoRows {
+		err = nil
 	}
 	return user, err
 }
@@ -95,4 +103,13 @@ func (store *Database) UpdateUserByID(userID int, newValues *User) error {
 // TODO: Implement and test this
 func (store *Database) DeactivateUserByID(userID int) error {
 	return nil
+}
+
+// LogError logs the given code and message to the database
+func (store *Database) LogError(err ErrorLog) {
+	_, dbErr := store.DB.Exec(`INSERT INTO Errors (ErrTime, ErrRemoteAddr, ErrRequestMethod, ErrRequestURI, ErrCode, ErrMessage) VALUES (?, ?, ?, ?, ?, ?)`,
+		err.Time, err.RemoteAddr, err.RequestMethod, err.RequestURI, err.Code, err.Message)
+	if dbErr != nil {
+		log.Println("logging failed: " + dbErr.Error())
+	}
 }

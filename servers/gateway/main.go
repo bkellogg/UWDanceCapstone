@@ -9,6 +9,7 @@ import (
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/handlers"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
@@ -44,8 +45,10 @@ func main() {
 	standardMux.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
 	standardMux.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 
+	loggedMux := middleware.NewLogger(standardMux, db)
+
 	log.Printf("Gateway listening at %s...\n", addr)
-	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, standardMux))
+	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, loggedMux))
 }
 
 // Gets the value of env from the environment or defaults it to the given
