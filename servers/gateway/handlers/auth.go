@@ -99,6 +99,13 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// UsersMeHandler handles requests for the currently authenticated user
+func UsersMeHandler(w http.ResponseWriter, r *http.Request, u *models.User) {
+	if err := respond(w, u, http.StatusOK); err != nil {
+		http.Error(w, "error responding with user: "+err.Error(), http.StatusInternalServerError)
+	}
+}
+
 // performs a dummy authentication to mimic a real authentication to
 // prevent timing attacks
 func dummyAuthenticate() {

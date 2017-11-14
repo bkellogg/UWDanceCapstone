@@ -4,6 +4,8 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 )
 
 const headerAuthorization = "Authorization"
@@ -81,4 +83,14 @@ func EndSession(r *http.Request, signingKey string, store Store) (SessionID, err
 		return InvalidSessionID, err
 	}
 	return sessionID, nil
+}
+
+// Gets the User from the given request. Returns an error if there was an error
+// getting the user
+func GetUserFromRequest(r *http.Request, signingKey string, store Store) (*models.User, error) {
+	state := &SessionState{}
+	if _, err := GetState(r, signingKey, store, state); err != nil {
+		return nil, err
+	}
+	return state.User, nil
 }

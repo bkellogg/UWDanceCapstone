@@ -36,14 +36,16 @@ func main() {
 		log.Fatalf("error connecting to database: %v", err)
 	}
 	defer db.DB.Close()
-
 	redis := sessions.NewRedisStore(nil, constants.DefaultSessionDuration, redisAddr)
+	defer redis.Client.Close()
 
 	authContext := handlers.NewAuthContext(sessionKey, redis, db)
 
 	standardMux := http.NewServeMux()
 	standardMux.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
 	standardMux.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
+
+	standardMux.Handle(constants.UsersMePath, middleware.NewAuthorizer(handlers.UsersMeHandler, authContext.SessionKey, authContext.SessionsStore))
 
 	loggedMux := middleware.NewLogger(standardMux, db)
 
