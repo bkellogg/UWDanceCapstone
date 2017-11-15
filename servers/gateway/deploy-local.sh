@@ -66,7 +66,7 @@ deployAPI () {
 	-e MYSQLADDR=mysql:3306 \
     -e MYSQLPASS=$MYSQLPASS \
     -e MYSQLDBNAME=DanceDB \
-	-e SESSIONKEY=$(uuidgen) \
+	-e SESSIONKEY=$SESSIONKEY \
 	brendankellogg/dancegateway
 
 	go clean

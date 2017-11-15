@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"github.com/Pallinder/go-randomdata"
 	"golang.org/x/crypto/bcrypt"
@@ -14,7 +15,7 @@ type User struct {
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
 	PassHash  []byte `json:"-"`
-	Role      string `json:"role"`
+	Role      int    `json:"role"`
 }
 
 // SetPassword hashes the given password and sets it as this users passHash
@@ -36,13 +37,17 @@ func (u *User) Authenticate(password string) error {
 	return nil
 }
 
+func (u *User) Can(action int) bool {
+	return action <= u.Role
+}
+
 // generateRandomUser creates a random user and returns it
 func generateRandomUser() *User {
 	user := &User{
 		FirstName: randomdata.FirstName(randomdata.RandomGender),
 		LastName:  randomdata.LastName(),
 		Email:     randomdata.Email(),
-		Role:      string(constants.UserDefaultRole),
+		Role:      constants.UserDefaultRole,
 	}
 	user.SetPassword(randomdata.FirstName(randomdata.RandomGender) + randomdata.Street())
 	return user

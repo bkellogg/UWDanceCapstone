@@ -56,6 +56,6 @@ func (l *Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			RequestURI:    r.RequestURI,
 			Time:          startTime,
 		}
-		l.db.LogError(errorCont)
+		go l.db.LogError(errorCont)
 	}
 }
