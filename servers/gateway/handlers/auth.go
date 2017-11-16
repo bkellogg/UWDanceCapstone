@@ -75,7 +75,7 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 		http.Error(w, "error performing database lookup: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if user == nil {
+	if user == nil || !user.Active {
 		dummyAuthenticate()
 		http.Error(w, "invalid credentials", http.StatusUnauthorized)
 		return
@@ -96,13 +96,6 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 	if err = respond(w, user, http.StatusOK); err != nil {
 		http.Error(w, "error responding with user: "+err.Error(), http.StatusBadRequest)
 		return
-	}
-}
-
-// UsersMeHandler handles requests for the currently authenticated user
-func UsersMeHandler(w http.ResponseWriter, r *http.Request, u *models.User) {
-	if err := respond(w, u, http.StatusOK); err != nil {
-		http.Error(w, "error responding with user: "+err.Error(), http.StatusInternalServerError)
 	}
 }
 

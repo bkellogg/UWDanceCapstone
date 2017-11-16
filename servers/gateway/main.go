@@ -45,7 +45,9 @@ func main() {
 	standardMux.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
 	standardMux.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 
-	standardMux.Handle(constants.UsersMePath, middleware.NewAuthorizer(handlers.UsersMeHandler, authContext.SessionKey, authContext.SessionsStore))
+	// Handlers that require an authenticated user
+	standardMux.Handle(constants.AllUsersPath, middleware.NewAuthorizer(authContext.AllUsersHandler, authContext.SessionKey, authContext.SessionsStore))
+	standardMux.Handle(constants.SpecificUserPath, middleware.NewAuthorizer(authContext.SpecificUserHandler, authContext.SessionKey, authContext.SessionsStore))
 	standardMux.Handle(constants.MailPath, middleware.NewAuthorizer(handlers.MailHandler, authContext.SessionKey, authContext.SessionsStore))
 
 	loggedMux := middleware.NewLogger(standardMux, db)

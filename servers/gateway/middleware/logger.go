@@ -47,7 +47,7 @@ func (l *Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	startTime := time.Now()
 	lrw := &loggingResponseWriter{w, http.StatusOK, ""}
 	l.handler.ServeHTTP(lrw, r)
-	if lrw.statusCode >= 400 {
+	if lrw.statusCode >= 500 {
 		errorCont := models.ErrorLog{
 			Code:          lrw.statusCode,
 			Message:       strings.TrimSpace(lrw.response),
