@@ -50,11 +50,7 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err = respond(w, user, http.StatusCreated); err != nil {
-		http.Error(w, "error responding with user: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
+	respond(w, user, http.StatusCreated)
 }
 
 // UserSignInHandler handles requests for user sign ins
@@ -93,10 +89,7 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err = respond(w, user, http.StatusOK); err != nil {
-		http.Error(w, "error responding with user: "+err.Error(), http.StatusBadRequest)
-		return
-	}
+	respond(w, user, http.StatusOK)
 }
 
 // performs a dummy authentication to mimic a real authentication to

@@ -3,11 +3,15 @@ set -e
 
 deployAPI () {
     cd $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway
-	echo >&2 "building gateway executable..."
-	GOOS=linux go build
+    if [[ "$1" != "nobuild" ]]; then
+        echo >&2 "building gateway executable..."
+        GOOS=linux go build
 
-	echo >&2 "building gateway docker container..."
-	docker build -t brendankellogg/dancegateway .
+        echo >&2 "building gateway docker container..."
+        docker build -t brendankellogg/dancegateway .
+
+        go clean
+    fi
 
 	docker pull redis
 
@@ -67,14 +71,16 @@ deployAPI () {
     -e MYSQLPASS=$MYSQLPASS \
     -e MYSQLDBNAME=DanceDB \
 	-e SESSIONKEY=$SESSIONKEY \
+    -e MAILUSER=$MAILUSER \
+    -e MAILPASS=$MAILPASS \
 	brendankellogg/dancegateway
-
-	go clean
 
 }
 
-if [[ "$1" == "gateway" ]]; then
+if [[ "$1" == "" ]]; then
     deployAPI
-elif [[ "$1" == "gateway-hard" ]]; then
+elif [[ "$1" == "--hard" ]]; then
 	deployAPI hard
+elif [[ "$1" == "--nobuild" ]]; then
+    deployAPI nobuild
 fi

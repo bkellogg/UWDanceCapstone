@@ -10,16 +10,18 @@ import (
 // respond encodes the given interface v to the given
 // http.ResponseWriter. Returns an error if one occured
 // nil if otherwise.
-func respond(w http.ResponseWriter, v interface{}, statusCode int) error {
+func respond(w http.ResponseWriter, v interface{}, statusCode int) {
 	w.Header().Add(constants.HeaderContentType, constants.ContentTypeJSONUTF8)
 	w.WriteHeader(statusCode)
-	encoder := json.NewEncoder(w)
-	return encoder.Encode(v)
+	if err := json.NewEncoder(w).Encode(v); err != nil {
+		http.Error(w, "error writing to client: "+err.Error(), http.StatusInternalServerError)
+	}
 }
 
-func respondWithString(w http.ResponseWriter, response string, statusCode int) error {
+func respondWithString(w http.ResponseWriter, response string, statusCode int) {
 	w.Header().Add(constants.HeaderContentType, constants.ContentTypeTextPlainUTF8)
 	w.WriteHeader(statusCode)
-	_, err := w.Write([]byte(response))
-	return err
+	if _, err := w.Write([]byte(response)); err != nil {
+		http.Error(w, "error writing to client: "+err.Error(), http.StatusInternalServerError)
+	}
 }

@@ -27,10 +27,8 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 		http.Error(w, "error getting users: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if err = respond(w, users, http.StatusOK); err != nil {
-		http.Error(w, "error responding with users: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+
+	respond(w, users, http.StatusOK)
 }
 
 // SpecificUserHandler handles requests for a specifc user
@@ -63,9 +61,8 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 			http.Error(w, "no user found", http.StatusBadRequest)
 			return
 		}
-		if err := respond(w, user, http.StatusOK); err != nil {
-			http.Error(w, "error responding with user: "+err.Error(), http.StatusInternalServerError)
-		}
+
+		respond(w, user, http.StatusOK)
 	case "PATCH":
 		if !u.CanModifyUser(userID) {
 			http.Error(w, "you do not have access to this resource", http.StatusForbidden)

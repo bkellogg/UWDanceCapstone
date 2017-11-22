@@ -30,6 +30,10 @@ func main() {
 	// Redis Database environment variables
 	redisAddr := getRequiredENVOrExit("REDISADDR", "")
 
+	// Mail Info
+	mailUser := getRequiredENVOrExit("MAILUSER", "")
+	mailPass := getRequiredENVOrExit("MAILPASS", "")
+
 	// Open connections to the databases
 	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
 	if err != nil {
@@ -40,15 +44,20 @@ func main() {
 	defer redis.Client.Close()
 
 	authContext := handlers.NewAuthContext(sessionKey, redis, db)
+	mailContext := handlers.NewMailContext(mailUser, mailPass)
 
 	standardMux := http.NewServeMux()
 	standardMux.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
 	standardMux.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 
+	authorize := middleware.NewAuthorizer
+	key := authContext.SessionKey
+	store := authContext.SessionsStore
+
 	// Handlers that require an authenticated user
-	standardMux.Handle(constants.AllUsersPath, middleware.NewAuthorizer(authContext.AllUsersHandler, authContext.SessionKey, authContext.SessionsStore))
-	standardMux.Handle(constants.SpecificUserPath, middleware.NewAuthorizer(authContext.SpecificUserHandler, authContext.SessionKey, authContext.SessionsStore))
-	standardMux.Handle(constants.MailPath, middleware.NewAuthorizer(handlers.MailHandler, authContext.SessionKey, authContext.SessionsStore))
+	standardMux.Handle(constants.AllUsersPath, authorize(authContext.AllUsersHandler, key, store))
+	standardMux.Handle(constants.SpecificUserPath, authorize(authContext.SpecificUserHandler, key, store))
+	standardMux.Handle(constants.MailPath, authorize(mailContext.MailHandler, key, store))
 
 	loggedMux := middleware.NewLogger(standardMux, db)
 
