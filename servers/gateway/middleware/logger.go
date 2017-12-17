@@ -26,7 +26,9 @@ func (lrw *loggingResponseWriter) WriteHeader(statusCode int) {
 // Write saves the given content []byte slice and writes it
 // to the wrapped http.ResponseWriter
 func (lrw *loggingResponseWriter) Write(content []byte) (int, error) {
-	lrw.response = string(content)
+	resBytes := []byte(lrw.response)
+	resBytes = append(resBytes, content...)
+	lrw.response = string(resBytes)
 	return lrw.ResponseWriter.Write(content)
 }
 

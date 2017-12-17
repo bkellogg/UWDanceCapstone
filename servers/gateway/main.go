@@ -10,7 +10,6 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/handlers"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
-
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
@@ -39,25 +38,20 @@ func main() {
 	if err != nil {
 		log.Fatalf("error connecting to database: %v", err)
 	}
-	defer db.DB.Close()
 	redis := sessions.NewRedisStore(nil, constants.DefaultSessionDuration, redisAddr)
-	defer redis.Client.Close()
 
 	authContext := handlers.NewAuthContext(sessionKey, redis, db)
 	mailContext := handlers.NewMailContext(mailUser, mailPass)
+	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
 	standardMux := http.NewServeMux()
 	standardMux.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
 	standardMux.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 
-	authorize := middleware.NewAuthorizer
-	key := authContext.SessionKey
-	store := authContext.SessionsStore
-
 	// Handlers that require an authenticated user
-	standardMux.Handle(constants.AllUsersPath, authorize(authContext.AllUsersHandler, key, store))
-	standardMux.Handle(constants.SpecificUserPath, authorize(authContext.SpecificUserHandler, key, store))
-	standardMux.Handle(constants.MailPath, authorize(mailContext.MailHandler, key, store))
+	standardMux.Handle(constants.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
+	standardMux.Handle(constants.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
+	standardMux.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
 
 	loggedMux := middleware.NewLogger(standardMux, db)
 
