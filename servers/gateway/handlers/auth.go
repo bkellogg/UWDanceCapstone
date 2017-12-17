@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"fmt"
-
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
@@ -50,7 +49,11 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	respond(w, user, http.StatusCreated)
+	if err = respond(w, user, http.StatusCreated); err != nil {
+		http.Error(w, "error responding with user: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
 }
 
 // UserSignInHandler handles requests for user sign ins
@@ -71,7 +74,7 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 		http.Error(w, "error performing database lookup: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if user == nil || !user.Active {
+	if user == nil {
 		dummyAuthenticate()
 		http.Error(w, "invalid credentials", http.StatusUnauthorized)
 		return
@@ -89,7 +92,10 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	respond(w, user, http.StatusOK)
+	if err = respond(w, user, http.StatusOK); err != nil {
+		http.Error(w, "error responding with user: "+err.Error(), http.StatusBadRequest)
+		return
+	}
 }
 
 // performs a dummy authentication to mimic a real authentication to
