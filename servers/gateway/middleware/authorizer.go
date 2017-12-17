@@ -7,9 +7,9 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
 
-// AuthenticatedHandlerFunc defines a function signature that is used for handlers that require
+// authenticatedHandler defines a function signature that is used for handlers that require
 // a request to be authorized before processing.
-type AuthenticatedHandlerFunc func(http.ResponseWriter, *http.Request, *models.User) *HTTPError
+type authenticatedHandler func(http.ResponseWriter, *http.Request, *models.User) *HTTPError
 
 // HandlerAuthorizer defines a type that authorizes handlers
 type HandlerAuthorizer struct {
@@ -26,7 +26,7 @@ func NewHandlerAuthorizer(signingKey string, store sessions.Store) *HandlerAutho
 }
 
 // Authorize authorizes the provied handler with the current HandlerAuthorizer
-func (aw *HandlerAuthorizer) Authorize(handler AuthenticatedHandlerFunc) *AuthorizedHandler {
+func (aw *HandlerAuthorizer) Authorize(handler authenticatedHandler) *AuthorizedHandler {
 	return &AuthorizedHandler{
 		handler:    handler,
 		signingKey: aw.signingKey,
@@ -36,7 +36,7 @@ func (aw *HandlerAuthorizer) Authorize(handler AuthenticatedHandlerFunc) *Author
 
 // AuthorizedHandler defines the types of information needed for an AuthorizedHandler.
 type AuthorizedHandler struct {
-	handler    AuthenticatedHandlerFunc
+	handler    authenticatedHandler
 	signingKey string
 	store      sessions.Store
 }
