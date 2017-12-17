@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"net/mail"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 )
@@ -26,7 +27,8 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Email:     u.Email,
-		Role:      string(constants.UserDefaultRole),
+		Role:      constants.UserDefaultRole,
+		Active:    constants.UserActive,
 	}
 	return user, user.SetPassword(u.Password)
 }
@@ -41,8 +43,8 @@ func (u *NewUserRequest) isReadyForUser() error {
 	if len(u.LastName) == 0 {
 		return errors.New("new user last name must exist")
 	}
-	if len(u.Email) == 0 {
-		return errors.New("new user email must exist")
+	if _, err := mail.ParseAddress(u.Email); err != nil {
+		return errors.New("new users must supply a valid email address")
 	}
 	if len(u.Password) < 6 {
 		return errors.New("new users must have a password")
