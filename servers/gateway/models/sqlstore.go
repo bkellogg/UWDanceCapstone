@@ -32,7 +32,7 @@ func NewDatabase(user, password, addr, dbName string) (*Database, error) {
 	return &Database{DB: db}, nil
 }
 
-// LogError logs the given code and message to the database
+// LogError logs the given error to the database.
 func (store *Database) LogError(err ErrorLog) {
 	_, dbErr := store.DB.Exec(`INSERT INTO Errors (ErrTime, ErrRemoteAddr, ErrRequestMethod, ErrRequestURI, ErrCode, ErrMessage) VALUES (?, ?, ?, ?, ?, ?)`,
 		err.Time, err.RemoteAddr, err.RequestMethod, err.RequestURI, err.Code, err.Message)
