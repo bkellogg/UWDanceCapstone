@@ -40,4 +40,6 @@ docker run -d \
 -e MYSQLPASS=$MYSQLPASS \
 -e MYSQLDBNAME=DanceDB \
 -e SESSIONKEY=$(uuidgen) \
+-e MAILUSER=$MAILUSER \
+-e MAILPASS=$MAILPASS \
 brendankellogg/dancegateway

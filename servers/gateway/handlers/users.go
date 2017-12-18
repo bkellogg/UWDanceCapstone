@@ -15,10 +15,10 @@ import (
 // AllUsersHandler handles requests for the all users resource
 func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	if r.Method != "GET" {
-		return HTTPError("unsupported method", http.StatusMethodNotAllowed)
+		return methodNotAllowed()
 	}
 	if !u.Can(permissions.SeeAllUsers) {
-		return HTTPError(errPermissionDenied, http.StatusForbidden)
+		return permissionDenied()
 	}
 	users, err := ctx.Database.GetAllUsers()
 	if err != nil {
@@ -43,7 +43,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 	switch r.Method {
 	case "GET":
 		if !u.CanSeeUser(userID) {
-			return HTTPError(errPermissionDenied, http.StatusForbidden)
+			return permissionDenied()
 		}
 		user, err := ctx.Database.GetUserByID(userID)
 		if err != nil {
@@ -56,13 +56,13 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		return respond(w, user, http.StatusOK)
 	case "PATCH":
 		if !u.CanModifyUser(userID) {
-			return HTTPError(errPermissionDenied, http.StatusForbidden)
+			return permissionDenied()
 		}
 		// TODO: Implement this
 		return respond(w, "TODO: Implement This", http.StatusOK)
 	case "DELETE":
 		if !u.CanDeleteUser(userID) {
-			return HTTPError(errPermissionDenied, http.StatusForbidden)
+			return permissionDenied()
 		}
 		if err := ctx.Database.DeactivateUserByID(userID); err != nil {
 			if err != sql.ErrNoRows {
@@ -72,6 +72,6 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		}
 		return respondWithString(w, "user has been deleted", 200)
 	default:
-		return HTTPError(r.Method+" is unsupported", http.StatusMethodNotAllowed)
+		return methodNotAllowed()
 	}
 }

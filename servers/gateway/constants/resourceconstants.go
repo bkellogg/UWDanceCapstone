@@ -8,4 +8,5 @@ const (
 	SpecificUserPath = UsersPath + "/"
 	SessionsPath     = BaseAPIPath + "/sessions"
 	MailPath         = BaseAPIPath + "/mail"
+	AuditionsPath    = BaseAPIPath + "/auditions"
 )

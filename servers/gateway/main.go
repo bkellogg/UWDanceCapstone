@@ -52,6 +52,7 @@ func main() {
 	standardMux.Handle(constants.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
 	standardMux.Handle(constants.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
 	standardMux.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
+	standardMux.Handle(constants.AuditionsPath, authorizer.Authorize(authContext.AuditionsHandler))
 
 	loggedMux := middleware.NewLogger(standardMux, db)
 
