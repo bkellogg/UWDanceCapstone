@@ -9,12 +9,21 @@ CREATE TABLE Users (
 );
 
 CREATE TABLE Auditions (
-    AuditionID INT AUTO_INCREMENT PRIMARY KEY
+    AuditionID INT AUTO_INCREMENT PRIMARY KEY,
+    AuditionName varchar (50) NOT NULL UNIQUE KEY,
+    AuditionDate varchar(20) NOT NULL,
+    AuditionTime varchar(20) NOT NULL,
+    AuditionLocation varchar(100) NOT NULL,
+    Quarter VARCHAR(10) NOT NULL,
+    Year VARCHAR(4) NOT NULL,
+    IsDeleted BOOLEAN NOT NULL
 );
 
 CREATE TABLE Shows (
     ShowID INT AUTO_INCREMENT PRIMARY KEY,
+    ShowName varchar(50) NOT NULL,
     AuditionID INT,
+    IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID)
 );
 

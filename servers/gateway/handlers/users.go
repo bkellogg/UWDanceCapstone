@@ -3,8 +3,9 @@ package handlers
 import (
 	"database/sql"
 	"net/http"
-	"path"
 	"strconv"
+
+	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
@@ -29,7 +30,7 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 
 // SpecificUserHandler handles requests for a specifc user
 func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	_, userIDString := path.Split(r.URL.Path)
+	userIDString := mux.Vars(r)["id"]
 	var userID int
 	var err error
 	if userIDString == "me" {
@@ -50,7 +51,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 			return HTTPError("error looking up user: "+err.Error(), http.StatusInternalServerError)
 		}
 		if user == nil {
-			return HTTPError("no user found", http.StatusBadRequest)
+			return notFound("user")
 		}
 
 		return respond(w, user, http.StatusOK)
@@ -68,7 +69,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 			if err != sql.ErrNoRows {
 				return HTTPError("error deleting user: "+err.Error(), http.StatusInternalServerError)
 			}
-			return HTTPError("no user found", http.StatusBadRequest)
+			return notFound("user")
 		}
 		return respondWithString(w, "user has been deleted", 200)
 	default:

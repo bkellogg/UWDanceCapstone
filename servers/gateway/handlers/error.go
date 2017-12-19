@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -16,8 +17,12 @@ var HTTPError = middleware.NewHTTPError
 // errPermissionDenied defines the error the client will recieve
 // when attempting to access a resource they do not have permission
 // to access.
-const errPermissionDenied = "you do not have access to this resource"
-const errMethodNotAllowed = "current method is not supported on this resource"
+// TODO: Comment not accurate
+const (
+	errPermissionDenied       = "you do not have access to this resource"
+	errMethodNotAllowed       = "current method is not supported on this resource"
+	errObjectTypeNotSupported = "object type is not supported on this resource"
+)
 
 // permissionDenied returns a permission deined HTTPError.
 func permissionDenied() *middleware.HTTPError {
@@ -32,6 +37,22 @@ func methodNotAllowed() *middleware.HTTPError {
 	return &middleware.HTTPError{
 		Message: errMethodNotAllowed,
 		Status:  http.StatusMethodNotAllowed,
+	}
+}
+
+// objectTypeNotSupported returns an object type not supported HTTPError.
+func objectTypeNotSupported() *middleware.HTTPError {
+	return &middleware.HTTPError{
+		Message: errObjectTypeNotSupported,
+		Status:  http.StatusBadRequest,
+	}
+}
+
+// notFound returns a not found HTTPError for the given type
+func notFound(objType string) *middleware.HTTPError {
+	return &middleware.HTTPError{
+		Message: fmt.Sprintf("no %s found", objType),
+		Status:  http.StatusNotFound,
 	}
 }
 

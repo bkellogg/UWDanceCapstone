@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/mux"
+
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
@@ -44,20 +46,29 @@ func main() {
 	mailContext := handlers.NewMailContext(mailUser, mailPass)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
-	standardMux := http.NewServeMux()
-	standardMux.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
-	standardMux.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
+	baseRouter := mux.NewRouter()
+	baseRouter.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
+	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 
 	// Handlers that require an authenticated user
-	standardMux.Handle(constants.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
-	standardMux.Handle(constants.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
-	standardMux.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
-	standardMux.Handle(constants.AuditionsPath, authorizer.Authorize(authContext.AuditionsHandler))
+	baseRouter.Handle(constants.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
+	baseRouter.Handle(constants.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
 
-	loggedMux := middleware.NewLogger(standardMux, db)
+	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
+
+	auditionRouter := baseRouter.PathPrefix(constants.AuditionsPath).Subrouter()
+	auditionRouter.Handle("", authorizer.Authorize(authContext.AuditionsHandler))
+	auditionRouter.Handle("/{id}", authorizer.Authorize(authContext.SpecificAuditionHandler))
+	auditionRouter.Handle("/{id}/{resource}", authorizer.Authorize(authContext.ResourceForSpecificAuditionHandler))
+
+	showRouter := baseRouter.PathPrefix(constants.ShowsPath).Subrouter()
+	showRouter.Handle("", authorizer.Authorize(authContext.ShowsHandler))
+	showRouter.Handle("/{id}", authorizer.Authorize(authContext.SpecificShowHandler))
+
+	loggedRouter := middleware.NewLogger(baseRouter, db)
 
 	log.Printf("Gateway listening at %s...\n", addr)
-	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, loggedMux))
+	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, loggedRouter))
 }
 
 // Gets the value of env from the environment or defaults it to the given
