@@ -73,7 +73,12 @@ func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.R
 	}
 }
 
+// ResourceForSpecificAuditionHandler handles requests for a specifc resource on a specific audition.
 func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	if r.Method != "GET" {
+		return methodNotAllowed()
+	}
+
 	muxVars := mux.Vars(r)
 	audIDString := muxVars["id"]
 	audID, err := strconv.Atoi(audIDString)
@@ -87,11 +92,25 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 	if audition == nil {
 		return notFound("audition")
 	}
-	resource := muxVars["resource"]
-	switch resource {
+
+	object := muxVars["object"]
+	switch object {
 	case "users":
+		// TODO: Change this to "permissions to see users in audition"
+		if !u.Can(permissions.SeeAllUsers) {
+			return permissionDenied()
+		}
 		return respondWithString(w, "TODO: Implement the users resource for auditions", http.StatusNotImplemented)
+	case "pieces":
+		// TODO: Change this to "permissions to see pieces in audition"
+		if !u.Can(permissions.SeePieces) {
+			return permissionDenied()
+		}
+		return respondWithString(w, "TODO: Implement the pieces resource for auditions", http.StatusNotImplemented)
 	case "shows":
+		if !u.Can(permissions.SeeShows) {
+			return permissionDenied()
+		}
 		shows, err := ctx.Database.GetShowsByAuditionID(audID)
 		if err != nil {
 			return HTTPError("error getting shows by audition id: "+err.Error(), http.StatusInternalServerError)

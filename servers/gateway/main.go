@@ -57,17 +57,22 @@ func main() {
 	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
 
 	auditionRouter := baseRouter.PathPrefix(constants.AuditionsPath).Subrouter()
-	auditionRouter.Handle("", authorizer.Authorize(authContext.AuditionsHandler))
-	auditionRouter.Handle("/{id}", authorizer.Authorize(authContext.SpecificAuditionHandler))
-	auditionRouter.Handle("/{id}/{resource}", authorizer.Authorize(authContext.ResourceForSpecificAuditionHandler))
+	auditionRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
+	auditionRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificAuditionHandler))
+	auditionRouter.Handle(constants.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificAuditionHandler))
 
 	showRouter := baseRouter.PathPrefix(constants.ShowsPath).Subrouter()
-	showRouter.Handle("", authorizer.Authorize(authContext.ShowsHandler))
-	showRouter.Handle("/{id}", authorizer.Authorize(authContext.SpecificShowHandler))
+	showRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.ShowsHandler))                       // /api/v1/shows
+	showRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificShowHandler))                  // /api/v1/shows/{showID}
+	showRouter.Handle(constants.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificShowHandler)) // /api/v1/shows/{showID}/{object}
+
+	pieceRouter := baseRouter.PathPrefix(constants.PiecesPath).Subrouter()
+	pieceRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
+	pieceRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
 
 	loggedRouter := middleware.NewLogger(baseRouter, db)
 
-	log.Printf("Gateway listening at %s...\n", addr)
+	log.Printf("Gateway is listening at %s...\n", addr)
 	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, loggedRouter))
 }
 

@@ -15,4 +15,8 @@ const (
 	SeeShows    = 20
 	CreateShows = 70
 	DeleteShows = 70
+
+	SeePieces    = 20
+	CreatePieces = 70
+	DeletePieces = 70
 )

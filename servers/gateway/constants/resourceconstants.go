@@ -8,13 +8,13 @@ const (
 	UsersMePath      = UsersPath + "/me"
 	SpecificUserPath = UsersPath + "/{id}"
 
-	SessionsPath = BaseAPIPath + "/sessions"
+	SessionsPath  = BaseAPIPath + "/sessions"
+	MailPath      = BaseAPIPath + "/mail"
+	AuditionsPath = BaseAPIPath + "/auditions"
+	ShowsPath     = BaseAPIPath + "/shows"
+	PiecesPath    = BaseAPIPath + "/pieces"
 
-	MailPath = BaseAPIPath + "/mail"
-
-	AuditionsPath        = BaseAPIPath + "/auditions"
-	SpecificAuditionPath = AuditionsPath + "/{id}"
-
-	ShowsPath        = BaseAPIPath + "/shows"
-	SpecificShowPath = ShowsPath + "/{id}"
+	ResourceRoot     = ""
+	ResourceID       = "/{id}"
+	ResourceIDObject = ResourceID + "/{object}"
 )

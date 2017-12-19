@@ -21,7 +21,7 @@ CREATE TABLE Auditions (
 
 CREATE TABLE Shows (
     ShowID INT AUTO_INCREMENT PRIMARY KEY,
-    ShowName varchar(50) NOT NULL,
+    ShowName varchar(50) NOT NULL UNIQUE KEY,
     AuditionID INT,
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID)
@@ -29,7 +29,9 @@ CREATE TABLE Shows (
 
 CREATE TABLE Pieces (
     PieceID INT AUTO_INCREMENT PRIMARY KEY,
-    ShowID INT NOT NULL,
+    PieceName varchar(50) NOT NULL UNIQUE KEY,
+    ShowID INT,
+    IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (ShowID) REFERENCES Shows(ShowID)
 );
 

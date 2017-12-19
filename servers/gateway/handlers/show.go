@@ -34,7 +34,7 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 	}
 }
 
-// SpecificShowHandler handles requests to a specifc audition.
+// SpecificShowHandler handles requests to a specifc show.
 func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	showIDString := mux.Vars(r)["id"]
 	showID, err := strconv.Atoi(showIDString)
@@ -46,7 +46,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 		if !u.Can(permissions.SeeShows) {
 			return permissionDenied()
 		}
-		show, err := ctx.Database.GetAuditionByID(showID)
+		show, err := ctx.Database.GetShowByID(showID)
 		if err != nil {
 			return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -68,5 +68,47 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 		return HTTPError("error deleting show: "+err.Error(), http.StatusInternalServerError)
 	default:
 		return methodNotAllowed()
+	}
+}
+
+// ResourceForShowAuditionHandler handles requests for a specifc resource on a specific audition.
+func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	if r.Method != "GET" {
+		return methodNotAllowed()
+	}
+
+	muxVars := mux.Vars(r)
+	showIDString := muxVars["id"]
+	showID, err := strconv.Atoi(showIDString)
+	if err != nil {
+		return HTTPError("unparsable ID given: "+err.Error(), http.StatusBadRequest)
+	}
+	audition, err := ctx.Database.GetShowByID(showID)
+	if err != nil {
+		return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
+	}
+	if audition == nil {
+		return notFound("show")
+	}
+
+	object := muxVars["object"]
+	switch object {
+	case "users":
+		// TODO: Change this to "permissions to see users in audition"
+		if !u.Can(permissions.SeeAllUsers) {
+			return permissionDenied()
+		}
+		return respondWithString(w, "TODO: Implement the users resource for shows", http.StatusNotImplemented)
+	case "pieces":
+		if !u.Can(permissions.SeePieces) {
+			return permissionDenied()
+		}
+		shows, err := ctx.Database.GetPiecesByShowID(showID)
+		if err != nil {
+			return HTTPError("error getting shows by audition id: "+err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, shows, http.StatusOK)
+	default:
+		return objectTypeNotSupported()
 	}
 }
