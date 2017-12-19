@@ -3,10 +3,11 @@ package constants
 const (
 	BaseAPIPath = "/api/v1"
 
-	UsersPath        = BaseAPIPath + "/users"
-	AllUsersPath     = UsersPath + "/all"
-	UsersMePath      = UsersPath + "/me"
-	SpecificUserPath = UsersPath + "/{id}"
+	UsersPath                 = BaseAPIPath + "/users"
+	AllUsersPath              = "/all"
+	SpecificUserPath          = "/{userID}"
+	UserObjectsPath           = SpecificUserPath + "/{object}"
+	UserMembershipInPiecePath = SpecificUserPath + "/pieces" + "/{pieceID}"
 
 	SessionsPath  = BaseAPIPath + "/sessions"
 	MailPath      = BaseAPIPath + "/mail"

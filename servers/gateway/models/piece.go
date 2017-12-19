@@ -59,7 +59,19 @@ func (store *Database) DeletePieceByID(id int) error {
 
 // GetPiecesByShowID gets all pieces that are associated with the given show ID.
 func (store *Database) GetPiecesByShowID(id int) ([]*Piece, error) {
-	result, err := store.DB.Query(`SELECT * FROM Pieces P Where P.ShowID = ?`, id)
+	return handlePiecesFromDatabase(store.DB.Query(`SELECT * FROM Pieces P Where P.ShowID = ?`, id))
+}
+
+// GetPiecesByUserID gets all pieces the given user is in.
+func (store *Database) GetPiecesByUserID(id int) ([]*Piece, error) {
+	return handlePiecesFromDatabase(store.DB.Query(`SELECT DISTINCT P.PieceID, P.PieceName, P.ShowID, 
+		P.IsDeleted FROM Pieces P 
+		JOIN UserPiece UP ON P.PieceID = UP.PieceID 
+		WHERE UP.UserID = ? AND UP.IsDeleted = ?`, id, false))
+}
+
+// handlePiecesFromDatabase compiles the given result and err into a slice of pieces or an error.
+func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, error) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil

@@ -86,6 +86,43 @@ func generateRandomUser() *User {
 	return user
 }
 
+// UserIsInPiece returns true if the given user is in the given piece or an error if one occured.
+func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
+	result, err := store.DB.Query(`SELECT * FROM UserPiece UP WHERE UP.UserID = ? AND UP.PieceID = ? AND UP.IsDeleted = ?`,
+		userID, pieceID, false)
+	if result == nil {
+		return false, err
+	}
+	return result.Next(), nil
+}
+
+// AddUserToPiece adds the given user to the given piece.
+func (store *Database) AddUserToPiece(userID, pieceID int) error {
+	exists, err := store.UserIsInPiece(userID, pieceID)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return errors.New("user is already in this piece")
+	}
+	_, err = store.DB.Exec(`INSERT INTO UserPiece (UserID, PieceID, IsDeleted) VALUES (?, ?, ?)`,
+		userID, pieceID, false)
+	return err
+}
+
+// RemoveUserFromPiece removes the given user from the given piece.
+func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
+	result, err := store.DB.Exec(`UPDATE UserPiece UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.PieceID = ?`,
+		true, userID, pieceID)
+	if err == nil {
+		rowsAffected, _ := result.RowsAffected()
+		if rowsAffected == 0 {
+			return sql.ErrNoRows
+		}
+	}
+	return err
+}
+
 // GetAllUsers returns a slice of users of every user in the database, active or not.
 // Returns an error if one occured
 func (store *Database) GetAllUsers() ([]*User, error) {

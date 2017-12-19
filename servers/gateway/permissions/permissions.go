@@ -4,9 +4,11 @@ package permissions
 const (
 	SendMail = 50
 
-	SeeAllUsers = 50
-	ModifyUsers = 70
-	DeleteUsers = 70
+	SeeAllUsers         = 50
+	ModifyUsers         = 70
+	DeleteUsers         = 70
+	AddUserToPiece      = 70
+	RemoveUserFromPiece = 70
 
 	SeeAuditions    = 20
 	CreateAuditions = 70

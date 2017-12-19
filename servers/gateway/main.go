@@ -47,14 +47,15 @@ func main() {
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
 	baseRouter := mux.NewRouter()
-	baseRouter.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
+	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
 	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 
-	// Handlers that require an authenticated user
-	baseRouter.Handle(constants.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
-	baseRouter.Handle(constants.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
-
-	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
+	usersRouter := baseRouter.PathPrefix(constants.UsersPath).Subrouter()
+	usersRouter.HandleFunc(constants.ResourceRoot, authContext.UserSignUpHandler)
+	usersRouter.Handle(constants.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
+	usersRouter.Handle(constants.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
+	usersRouter.Handle(constants.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
+	usersRouter.Handle(constants.UserMembershipInPiecePath, authorizer.Authorize(authContext.UserMembershipInPieceHandler))
 
 	auditionRouter := baseRouter.PathPrefix(constants.AuditionsPath).Subrouter()
 	auditionRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
