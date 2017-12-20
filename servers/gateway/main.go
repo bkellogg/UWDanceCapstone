@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -19,6 +20,7 @@ import (
 func main() {
 	// Gateway server environment variables
 	addr := getRequiredENVOrExit("ADDR", ":443")
+	httpRedirAddr := getRequiredENVOrExit("HTTPREDIRADDR", ":80")
 	tlsKey := getRequiredENVOrExit("TLSKEY", "")
 	tlsCert := getRequiredENVOrExit("TLSCERT", "")
 	sessionKey := getRequiredENVOrExit("SESSIONKEY", "")
@@ -71,11 +73,22 @@ func main() {
 	pieceRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
 	pieceRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
 
-	loggedCORSRouter := middleware.NewCORSHandler(
+	treatedRouter := middleware.NewHeaderAdder(
 		middleware.NewLogger(baseRouter, db))
 
-	log.Printf("Gateway is listening at %s...\n", addr)
-	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, loggedCORSRouter))
+	// redirect HTTP requests to HTTPS when appropriate
+	// this needs to be done since the gateway server will need to
+	// be responsible for serving the web client due to hardware
+	// limitations of this project
+	http.HandleFunc("/", handlers.HTTPSRedirectHandler)
+	log.Printf("HTTP Redirect server is listen at http://%s\n", httpRedirAddr)
+	go http.ListenAndServe(httpRedirAddr, nil)
+
+	log.Printf("Gateway server is listen at https://%s...\n", addr)
+	if !strings.HasSuffix(addr, ":443") {
+		log.Println("WARNING: Gateway server listening on non-standard HTTPS port. HTTP Redirects only work when standard HTTP/S ports.")
+	}
+	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, treatedRouter))
 }
 
 // Gets the value of env from the environment or defaults it to the given

@@ -13,7 +13,12 @@ const (
 	CORSAllowedOrigins = "*"
 	CORSAllowedMethods = "OPTIONS, GET, POST, PATCH, DELETE, LINK, UNLINK"
 	CORSAllowedHeaders = "Content-Type, Authorization"
-	CORSExposedHeaders = "Authorization"
+	CORSExposedHeaders = "Authorization, " + HeaderStrictTransportSecurity
+)
+
+const (
+	HeaderStrictTransportSecurity = "Strict-Transport-Security"
+	StrictTransportSecurity       = "max-age=31536000; includeSubDomains"
 )
 
 const (

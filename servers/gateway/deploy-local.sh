@@ -13,13 +13,13 @@ deployAPI () {
         go clean
     fi
 
-	docker pull redis
-
 	if [ "$(docker ps -aq --filter name=gateway)" ]; then
 		docker rm -f gateway
 	fi
 
 	if [[ "$1" == "hard" ]]; then
+		docker pull redis
+		
 		if [ "$(docker ps -aq --filter name=mysql)" ]; then
 			docker rm -f mysql
 		fi
@@ -61,9 +61,10 @@ deployAPI () {
 	docker run -d \
 	--name gateway \
 	--network dance-net \
-	-p 4000:4000 \
+	-p 443:443 \
+	-p 80:80 \
 	-v $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway:$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway:ro \
-	-e ADDR=:4000 \
+	-e ADDR=:443 \
 	-e TLSKEY=$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/privkey.pem \
 	-e TLSCERT=$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/fullchain.pem \
 	-e REDISADDR=redis:6379 \
