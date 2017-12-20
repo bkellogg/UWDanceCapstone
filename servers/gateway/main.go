@@ -75,8 +75,8 @@ func main() {
 	pieceRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
 	pieceRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
 
-	treatedRouter := middleware.NewHeaderAdder(
-		middleware.NewLogger(baseRouter, db))
+	treatedRouter := middleware.EnsureHeaders(
+		middleware.LogErrors(baseRouter, db))
 
 	// redirect HTTP requests to HTTPS when appropriate
 	// this needs to be done since the gateway server will need to

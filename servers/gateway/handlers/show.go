@@ -51,7 +51,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 			return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
 		}
 		if show == nil {
-			return notFound("show")
+			return objectNotFound("show")
 		}
 		return respond(w, show, http.StatusOK)
 	case "DELETE":
@@ -63,7 +63,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 			return respondWithString(w, "show deleted", http.StatusOK)
 		}
 		if err == sql.ErrNoRows {
-			return notFound("show")
+			return objectNotFound("show")
 		}
 		return HTTPError("error deleting show: "+err.Error(), http.StatusInternalServerError)
 	default:
@@ -88,7 +88,7 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 		return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
 	}
 	if audition == nil {
-		return notFound("show")
+		return objectNotFound("show")
 	}
 
 	object := muxVars["object"]

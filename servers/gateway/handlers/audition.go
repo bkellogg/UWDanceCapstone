@@ -53,7 +53,7 @@ func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.R
 			return HTTPError("error getting audition by ID: "+err.Error(), http.StatusInternalServerError)
 		}
 		if audition == nil {
-			return notFound("audition")
+			return objectNotFound("audition")
 		}
 		return respond(w, audition, http.StatusOK)
 	case "DELETE":
@@ -65,7 +65,7 @@ func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.R
 			return respondWithString(w, "audition deleted", http.StatusOK)
 		}
 		if err == sql.ErrNoRows {
-			return notFound("audition")
+			return objectNotFound("audition")
 		}
 		return HTTPError("error deleting audition: "+err.Error(), http.StatusInternalServerError)
 	default:
@@ -90,7 +90,7 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		return HTTPError("error getting audition by ID: "+err.Error(), http.StatusInternalServerError)
 	}
 	if audition == nil {
-		return notFound("audition")
+		return objectNotFound("audition")
 	}
 
 	object := muxVars["object"]

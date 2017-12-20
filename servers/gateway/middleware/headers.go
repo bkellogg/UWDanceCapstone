@@ -8,8 +8,9 @@ type HeaderAdder struct {
 	handler http.Handler
 }
 
-// NewHeaderAdder returns a CORSHandler from the given handler.
-func NewHeaderAdder(handler http.Handler) *HeaderAdder {
+// EnsureHeaders returns a wrapper for the given handler that will
+// add CORS and HSTS headers to the response when the request is processed.
+func EnsureHeaders(handler http.Handler) *HeaderAdder {
 	return &HeaderAdder{handler: handler}
 }
 

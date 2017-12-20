@@ -50,7 +50,7 @@ func (ctx *AuthContext) SpecificPieceHandler(w http.ResponseWriter, r *http.Requ
 			return HTTPError("error getting piece by ID: "+err.Error(), http.StatusInternalServerError)
 		}
 		if piece == nil {
-			return notFound("piece")
+			return objectNotFound("piece")
 		}
 		return respond(w, piece, http.StatusOK)
 	case "DELETE":
@@ -62,7 +62,7 @@ func (ctx *AuthContext) SpecificPieceHandler(w http.ResponseWriter, r *http.Requ
 			return respondWithString(w, "piece deleted", http.StatusOK)
 		}
 		if err == sql.ErrNoRows {
-			return notFound("piece")
+			return objectNotFound("piece")
 		}
 		return HTTPError("error deleting piece: "+err.Error(), http.StatusInternalServerError)
 	default:

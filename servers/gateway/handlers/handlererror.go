@@ -48,8 +48,8 @@ func objectTypeNotSupported() *middleware.HTTPError {
 	}
 }
 
-// notFound returns a not found HTTPError for the given type
-func notFound(objType string) *middleware.HTTPError {
+// objectNotFound returns a not found HTTPError for the given type
+func objectNotFound(objType string) *middleware.HTTPError {
 	return &middleware.HTTPError{
 		Message: fmt.Sprintf("no %s found", objType),
 		Status:  http.StatusNotFound,
