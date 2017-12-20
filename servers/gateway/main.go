@@ -71,10 +71,11 @@ func main() {
 	pieceRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
 	pieceRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
 
-	loggedRouter := middleware.NewLogger(baseRouter, db)
+	loggedCORSRouter := middleware.NewCORSHandler(
+		middleware.NewLogger(baseRouter, db))
 
 	log.Printf("Gateway is listening at %s...\n", addr)
-	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, loggedRouter))
+	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, loggedCORSRouter))
 }
 
 // Gets the value of env from the environment or defaults it to the given

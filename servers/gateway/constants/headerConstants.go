@@ -10,6 +10,13 @@ const (
 )
 
 const (
+	CORSAllowedOrigins = "*"
+	CORSAllowedMethods = "OPTIONS, GET, POST, PATCH, DELETE, LINK, UNLINK"
+	CORSAllowedHeaders = "Content-Type, Authorization"
+	CORSExposedHeaders = "Authorization"
+)
+
+const (
 	CharsetUTF8              = "; charset=utf-8"
 	ContentTypeJSON          = "application/json"
 	ContentTypeJSONUTF8      = ContentTypeJSON + CharsetUTF8
