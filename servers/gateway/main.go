@@ -24,6 +24,7 @@ func main() {
 	tlsKey := getRequiredENVOrExit("TLSKEY", "")
 	tlsCert := getRequiredENVOrExit("TLSCERT", "")
 	sessionKey := getRequiredENVOrExit("SESSIONKEY", "")
+	clientPath := getRequiredENVOrExit("CLIENTPATH", "")
 
 	// MYSQL Database environment variables
 	mySQLPass := getRequiredENVOrExit("MYSQLPASS", "")
@@ -49,6 +50,7 @@ func main() {
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
 	baseRouter := mux.NewRouter()
+	baseRouter.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(clientPath)))) // serve the web
 	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
 	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 

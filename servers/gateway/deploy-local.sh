@@ -19,7 +19,7 @@ deployAPI () {
 
 	if [[ "$1" == "hard" ]]; then
 		docker pull redis
-		
+
 		if [ "$(docker ps -aq --filter name=mysql)" ]; then
 			docker rm -f mysql
 		fi
@@ -64,7 +64,10 @@ deployAPI () {
 	-p 443:443 \
 	-p 80:80 \
 	-v $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway:$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway:ro \
+	-v $CLIENTPATH:$CLIENTPATH:ro \
 	-e ADDR=:443 \
+	-e HTTPREDIRADDR=:80 \
+	-e CLIENTPATH=$CLIENTPATH \
 	-e TLSKEY=$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/privkey.pem \
 	-e TLSCERT=$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/fullchain.pem \
 	-e REDISADDR=redis:6379 \
