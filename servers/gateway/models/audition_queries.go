@@ -31,7 +31,8 @@ func (store *Database) InsertNewAudition(newAud *NewAudition) (*Audition, error)
 // GetAuditionByName returns the audition with the given name.
 func (store *Database) GetAuditionByName(name string) (*Audition, error) {
 	audition := &Audition{}
-	err := store.DB.QueryRow(`SELECT * FROM Auditions A WHERE A.AuditionName = ?`, name).Scan(
+	err := store.DB.QueryRow(`SELECT * FROM Auditions A WHERE A.AuditionName = ? AND A.IsDeleted = FALSE`,
+		name).Scan(
 		&audition.ID, &audition.Name,
 		&audition.Date, &audition.Location,
 		&audition.Quarter, &audition.Year,
@@ -48,7 +49,8 @@ func (store *Database) GetAuditionByName(name string) (*Audition, error) {
 // GetAuditionByID returns the audition with the given ID.
 func (store *Database) GetAuditionByID(id int) (*Audition, error) {
 	audition := &Audition{}
-	err := store.DB.QueryRow(`SELECT * FROM Auditions A WHERE A.AuditionID = ?`, id).Scan(
+	err := store.DB.QueryRow(`SELECT * FROM Auditions A WHERE A.AuditionID = ? AND A.IsDeleted = FALSE`,
+		id).Scan(
 		&audition.ID, &audition.Name,
 		&audition.Date, &audition.Time,
 		&audition.Location, &audition.Quarter,

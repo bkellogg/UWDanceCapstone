@@ -27,7 +27,7 @@ type User struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
-	PassHash  []byte `json:"-,omitempty"`
+	PassHash  []byte `json:"-"`
 	Role      int    `json:"role"`
 	Active    bool   `json:"active"`
 }

@@ -185,30 +185,36 @@ func (store *Database) ActivateUserByID(userID int) error {
 // Returns an error if one occured.
 func (store *Database) GetUsersByAuditionID(id int) ([]*User, error) {
 	return handleUsersFromDatabase(store.DB.Query(`
-		SELECT * FROM Users U
+		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
 		JOIN UserPiece UP On UP.UserID = U.UserID
 		JOIN Pieces P ON P.PieceID = UP.PieceID
 		JOIN Shows S ON S.ShowID = P.ShowID
-		WHERE S.AuditionID = ?`, id))
+		WHERE S.AuditionID = ?
+		AND UP.IsDeleted = FALSE
+		AND P.IsDeleted = FALSE
+		AND S.IsDeleted = FALSE`, id))
 }
 
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
 // Returns an error if one occured.
 func (store *Database) GetUsersByShowID(id int) ([]*User, error) {
 	return handleUsersFromDatabase(store.DB.Query(`
-		SELECT * FROM Users U
+		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
 		JOIN UserPiece UP On UP.UserID = U.UserID
 		JOIN Pieces P ON P.PieceID = UP.PieceID
-		WHERE P.ShowID = ?`, id))
+		WHERE P.ShowID = ?
+		AND UP.IsDeleted = FALSE
+		AND P.IsDeleted = FALSE`, id))
 }
 
 // GetUsersByPieceID returns a slice of users that are in the given piece, if any.
 // Returns an error if one occured.
 func (store *Database) GetUsersByPieceID(id int) ([]*User, error) {
 	return handleUsersFromDatabase(store.DB.Query(`
-		SELECT * FROM Users U
+		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
 		JOIN UserPiece UP On UP.UserID = U.UserID
-		WHERE UP.PieceID = ?`, id))
+		WHERE UP.PieceID = ?
+		AND UP.IsDeleted = FALSE`, id))
 }
 
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.

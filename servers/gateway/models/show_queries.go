@@ -24,7 +24,8 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 // GetShowByID returns the show with the given ID.
 func (store *Database) GetShowByID(id int) (*Show, error) {
 	show := &Show{}
-	err := store.DB.QueryRow(`SELECT * FROM Shows S WHERE S.ShowID = ?`, id).Scan(
+	err := store.DB.QueryRow(`SELECT * FROM Shows S WHERE S.ShowID = ? AND S.IsDeleted = FALSE`,
+		id).Scan(
 		&show.ID, &show.Name,
 		&show.AuditionID, &show.IsDeleted)
 	if err != nil {
@@ -44,7 +45,7 @@ func (store *Database) DeleteShowByID(id int) error {
 
 // GetShowsByAuditionID returns a slice of shows that are in the given audition
 func (store *Database) GetShowsByAuditionID(id int) ([]*Show, error) {
-	result, err := store.DB.Query(`SELECT * FROM Shows S Where S.AuditionID = ?`, id)
+	result, err := store.DB.Query(`SELECT * FROM Shows S Where S.AuditionID = ? AND S,IsDeleted = FALSE`, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil

@@ -25,7 +25,7 @@ func (store *Database) InsertNewPiece(newPiece *NewPiece) (*Piece, error) {
 // GetPieceByID returns the show with the given ID.
 func (store *Database) GetPieceByID(id int) (*Piece, error) {
 	piece := &Piece{}
-	err := store.DB.QueryRow(`SELECT * FROM Pieces P WHERE P.PieceID = ?`, id).Scan(
+	err := store.DB.QueryRow(`SELECT * FROM Pieces P WHERE P.PieceID = ? AND P.IsDeleted = FALSE`, id).Scan(
 		&piece.ID, &piece.Name,
 		&piece.ShowID, &piece.IsDeleted)
 	if err != nil {
@@ -56,7 +56,7 @@ func (store *Database) GetPiecesByUserID(id int) ([]*Piece, error) {
 // GetPiecesByShowID gets all pieces that are associated with the given show ID.
 func (store *Database) GetPiecesByShowID(id int) ([]*Piece, error) {
 	return handlePiecesFromDatabase(store.DB.Query(
-		`SELECT * FROM Pieces P Where P.ShowID = ?`,
+		`SELECT * FROM Pieces P Where P.ShowID = ? AND P.IsDeleted = FALSE`,
 		id))
 }
 
@@ -65,7 +65,9 @@ func (store *Database) GetPiecesByAuditionID(id int) ([]*Piece, error) {
 	return handlePiecesFromDatabase(store.DB.Query(
 		`SELECT P.PieceID, P.PieceName, P.ShowID, P.IsDeleted FROM Pieces P
 		JOIN Shows S ON P.ShowID = S.ShowID
-		WHERE S.AuditionID = ?`,
+		WHERE S.AuditionID = ?
+		AND P.IsDeleted = FALSE
+		AND S.IsDeleted = FALSE`,
 		id))
 }
 
