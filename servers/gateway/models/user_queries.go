@@ -4,87 +4,8 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
-
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
-	"github.com/Pallinder/go-randomdata"
-	"golang.org/x/crypto/bcrypt"
 )
-
-// User defines the properties of a specific user in the system
-type User struct {
-	ID        int64  `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	PassHash  []byte `json:"-"`
-	Role      int    `json:"role"`
-	Active    bool   `json:"active"`
-}
-
-// SetPassword hashes the given password and sets it as this users passHash
-func (u *User) SetPassword(password string) error {
-	passHash, err := bcrypt.GenerateFromPassword([]byte(password), constants.BCryptDefaultCost)
-	if err != nil {
-		return err
-	}
-	u.PassHash = passHash
-	return nil
-}
-
-// Authenticate (s) the given user with the given password. Returns an error if
-// the authentication failed.
-func (u *User) Authenticate(password string) error {
-	if err := bcrypt.CompareHashAndPassword(u.PassHash, []byte(password)); err != nil {
-		return errors.New("invalid credentials")
-	}
-	return nil
-}
-
-// Can returns true if the user has permissions to perform
-// the given action
-func (u *User) Can(action int) bool {
-	return action <= u.Role
-}
-
-// CanSeeUser returns true if the user has permissions
-// to view the user with the given ID
-func (u *User) CanSeeUser(id int) bool {
-	return u.hasPermissionTo(permissions.SeeAllUsers, id)
-}
-
-// CanModifyUser returns true if the user has permissions
-// to modify the user with the given ID
-func (u *User) CanModifyUser(id int) bool {
-	return u.hasPermissionTo(permissions.ModifyUsers, id)
-}
-
-// CanDeleteUser returns true if the user has permissions
-// to delete the user with the given ID
-func (u *User) CanDeleteUser(id int) bool {
-	return u.hasPermissionTo(permissions.DeleteUsers, id)
-}
-
-// hasPermissionTo returns true if the user can perform the given
-// action on the given user id
-func (u *User) hasPermissionTo(action, id int) bool {
-	if int(u.ID) == id {
-		return true
-	}
-	return u.Role >= action
-}
-
-// generateRandomUser creates a random user and returns it
-func generateRandomUser() *User {
-	user := &User{
-		FirstName: randomdata.FirstName(randomdata.RandomGender),
-		LastName:  randomdata.LastName(),
-		Email:     randomdata.Email(),
-		Role:      constants.UserDefaultRole,
-	}
-	user.SetPassword(randomdata.FirstName(randomdata.RandomGender) + randomdata.Street())
-	return user
-}
 
 // UserIsInPiece returns true if the given user is in the given piece or an error if one occured.
 func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
@@ -126,23 +47,7 @@ func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
 // GetAllUsers returns a slice of users of every user in the database, active or not.
 // Returns an error if one occured
 func (store *Database) GetAllUsers() ([]*User, error) {
-	users := make([]*User, 0)
-	result, err := store.DB.Query(`SELECT * FROM Users`)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-		return nil, err
-	}
-	for result.Next() {
-		u := &User{}
-		err = result.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.PassHash, &u.Role, &u.Active)
-		if err != nil {
-			return nil, err
-		}
-		users = append(users, u)
-	}
-	return users, nil
+	return handleUsersFromDatabase(store.DB.Query(`SELECT * FROM Users`))
 }
 
 // ContainsUser returns true if this database contains a user with the same
@@ -272,4 +177,55 @@ func (store *Database) DeactivateUserByID(userID int) error {
 func (store *Database) ActivateUserByID(userID int) error {
 	_, err := store.DB.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, constants.UserActive, userID)
 	return err
+}
+
+// TODO: Modularize these GetUsersByX functions...
+
+// GetUsersByAuditionID returns a slice of users that are in the given audition, if any.
+// Returns an error if one occured.
+func (store *Database) GetUsersByAuditionID(id int) ([]*User, error) {
+	return handleUsersFromDatabase(store.DB.Query(`
+		SELECT * FROM Users U
+		JOIN UserPiece UP On UP.UserID = U.UserID
+		JOIN Pieces P ON P.PieceID = UP.PieceID
+		JOIN Shows S ON S.ShowID = P.ShowID
+		WHERE S.AuditionID = ?`, id))
+}
+
+// GetUsersByShowID returns a slice of users that are in the given show, if any.
+// Returns an error if one occured.
+func (store *Database) GetUsersByShowID(id int) ([]*User, error) {
+	return handleUsersFromDatabase(store.DB.Query(`
+		SELECT * FROM Users U
+		JOIN UserPiece UP On UP.UserID = U.UserID
+		JOIN Pieces P ON P.PieceID = UP.PieceID
+		WHERE P.ShowID = ?`, id))
+}
+
+// GetUsersByPieceID returns a slice of users that are in the given piece, if any.
+// Returns an error if one occured.
+func (store *Database) GetUsersByPieceID(id int) ([]*User, error) {
+	return handleUsersFromDatabase(store.DB.Query(`
+		SELECT * FROM Users U
+		JOIN UserPiece UP On UP.UserID = U.UserID
+		WHERE UP.PieceID = ?`, id))
+}
+
+// handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
+func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, error) {
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		return nil, err
+	}
+	users := make([]*User, 0)
+	for result.Next() {
+		u := &User{}
+		if err = result.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.PassHash, &u.Role, &u.Active); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	return users, nil
 }

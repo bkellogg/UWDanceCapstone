@@ -22,6 +22,7 @@ const (
 	errPermissionDenied       = "you do not have access to this resource"
 	errMethodNotAllowed       = "current method is not supported on this resource"
 	errObjectTypeNotSupported = "object type is not supported on this resource"
+	errResourceDoesNotExist   = "requested esource type does not exist"
 )
 
 // permissionDenied returns a permission deined HTTPError.
@@ -45,6 +46,14 @@ func objectTypeNotSupported() *middleware.HTTPError {
 	return &middleware.HTTPError{
 		Message: errObjectTypeNotSupported,
 		Status:  http.StatusBadRequest,
+	}
+}
+
+// resourceDoesNotExist returns a resource does not exists HTTPError.
+func resourceDoesNotExist() *middleware.HTTPError {
+	return &middleware.HTTPError{
+		Message: errResourceDoesNotExist,
+		Status:  http.StatusNotExtended,
 	}
 }
 

@@ -100,13 +100,21 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		if !u.Can(permissions.SeeAllUsers) {
 			return permissionDenied()
 		}
-		return respondWithString(w, "TODO: Implement the users resource for auditions", http.StatusNotImplemented)
+		users, err := ctx.Database.GetUsersByAuditionID(audID)
+		if err != nil {
+			return HTTPError("error getting users by audition id: "+err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, users, http.StatusOK)
 	case "pieces":
 		// TODO: Change this to "permissions to see pieces in audition"
 		if !u.Can(permissions.SeePieces) {
 			return permissionDenied()
 		}
-		return respondWithString(w, "TODO: Implement the pieces resource for auditions", http.StatusNotImplemented)
+		pieces, err := ctx.Database.GetPiecesByAuditionID(audID)
+		if err != nil {
+			return HTTPError("error getting pieces by audition id: "+err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, pieces, http.StatusOK)
 	case "shows":
 		if !u.Can(permissions.SeeShows) {
 			return permissionDenied()

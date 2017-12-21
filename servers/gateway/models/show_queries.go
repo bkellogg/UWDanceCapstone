@@ -2,20 +2,6 @@ package models
 
 import "database/sql"
 
-// NewShow defines the information needed to create a new show.
-type NewShow struct {
-	Name       string `json:"name"`
-	AuditionID int    `json:"auditionID,omitempty"`
-}
-
-// Show defines the information needed to store a show.
-type Show struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	AuditionID int    `json:"auditionID"`
-	IsDeleted  bool   `json:"isDeleted"`
-}
-
 // InsertNewShow inserts the given newShow into the database and returns the created Show
 func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 	result, err := store.DB.Exec(`INSERT INTO Shows (ShowName, AuditionID, IsDeleted) VALUES (?, ?, ?)`,

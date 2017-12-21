@@ -2,20 +2,6 @@ package models
 
 import "database/sql"
 
-// NewPiece defines the information needed to create a new piece.
-type NewPiece struct {
-	Name   string `json:"name"`
-	ShowID int    `json:"showID,omitempty"`
-}
-
-// Piece defines a piece within a show.
-type Piece struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	ShowID    int    `json:"showID,omitempty"`
-	IsDeleted bool   `json:"isDeleted"`
-}
-
 // InsertNewPiece inserts the given NewPieve into the database and returns the
 // created Piece, or an error if one occured.
 func (store *Database) InsertNewPiece(newPiece *NewPiece) (*Piece, error) {
@@ -57,17 +43,30 @@ func (store *Database) DeletePieceByID(id int) error {
 	return err
 }
 
-// GetPiecesByShowID gets all pieces that are associated with the given show ID.
-func (store *Database) GetPiecesByShowID(id int) ([]*Piece, error) {
-	return handlePiecesFromDatabase(store.DB.Query(`SELECT * FROM Pieces P Where P.ShowID = ?`, id))
-}
-
 // GetPiecesByUserID gets all pieces the given user is in.
 func (store *Database) GetPiecesByUserID(id int) ([]*Piece, error) {
-	return handlePiecesFromDatabase(store.DB.Query(`SELECT DISTINCT P.PieceID, P.PieceName, P.ShowID, 
+	return handlePiecesFromDatabase(store.DB.Query(
+		`SELECT DISTINCT P.PieceID, P.PieceName, P.ShowID, 
 		P.IsDeleted FROM Pieces P 
 		JOIN UserPiece UP ON P.PieceID = UP.PieceID 
-		WHERE UP.UserID = ? AND UP.IsDeleted = ?`, id, false))
+		WHERE UP.UserID = ? AND UP.IsDeleted = ?`,
+		id, false))
+}
+
+// GetPiecesByShowID gets all pieces that are associated with the given show ID.
+func (store *Database) GetPiecesByShowID(id int) ([]*Piece, error) {
+	return handlePiecesFromDatabase(store.DB.Query(
+		`SELECT * FROM Pieces P Where P.ShowID = ?`,
+		id))
+}
+
+// GetPiecesByAuditionID gets all pieces in the given audition.
+func (store *Database) GetPiecesByAuditionID(id int) ([]*Piece, error) {
+	return handlePiecesFromDatabase(store.DB.Query(
+		`SELECT P.PieceID, P.PieceName, P.ShowID, P.IsDeleted FROM Pieces P
+		JOIN Shows S ON P.ShowID = S.ShowID
+		WHERE S.AuditionID = ?`,
+		id))
 }
 
 // handlePiecesFromDatabase compiles the given result and err into a slice of pieces or an error.
