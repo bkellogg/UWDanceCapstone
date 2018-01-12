@@ -53,7 +53,7 @@ func objectTypeNotSupported() *middleware.HTTPError {
 func resourceDoesNotExist() *middleware.HTTPError {
 	return &middleware.HTTPError{
 		Message: errResourceDoesNotExist,
-		Status:  http.StatusNotExtended,
+		Status:  http.StatusNotFound,
 	}
 }
 

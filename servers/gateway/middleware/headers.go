@@ -24,5 +24,7 @@ func (ha *HeaderAdder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add(constants.HeaderStrictTransportSecurity, constants.StrictTransportSecurity)
 
 	// Process the original request.
-	ha.handler.ServeHTTP(w, r)
+	if r.Method != "OPTIONS" {
+		ha.handler.ServeHTTP(w, r)
+	}
 }
