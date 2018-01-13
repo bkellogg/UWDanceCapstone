@@ -28,3 +28,10 @@ func respondWithString(w http.ResponseWriter, response string, statusCode int) *
 	}
 	return nil
 }
+
+func respondWithImage(w http.ResponseWriter, image []byte, statusCode int) *middleware.HTTPError {
+	w.Header().Add(constants.HeaderContentType, constants.ContentTypeImageJPEG)
+	w.WriteHeader(statusCode)
+	w.Write(image)
+	return nil
+}

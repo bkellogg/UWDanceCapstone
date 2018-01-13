@@ -83,6 +83,26 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return HTTPError("error getting pieces by user id: "+err.Error(), http.StatusInternalServerError)
 		}
 		return respond(w, pieces, http.StatusOK)
+	case "photo":
+		userID, err := parseUserID(r, u)
+		if r.Method == "GET" {
+			imageBytes, err := GetUserProfilePicture(userID)
+			if err != nil {
+				return HTTPError(err.Error(), http.StatusBadRequest)
+			}
+			return respondWithImage(w, imageBytes, http.StatusOK)
+		} else if r.Method == "POST" {
+			if err != nil {
+				return HTTPError(err.Message, err.Status)
+			}
+			err = SaveImageFromRequest(r, userID)
+			if err != nil {
+				return err
+			}
+			return respondWithString(w, "image uploaded!", http.StatusCreated)
+		} else {
+			return methodNotAllowed()
+		}
 	default:
 		return objectTypeNotSupported()
 	}

@@ -29,4 +29,5 @@ const (
 	ContentTypeTextPlainUTF8 = ContentTypeTextPlain + CharsetUTF8
 	ContentTypeTextHTML      = "text/html"
 	ContentTypeTextHTMLUTF8  = ContentTypeTextHTML + CharsetUTF8
+	ContentTypeImageJPEG     = "image/jpeg"
 )
