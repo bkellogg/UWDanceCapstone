@@ -65,7 +65,7 @@ deployAPI () {
 	-p 80:80 \
 	-v $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway:$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway:ro \
 	-v $CLIENTPATH:$CLIENTPATH:ro \
-	-v $IMAGEPATH:/images/ \
+	-v $IMAGEPATH:/static/images/users \
 	-e ADDR=:443 \
 	-e HTTPREDIRADDR=:80 \
 	-e CLIENTPATH=$CLIENTPATH \
