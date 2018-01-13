@@ -85,15 +85,21 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		return respond(w, pieces, http.StatusOK)
 	case "photo":
 		userID, err := parseUserID(r, u)
+		if err != nil {
+			return HTTPError(err.Message, err.Status)
+		}
 		if r.Method == "GET" {
+			if !u.CanSeeUser(userID) {
+				return permissionDenied()
+			}
 			imageBytes, err := GetUserProfilePicture(userID)
 			if err != nil {
 				return HTTPError(err.Error(), http.StatusBadRequest)
 			}
 			return respondWithImage(w, imageBytes, http.StatusOK)
 		} else if r.Method == "POST" {
-			if err != nil {
-				return HTTPError(err.Message, err.Status)
+			if !u.CanModifyUser(userID) {
+				return permissionDenied()
 			}
 			err = SaveImageFromRequest(r, userID)
 			if err != nil {
