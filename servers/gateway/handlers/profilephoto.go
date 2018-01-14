@@ -20,9 +20,9 @@ import (
 
 // SaveImageFromRequest saves the image in the given request to the file system.
 // Assumes the request is authorized.
-func SaveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
+func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 	// Get the name of the field the image is in
-	inputFieldName := r.Header.Get("InputFieldName")
+	inputFieldName := r.Header.Get("ImageFieldName")
 	if len(inputFieldName) == 0 {
 		return HTTPError("No InputFieldName header provided", http.StatusBadRequest)
 	}
@@ -77,7 +77,7 @@ func SaveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 
 // GetUserProfilePicture gets the profile picture associated with the given
 // userID as a []byte. Returns an error if one occurred.
-func GetUserProfilePicture(userID int) ([]byte, error) {
+func getUserProfilePicture(userID int) ([]byte, error) {
 	userIDString := strconv.Itoa(userID)
 	imageBytes, err := ioutil.ReadFile(constants.ProfilePicturePath + userIDString + ".jpg")
 	if err != nil {

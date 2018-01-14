@@ -53,3 +53,46 @@ func parseTargetTypeAndID(r *http.Request, target string) (string, int) {
 	}
 	return targetType, targetID
 }
+
+// parseUserID gets the userID as an int from the requets and user.
+func parseUserID(r *http.Request, u *models.User) (int, *middleware.HTTPError) {
+	userIDString, found := mux.Vars(r)["userID"]
+	if !found {
+		return 0, HTTPError("no user ID given", http.StatusBadRequest)
+	}
+	var userID int
+	var err error
+	if userIDString == "me" {
+		userID = int(u.ID)
+	} else {
+		userID, err = strconv.Atoi(userIDString)
+		if err != nil {
+			return 0, HTTPError("unparsable user ID given: "+err.Error(), http.StatusBadRequest)
+		}
+	}
+	return userID, nil
+}
+
+// getPageFromRequest gets the value of the page query parameter
+// used in pagination. Returns an error if one occured.
+func getPageParam(r *http.Request) (int, *middleware.HTTPError) {
+	pageParam := r.URL.Query().Get("page")
+	if len(pageParam) == 0 {
+		return 1, nil
+	}
+	page, err := strconv.Atoi(pageParam)
+	if err != nil {
+		return 0, HTTPError("unparsable page number given", http.StatusBadRequest)
+	}
+	return page, nil
+}
+
+// getIncludeInactiveParam returns true if the includeInactive param is true,
+// false if otherwise.
+func getIncludeInactiveParam(r *http.Request) bool {
+	includeInactiveParam := r.URL.Query().Get("includeInactive")
+	if includeInactiveParam == "true" {
+		return true
+	}
+	return false
+}

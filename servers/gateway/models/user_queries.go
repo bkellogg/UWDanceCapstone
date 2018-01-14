@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"strconv"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 )
@@ -46,14 +47,20 @@ func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
 
 // GetAllUsers returns a slice of users of every user in the database, active or not.
 // Returns an error if one occured
-func (store *Database) GetAllUsers() ([]*User, error) {
-	return handleUsersFromDatabase(store.DB.Query(`SELECT * FROM Users`))
+func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, error) {
+	offset := strconv.Itoa((page - 1) * 25)
+	query := `SELECT * FROM Users U `
+	if !includeInactive {
+		query += `WHERE U.Active = true `
+	}
+	query += `LIMIT 25 OFFSET ` + offset
+	return handleUsersFromDatabase(store.DB.Query(query))
 }
 
 // ContainsUser returns true if this database contains a user with the same
 // email as the given newUser object. Returns an error if one occurred
 func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, error) {
-	user, err := store.GetUserByEmailIncludeInactive(newUser.Email)
+	user, err := store.GetUserByEmail(newUser.Email, true)
 	if user != nil {
 		return true, nil
 	}
@@ -76,29 +83,14 @@ func (store *Database) InsertNewUser(user *User) error {
 // GetUserByID gets the user with the given id, if it exists and it is active.
 // returns an error if the lookup failed
 // TODO: Test this
-func (store *Database) GetUserByID(id int) (*User, error) {
-	// TODO: Replace with stored procedure
+func (store *Database) GetUserByID(id int, includeInactive bool) (*User, error) {
+	query := `SELECT * FROM Users U WHERE U.UserID =?`
+	if !includeInactive {
+		query += ` AND U.Active = true`
+	}
 	user := &User{}
 	err := store.DB.QueryRow(
-		`SELECT * FROM Users U WHERE U.UserID =? AND U.Active =?`, id, constants.UserActive).Scan(
-		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role, &user.Active)
-	if err != nil {
-		user = nil
-	}
-	if err == sql.ErrNoRows {
-		err = nil
-	}
-	return user, err
-}
-
-// GetUserByIDIncludeInactive gets the user with the given id, if it exists.
-// returns an error if the lookup failed
-// TODO: Test this
-func (store *Database) GetUserByIDIncludeInactive(id int) (*User, error) {
-	// TODO: Replace with stored procedure
-	user := &User{}
-	err := store.DB.QueryRow(
-		`SELECT * FROM Users U WHERE U.UserID =?`, id).Scan(
+		query, id).Scan(
 		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role, &user.Active)
 	if err != nil {
 		user = nil
@@ -112,30 +104,14 @@ func (store *Database) GetUserByIDIncludeInactive(id int) (*User, error) {
 // GetUserByEmail gets the user with the given email, if it exists.
 // returns an error if the lookup failed
 // TODO: Test this
-func (store *Database) GetUserByEmail(email string) (*User, error) {
-	// TODO: Replace with stored procedure
+func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User, error) {
+	query := `SELECT * FROM Users U WHERE Users.Email =?`
+	if !includeInactive {
+		query += ` AND U.Active = true`
+	}
 	user := &User{}
 	err := store.DB.QueryRow(
-		`SELECT * FROM Users WHERE Users.Email =? AND Users.Active =?`,
-		email, constants.UserActive).Scan(
-		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role, &user.Active)
-	if err != nil {
-		user = nil
-	}
-	if err == sql.ErrNoRows {
-		err = nil
-	}
-	return user, err
-}
-
-// GetUserByEmailIncludeInactive gets the user with the given email, if it exists.
-// returns an error if the lookup failed
-// TODO: Test this
-func (store *Database) GetUserByEmailIncludeInactive(email string) (*User, error) {
-	// TODO: Replace with stored procedure
-	user := &User{}
-	err := store.DB.QueryRow(
-		`SELECT * FROM Users WHERE Users.Email =?`,
+		query,
 		email).Scan(
 		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role, &user.Active)
 	if err != nil {

@@ -66,7 +66,7 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	// Get the user from the database corresponding to the given email
-	user, err := ctx.Database.GetUserByEmail(signInRequest.Email)
+	user, err := ctx.Database.GetUserByEmail(signInRequest.Email, true)
 	if err != nil {
 		http.Error(w, "error performing database lookup: "+err.Error(), http.StatusInternalServerError)
 		return

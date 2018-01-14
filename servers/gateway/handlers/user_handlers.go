@@ -20,7 +20,12 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	if !u.Can(permissions.SeeAllUsers) {
 		return permissionDenied()
 	}
-	users, err := ctx.Database.GetAllUsers()
+	page, httperror := getPageParam(r)
+	if httperror != nil {
+		return httperror
+	}
+	includeInactive := getIncludeInactiveParam(r)
+	users, err := ctx.Database.GetAllUsers(page, includeInactive)
 	if err != nil {
 		return HTTPError("error getting users: "+err.Error(), http.StatusInternalServerError)
 	}
@@ -33,12 +38,13 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		return err
 	}
+	includeInactive := getIncludeInactiveParam(r)
 	switch r.Method {
 	case "GET":
 		if !u.CanSeeUser(userID) {
 			return permissionDenied()
 		}
-		user, err := ctx.Database.GetUserByID(userID)
+		user, err := ctx.Database.GetUserByID(userID, includeInactive)
 		if err != nil {
 			return HTTPError("error looking up user: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -92,7 +98,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			if !u.CanSeeUser(userID) {
 				return permissionDenied()
 			}
-			imageBytes, err := GetUserProfilePicture(userID)
+			imageBytes, err := getUserProfilePicture(userID)
 			if err != nil {
 				return HTTPError(err.Error(), http.StatusBadRequest)
 			}
@@ -101,7 +107,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			if !u.CanModifyUser(userID) {
 				return permissionDenied()
 			}
-			err = SaveImageFromRequest(r, userID)
+			err = saveImageFromRequest(r, userID)
 			if err != nil {
 				return err
 			}
@@ -152,23 +158,4 @@ func (ctx *AuthContext) UserMembershipInPieceHandler(w http.ResponseWriter, r *h
 	default:
 		return methodNotAllowed()
 	}
-}
-
-// parseUserID gets the userID as an int from the requets and user.
-func parseUserID(r *http.Request, u *models.User) (int, *middleware.HTTPError) {
-	userIDString, found := mux.Vars(r)["userID"]
-	if !found {
-		return 0, HTTPError("no user ID given", http.StatusBadRequest)
-	}
-	var userID int
-	var err error
-	if userIDString == "me" {
-		userID = int(u.ID)
-	} else {
-		userID, err = strconv.Atoi(userIDString)
-		if err != nil {
-			return 0, HTTPError("unparsable user ID given: "+err.Error(), http.StatusBadRequest)
-		}
-	}
-	return userID, nil
 }
