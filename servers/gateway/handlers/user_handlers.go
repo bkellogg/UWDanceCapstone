@@ -100,7 +100,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			}
 			imageBytes, err := getUserProfilePicture(userID)
 			if err != nil {
-				return HTTPError(err.Error(), http.StatusBadRequest)
+				return err
 			}
 			return respondWithImage(w, imageBytes, http.StatusOK)
 		} else if r.Method == "POST" {
@@ -115,6 +115,15 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		} else {
 			return methodNotAllowed()
 		}
+	case "resume":
+		userID, err := parseUserID(r, u)
+		if err != nil {
+			return HTTPError(err.Message, err.Status)
+		}
+		if r.Method == "POST" {
+			return saveResumeFromRequest(r, userID)
+		}
+		return methodNotAllowed()
 	default:
 		return objectTypeNotSupported()
 	}

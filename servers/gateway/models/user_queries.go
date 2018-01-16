@@ -105,7 +105,7 @@ func (store *Database) GetUserByID(id int, includeInactive bool) (*User, error) 
 // returns an error if the lookup failed
 // TODO: Test this
 func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User, error) {
-	query := `SELECT * FROM Users U WHERE Users.Email =?`
+	query := `SELECT * FROM Users U WHERE U.Email =?`
 	if !includeInactive {
 		query += ` AND U.Active = true`
 	}
