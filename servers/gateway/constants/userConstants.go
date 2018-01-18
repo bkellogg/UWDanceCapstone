@@ -5,7 +5,7 @@ const (
 	UserDefaultRole          = 10
 	UserActive               = true
 	UserInactive             = false
-	ProfilePicturePath       = "/static/images/users"
+	ProfilePicturePath       = "/static/images/users/"
 	ProfileResumePath        = "/static/resumes/"
 	ProfileUploadMaxFileSize = 5242880
 )

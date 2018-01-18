@@ -54,6 +54,7 @@ func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, err
 		query += `WHERE U.Active = true `
 	}
 	query += `LIMIT 25 OFFSET ` + offset
+
 	return handleUsersFromDatabase(store.DB.Query(query))
 }
 

@@ -35,3 +35,10 @@ func respondWithImage(w http.ResponseWriter, image []byte, statusCode int) *midd
 	w.Write(image)
 	return nil
 }
+
+func respondWithPDF(w http.ResponseWriter, pdf []byte, statusCode int) *middleware.HTTPError {
+	w.Header().Add(constants.HeaderContentType, constants.ContentTypeApplicationPDF)
+	w.WriteHeader(statusCode)
+	w.Write(pdf)
+	return nil
+}

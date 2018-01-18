@@ -47,7 +47,8 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 
 	if strings.HasSuffix(fileheader.Filename, ".png") {
 		uploadedImage, err = png.Decode(imgBytesBuffer)
-	} else if strings.HasSuffix(fileheader.Filename, ".jpg") {
+	} else if strings.HasSuffix(fileheader.Filename, ".jpg") ||
+		strings.HasSuffix(fileheader.Filename, ".jpeg") {
 		uploadedImage, err = jpeg.Decode(imgBytesBuffer)
 	} else {
 		return HTTPError("unsupported file type", http.StatusBadRequest)
@@ -77,14 +78,35 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 }
 
 func saveResumeFromRequest(r *http.Request, userID int) *middleware.HTTPError {
-	resumeUpload, _, httperr := getUploadFromRequest(r, "ResumeFieldName")
+	resumeUpload, fileheader, httperr := getUploadFromRequest(r, "ResumeFieldName")
 	if httperr != nil {
 		return httperr
 	}
 	resumeBytesBuffer := bytes.NewBuffer(nil)
 	io.Copy(resumeBytesBuffer, resumeUpload)
 
+	if !strings.HasSuffix(fileheader.Filename, ".pdf") {
+		return HTTPError("unsupported file type", http.StatusBadRequest)
+	}
+
+	// get the user ID and create a new file for the resume to be saved to.
+	userIDString := strconv.Itoa(userID)
+	f, err := os.OpenFile(constants.ProfileResumePath+userIDString+".pdf", os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		return HTTPError(err.Error(), http.StatusInternalServerError)
+	}
+	defer f.Close()
+	io.Copy(f, resumeBytesBuffer)
 	return nil
+}
+
+func getUserResume(userID int) ([]byte, *middleware.HTTPError) {
+	userIDString := strconv.Itoa(userID)
+	resumeBytes, err := ioutil.ReadFile(constants.ProfileResumePath + userIDString + ".pdf")
+	if err != nil {
+		return nil, HTTPError("user resume not found", http.StatusNotFound)
+	}
+	return resumeBytes, nil
 }
 
 // GetUserProfilePicture gets the profile picture associated with the given

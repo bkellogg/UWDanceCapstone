@@ -29,7 +29,7 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	if err != nil {
 		return HTTPError("error getting users: "+err.Error(), http.StatusInternalServerError)
 	}
-	return respond(w, users, http.StatusOK)
+	return respond(w, models.PaginateUsers(users, page), http.StatusOK)
 }
 
 // SpecificUserHandler handles requests for a specifc user
@@ -120,8 +120,17 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		if err != nil {
 			return HTTPError(err.Message, err.Status)
 		}
-		if r.Method == "POST" {
-			return saveResumeFromRequest(r, userID)
+		if r.Method == "GET" {
+			resumeBytes, httperr := getUserResume(userID)
+			if httperr != nil {
+				return httperr
+			}
+			return respondWithPDF(w, resumeBytes, http.StatusOK)
+		} else if r.Method == "POST" {
+			if httperr := saveResumeFromRequest(r, userID); httperr != nil {
+				return httperr
+			}
+			return respondWithString(w, "resume uploaded!", http.StatusCreated)
 		}
 		return methodNotAllowed()
 	default:
