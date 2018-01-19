@@ -41,12 +41,13 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		return HTTPError("unparsable ID given: "+err.Error(), http.StatusBadRequest)
 	}
+	includeDeleted := getIncludeDeletedParam(r)
 	switch r.Method {
 	case "GET":
 		if !u.Can(permissions.SeeShows) {
 			return permissionDenied()
 		}
-		show, err := ctx.Database.GetShowByID(showID)
+		show, err := ctx.Database.GetShowByID(showID, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -71,7 +72,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-// ResourceForShowAuditionHandler handles requests for a specifc resource on a specific audition.
+// ResourceForSpecificShowHandler handles requests for a specifc resource on a specific audition.
 func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	if r.Method != "GET" {
 		return methodNotAllowed()
@@ -83,7 +84,14 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 	if err != nil {
 		return HTTPError("unparsable ID given: "+err.Error(), http.StatusBadRequest)
 	}
-	audition, err := ctx.Database.GetShowByID(showID)
+
+	includeDeleted := getIncludeDeletedParam(r)
+	page, httperr := getPageParam(r)
+	if httperr != nil {
+		return httperr
+	}
+
+	audition, err := ctx.Database.GetShowByID(showID, includeDeleted)
 	if err != nil {
 		return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
 	}
@@ -103,11 +111,11 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 		if !u.Can(permissions.SeePieces) {
 			return permissionDenied()
 		}
-		shows, err := ctx.Database.GetPiecesByShowID(showID)
+		pieces, err := ctx.Database.GetPiecesByShowID(showID, page, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting shows by audition id: "+err.Error(), http.StatusInternalServerError)
 		}
-		return respond(w, shows, http.StatusOK)
+		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
 	default:
 		return objectTypeNotSupported()
 	}

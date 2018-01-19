@@ -22,9 +22,13 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 }
 
 // GetShowByID returns the show with the given ID.
-func (store *Database) GetShowByID(id int) (*Show, error) {
+func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
+	query := `SELECT * FROM Shows S WHERE S.ShowID = ?`
+	if !includeDeleted {
+		query += ` AND S.IsDeleted = false`
+	}
 	show := &Show{}
-	err := store.DB.QueryRow(`SELECT * FROM Shows S WHERE S.ShowID = ? AND S.IsDeleted = FALSE`,
+	err := store.DB.QueryRow(query,
 		id).Scan(
 		&show.ID, &show.Name,
 		&show.AuditionID, &show.IsDeleted)
@@ -44,8 +48,14 @@ func (store *Database) DeleteShowByID(id int) error {
 }
 
 // GetShowsByAuditionID returns a slice of shows that are in the given audition
-func (store *Database) GetShowsByAuditionID(id int) ([]*Show, error) {
-	result, err := store.DB.Query(`SELECT * FROM Shows S Where S.AuditionID = ? AND S,IsDeleted = FALSE`, id)
+func (store *Database) GetShowsByAuditionID(id, page int, includeDeleted bool) ([]*Show, error) {
+	offset := getSQLPageOffset(page)
+	query := `SELECT * FROM Shows S Where S.AuditionID = ?`
+	if !includeDeleted {
+		query += ` AND S.IsDeleted = false`
+	}
+	query += ` LIMIT 25 OFFSET ?`
+	result, err := store.DB.Query(query, id, offset)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil

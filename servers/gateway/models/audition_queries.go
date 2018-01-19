@@ -29,9 +29,13 @@ func (store *Database) InsertNewAudition(newAud *NewAudition) (*Audition, error)
 }
 
 // GetAuditionByName returns the audition with the given name.
-func (store *Database) GetAuditionByName(name string) (*Audition, error) {
+func (store *Database) GetAuditionByName(name string, includeDeleted bool) (*Audition, error) {
+	query := `SELECT * FROM Auditions A WHERE A.AuditionName = ?`
+	if !includeDeleted {
+		query += ` AND A.IsDeleted = false`
+	}
 	audition := &Audition{}
-	err := store.DB.QueryRow(`SELECT * FROM Auditions A WHERE A.AuditionName = ? AND A.IsDeleted = FALSE`,
+	err := store.DB.QueryRow(query,
 		name).Scan(
 		&audition.ID, &audition.Name,
 		&audition.Date, &audition.Location,
@@ -47,9 +51,13 @@ func (store *Database) GetAuditionByName(name string) (*Audition, error) {
 }
 
 // GetAuditionByID returns the audition with the given ID.
-func (store *Database) GetAuditionByID(id int) (*Audition, error) {
+func (store *Database) GetAuditionByID(id int, includeDeleted bool) (*Audition, error) {
+	query := `SELECT * FROM Auditions A WHERE A.AuditionID = ?`
+	if !includeDeleted {
+		query += ` AND A.IsDeleted = false`
+	}
 	audition := &Audition{}
-	err := store.DB.QueryRow(`SELECT * FROM Auditions A WHERE A.AuditionID = ? AND A.IsDeleted = FALSE`,
+	err := store.DB.QueryRow(query,
 		id).Scan(
 		&audition.ID, &audition.Name,
 		&audition.Date, &audition.Time,

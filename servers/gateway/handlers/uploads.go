@@ -77,6 +77,8 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 	return nil
 }
 
+// saveResumeFromRequest saves the resume that is found in the given request and
+// ties it to the user with the given ID.
 func saveResumeFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 	resumeUpload, fileheader, httperr := getUploadFromRequest(r, "ResumeFieldName")
 	if httperr != nil {
@@ -100,6 +102,8 @@ func saveResumeFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 	return nil
 }
 
+// getUserResume returns the bytes of the user's resume, or an HTTPError if an
+// error occured.
 func getUserResume(userID int) ([]byte, *middleware.HTTPError) {
 	userIDString := strconv.Itoa(userID)
 	resumeBytes, err := ioutil.ReadFile(constants.ProfileResumePath + userIDString + ".pdf")
@@ -120,6 +124,9 @@ func getUserProfilePicture(userID int) ([]byte, *middleware.HTTPError) {
 	return imageBytes, nil
 }
 
+// getUploadFromRequest gets the upload in the field of the given request that is specified
+// by the given inputHeader. Returns a file and a fileheader, or an HTTPError if an error
+// occured.
 func getUploadFromRequest(r *http.Request, inputHeader string) (multipart.File, *multipart.FileHeader, *middleware.HTTPError) {
 	inputFieldName := r.Header.Get(inputHeader)
 	if len(inputFieldName) == 0 {

@@ -81,14 +81,19 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 	if httperr != nil {
 		return httperr
 	}
+	includeDeleted := getIncludeDeletedParam(r)
+	page, httperr := getPageParam(r)
+	if httperr != nil {
+		return httperr
+	}
 	objectType := mux.Vars(r)["object"]
 	switch objectType {
 	case "pieces":
-		pieces, err := ctx.Database.GetPiecesByUserID(userID)
+		pieces, err := ctx.Database.GetPiecesByUserID(userID, page, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting pieces by user id: "+err.Error(), http.StatusInternalServerError)
 		}
-		return respond(w, pieces, http.StatusOK)
+		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
 	case "photo":
 		userID, err := parseUserID(r, u)
 		if err != nil {

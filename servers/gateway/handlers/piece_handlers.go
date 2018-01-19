@@ -40,12 +40,13 @@ func (ctx *AuthContext) SpecificPieceHandler(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		return HTTPError("unparsable ID given: "+err.Error(), http.StatusBadRequest)
 	}
+	includeDeleted := getIncludeDeletedParam(r)
 	switch r.Method {
 	case "GET":
 		if !u.Can(permissions.SeePieces) {
 			return permissionDenied()
 		}
-		piece, err := ctx.Database.GetPieceByID(pieceID)
+		piece, err := ctx.Database.GetPieceByID(pieceID, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting piece by ID: "+err.Error(), http.StatusInternalServerError)
 		}

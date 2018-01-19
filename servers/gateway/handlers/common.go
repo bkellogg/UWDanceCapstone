@@ -90,9 +90,11 @@ func getPageParam(r *http.Request) (int, *middleware.HTTPError) {
 // getIncludeInactiveParam returns true if the includeInactive param is true,
 // false if otherwise.
 func getIncludeInactiveParam(r *http.Request) bool {
-	includeInactiveParam := r.URL.Query().Get("includeInactive")
-	if includeInactiveParam == "true" {
-		return true
-	}
-	return false
+	return r.URL.Query().Get("includeInactive") == "true"
+}
+
+// getIncludeDeletedParam returns true if the includeInactive param is true,
+// false if otherwise.
+func getIncludeDeletedParam(r *http.Request) bool {
+	return r.URL.Query().Get("includeDeleted") == "true"
 }

@@ -160,38 +160,50 @@ func (store *Database) ActivateUserByID(userID int) error {
 
 // GetUsersByAuditionID returns a slice of users that are in the given audition, if any.
 // Returns an error if one occured.
-func (store *Database) GetUsersByAuditionID(id int) ([]*User, error) {
-	return handleUsersFromDatabase(store.DB.Query(`
-		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
-		JOIN UserPiece UP On UP.UserID = U.UserID
-		JOIN Pieces P ON P.PieceID = UP.PieceID
-		JOIN Shows S ON S.ShowID = P.ShowID
-		WHERE S.AuditionID = ?
-		AND UP.IsDeleted = FALSE
+func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) ([]*User, error) {
+	offset := getSQLPageOffset(page)
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
+	JOIN UserPiece UP On UP.UserID = U.UserID
+	JOIN Pieces P ON P.PieceID = UP.PieceID
+	JOIN Shows S ON S.ShowID = P.ShowID
+	WHERE S.AuditionID = ?`
+	if !includeDeleted {
+		query += ` AND UP.IsDeleted = FALSE
 		AND P.IsDeleted = FALSE
-		AND S.IsDeleted = FALSE`, id))
+		AND S.IsDeleted = FALSE`
+	}
+	query += ` LIMIT 25 OFFSET ?`
+	return handleUsersFromDatabase(store.DB.Query(query, id, offset))
 }
 
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
 // Returns an error if one occured.
-func (store *Database) GetUsersByShowID(id int) ([]*User, error) {
-	return handleUsersFromDatabase(store.DB.Query(`
-		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
-		JOIN UserPiece UP On UP.UserID = U.UserID
-		JOIN Pieces P ON P.PieceID = UP.PieceID
-		WHERE P.ShowID = ?
-		AND UP.IsDeleted = FALSE
-		AND P.IsDeleted = FALSE`, id))
+func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, error) {
+	offset := getSQLPageOffset(page)
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
+	JOIN UserPiece UP On UP.UserID = U.UserID
+	JOIN Pieces P ON P.PieceID = UP.PieceID
+	WHERE P.ShowID = ?`
+	if !includeDeleted {
+		query += ` AND UP.IsDeleted = FALSE
+		AND P.IsDeleted = FALSE`
+	}
+	query += ` LIMIT 25 OFFSET ?`
+	return handleUsersFromDatabase(store.DB.Query(query, id, offset))
 }
 
 // GetUsersByPieceID returns a slice of users that are in the given piece, if any.
 // Returns an error if one occured.
-func (store *Database) GetUsersByPieceID(id int) ([]*User, error) {
-	return handleUsersFromDatabase(store.DB.Query(`
-		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
-		JOIN UserPiece UP On UP.UserID = U.UserID
-		WHERE UP.PieceID = ?
-		AND UP.IsDeleted = FALSE`, id))
+func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, error) {
+	offset := getSQLPageOffset(page)
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
+	JOIN UserPiece UP On UP.UserID = U.UserID
+	WHERE UP.PieceID = ?`
+	if !includeDeleted {
+		query += ` AND UP.IsDeleted = FALSE`
+	}
+	query += ` LIMIT 25 OFFSET ?`
+	return handleUsersFromDatabase(store.DB.Query(query, id, offset))
 }
 
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
