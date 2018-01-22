@@ -14,6 +14,7 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/handlers"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/notify"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
 
@@ -44,13 +45,19 @@ func main() {
 	}
 	redis := sessions.NewRedisStore(nil, constants.DefaultSessionDuration, redisAddr)
 
+	annoucementNotifier := notify.NewNotifier()
+
 	authContext := handlers.NewAuthContext(sessionKey, redis, db)
 	mailContext := handlers.NewMailContext(mailUser, mailPass)
+	annoucementContext := handlers.NewAnnoucementContext(db, annoucementNotifier)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
 	baseRouter := mux.NewRouter()
 	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
 	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
+
+	annoucementsRouter := baseRouter.PathPrefix(constants.AnnoucementsPath).Subrouter()
+	annoucementsRouter.Handle(constants.ResourceRoot, authorizer.Authorize(annoucementContext.AnnoucementsHandler))
 
 	usersRouter := baseRouter.PathPrefix(constants.UsersPath).Subrouter()
 	usersRouter.HandleFunc(constants.ResourceRoot, authContext.UserSignUpHandler)

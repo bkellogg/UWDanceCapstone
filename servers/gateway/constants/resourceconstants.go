@@ -18,4 +18,7 @@ const (
 	ResourceRoot     = ""
 	ResourceID       = "/{id}"
 	ResourceIDObject = ResourceID + "/{object}"
+
+	AnnoucementsPath       = BaseAPIPath + "/announcements"
+	AnnoucementsListenPath = "/listen"
 )
