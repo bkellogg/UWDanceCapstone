@@ -67,3 +67,20 @@ func PaginatePieces(pieces []*Piece, page int) *PaginatedPieces {
 		Page:   page,
 	}
 }
+
+// PaginatedAnnoucements defines the object that is written
+// back to the client for requests that can contain multiple
+// pages of annoucements.
+type PaginatedAnnoucements struct {
+	Page         int            `json:"page"`
+	Annoucements []*Annoucement `json:"annoucements"`
+}
+
+// PaginateAnnoucements returns the given slice of pieces and the page
+// as a PaginatedAnnoucements struct.
+func PaginateAnnoucements(annoucements []*Annoucement, page int) *PaginatedAnnoucements {
+	return &PaginatedAnnoucements{
+		Annoucements: annoucements,
+		Page:         page,
+	}
+}
