@@ -28,11 +28,18 @@ func (ctx *AnnoucementContext) AnnoucementsHandler(w http.ResponseWriter, r *htt
 			return HTTPError(err.Error(), http.StatusInternalServerError)
 		}
 
-		annoucementBytes, err := json.Marshal(annoucement)
+		wsa := &models.WebSocketAnnoucement{
+			ID:       annoucement.ID,
+			PostDate: annoucement.PostDate,
+			User:     u,
+			Message:  annoucement.Message,
+		}
+
+		wsaBytes, err := json.Marshal(wsa)
 		if err != nil {
 			return HTTPError("error marshalling annoucement: "+err.Error(), http.StatusInternalServerError)
 		}
-		ctx.Notifier.Notify(annoucementBytes)
+		ctx.Notifier.Notify(wsaBytes)
 		return respond(w, annoucement, http.StatusCreated)
 	default:
 		return methodNotAllowed()
