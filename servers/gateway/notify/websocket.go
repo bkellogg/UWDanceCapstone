@@ -1,9 +1,7 @@
 package notify
 
 import (
-	"bufio"
 	"fmt"
-	"net"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -25,10 +23,6 @@ func NewWebSocketsHandler(notifier *Notifier) *WebSocketsHandler {
 			CheckOrigin:     func(r *http.Request) bool { return true },
 		},
 	}
-}
-
-func (wsh *WebSocketsHandler) Hijack(conn net.Conn, rw *bufio.ReadWriter, err error) {
-	conn.Close()
 }
 
 //ServeHTTP implements the http.Handler interface for the WebSocketsHandler

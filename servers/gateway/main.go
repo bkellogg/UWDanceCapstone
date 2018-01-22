@@ -58,6 +58,7 @@ func main() {
 
 	annoucementsRouter := baseRouter.PathPrefix(constants.AnnoucementsPath).Subrouter()
 	annoucementsRouter.Handle(constants.ResourceRoot, authorizer.Authorize(annoucementContext.AnnoucementsHandler))
+	annoucementsRouter.Handle("/listen", notify.NewWebSocketsHandler(annoucementNotifier))
 
 	usersRouter := baseRouter.PathPrefix(constants.UsersPath).Subrouter()
 	usersRouter.HandleFunc(constants.ResourceRoot, authContext.UserSignUpHandler)
