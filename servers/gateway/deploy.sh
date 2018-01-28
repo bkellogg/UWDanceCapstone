@@ -17,4 +17,8 @@ docker push brendankellogg/dance-mysql
 
 go clean
 
-ssh -oStrictHostKeyChecking=no dance 'bash -s' < run.sh
+if [[ "$1" == "hard" ]]; then
+    ssh -oStrictHostKeyChecking=no dance 'bash -s' < run.sh --hard
+else
+    ssh -oStrictHostKeyChecking=no dance 'bash -s' < run.sh
+fi

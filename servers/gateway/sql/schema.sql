@@ -62,10 +62,11 @@ CREATE TABLE Errors (
     ErrMessage VARCHAR(150) NOT NULL
 );
 
-CREATE TABLE Annoucements (
-    AnnoucementID INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Announcements (
+    AnnouncementID INT AUTO_INCREMENT PRIMARY KEY,
     PostDate DATETIME NOT NULL,
     User INT NOT NULL,
     Message varchar(500) NOT NULL,
+    IsDeleted Boolean NOT NULL,
     FOREIGN KEY (User) REFERENCES Users(UserID)
 );

@@ -22,5 +22,6 @@ const (
 	CreatePieces = 70
 	DeletePieces = 70
 
-	SendAnnoucements = 70
+	SendAnnouncements = 70
+	SeeAnnouncements  = 10
 )

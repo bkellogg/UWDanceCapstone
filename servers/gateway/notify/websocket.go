@@ -61,8 +61,8 @@ func (n *Notifier) AddClient(client *websocket.Conn) {
 }
 
 //Notify broadcasts the event to all WebSocket clients
-func (n *Notifier) Notify(event []byte) {
-	n.eventQ <- event
+func (n *Notifier) Notify(event *WebSocketEvent) {
+	n.eventQ <- event.prepare()
 }
 
 //start starts the notification loop
