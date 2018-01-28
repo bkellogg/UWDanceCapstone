@@ -11,7 +11,7 @@ websocket.addEventListener("error", function(err) {
     errors.textContent = err.message;
 });
 websocket.addEventListener("open", function() {
-    status.textContent = "Open";
+    status.textContent = "Connected";
 });
 websocket.addEventListener("close", function() {
     status.textContent = "Closed";
