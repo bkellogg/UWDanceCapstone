@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/console.css">
+</head>
+    <body>
+        <h1>UW Stage Admin Console</h1>
+        <div class="content"></div>
+        <div class="error"></div>
+        <div class="add-object-btns">
+            <button class="js-create-audition">Create Audition</button>
+            <button class="js-create-show">Create Show</button>
+            <button class="js-create-piece">Create Piece</button>
+            <div class="create-audition-form-wrapper">
+                <h2>Create Audition</h2>
+                <form class="create-audition-form" action="submit">
+                    <div class="name">
+                        <label for="aud-name-input">Name</label>
+                        <input id="aud-name-input" type="text">
+                    </div>
+                    <div class="date">
+                        <label for="aud-date-input">Date</label>
+                        <input id="aud-date-input" type="text">
+                    </div>
+                    <div class="time">
+                        <label for="aud-time-input">Time</label>
+                        <input id="aud-time-input" type="text">
+                    </div>
+                    <div class="location"> 
+                        <label for="aud-location-input">Location</label>
+                        <input id="aud-location-input" type="text">
+                    </div>
+                    <div class="quarter"> 
+                        <label for="aud-quarter-input">Quarter</label>
+                        <input id="aud-quarter-input" type="text">
+                    </div>
+                    <div class="year"> 
+                        <label for="aud-year-input">year</label>
+                        <input id="aud-year-input" type="text">
+                    </div>
+                    <button type="submit">Create Audition</button>
+                    <div class="create-aud-res-box"></div>
+                </form>
+            </div>
+            <div class="create-show-form-wrapper">
+                <h2>Create Show</h2>
+                <form class="create-show-form" action="submit">
+                    <div class="name">
+                        <label for="show-name-input">Name</label>
+                        <input id="show-name-input" type="text">
+                    </div>
+                    <div class="audid">
+                        <label for="show-audid-input">Audition ID</label>
+                        <input id="show-audid-input" type="text">
+                    </div>
+                    <button type="submit">Create Show</button>
+                    <div class="create-show-res-box"></div>
+                </form>
+            </div>
+            <div class="create-piece-form-wrapper">
+                <h2>Create Piece</h2>
+                <form class="create-piece-form" action="submit">
+                    <div class="name">
+                        <label for="piece-name-input">Name</label>
+                        <input id="piece-name-input" type="text">
+                    </div>
+                    <div class="showid">
+                        <label for="piece-showid-input">Show ID</label>
+                        <input id="piece-showid-input" type="text">
+                    </div>
+                    <button type="submit">Create Piece</button>
+                    <div class="create-piece-res-box"></div>
+                </form>
+            </div>
+        </div>
+        <div class="curr-user-btns">
+            <button class="js-refresh-user-btn">Refresh Local User</button>
+            <button class="js-signout-btn">Sign Out</button>
+        </div>
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/console.js"></script>
+</html>
