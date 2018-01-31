@@ -72,7 +72,7 @@ func NewNotifier() *Notifier {
 func (n *Notifier) AddClient(u *models.User, c *websocket.Conn) {
 	client := NewWebSocketClient(u, c)
 	n.newClientQ <- client
-	n.readControlMessages(client)
+	n.readControlMessages(u.ID, c)
 }
 
 // Notify broadcasts the event to all WebSocket clients
@@ -96,10 +96,7 @@ func (n *Notifier) start() {
 			} else {
 				n.clients[clientToAdd.user.ID] = clientToAdd
 			}
-			fmt.Print("after all adding: ")
-			fmt.Println(n.clients[clientToAdd.user.ID].conns)
 		case clientToRemove := <-n.removeClientQ:
-			fmt.Println("trying to remove enture client")
 			clientToRemove.mx.Lock()
 			delete(n.clients, clientToRemove.user.ID)
 			clientToRemove.mx.Unlock()
@@ -110,26 +107,19 @@ func (n *Notifier) start() {
 // readControlMessages reads and discards all control messages
 // send from the client, but if a read fails, it removes the given
 // WebSocketClient from the notifier
-func (n *Notifier) readControlMessages(c *WebSocketClient) {
-	for i, conn := range c.conns {
-		go func(conn *websocket.Conn, i int) {
-			for {
-				fmt.Printf("connection index: %b\n", i)
-				if _, _, err := conn.NextReader(); err != nil {
-					fmt.Printf("calling removeCon from control messages at index %b\n", i)
-					fmt.Println()
-					fmt.Print("before calling remove conn: ")
-					fmt.Println(c.conns)
-					c.removeConn(conn)
-					fmt.Print("after: ")
-					fmt.Println(c.conns)
-					if !c.hasConnections() {
-						n.removeClientQ <- c
-					}
-					break
-				}
-				fmt.Println("end of readcontroll messages loop")
-			}
-		}(conn, i)
+func (n *Notifier) readControlMessages(userID int64, conn *websocket.Conn) {
+	for {
+		if _, _, err := conn.NextReader(); err != nil {
+			break
+		}
 	}
+	wsc, ok := n.clients[userID]
+	if !ok {
+		return
+	}
+	wsc.removeConn(conn)
+	if !wsc.hasConnections() {
+		n.removeClientQ <- wsc
+	}
+
 }
