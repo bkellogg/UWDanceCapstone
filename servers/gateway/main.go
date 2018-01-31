@@ -4,6 +4,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
+
+	"github.com/gorilla/mux"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -17,6 +20,7 @@ import (
 func main() {
 	// Gateway server environment variables
 	addr := getRequiredENVOrExit("ADDR", ":443")
+	httpRedirAddr := getRequiredENVOrExit("HTTPREDIRADDR", ":80")
 	tlsKey := getRequiredENVOrExit("TLSKEY", "")
 	tlsCert := getRequiredENVOrExit("TLSCERT", "")
 	sessionKey := getRequiredENVOrExit("SESSIONKEY", "")
@@ -44,19 +48,47 @@ func main() {
 	mailContext := handlers.NewMailContext(mailUser, mailPass)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
-	standardMux := http.NewServeMux()
-	standardMux.HandleFunc(constants.UsersPath, authContext.UserSignUpHandler)
-	standardMux.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
+	baseRouter := mux.NewRouter()
+	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
+	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 
-	// Handlers that require an authenticated user
-	standardMux.Handle(constants.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
-	standardMux.Handle(constants.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
-	standardMux.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
+	usersRouter := baseRouter.PathPrefix(constants.UsersPath).Subrouter()
+	usersRouter.HandleFunc(constants.ResourceRoot, authContext.UserSignUpHandler)
+	usersRouter.Handle(constants.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
+	usersRouter.Handle(constants.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
+	usersRouter.Handle(constants.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
+	usersRouter.Handle(constants.UserMembershipInPiecePath, authorizer.Authorize(authContext.UserMembershipInPieceHandler))
 
-	loggedMux := middleware.NewLogger(standardMux, db)
+	auditionRouter := baseRouter.PathPrefix(constants.AuditionsPath).Subrouter()
+	auditionRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
+	auditionRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificAuditionHandler))
+	auditionRouter.Handle(constants.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificAuditionHandler))
 
-	log.Printf("Gateway listening at %s...\n", addr)
-	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, loggedMux))
+	showRouter := baseRouter.PathPrefix(constants.ShowsPath).Subrouter()
+	showRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.ShowsHandler))                       // /api/v1/shows
+	showRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificShowHandler))                  // /api/v1/shows/{showID}
+	showRouter.Handle(constants.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificShowHandler)) // /api/v1/shows/{showID}/{object}
+
+	pieceRouter := baseRouter.PathPrefix(constants.PiecesPath).Subrouter()
+	pieceRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
+	pieceRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
+
+	treatedRouter := middleware.EnsureHeaders(
+		middleware.LogErrors(baseRouter, db))
+
+	// redirect HTTP requests to HTTPS when appropriate
+	// this needs to be done since the gateway server will need to
+	// be responsible for serving the web client due to hardware
+	// limitations of this project
+	http.HandleFunc("/", handlers.HTTPSRedirectHandler)
+	log.Printf("HTTP Redirect server is listen at http://%s\n", httpRedirAddr)
+	go http.ListenAndServe(httpRedirAddr, nil)
+
+	log.Printf("Gateway server is listen at https://%s...\n", addr)
+	if !strings.HasSuffix(addr, ":443") {
+		log.Println("WARNING: Gateway server listening on non-standard HTTPS port. HTTP Redirects only work when standard HTTP/S ports.")
+	}
+	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, treatedRouter))
 }
 
 // Gets the value of env from the environment or defaults it to the given

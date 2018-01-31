@@ -3,24 +3,36 @@ CREATE TABLE Users (
     FirstName VARCHAR(50) NOT NULL,
     LastName VARCHAR(50) NOT NULL,
     Email VARCHAR(100) NOT NULL UNIQUE KEY,
+    PhotoURL VARCHAR(150) NOT NULL,
     PassHash BINARY(60) NOT NULL,
     Role TINYINT NOT NULL,
     Active BOOLEAN NOT NULL
 );
 
 CREATE TABLE Auditions (
-    AuditionID INT AUTO_INCREMENT PRIMARY KEY
+    AuditionID INT AUTO_INCREMENT PRIMARY KEY,
+    AuditionName varchar (50) NOT NULL UNIQUE KEY,
+    AuditionDate varchar(20) NOT NULL,
+    AuditionTime varchar(20) NOT NULL,
+    AuditionLocation varchar(100) NOT NULL,
+    Quarter VARCHAR(10) NOT NULL,
+    Year VARCHAR(4) NOT NULL,
+    IsDeleted BOOLEAN NOT NULL
 );
 
 CREATE TABLE Shows (
     ShowID INT AUTO_INCREMENT PRIMARY KEY,
+    ShowName varchar(50) NOT NULL UNIQUE KEY,
     AuditionID INT,
+    IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID)
 );
 
 CREATE TABLE Pieces (
     PieceID INT AUTO_INCREMENT PRIMARY KEY,
-    ShowID INT NOT NULL,
+    PieceName varchar(50) NOT NULL UNIQUE KEY,
+    ShowID INT,
+    IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (ShowID) REFERENCES Shows(ShowID)
 );
 
@@ -28,6 +40,7 @@ CREATE TABLE UserPiece (
     UserPieceID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT NOT NULL,
     PieceID INT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID)
 );
