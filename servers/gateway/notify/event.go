@@ -12,20 +12,16 @@ const (
 // WebSocketEvent defines the structure of how an event will
 // be sent over a websocket.
 type WebSocketEvent struct {
-	Event string `json:"event"`
-	Data  []byte `json:"data"`
+	EventType string      `json:"eventType"`
+	Data      interface{} `json:"data"`
 }
 
 // NewWebSocketEvent returns the given event and data as a
 // WebSocketEVent to be sent over a websocket connection.
 func NewWebSocketEvent(event string, data interface{}) (*WebSocketEvent, error) {
-	dataBytes, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
 	return &WebSocketEvent{
-		Event: event,
-		Data:  dataBytes,
+		EventType: event,
+		Data:      data,
 	}, nil
 }
 

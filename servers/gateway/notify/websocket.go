@@ -4,19 +4,27 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 	"github.com/gorilla/websocket"
 )
 
 //WebSocketsHandler is a handler for WebSocket upgrade requests
 type WebSocketsHandler struct {
-	notifier *Notifier
-	upgrader *websocket.Upgrader
+	sessionStore sessions.Store
+	sessionKey   string
+	notifier     *Notifier
+	upgrader     *websocket.Upgrader
 }
 
 //NewWebSocketsHandler constructs a new WebSocketsHandler
-func NewWebSocketsHandler(notifier *Notifier) *WebSocketsHandler {
+func NewWebSocketsHandler(notifier *Notifier, store sessions.Store, sessionKey string) *WebSocketsHandler {
 	return &WebSocketsHandler{
-		notifier: notifier,
+		sessionStore: store,
+		sessionKey:   sessionKey,
+		notifier:     notifier,
 		upgrader: &websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
@@ -27,78 +35,101 @@ func NewWebSocketsHandler(notifier *Notifier) *WebSocketsHandler {
 
 //ServeHTTP implements the http.Handler interface for the WebSocketsHandler
 func (wsh *WebSocketsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	user, err := sessions.GetUserFromRequest(r, wsh.sessionKey, wsh.sessionStore)
+	if err != nil {
+		http.Error(w, constants.ErrNotSignedIn, http.StatusUnauthorized)
+		return
+	}
 	conn, err := wsh.upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("error upgrading to WebSocket connection: %v", err), http.StatusInternalServerError)
 		return
 	}
-	wsh.notifier.AddClient(conn)
+	wsh.notifier.AddClient(user, conn)
 }
 
-//Notifier is an object that handles WebSocket notifications
+// Notifier is an object that handles WebSocket notifications
 type Notifier struct {
-	clients       []*websocket.Conn
-	eventQ        chan []byte
-	addClientQ    chan *websocket.Conn
-	removeClientQ chan *websocket.Conn
+	clients       map[int64]*WebSocketClient
+	eventQ        chan *WebSocketEvent
+	newClientQ    chan *WebSocketClient
+	removeClientQ chan *WebSocketClient
 }
 
-//NewNotifier constructs a new Notifier
+// NewNotifier constructs a new Notifier
 func NewNotifier() *Notifier {
 	n := &Notifier{
-		eventQ:        make(chan []byte),
-		addClientQ:    make(chan *websocket.Conn),
-		removeClientQ: make(chan *websocket.Conn),
+		clients:       make(map[int64]*WebSocketClient),
+		eventQ:        make(chan *WebSocketEvent),
+		newClientQ:    make(chan *WebSocketClient),
+		removeClientQ: make(chan *WebSocketClient),
 	}
 	go n.start()
 	return n
 }
 
-//AddClient adds a new client to the Notifier
-func (n *Notifier) AddClient(client *websocket.Conn) {
-	n.addClientQ <- client
+// AddClient adds a new client to the Notifier
+func (n *Notifier) AddClient(u *models.User, c *websocket.Conn) {
+	client := NewWebSocketClient(u, c)
+	n.newClientQ <- client
 	n.readControlMessages(client)
 }
 
-//Notify broadcasts the event to all WebSocket clients
+// Notify broadcasts the event to all WebSocket clients
 func (n *Notifier) Notify(event *WebSocketEvent) {
-	n.eventQ <- event.prepare()
+	n.eventQ <- event
 }
 
-//start starts the notification loop
+// start starts the notification loop
 func (n *Notifier) start() {
 	for {
 		select {
 		case event := <-n.eventQ:
 			for _, client := range n.clients {
-				if err := client.WriteMessage(websocket.TextMessage, event); err != nil {
+				if client.writeToAll(event) {
 					n.removeClientQ <- client
 				}
 			}
-		case clientToAdd := <-n.addClientQ:
-			n.clients = append(n.clients, clientToAdd)
-		case clientToRemove := <-n.removeClientQ:
-			clientToRemove.Close()
-			newClients := make([]*websocket.Conn, 0, len(n.clients)-1)
-			for _, client := range n.clients {
-				if client != clientToRemove {
-					newClients = append(newClients, client)
-				}
+		case clientToAdd := <-n.newClientQ:
+			if existingClient, ok := n.clients[clientToAdd.user.ID]; ok {
+				existingClient.addConnections(clientToAdd.conns[:]...)
+			} else {
+				n.clients[clientToAdd.user.ID] = clientToAdd
 			}
-			n.clients = newClients
-		default:
+			fmt.Print("after all adding: ")
+			fmt.Println(n.clients[clientToAdd.user.ID].conns)
+		case clientToRemove := <-n.removeClientQ:
+			fmt.Println("trying to remove enture client")
+			clientToRemove.mx.Lock()
+			delete(n.clients, clientToRemove.user.ID)
+			clientToRemove.mx.Unlock()
 		}
 	}
 }
 
-//readControlMessages reads and discards all control messages
-//send from the client, but if a read fails, it removes the
-//client form the clients slice
-func (n *Notifier) readControlMessages(client *websocket.Conn) {
-	for {
-		if _, _, err := client.NextReader(); err != nil {
-			n.removeClientQ <- client
-			break
-		}
+// readControlMessages reads and discards all control messages
+// send from the client, but if a read fails, it removes the given
+// WebSocketClient from the notifier
+func (n *Notifier) readControlMessages(c *WebSocketClient) {
+	for i, conn := range c.conns {
+		go func(conn *websocket.Conn, i int) {
+			for {
+				fmt.Printf("connection index: %b\n", i)
+				if _, _, err := conn.NextReader(); err != nil {
+					fmt.Printf("calling removeCon from control messages at index %b\n", i)
+					fmt.Println()
+					fmt.Print("before calling remove conn: ")
+					fmt.Println(c.conns)
+					c.removeConn(conn)
+					fmt.Print("after: ")
+					fmt.Println(c.conns)
+					if !c.hasConnections() {
+						n.removeClientQ <- c
+					}
+					break
+				}
+				fmt.Println("end of readcontroll messages loop")
+			}
+		}(conn, i)
 	}
 }
