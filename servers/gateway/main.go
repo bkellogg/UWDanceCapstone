@@ -45,21 +45,23 @@ func main() {
 	}
 	redis := sessions.NewRedisStore(nil, constants.DefaultSessionDuration, redisAddr)
 
-	annoucementNotifier := notify.NewNotifier()
+	notifier := notify.NewNotifier()
 
 	authContext := handlers.NewAuthContext(sessionKey, redis, db)
 	mailContext := handlers.NewMailContext(mailUser, mailPass)
-	annoucementContext := handlers.NewAnnoucementContext(db, annoucementNotifier)
+	annoucementContext := handlers.NewAnnoucementContext(db, notifier)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
 	baseRouter := mux.NewRouter()
 	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
 	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 
+	updatesRouter := baseRouter.PathPrefix(constants.UpdatesPath).Subrouter()
+	updatesRouter.Handle(constants.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
+
 	annoucementsRouter := baseRouter.PathPrefix(constants.AnnoucementsPath).Subrouter()
 	annoucementsRouter.Handle(constants.ResourceRoot, authorizer.Authorize(annoucementContext.AnnoucementsHandler))
 	annoucementsRouter.Handle("/dummy", authorizer.Authorize(annoucementContext.DummyAnnouncementHandler))
-	annoucementsRouter.Handle("/listen", notify.NewWebSocketsHandler(annoucementNotifier))
 
 	usersRouter := baseRouter.PathPrefix(constants.UsersPath).Subrouter()
 	usersRouter.HandleFunc(constants.ResourceRoot, authContext.UserSignUpHandler)

@@ -21,4 +21,6 @@ const (
 
 	AnnoucementsPath       = BaseAPIPath + "/announcements"
 	AnnoucementsListenPath = "/listen"
+
+	UpdatesPath = BaseAPIPath + "/updates"
 )

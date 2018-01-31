@@ -4,9 +4,12 @@
 const host = "dasc.capstone.ischool.uw.edu";
 const status = document.querySelector("#status")
 const notifications = document.querySelector("#notifications");
+const dummyAnnouncementBtn = document.querySelector("#DummyAnnouncementBtn");
 const errors = document.querySelector("#errors");
 
-const websocket = new WebSocket("wss://" + host + "/api/v1/updates");
+let auth = getAuth();
+
+const websocket = new WebSocket("wss://" + host + "/api/v1/updates?auth=" + auth);
 websocket.addEventListener("error", function(err) {
     errors.textContent = err.message;
 });
@@ -17,8 +20,9 @@ websocket.addEventListener("close", function() {
     status.textContent = "Closed";
 });
 websocket.addEventListener("message", function(event) {
-    let data = JSON.parse(event.data);
-
+    
+    let notification = JSON.parse(event.data);
+    let data = notification.data;
     let messageWrapper = document.createElement("div");
     messageWrapper.classList.add("message-wrapper");
 
@@ -41,3 +45,15 @@ websocket.addEventListener("message", function(event) {
     messageWrapper.appendChild(body);
     notifications.appendChild(messageWrapper);
 });
+
+dummyAnnouncementBtn.addEventListener("click", (evt) => {
+    fetch("https://dasc.capstone.ischool.uw.edu/api/v1/announcements/dummy?auth=" + getAuth())
+    .then((res) => {
+        if (!res.ok) {
+            return res.text().then((t) => Promise.reject(t));
+        }
+    })
+    .catch((err) => {
+        window.alert(err);
+    })
+})
