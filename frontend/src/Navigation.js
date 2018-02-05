@@ -1,10 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom'
-
-import Dashboard from './Dashboard.js';
-import Shows from './Shows.js';
-import Calendar from './Calendar.js';
-import Profile from './Profile.js';
+import { Link } from 'react-router-dom';
 
 class Navigation extends Component {
   constructor(props) {
@@ -15,12 +10,10 @@ class Navigation extends Component {
   render() {
       return(
         <section className='router'>
-          <Switch>
-            <Route exact path='/dashboard' component={Dashboard}/>
-            <Route path='/dashboard/shows' component={Shows}/>
-            <Route path='/dashboard/calendar' component={Calendar}/>
-            <Route path='/dashboard/profile' component={Profile}/>
-          </Switch>
+          <div className='shows'><Link to='/dashboard/shows'>Shows</Link></div>
+          <div className='calendar'><Link to='/dashboard/calendar'>Calendar</Link></div>
+          <div className='profile'><Link to='/dashboard/profile'>Profile</Link></div>
+          <div className='dashboard'><Link to='/dashboard'>Dashboard</Link></div>
         </section>
       )
   }

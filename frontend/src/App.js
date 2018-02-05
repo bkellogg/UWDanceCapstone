@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom'
 
 import SignUp from './SignUp.js';
 import SignIn from './SignIn.js';
-import Navigation from './Navigation.js'
+import Main from './Main.js'
 import './styling/App.css';
 
 class App extends Component {
@@ -22,7 +22,7 @@ class App extends Component {
         <Switch>
           <Route exact path='/' component={SignIn}/>
           <Route path='/signup' component={SignUp}/>
-          <Route path='/dashboard' component={Navigation}/>
+          <Route path='/dashboard' component={Main}/>
         </Switch>
       </section>
   );
