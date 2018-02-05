@@ -1,46 +1,33 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
-import img from './imgs/tresmaines.jpg'
+import { Switch, Route } from 'react-router-dom'
+
+import SignUp from './SignUp.js';
+import SignIn from './SignIn.js';
+import Navigation from './Navigation.js'
+import './styling/App.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: null,
+      currentTab: 'landing',
+    };
+    console.log(this.state);
+  };
+
   render() {
     return (
-      <div className="LogInLanding" style={{height:100 + '%'}}>
-        <div className="LogInPhoto">
-         {/* <img src={img}></img>*/}
-        </div>
-        <div className="Functionality">
-          <div className="Logo"></div>
-          <h1>Sign in</h1>
-          <div className="LogIn">
-            <div className="Input">
+      <section className="routing">
+        <Switch>
+          <Route exact path='/' component={SignIn}/>
+          <Route path='/signup' component={SignUp}/>
+          <Route path='/dashboard' component={Navigation}/>
+        </Switch>
+      </section>
+  );
+};
 
-
-            <form className="authenticate" id="sign-up">
-                    <div className="row">
-                        <div className="input-field col s12">
-                            <input id="email" type="email" className="validate" />
-                            <label htmlFor="email">Email</label>
-                        </div>
-                        <div className="input-field col s12">
-                            <input id="password" type="password" className="validate" />
-                            <label htmlFor="password">Password</label>
-                        </div>
-                    </div>
-
-            </form>
-            <div className="Buttons">
-              <button></button>
-              <button></button>
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
-    );
-  }
 }
-
 export default App;
 
