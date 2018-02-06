@@ -38,8 +38,9 @@ type Logger struct {
 	db      *models.Database
 }
 
-// NewLogger returns a pointer to a Logger from the given information
-func NewLogger(handler http.Handler, db *models.Database) *Logger {
+// LogErrors returns a handler wrapper that will log errors encountered
+// while the handler's request was being processed.
+func LogErrors(handler http.Handler, db *models.Database) *Logger {
 	return &Logger{handler: handler, db: db}
 }
 

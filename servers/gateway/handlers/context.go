@@ -24,6 +24,17 @@ func NewAuthContext(sessionKey string, sessionStore sessions.Store, database *mo
 	}
 }
 
+// HandlerContext defines context for non-auth related handlers.
+type HandlerContext struct {
+	Store *models.Database
+}
+
+// NewHandlerContext creates a new HandlerContext with the
+// given arguments.
+func NewHandlerContext(store *models.Database) *HandlerContext {
+	return &HandlerContext{Store: store}
+}
+
 // MailContext is context used to invoke mail related handlers
 // This is defined so that handlers can be invoked on a set of
 // mail credentials
