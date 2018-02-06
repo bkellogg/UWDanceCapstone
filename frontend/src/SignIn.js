@@ -32,11 +32,11 @@ class SignIn extends Component {
                             <label htmlFor="password">Password</label>
                         </div>
                     </div>
-
             </form>
             <div className="Buttons">
-              <button onClick={this.handleSignIn}><Link to='/dashboard'>Sign In</Link></button>
-              <button onClick={this.handleSignUp}><Link to='/signup'>Sign Up</Link></button>
+            {/*We're going to take out this link and replace it with a show/hide type deal*/}
+              <button onClick={this.signIn}><Link to='/dashboard'>Sign In</Link></button>
+              <button><Link to='/signup'>Sign Up</Link></button>
             </div>
           </div>
         </div>
@@ -45,9 +45,21 @@ class SignIn extends Component {
     );
   };
 
-  handleSignIn(event){
-    console.log("sign in!")
-
+  signIn(event){
+    console.log(event);
+    {/*set these as global variables*/}
+    let baseUrl = 'https://dasc.capstone.ischool.uw.edu';
+    let endpoint = '/api/v1/sessions'
+    let auth = fetch((baseUrl + endpoint), {
+                method: 'POST',
+                body: JSON.stringify(
+                  {
+                    email: "<email>",
+                    password: "<password>"
+                  }
+                )
+    });
+    console.log(auth);
   };
 
 }
