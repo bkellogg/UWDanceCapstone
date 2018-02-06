@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 import './styling/SignIn.css';
 
 class SignIn extends Component {
-  constructor(props) {
-    super(props);
-    console.log(this.state);
-  };
+  //constructor() {
+    //super(props);
+    //console.log(this.state);
+  //};
 
   render() {
     return (
@@ -46,7 +46,6 @@ class SignIn extends Component {
   };
 
   signIn(event){
-    console.log(event);
     {/*set these as global variables*/}
     let baseUrl = 'https://dasc.capstone.ischool.uw.edu';
     let endpoint = '/api/v1/sessions'
@@ -59,7 +58,7 @@ class SignIn extends Component {
                   }
                 )
     });
-    console.log(auth);
+    this.props.onSignIn(auth);
   };
 
 }

@@ -11,12 +11,24 @@ class App extends Component {
     super(props);
     this.state = {
       user: null,
-      currentTab: 'landing',
+      currentTab: 'signIn',
     };
     console.log(this.state);
   };
 
+  handleSignIn(userVal) {
+    this.setState({user: userVal})
+  };
+
   render() {
+    if(this.state.user === null){
+        let signIn = <SignIn onSignIn={this.handleSignIn}/>
+    }
+    
+    if(this.state.user != null){
+      <Main />
+    }
+
     return (
       <section className="routing">
         <Switch>
