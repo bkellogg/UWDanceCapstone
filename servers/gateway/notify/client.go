@@ -29,7 +29,7 @@ func NewWebSocketClient(u *models.User, c *websocket.Conn) *WebSocketClient {
 	return wsc
 }
 
-// addConnection adds the given connections to this WebSocketClient
+// addConnection adds the given connections to this WebSocketClient.
 func (c *WebSocketClient) addConnections(conn ...*websocket.Conn) {
 	if conn != nil {
 		c.mx.Lock()
@@ -38,7 +38,7 @@ func (c *WebSocketClient) addConnections(conn ...*websocket.Conn) {
 	}
 }
 
-// hasConnections returns true if this WebSocketConnection has connections
+// hasConnections returns true if this WebSocketConnection has connections.
 func (c *WebSocketClient) hasConnections() bool {
 	return len(c.conns) > 0
 }
@@ -69,7 +69,7 @@ func (c *WebSocketClient) writeToAll(e *WebSocketEvent) bool {
 	return !c.hasConnections()
 }
 
-// removeConn removes the given websocket conn from this WebSocketClient
+// removeConn removes the given websocket conn from this WebSocketClient.
 func (c *WebSocketClient) removeConn(connToRemove *websocket.Conn) {
 	connToRemove.Close()
 	newConns := make([]*websocket.Conn, 0, len(c.conns)-1)
