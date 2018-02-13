@@ -1,3 +1,5 @@
+# noinspection SqlNoDataSourceInspectionForFile
+
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     FirstName VARCHAR(50) NOT NULL,
