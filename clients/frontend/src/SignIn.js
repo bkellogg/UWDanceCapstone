@@ -2,11 +2,63 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import './styling/SignIn.css';
 
-class SignIn extends Component {
-  //constructor() {
-    //super(props);
-    //console.log(this.state);
-  //};
+class SignIn extends React.Component {
+  constructor(props) {
+    super(props);
+    this.signIn = this.signIn.bind(this);
+    this.signUp = this.signUp.bind(this);
+    this.emailChange = this.emailChange.bind(this);
+    this.state = {
+      email: null,
+      password: null,
+      auth: null
+    }
+  };
+
+  emailChange(event){
+    this.setState({
+      email: event.target.value
+    })
+  }
+
+  passwordChange(event){
+    this.setState({
+      password: event.target.value
+    })
+  }
+
+  signUp(){
+    console.log("clicked!");
+    this.props.onSignUp()
+  };
+
+  signIn(event){
+    event.preventDefault()
+    let baseUrl = 'https://dasc.capstone.ischool.uw.edu';
+    let endpoint = '/api/v1/sessions'
+    let url = baseUrl + endpoint;
+    let email =
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(
+        {
+          email: this.state.email,
+          password: this.state.password
+        }
+      )})
+      //.then(res => { return res.json() })
+      .then(json => {
+        this.setState({
+          auth: json
+        });
+      })
+      .then(this.props.onSignIn(this.state.auth))
+      .catch(error => console.log(error));
+  };
 
   render() {
     return (
@@ -19,12 +71,10 @@ class SignIn extends Component {
           <h1>Sign in</h1>
           <div className="LogIn">
             <div className="Input">
-
-
             <form className="authenticate" id="sign-up">
                     <div className="row">
                         <div className="input-field col s12">
-                            <input id="email" type="email" className="validate" />
+                            <input id="email" type="email" className="validate" onChange={this.emailChange}/>
                             <label htmlFor="email">Email</label>
                         </div>
                         <div className="input-field col s12">
@@ -34,9 +84,8 @@ class SignIn extends Component {
                     </div>
             </form>
             <div className="Buttons">
-            {/*We're going to take out this link and replace it with a show/hide type deal*/}
-              <button onClick={this.signIn}><Link to='/dashboard'>Sign In</Link></button>
-              <button><Link to='/signup'>Sign Up</Link></button>
+              <button onClick={this.signIn}>Sign In</button>
+              <button onClick ={this.signUp}>Sign Up</button>
             </div>
           </div>
         </div>
@@ -45,21 +94,6 @@ class SignIn extends Component {
     );
   };
 
-  signIn(event){
-    {/*set these as global variables*/}
-    let baseUrl = 'https://dasc.capstone.ischool.uw.edu';
-    let endpoint = '/api/v1/sessions'
-    let auth = fetch((baseUrl + endpoint), {
-                method: 'POST',
-                body: JSON.stringify(
-                  {
-                    email: "<email>",
-                    password: "<password>"
-                  }
-                )
-    });
-    this.props.onSignIn(auth);
-  };
 
 }
 

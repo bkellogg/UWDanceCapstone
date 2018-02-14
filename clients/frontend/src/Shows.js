@@ -4,7 +4,6 @@ import './styling/Shows.css';
 class Shows extends Component {
   constructor(props) {
     super(props);
-    console.log(this.state);
   };
 
   render() {
