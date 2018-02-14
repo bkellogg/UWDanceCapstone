@@ -29,20 +29,15 @@ class App extends React.Component {
   }
 
   componentDidUpdate(){
-    if(this.state.user != null){
-      if(this.state.user.status === 200) {
-        this.setState({
-          authorized: true
-        })
+    if(this.state.authorized == false){
+      if(this.state.user != null){
+        if(this.state.user.status === 200) {
+          this.setState({
+            authorized: true
+          })
+        }
       }
     }
-    if(this.state.signUp === true){
-      console.log('clicked signIn');
-    }
-  }
-
-  componentDidMount(){
-
   }
 
   render() {

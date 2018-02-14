@@ -8,6 +8,7 @@ class SignIn extends React.Component {
     this.signIn = this.signIn.bind(this);
     this.signUp = this.signUp.bind(this);
     this.emailChange = this.emailChange.bind(this);
+    this.passwordChange = this.passwordChange.bind(this);
     this.state = {
       email: null,
       password: null,
@@ -28,7 +29,6 @@ class SignIn extends React.Component {
   }
 
   signUp(){
-    console.log("clicked!");
     this.props.onSignUp()
   };
 
@@ -78,7 +78,7 @@ class SignIn extends React.Component {
                             <label htmlFor="email">Email</label>
                         </div>
                         <div className="input-field col s12">
-                            <input id="password" type="password" className="validate" />
+                            <input id="password" type="password" className="validate" onChange={this.passwordChange}/>
                             <label htmlFor="password">Password</label>
                         </div>
                     </div>
