@@ -81,6 +81,7 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 	// If they don't, then reject the signin request.
 	if err = user.Authenticate(signInRequest.Password); err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
 	}
 
 	state := sessions.NewSessionState(user)

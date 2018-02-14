@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"bufio"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -8,9 +10,9 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 )
 
-// loggingResponseWriter defines a wrapper for an http.ResponseWriter
+// LoggingResponseWriter defines a wrapper for an http.ResponseWriter
 // that saves status code and the message for an http response
-type loggingResponseWriter struct {
+type LoggingResponseWriter struct {
 	http.ResponseWriter
 	statusCode int
 	response   string
@@ -18,18 +20,22 @@ type loggingResponseWriter struct {
 
 // WriteHeader saves the given status code and writes the status
 // code to the wrapped http.ResponseWriter
-func (lrw *loggingResponseWriter) WriteHeader(statusCode int) {
+func (lrw *LoggingResponseWriter) WriteHeader(statusCode int) {
 	lrw.statusCode = statusCode
 	lrw.ResponseWriter.WriteHeader(statusCode)
 }
 
 // Write saves the given content []byte slice and writes it
 // to the wrapped http.ResponseWriter
-func (lrw *loggingResponseWriter) Write(content []byte) (int, error) {
+func (lrw *LoggingResponseWriter) Write(content []byte) (int, error) {
 	resBytes := []byte(lrw.response)
 	resBytes = append(resBytes, content...)
 	lrw.response = string(resBytes)
 	return lrw.ResponseWriter.Write(content)
+}
+
+func (lrw *LoggingResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	return lrw.ResponseWriter.(http.Hijacker).Hijack()
 }
 
 // Logger defines the infromation needed for logging middleware
@@ -48,7 +54,7 @@ func LogErrors(handler http.Handler, db *models.Database) *Logger {
 // various information about the request
 func (l *Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	startTime := time.Now()
-	lrw := &loggingResponseWriter{w, http.StatusOK, ""}
+	lrw := &LoggingResponseWriter{w, http.StatusOK, ""}
 	l.handler.ServeHTTP(lrw, r)
 	if lrw.statusCode >= 500 {
 		errorCont := models.ErrorLog{

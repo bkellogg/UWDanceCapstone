@@ -1,9 +1,10 @@
+# noinspection SqlNoDataSourceInspectionForFile
+
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     FirstName VARCHAR(50) NOT NULL,
     LastName VARCHAR(50) NOT NULL,
     Email VARCHAR(100) NOT NULL UNIQUE KEY,
-    PhotoURL VARCHAR(150) NOT NULL,
     PassHash BINARY(60) NOT NULL,
     Role TINYINT NOT NULL,
     Active BOOLEAN NOT NULL
@@ -61,4 +62,13 @@ CREATE TABLE Errors (
     ErrRequestURI VARCHAR (100) NOT NULL,
     ErrCode INT NOT NULL,
     ErrMessage VARCHAR(150) NOT NULL
+);
+
+CREATE TABLE Announcements (
+    AnnouncementID INT AUTO_INCREMENT PRIMARY KEY,
+    PostDate DATETIME NOT NULL,
+    User INT NOT NULL,
+    Message varchar(500) NOT NULL,
+    IsDeleted Boolean NOT NULL,
+    FOREIGN KEY (User) REFERENCES Users(UserID)
 );

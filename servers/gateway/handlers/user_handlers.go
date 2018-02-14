@@ -121,10 +121,6 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return methodNotAllowed()
 		}
 	case "resume":
-		userID, err := parseUserID(r, u)
-		if err != nil {
-			return HTTPError(err.Message, err.Status)
-		}
 		if r.Method == "GET" {
 			resumeBytes, httperr := getUserResume(userID)
 			if httperr != nil {
@@ -138,6 +134,12 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return respondWithString(w, "resume uploaded!", http.StatusCreated)
 		}
 		return methodNotAllowed()
+	case "announcements":
+		announcements, err := ctx.Database.GetAllAnnouncements(page, includeDeleted, userID)
+		if err != nil {
+			return HTTPError("error looking up announcements: "+err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, models.PaginateAnnouncementResponses(announcements, page), http.StatusOK)
 	default:
 		return objectTypeNotSupported()
 	}
