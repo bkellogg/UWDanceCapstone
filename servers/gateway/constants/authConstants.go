@@ -6,6 +6,7 @@ import (
 
 // Defines general constants for operations related to authentication
 const (
-	DefaultSessionDuration = time.Hour
-	BCryptDefaultCost      = 13
+	DefaultSessionDuration        = time.Hour
+	PasswordResetValidityDuration = time.Minute * 5
+	BCryptDefaultCost             = 13
 )
