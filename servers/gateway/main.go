@@ -47,14 +47,15 @@ func main() {
 
 	notifier := notify.NewNotifier()
 
-	authContext := handlers.NewAuthContext(sessionKey, redis, db)
 	mailContext := handlers.NewMailContext(mailUser, mailPass)
+	authContext := handlers.NewAuthContext(sessionKey, redis, db, mailContext.AsMailCredentials())
 	annoucementContext := handlers.NewAnnoucementContext(db, notifier)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
 	baseRouter := mux.NewRouter()
 	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
 	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
+	baseRouter.HandleFunc(constants.PasswordResetPath, authContext.InitiatePasswordResetHandler)
 
 	updatesRouter := baseRouter.PathPrefix(constants.UpdatesPath).Subrouter()
 	updatesRouter.Handle(constants.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))

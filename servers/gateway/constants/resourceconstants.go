@@ -23,4 +23,6 @@ const (
 	AnnoucementsListenPath = "/listen"
 
 	UpdatesPath = BaseAPIPath + "/updates"
+
+	PasswordResetPath = BaseAPIPath + "/passwordreset"
 )

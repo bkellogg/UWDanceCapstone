@@ -42,6 +42,9 @@ func NewMessageFromRequest(credentials *MailCredentials, r *http.Request) (*Mess
 func (m *Message) Send() error {
 	m.addHeaders()
 	m.addFooter()
+	if len(m.Sender) == 0 {
+		m.Sender = stageEmailAddress
+	}
 	return smtp.SendMail(gmailAddr, m.auth, m.Sender, m.Recipients, []byte(m.Body))
 }
 
