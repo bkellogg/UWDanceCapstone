@@ -4,39 +4,72 @@ import (
 	"fmt"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/mail"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 	"net/http"
 )
 
-// InitiatePasswordResetHandler handles requests that will initiate a password reset.
-func (ctx *AuthContext) InitiatePasswordResetHandler(w http.ResponseWriter, r *http.Request) {
+// PasswordResetHandler handles requests that will initiate a password reset.
+func (ctx *AuthContext) PasswordResetHandler(w http.ResponseWriter, r *http.Request) {
 	email := getEmailParam(r)
 	if len(email) == 0 {
 		http.Error(w, "no email provided", http.StatusBadRequest)
 		return
 	}
-
-	validResetRequest := true
 	user, err := ctx.Database.GetUserByEmail(email, false)
 	if err != nil {
 		http.Error(w, constants.ErrDatabaseLookupFailed, http.StatusInternalServerError)
 		return
 	}
-	if user == nil {
-		validResetRequest = false
-	}
-	token, err := ctx.SessionsStore.NewPasswordResetToken(email)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if validResetRequest {
-		if err = mail.NewMessage(ctx.MailCredentials, constants.StageEmailAddress, getPasswordResetBody(user.FirstName, token),
-			constants.PasswordResetEmailSubject, asSlice(email)).Send(); err != nil {
-			http.Error(w, "error sending password reset email: "+err.Error(), http.StatusInternalServerError)
+	switch r.Method {
+	case "GET":
+		validResetRequest := true
+		if user == nil {
+			validResetRequest = false
+		}
+		token, err := ctx.SessionsStore.NewPasswordResetToken(email)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		if validResetRequest {
+			if err = mail.NewMessage(ctx.MailCredentials, constants.StageEmailAddress, getPasswordResetBody(user.FirstName, token),
+				constants.PasswordResetEmailSubject, asSlice(email)).Send(); err != nil {
+				http.Error(w, "error sending password reset email: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+		}
+		respondWithString(w, "password reset instructions will be sent to the provided email if it exists", http.StatusOK)
+	case "PATCH":
+		reset := &models.PasswordResetRequest{}
+		if err := recieve(r, reset); err != nil {
+			http.Error(w, "error decoding request JSON: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+		if ok, err := ctx.SessionsStore.ValidatePasswordResetToken(email, reset.Token); !ok {
+			status := http.StatusInternalServerError
+			if err.Error() == constants.ErrPasswordResetTokensMismatch {
+				status = http.StatusUnauthorized
+			}
+			http.Error(w, err.Error(), status)
+			return
+		}
+		if ok, err := sessions.ValidatePasswords(reset.Password, reset.PasswordConf); !ok {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		if err := user.SetPassword(reset.Password); err != nil {
+			http.Error(w, "error changing password: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if err := ctx.Database.UpdatePasswordByID(int(user.ID), user.PassHash); err != nil {
+			http.Error(w, "error saving new password: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		respondWithString(w, "password change success; please use the new password next time you sign in", http.StatusOK)
+	default:
+		http.Error(w, constants.ErrMethodNotAllowed, http.StatusMethodNotAllowed)
 	}
-	respondWithString(w, "password reset instructions will be sent to the provided email if it exists", http.StatusOK)
 
 }
 

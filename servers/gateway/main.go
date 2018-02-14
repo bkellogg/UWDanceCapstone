@@ -55,7 +55,7 @@ func main() {
 	baseRouter := mux.NewRouter()
 	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
 	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
-	baseRouter.HandleFunc(constants.PasswordResetPath, authContext.InitiatePasswordResetHandler)
+	baseRouter.HandleFunc(constants.PasswordResetPath, authContext.PasswordResetHandler)
 
 	updatesRouter := baseRouter.PathPrefix(constants.UpdatesPath).Subrouter()
 	updatesRouter.Handle(constants.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))

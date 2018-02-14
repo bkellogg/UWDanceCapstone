@@ -32,5 +32,5 @@ type Store interface {
 
 	// ValidatePasswordResetToken validates that the given token exists for the given
 	// email. Returns an error if no such token exists, or there was an error validating it.
-	ValidatePasswordResetToken(email, token string) error
+	ValidatePasswordResetToken(email, token string) (bool, error)
 }
