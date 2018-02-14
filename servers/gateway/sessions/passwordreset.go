@@ -49,7 +49,6 @@ func (rs *RedisStore) ValidatePasswordResetToken(email, token string) (bool, err
 	}
 	storedTokenBytes, _ := cmd.Bytes()
 	storedToken := string(storedTokenBytes)
-	fmt.Println("stored token: " + storedToken)
 	storedToken = strings.TrimPrefix(storedToken, passwordResetPrefix)
 	if token != storedToken {
 		return false, errors.New(constants.ErrPasswordResetTokensMismatch)
