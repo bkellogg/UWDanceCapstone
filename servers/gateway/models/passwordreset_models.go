@@ -7,3 +7,10 @@ type PasswordResetRequest struct {
 	Password     string `json:"password"`
 	PasswordConf string `json:"passwordConf"`
 }
+
+type PasswordResetTPL struct {
+	Name   string
+	Code   string
+	URL    string
+	Footer string
+}

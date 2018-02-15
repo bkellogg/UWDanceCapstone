@@ -15,15 +15,17 @@ type AuthContext struct {
 	SessionsStore   sessions.Store
 	Database        *models.Database
 	MailCredentials *mail.MailCredentials
+	TemplatePath    string
 }
 
 // NewAuthContext Creates a new auth context with the given information
-func NewAuthContext(sessionKey string, sessionStore sessions.Store, database *models.Database, mc *mail.MailCredentials) *AuthContext {
+func NewAuthContext(sessionKey, tp string, sessionStore sessions.Store, database *models.Database, mc *mail.MailCredentials) *AuthContext {
 	return &AuthContext{
 		SessionKey:      sessionKey,
 		SessionsStore:   sessionStore,
 		Database:        database,
 		MailCredentials: mc,
+		TemplatePath:    tp,
 	}
 }
 
