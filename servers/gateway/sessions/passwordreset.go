@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"fmt"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"gopkg.in/redis.v5"
 	"strings"

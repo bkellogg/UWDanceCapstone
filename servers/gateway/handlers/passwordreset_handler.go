@@ -6,6 +6,7 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/mail"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/templates"
 	"net/http"
 )
 
@@ -27,13 +28,23 @@ func (ctx *AuthContext) PasswordResetHandler(w http.ResponseWriter, r *http.Requ
 		if user == nil {
 			validResetRequest = false
 		}
-		token, err := ctx.SessionsStore.NewPasswordResetToken(email)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 		if validResetRequest {
-			if err = mail.NewMessage(ctx.MailCredentials, constants.StageEmailAddress, getPasswordResetBody(user.FirstName, token),
+			token, err := ctx.SessionsStore.NewPasswordResetToken(email)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			tplVars := models.PasswordResetTPL{
+				Name: user.FirstName,
+				Code: token,
+			}
+			parsedTpl, err := templates.ParseTemplate(ctx.TemplatePath+"passwordreset_tpl.html", tplVars)
+			if err != nil {
+				http.Error(w, "error pasrsing email tpl: "+err.Error(), http.StatusInternalServerError)
+				return
+			}
+			if err = mail.NewMessage(ctx.MailCredentials, constants.StageEmailAddress,
+				parsedTpl,
 				constants.PasswordResetEmailSubject, asSlice(email)).Send(); err != nil {
 				http.Error(w, "error sending password reset email: "+err.Error(), http.StatusInternalServerError)
 				return

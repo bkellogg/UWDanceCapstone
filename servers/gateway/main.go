@@ -37,6 +37,7 @@ func main() {
 	// Mail Info
 	mailUser := getRequiredENVOrExit("MAILUSER", "")
 	mailPass := getRequiredENVOrExit("MAILPASS", "")
+	templatesPath := getRequiredENVOrExit("TEMPLATESPATH", "")
 
 	// Open connections to the databases
 	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
@@ -48,7 +49,7 @@ func main() {
 	notifier := notify.NewNotifier()
 
 	mailContext := handlers.NewMailContext(mailUser, mailPass)
-	authContext := handlers.NewAuthContext(sessionKey, redis, db, mailContext.AsMailCredentials())
+	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials())
 	annoucementContext := handlers.NewAnnoucementContext(db, notifier)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 

@@ -41,7 +41,7 @@ func NewMessageFromRequest(credentials *MailCredentials, r *http.Request) (*Mess
 // Send sends "this" message
 func (m *Message) Send() error {
 	m.addHeaders()
-	m.addFooter()
+	//m.addFooter()
 	if len(m.Sender) == 0 {
 		m.Sender = stageEmailAddress
 	}
@@ -50,9 +50,10 @@ func (m *Message) Send() error {
 
 // addHeaders adds the basic headers to the message body
 func (m *Message) addHeaders() {
+	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 	subject := fmt.Sprintf("Subject: %s", "[UW STAGE] "+m.Subject)
 	from := fmt.Sprintf("From: UW STAGE <ischooldancecap@gmail.com>")
-	allHeaders := []byte(fmt.Sprintf("%s\n%s\n\n", subject, from))
+	allHeaders := []byte(fmt.Sprintf("%s\n%s\n%s\n\n", subject, from, mime))
 	bodyBytes := []byte(m.Body)
 	bodyBytes = append(allHeaders, bodyBytes...)
 	m.Body = string(bodyBytes)
