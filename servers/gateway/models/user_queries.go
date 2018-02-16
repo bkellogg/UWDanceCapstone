@@ -206,6 +206,14 @@ func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*
 	return handleUsersFromDatabase(store.DB.Query(query, id, offset))
 }
 
+// UpdatePasswordByID changes the user with the given IDs passhash to the given
+// byte slice representing the new passhash.
+func (store *Database) UpdatePasswordByID(id int, passHash []byte) error {
+	query := `UPDATE Users SET PassHash = ? WhERE UserID = ?`
+	_, err := store.DB.Query(query, passHash, id)
+	return err
+}
+
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
 func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, error) {
 	if err != nil {
