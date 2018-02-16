@@ -11,6 +11,7 @@ class App extends React.Component {
     super(props);
     this.registerUser = this.registerUser.bind(this);
     this.handleSignUp = this.handleSignUp.bind(this);
+    this.goBack = this.goBack.bind(this);
     this.state = {
       user: null,
       signUp: false,
@@ -19,6 +20,7 @@ class App extends React.Component {
   };
 
   registerUser(userVal) {
+    console.log("registered");
     this.setState({
       user: userVal
     })
@@ -28,6 +30,11 @@ class App extends React.Component {
     this.setState({signUp: true})
   }
 
+  goBack() {
+    this.setState({
+      signUp: false
+    })
+  }
   componentDidUpdate(){
     if(this.state.authorized == false){
       if(this.state.user != null){
@@ -41,36 +48,17 @@ class App extends React.Component {
   }
 
   render() {
-    let page = null;
-
-    //if(this.state.user != null){
-      //<Main />
-    //}
-
-          {/*
-      <section className="routing">
-        <Switch>
-          <Route exact path='/' component={SignIn}/>
-          <Route path='/signup' component={SignUp}/>
-          <Route path='/dashboard' component={Main}/>
-        </Switch>
-      </section>
-          */}
-
+    console.log(this.state)
     return (  
       <section>
-        {/*{this.state.authorized == false && this.signUp == false ? (
-          page = <SignIn onSignIn={this.handleSignIn} onSignUp={this.handleSignUp}/>
-        ) : (
-          page = <Main />
-        )}*/}
-
+        
         {this.state.authorized === false && this.state.signUp === false &&
           <SignIn onSignIn={this.registerUser} onSignUp={this.handleSignUp}/>
         }
         {this.state.authorized === false && this.state.signUp === true &&
-          <SignUp onSignUp={this.registerUser}/>
+          <SignUp onSignUp={this.registerUser} goBack={this.goBack}/>
         }
+      
         {this.state.authorized === true &&
           <Main />
         }

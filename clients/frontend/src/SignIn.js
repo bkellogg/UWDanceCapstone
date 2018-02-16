@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import {Button, Card} from 'react-materialize';
+//import img from './imgs/tresmaines.jpg'
 import './styling/SignIn.css';
 
 class SignIn extends React.Component {
@@ -9,10 +11,12 @@ class SignIn extends React.Component {
     this.signUp = this.signUp.bind(this);
     this.emailChange = this.emailChange.bind(this);
     this.passwordChange = this.passwordChange.bind(this);
+    this.goBack = this.goBack.bind(this);
     this.state = {
       email: null,
       password: null,
-      auth: null
+      auth: null,
+      error: null
     }
   };
 
@@ -31,6 +35,10 @@ class SignIn extends React.Component {
   signUp(){
     this.props.onSignUp()
   };
+
+  goBack(){
+    this.props.goBack()
+  }
 
   signIn(event){
     event.preventDefault()
@@ -57,18 +65,28 @@ class SignIn extends React.Component {
         });
       })
       .then(this.props.onSignIn(this.state.auth))
-      .catch(error => console.log(error));
+      .catch(error => {
+        this.setState({
+          error: 1
+        })
+      });
   };
 
   render() {
     return (
       <div className="LogInLanding" style={{height:100 + '%'}}>
         <div className="LogInPhoto">
-         {/* <img src={img}></img>*/}
+        {/* <img src={img}></img> */}
         </div>
         <div className="Functionality">
-          <div className="Logo"></div>
-          <h1>Sign in</h1>
+        <div className="Logo"></div>
+          <div className="content">
+          <h5 className="title">Sign in</h5>
+          <div className='error'>
+            {this.state.auth != null && this.state.auth.status != 200 &&
+              <alert> Incorrect username or password </alert>
+            }
+          </div>
           <div className="LogIn">
             <div className="Input">
             <form className="authenticate" id="sign-up">
@@ -84,8 +102,9 @@ class SignIn extends React.Component {
                     </div>
             </form>
             <div className="Buttons">
-              <button onClick={this.signIn}>Sign In</button>
-              <button onClick ={this.signUp}>Sign Up</button>
+              <Button onClick={this.signIn}>Sign In</Button>
+              <Button onClick ={this.signUp}>Sign Up</Button>
+            </div>
             </div>
           </div>
         </div>

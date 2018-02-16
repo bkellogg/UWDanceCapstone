@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
+import {Button} from 'react-materialize';
 import './styling/SignUp.css'
 
 class SignUp extends Component {
@@ -7,6 +8,7 @@ class SignUp extends Component {
       super(props);
       this.onClick = this.onClick.bind(this);
       this.inputChange = this.inputChange.bind(this);
+      this.goBack = this.goBack.bind(this);
       this.state ={
         firstname: null,
         lastname: null,
@@ -38,11 +40,12 @@ class SignUp extends Component {
             passwordConf: this.state.passwordConf
           }
         )})
-        //.then(res => { return res.json() })
+        //.then(res => { return res.json() }) if res.ok = true then do res.json
         .then(json => {
           this.setState({
             auth: json
           });
+          console.log(json);
         })
         .then(this.props.onSignUp(this.state.auth))
         .catch(error => console.log(error));
@@ -55,34 +58,49 @@ class SignUp extends Component {
         [name] : val.target.value
       })
     }
+
+    goBack(){
+      this.props.goBack();
+    }
   
     render() {
         return(
         <section className="signUp">
-        <h1> Sign up </h1>
+        <div className="Functionality">
+        <div className="Logo"></div>
+        <div className='content'>
+        <h5 className='title'> Sign up </h5>
+        <div className="error">
+          {this.state.auth != null}
+        </div>
           <form>
-            <label>
-              First Name
-              <input type="text" name="firstname" onChange={this.inputChange}/>
-            </label>
-            <label>
-              Last Name
-              <input type="text" name="lastname" onChange={this.inputChange}/>
-            </label>
-            <label>
-              Email
-              <input type="email" name="email" onChange={this.inputChange}/>
-            </label>
-            <label>
-              Password
-              <input type="password" name="password" onChange={this.inputChange}/>
-            </label>
-            <label>
-              Confirm Password
-              <input type="password" name="passwordConf" onChange={this.inputChange}/>
-            </label>
+            <div className="row">
+              <div className="input-field col s12">
+                <input type="text" name="firstname" id="firstname" onChange={this.inputChange}/>
+                <label htmlFor="firstname">First Name</label>
+              </div>
+              <div className="input-field col s12">
+                <input type="text" name="lastname" id="lastname" onChange={this.inputChange}/>
+                <label htmlFor="lastname">Last Name</label>
+              </div>
+              <div className="input-field col s12">
+                <input type="email" name="email" id="email" onChange={this.inputChange}/>
+                <label htmlFor="email">Email</label>
+              </div>
+              <div className="input-field col s12">
+                <input type="password" name="password" id="password" onChange={this.inputChange}/>
+                <label htmlFor="password">Password</label>
+              </div>
+              <div className="input-field col s12">
+                <input type="password" name="passwordConf" id="passwordConf" onChange={this.inputChange}/>
+                <label htmlFor="passwordConf">Confirm Password</label>
+              </div>
+            </div>
           </form>
-          <button onClick={this.onClick}> Sign Up </button>
+          <Button onClick={this.goBack}> Back </Button>
+          <Button onClick={this.onClick}> Sign Up </Button>
+        </div>
+        </div>
         </section>
         )
     };
