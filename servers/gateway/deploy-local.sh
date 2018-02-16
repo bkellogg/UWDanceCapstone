@@ -68,6 +68,7 @@ deployAPI () {
 	-v $IMAGEPATH:/static/images/users/ \
 	-v $STATICPATH:/static/ \
 	-e ADDR=:443 \
+	-e TEMPLATESPATH=/templates/ \
 	-e HTTPREDIRADDR=:80 \
 	-e CLIENTPATH=$CLIENTPATH \
 	-e TLSKEY=$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/privkey.pem \

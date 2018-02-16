@@ -37,6 +37,7 @@ docker run -d \
 -e ADDR=:443 \
 -e TLSKEY=/certs/dance/dasc.capstone.ischool.uw.edu-key.pem \
 -e TLSCERT=/certs/dance/dasc.capstone.ischool.uw.edu-cert.pem \
+-e TEMPLATESPATH=/templates/ \
 -e HTTPREDIRADDR=:80 \
 -e REDISADDR=redis:6379 \
 -e MYSQLADDR=mysql:3306 \
