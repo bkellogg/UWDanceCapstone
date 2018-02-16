@@ -27,6 +27,21 @@ func NewMessage(credentials *MailCredentials, sender, body, subject string, reci
 	}
 }
 
+func NewMessageFromTemplate(credentials *MailCredentials, sender, tpl, subject string,
+	tplVars interface{}, recipients []string) (*Message, error) {
+	parsedTpl, err := parseTemplate(tpl, tplVars)
+	if err != nil {
+		return nil, err
+	}
+	return &Message{
+		auth:       credentials.toSMTPAuth(),
+		Sender:     sender,
+		Recipients: recipients,
+		Subject:    subject,
+		Body:       parsedTpl,
+	}, nil
+}
+
 // NewMessageFromRequest builds and returns a new message from the given credentials
 // and http.Request. Consumes the given requests's body.
 func NewMessageFromRequest(credentials *MailCredentials, r *http.Request) (*Message, error) {

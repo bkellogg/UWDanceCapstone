@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -18,7 +17,6 @@ func HTTPSRedirectHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Do not redirect requests to any API route as to help stop
 	// man in the middle attacks.
-	fmt.Println(r.RequestURI)
 	if strings.HasPrefix(r.RequestURI, constants.BaseAPIPath) {
 		http.Error(w, "insecure request rejected: you must use HTTPS for this resource", http.StatusNotFound)
 		return
