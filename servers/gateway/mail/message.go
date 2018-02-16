@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"net/http"
 	"net/smtp"
+
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 )
 
 // Message defines the information needed to send a message
 type Message struct {
 	auth       smtp.Auth
 	Recipients []string `json:"recipients"`
-	Sender     string   `json:"sender"`
+	sender     string   `json:"sender"`
 	Subject    string   `json:"subject"`
 	Body       string   `json:"body"`
 }
@@ -20,13 +22,14 @@ type Message struct {
 func NewMessage(credentials *MailCredentials, sender, body, subject string, recipients []string) *Message {
 	return &Message{
 		auth:       credentials.toSMTPAuth(),
-		Sender:     sender,
+		sender:     sender,
 		Recipients: recipients,
 		Subject:    subject,
 		Body:       body,
 	}
 }
 
+// NewMessageFromTemplate creates a new
 func NewMessageFromTemplate(credentials *MailCredentials, sender, tpl, subject string,
 	tplVars interface{}, recipients []string) (*Message, error) {
 	parsedTpl, err := parseTemplate(tpl, tplVars)
@@ -35,7 +38,7 @@ func NewMessageFromTemplate(credentials *MailCredentials, sender, tpl, subject s
 	}
 	return &Message{
 		auth:       credentials.toSMTPAuth(),
-		Sender:     sender,
+		Sender:     constants.StageEmailAddress,
 		Recipients: recipients,
 		Subject:    subject,
 		Body:       parsedTpl,
@@ -56,11 +59,10 @@ func NewMessageFromRequest(credentials *MailCredentials, r *http.Request) (*Mess
 // Send sends "this" message
 func (m *Message) Send() error {
 	m.addHeaders()
-	//m.addFooter()
-	if len(m.Sender) == 0 {
-		m.Sender = stageEmailAddress
+	if len(m.sender) == 0 {
+		m.sender = constants.StageEmailAddress
 	}
-	return smtp.SendMail(gmailAddr, m.auth, m.Sender, m.Recipients, []byte(m.Body))
+	return smtp.SendMail(gmailAddr, m.auth, m.sender, m.Recipients, []byte(m.Body))
 }
 
 // addHeaders adds the basic headers to the message body
@@ -73,19 +75,4 @@ func (m *Message) addHeaders() {
 	bodyBytes = append(allHeaders, bodyBytes...)
 	m.Body = string(bodyBytes)
 
-}
-
-// addFooter adds a no reply message to the bottom of the message
-func (m *Message) addFooter() {
-	bodyBytes := []byte(m.Body)
-	bodyBytes = append(bodyBytes, []byte(`
-
-===================
-This mail inbox is not monitored. No one will reply to messages sent to this address,
-but feel free to have a conversation with yourself. Note that you'll have to supply
-both sides of the conversation! :)
-
-Thank you,
-UW STAGE Team`)...)
-	m.Body = string(bodyBytes)
 }
