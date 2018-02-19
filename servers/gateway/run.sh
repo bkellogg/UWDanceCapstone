@@ -47,4 +47,5 @@ docker run -d \
 -e MAILUSER=$MAILUSER \
 -e MAILPASS=$MAILPASS \
 -e RESETPASSWORDCLIENTPATH=/webclients/passwordreset/ \
+-e ADMINCONSOLEPATH=/webclients/console/ \
 brendankellogg/dancegateway
