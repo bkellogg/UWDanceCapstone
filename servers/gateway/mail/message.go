@@ -38,7 +38,7 @@ func NewMessageFromTemplate(credentials *MailCredentials, sender, tpl, subject s
 	}
 	return &Message{
 		auth:       credentials.toSMTPAuth(),
-		Sender:     constants.StageEmailAddress,
+		sender:     constants.StageEmailAddress,
 		Recipients: recipients,
 		Subject:    subject,
 		Body:       parsedTpl,
