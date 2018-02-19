@@ -5,7 +5,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
-	"gopkg.in/redis.v5"
 	"strings"
 )
 
@@ -41,10 +40,7 @@ func (rs *RedisStore) ValidatePasswordResetToken(email, token string) (bool, err
 	cmd := rs.Client.Get(passwordResetPrefix + email)
 	err := cmd.Err()
 	if err != nil {
-		if err == redis.Nil {
-			return false, errors.New(constants.ErrPasswordResetTokensMismatch)
-		}
-		return false, err
+		return false, errors.New(constants.ErrPasswordResetTokensMismatch)
 	}
 	storedTokenBytes, _ := cmd.Bytes()
 	storedToken := string(storedTokenBytes)

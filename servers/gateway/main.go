@@ -40,6 +40,7 @@ func main() {
 	templatesPath := getRequiredENVOrExit("TEMPLATESPATH", "")
 
 	resetPasswordClientPath := getRequiredENVOrExit("RESETPASSWORDCLIENTPATH", "")
+	adminConsolePath := getRequiredENVOrExit("ADMINCONSOLEPATH", "")
 
 	// Open connections to the databases
 	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
@@ -60,6 +61,7 @@ func main() {
 	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
 	baseRouter.HandleFunc(constants.PasswordResetPath, authContext.PasswordResetHandler)
 	baseRouter.PathPrefix("/reset/").Handler(handlers.PreventDirListing(http.StripPrefix("/reset/", http.FileServer(http.Dir(resetPasswordClientPath)))))
+	baseRouter.PathPrefix("/console").Handler(handlers.AddTrailingSlash(http.StripPrefix("/console/", http.FileServer(http.Dir(adminConsolePath)))))
 
 	updatesRouter := baseRouter.PathPrefix(constants.UpdatesPath).Subrouter()
 	updatesRouter.Handle(constants.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
