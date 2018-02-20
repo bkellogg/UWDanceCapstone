@@ -10,8 +10,8 @@ import (
 // and returns an annoucement. Returns an error if one occured.
 func (store *Database) InsertNewAnnouncment(newAnnouncement *NewAnnouncement) (*Announcement, error) {
 	postTime := time.Now()
-	result, err := store.DB.Exec(`INSERT INTO Announcements (PostDate, User, Message, IsDeleted)
-		VALUES (?, ?, ?, ?)`, postTime, newAnnouncement.UserID, newAnnouncement.Message, false)
+	result, err := store.DB.Exec(`INSERT INTO Announcements (Message, CreatedAt, CreatedBy, IsDeleted)
+		VALUES (?, ?, ?, ?)`, newAnnouncement.Message, postTime, newAnnouncement.UserID, false)
 	if err != nil {
 		return nil, err
 	}
@@ -20,10 +20,10 @@ func (store *Database) InsertNewAnnouncment(newAnnouncement *NewAnnouncement) (*
 		return nil, err
 	}
 	return &Announcement{
-		ID:       announcementID,
-		PostDate: postTime,
-		UserID:   newAnnouncement.UserID,
-		Message:  newAnnouncement.Message,
+		ID:        announcementID,
+		Message:   newAnnouncement.Message,
+		CreatedAt: postTime,
+		CreatedBy: newAnnouncement.UserID,
 	}, nil
 }
 
@@ -31,14 +31,14 @@ func (store *Database) InsertNewAnnouncment(newAnnouncement *NewAnnouncement) (*
 // returns an error if one occurred.
 func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID int) ([]*AnnouncementResponse, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT A.AnnouncementID, A.PostDate, A.Message, A.IsDeleted,
-		U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Announcements A
-		JOIN Users U ON A.User = U.UserID`
+	query := `SELECT DISTINCT A.AnnouncementID, A.Message, A.CreatedAt, A.IsDeleted,
+		U.UserID, U.FirstName, U.LastName, U.Email, U.Role, U.Active FROM Announcements A
+		JOIN Users U ON A.CreatedBy = U.UserID`
 	if !includeDeleted {
 		query += ` WHERE A.IsDeleted = FALSE`
 	}
 	if userID > 0 {
-		query += ` AND A.User = ` + strconv.Itoa(userID)
+		query += ` AND A.CreatedBy = ` + strconv.Itoa(userID)
 	}
 	query += ` LIMIT 25 OFFSET ?`
 	return handleAnnouncementsFromDatabase(store.DB.Query(query, offset))
@@ -55,10 +55,11 @@ func handleAnnouncementsFromDatabase(result *sql.Rows, err error) ([]*Announceme
 	announcements := make([]*AnnouncementResponse, 0)
 	for result.Next() {
 		a := &AnnouncementResponse{
-			User: &User{},
+			CreatedBy: &User{},
 		}
-		if err = result.Scan(&a.ID, &a.PostDate, &a.Message, &a.IsDeleted, &a.User.ID,
-			&a.User.FirstName, &a.User.LastName, &a.User.Email, &a.User.PassHash, &a.User.Role, &a.User.Active); err != nil {
+		if err = result.Scan(&a.ID, &a.Message, &a.CreatedAt, &a.IsDeleted,
+			&a.CreatedBy.ID, &a.CreatedBy.FirstName, &a.CreatedBy.LastName, &a.CreatedBy.Email,
+			&a.CreatedBy.Role, &a.CreatedBy.Active); err != nil {
 			return nil, err
 		}
 		announcements = append(announcements, a)

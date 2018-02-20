@@ -1,11 +1,15 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 // InsertNewShow inserts the given newShow into the database and returns the created Show
 func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
-	result, err := store.DB.Exec(`INSERT INTO Shows (ShowName, AuditionID, IsDeleted) VALUES (?, ?, ?)`,
-		newShow.Name, newShow.AuditionID, false)
+	createTime := time.Now()
+	result, err := store.DB.Exec(`INSERT INTO Shows (ShowName, AuditionID, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+		newShow.Name, newShow.AuditionID, createTime, newShow.CreatedBy, false)
 	if err != nil {
 		return nil, err
 	}
@@ -17,6 +21,9 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 		ID:         int(showID),
 		Name:       newShow.Name,
 		AuditionID: newShow.AuditionID,
+		CreatedAt:  createTime,
+		CreatedBy:  newShow.CreatedBy,
+		IsDeleted:  false,
 	}
 	return show, nil
 }
@@ -31,7 +38,8 @@ func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
 	err := store.DB.QueryRow(query,
 		id).Scan(
 		&show.ID, &show.Name,
-		&show.AuditionID, &show.IsDeleted)
+		&show.AuditionID, &show.CreatedAt,
+		&show.CreatedBy, &show.IsDeleted)
 	if err != nil {
 		show = nil
 	}
@@ -65,7 +73,8 @@ func (store *Database) GetShowsByAuditionID(id, page int, includeDeleted bool) (
 	shows := make([]*Show, 0)
 	for result.Next() {
 		show := &Show{}
-		if err = result.Scan(&show.ID, &show.Name, &show.AuditionID, &show.IsDeleted); err != nil {
+		if err = result.Scan(&show.ID, &show.Name, &show.AuditionID, &show.CreatedAt,
+			&show.CreatedBy, &show.IsDeleted); err != nil {
 			return nil, err
 		}
 		shows = append(shows, show)

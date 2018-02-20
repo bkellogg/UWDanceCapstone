@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"net/mail"
+	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
 
@@ -23,13 +24,14 @@ type NewUserRequest struct {
 
 // User defines the properties of a specific user in the system
 type User struct {
-	ID        int64  `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	PassHash  []byte `json:"-"`
-	Role      int    `json:"role"`
-	Active    bool   `json:"active"`
+	ID        int64     `json:"id"`
+	FirstName string    `json:"firstName"`
+	LastName  string    `json:"lastName"`
+	Email     string    `json:"email"`
+	PassHash  []byte    `json:"-"`
+	Role      int       `json:"role"`
+	Active    bool      `json:"active"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 // ToUser takes this *NewUserRequest and returns
@@ -44,6 +46,7 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 		Email:     u.Email,
 		Role:      constants.UserDefaultRole,
 		Active:    constants.UserActive,
+		CreatedAt: time.Now(),
 	}
 	return user, user.SetPassword(u.Password)
 }

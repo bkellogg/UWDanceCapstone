@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"strconv"
+	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 )
@@ -20,6 +21,7 @@ func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
 
 // AddUserToPiece adds the given user to the given piece.
 func (store *Database) AddUserToPiece(userID, pieceID int) error {
+	addTime := time.Now()
 	exists, err := store.UserIsInPiece(userID, pieceID)
 	if err != nil {
 		return err
@@ -27,8 +29,8 @@ func (store *Database) AddUserToPiece(userID, pieceID int) error {
 	if exists {
 		return errors.New("user is already in this piece")
 	}
-	_, err = store.DB.Exec(`INSERT INTO UserPiece (UserID, PieceID, IsDeleted) VALUES (?, ?, ?)`,
-		userID, pieceID, false)
+	_, err = store.DB.Exec(`INSERT INTO UserPiece (UserID, PieceID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?)`,
+		userID, pieceID, addTime, false)
 	return err
 }
 
@@ -72,8 +74,9 @@ func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, error) {
 // and populates the ID field of the user
 func (store *Database) InsertNewUser(user *User) error {
 	// TODO: Replace this with stored procedure
-	result, err := store.DB.Exec(`INSERT INTO Users (FirstName, LastName, Email, PassHash, Role, Active) VALUES (?, ?, ?, ?, ?, ?)`,
-		user.FirstName, user.LastName, user.Email, user.PassHash, user.Role, constants.UserActive)
+	result, err := store.DB.Exec(
+		`INSERT INTO Users (FirstName, LastName, Email, PassHash, Role, Active, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		user.FirstName, user.LastName, user.Email, user.PassHash, user.Role, constants.UserActive, user.CreatedAt)
 	if err != nil {
 		return err
 	}
@@ -92,7 +95,7 @@ func (store *Database) GetUserByID(id int, includeInactive bool) (*User, error) 
 	user := &User{}
 	err := store.DB.QueryRow(
 		query, id).Scan(
-		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role, &user.Active)
+		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role, &user.Active, &user.CreatedAt)
 	if err != nil {
 		user = nil
 	}
@@ -114,7 +117,7 @@ func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User
 	err := store.DB.QueryRow(
 		query,
 		email).Scan(
-		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role, &user.Active)
+		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role, &user.Active, &user.CreatedAt)
 	if err != nil {
 		user = nil
 	}
@@ -162,7 +165,7 @@ func (store *Database) ActivateUserByID(userID int) error {
 // Returns an error if one occured.
 func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) ([]*User, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
 	JOIN UserPiece UP On UP.UserID = U.UserID
 	JOIN Pieces P ON P.PieceID = UP.PieceID
 	JOIN Shows S ON S.ShowID = P.ShowID
@@ -180,7 +183,7 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 // Returns an error if one occured.
 func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
 	JOIN UserPiece UP On UP.UserID = U.UserID
 	JOIN Pieces P ON P.PieceID = UP.PieceID
 	WHERE P.ShowID = ?`
@@ -196,7 +199,7 @@ func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*U
 // Returns an error if one occured.
 func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active FROM Users U
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
 	JOIN UserPiece UP On UP.UserID = U.UserID
 	WHERE UP.PieceID = ?`
 	if !includeDeleted {
@@ -225,7 +228,8 @@ func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, error) {
 	users := make([]*User, 0)
 	for result.Next() {
 		u := &User{}
-		if err = result.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.PassHash, &u.Role, &u.Active); err != nil {
+		if err = result.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.PassHash,
+			&u.Role, &u.Active, &u.CreatedAt); err != nil {
 			return nil, err
 		}
 		users = append(users, u)

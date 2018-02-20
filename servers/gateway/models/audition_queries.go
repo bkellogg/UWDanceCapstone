@@ -1,13 +1,17 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 // InsertNewAudition inserts a new audition and returns its id.
 func (store *Database) InsertNewAudition(newAud *NewAudition) (*Audition, error) {
+	createdTime := time.Now()
 	result, err := store.DB.Exec(`INSERT INTO Auditions (AuditionName, AuditionDate,
 		AuditionTime, AuditionLocation,
-		Quarter, Year, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?)`, newAud.Name, newAud.Date,
-		newAud.Time, newAud.Location, newAud.Quarter, newAud.Year, false)
+		Quarter, Year, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, newAud.Name, newAud.Date,
+		newAud.Time, newAud.Location, newAud.Quarter, newAud.Year, createdTime, newAud.CreatedBy, false)
 	if err != nil {
 		return nil, err
 	}
@@ -23,6 +27,8 @@ func (store *Database) InsertNewAudition(newAud *NewAudition) (*Audition, error)
 		Location:  newAud.Location,
 		Quarter:   newAud.Quarter,
 		Year:      newAud.Year,
+		CreatedAt: createdTime,
+		CreatedBy: newAud.CreatedBy,
 		IsDeleted: false,
 	}
 	return audition, nil
@@ -38,9 +44,10 @@ func (store *Database) GetAuditionByName(name string, includeDeleted bool) (*Aud
 	err := store.DB.QueryRow(query,
 		name).Scan(
 		&audition.ID, &audition.Name,
-		&audition.Date, &audition.Location,
-		&audition.Quarter, &audition.Year,
-		&audition.IsDeleted)
+		&audition.Date, &audition.Time,
+		&audition.Location, &audition.Quarter,
+		&audition.Year, &audition.CreatedAt,
+		&audition.CreatedBy, &audition.IsDeleted)
 	if err != nil {
 		audition = nil
 	}
@@ -62,7 +69,8 @@ func (store *Database) GetAuditionByID(id int, includeDeleted bool) (*Audition, 
 		&audition.ID, &audition.Name,
 		&audition.Date, &audition.Time,
 		&audition.Location, &audition.Quarter,
-		&audition.Year, &audition.IsDeleted)
+		&audition.Year, &audition.CreatedAt,
+		&audition.CreatedBy, &audition.IsDeleted)
 	if err != nil {
 		audition = nil
 	}
