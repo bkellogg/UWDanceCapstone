@@ -29,7 +29,7 @@ websocket.addEventListener("message", function(event) {
     let name = document.createElement("p");
     name.classList.add("message-top-row")
     name.classList.add("message-name");
-    name.textContent = data.user.firstName + " " + data.user.lastName;
+    name.textContent = data.createdBy.firstName + " " + data.createdBy.lastName;
 
     let timestamp = document.createElement("p");
     timestamp.classList.add("message-top-row");
