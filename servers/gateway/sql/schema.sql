@@ -57,6 +57,7 @@ CREATE TABLE UserAudition (
     AuditionID INT NOT NULL,
     UserID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
+    IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID)
 );
