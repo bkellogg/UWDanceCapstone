@@ -8,9 +8,9 @@ import (
 // announcement will be stored inside of the database.
 type Announcement struct {
 	ID        int64     `json:"id"`
-	PostDate  time.Time `json:"postDate"`
-	UserID    int64     `json:"userID"`
 	Message   string    `json:"message"`
+	CreatedAt time.Time `json:"createdAt"`
+	CreatedBy int64     `json:"createdBy"`
 	IsDeleted bool      `json:"isDeleted"`
 }
 
@@ -19,9 +19,9 @@ type Announcement struct {
 // client.
 type AnnouncementResponse struct {
 	ID        int64     `json:"id"`
-	PostDate  time.Time `json:"postDate"`
-	User      *User     `json:"user"`
 	Message   string    `json:"message"`
+	CreatedAt time.Time `json:"createdAt"`
+	CreatedBy *User     `json:"createdBy"`
 	IsDeleted bool      `json:"isDeleted"`
 }
 
@@ -35,8 +35,8 @@ type NewAnnouncement struct {
 func (a *Announcement) AsAnnouncementResponse(u *User) *AnnouncementResponse {
 	return &AnnouncementResponse{
 		ID:        a.ID,
-		PostDate:  a.PostDate,
-		User:      u,
+		CreatedAt: a.CreatedAt,
+		CreatedBy: u,
 		Message:   a.Message,
 		IsDeleted: a.IsDeleted,
 	}

@@ -177,7 +177,7 @@ func (ctx *AuthContext) UserMembershipInPieceHandler(w http.ResponseWriter, r *h
 			if err == sql.ErrNoRows {
 				status = http.StatusBadRequest
 			}
-			return HTTPError("error removing user to piece: user is not in this piece", status)
+			return HTTPError("error removing user from piece: user is not in this piece", status)
 		}
 		return respondWithString(w, "user removed", http.StatusOK)
 	default:

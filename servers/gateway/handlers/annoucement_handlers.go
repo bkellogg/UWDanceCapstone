@@ -71,8 +71,8 @@ func (ctx *AnnoucementContext) DummyAnnouncementHandler(w http.ResponseWriter, r
 	}
 	wsa := &models.AnnouncementResponse{
 		ID:        0,
-		PostDate:  time.Now(),
-		User:      dummyUser,
+		CreatedAt: time.Now(),
+		CreatedBy: dummyUser,
 		Message:   randomdata.Letters(randomdata.Number(10, 75)),
 		IsDeleted: false,
 	}

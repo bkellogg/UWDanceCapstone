@@ -1,12 +1,16 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 // InsertNewPiece inserts the given NewPieve into the database and returns the
 // created Piece, or an error if one occured.
 func (store *Database) InsertNewPiece(newPiece *NewPiece) (*Piece, error) {
-	result, err := store.DB.Exec(`INSERT INTO Pieces (PieceName, ShowID, IsDeleted) VALUES (?, ?, ?)`,
-		newPiece.Name, newPiece.ShowID, false)
+	createTime := time.Now()
+	result, err := store.DB.Exec(`INSERT INTO Pieces (PieceName, ShowID, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+		newPiece.Name, newPiece.ShowID, createTime, newPiece.CreatedBy, false)
 	if err != nil {
 		return nil, err
 	}
@@ -15,9 +19,11 @@ func (store *Database) InsertNewPiece(newPiece *NewPiece) (*Piece, error) {
 		return nil, err
 	}
 	piece := &Piece{
-		ID:     int(pieceID),
-		Name:   newPiece.Name,
-		ShowID: newPiece.ShowID,
+		ID:        int(pieceID),
+		Name:      newPiece.Name,
+		ShowID:    newPiece.ShowID,
+		CreatedBy: newPiece.CreatedBy,
+		CreatedAt: createTime,
 	}
 	return piece, nil
 }
@@ -27,7 +33,8 @@ func (store *Database) GetPieceByID(id int, includeDeleted bool) (*Piece, error)
 	piece := &Piece{}
 	err := store.DB.QueryRow(`SELECT * FROM Pieces P WHERE P.PieceID = ? AND P.IsDeleted = FALSE`, id).Scan(
 		&piece.ID, &piece.Name,
-		&piece.ShowID, &piece.IsDeleted)
+		&piece.ShowID, &piece.CreatedAt,
+		&piece.CreatedBy, &piece.IsDeleted)
 	if err != nil {
 		piece = nil
 	}
@@ -46,7 +53,7 @@ func (store *Database) DeletePieceByID(id int) error {
 // GetPiecesByUserID gets all pieces the given user is in.
 func (store *Database) GetPiecesByUserID(id, page int, includeDeleted bool) ([]*Piece, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT P.PieceID, P.PieceName, P.ShowID, 
+	query := `SELECT DISTINCT P.PieceID, P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy,
 	P.IsDeleted FROM Pieces P 
 	JOIN UserPiece UP ON P.PieceID = UP.PieceID 
 	WHERE UP.UserID = ?`
@@ -71,7 +78,7 @@ func (store *Database) GetPiecesByShowID(id, page int, includeDeleted bool) ([]*
 // GetPiecesByAuditionID gets all pieces in the given audition.
 func (store *Database) GetPiecesByAuditionID(id, page int, includeDeleted bool) ([]*Piece, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT P.PieceID, P.PieceName, P.ShowID, P.IsDeleted FROM Pieces P
+	query := `SELECT P.PieceID, P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy, P.IsDeleted FROM Pieces P
 	JOIN Shows S ON P.ShowID = S.ShowID
 	WHERE S.AuditionID = ?`
 	if !includeDeleted {
@@ -92,7 +99,8 @@ func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, error) {
 	pieces := make([]*Piece, 0)
 	for result.Next() {
 		piece := &Piece{}
-		if err = result.Scan(&piece.ID, &piece.Name, &piece.ShowID, &piece.IsDeleted); err != nil {
+		if err = result.Scan(&piece.ID, &piece.Name, &piece.ShowID,
+			&piece.CreatedAt, &piece.CreatedBy, &piece.IsDeleted); err != nil {
 			return nil, err
 		}
 		pieces = append(pieces, piece)
