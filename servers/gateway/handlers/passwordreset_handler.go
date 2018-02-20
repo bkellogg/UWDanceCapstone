@@ -34,7 +34,7 @@ func (ctx *AuthContext) PasswordResetHandler(w http.ResponseWriter, r *http.Requ
 			}
 			tplVars := models.PasswordResetTPL{
 				Name: user.FirstName,
-				URL:  token,
+				URL:  "https://dasc.capstone.ischool.uw.edu/reset/reset.html?email=" + email + "&token=" + token,
 			}
 			msg, err := mail.NewMessageFromTemplate(ctx.MailCredentials,
 				"", ctx.TemplatePath+"passwordreset_tpl.html",

@@ -70,5 +70,5 @@ function signout() {
     // no need to handle the respose here. If it fails, you can treat the auth and
     // user as invalid and clear their local storage entries anyway.
     clearAuthAndUser();
-    window.location.href = "/index.html";
+    window.location.href = "index.html";
 }

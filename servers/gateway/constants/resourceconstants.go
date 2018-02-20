@@ -24,5 +24,6 @@ const (
 
 	UpdatesPath = BaseAPIPath + "/updates"
 
-	PasswordResetPath = BaseAPIPath + "/passwordreset"
+	PasswordResetPath       = BaseAPIPath + "/passwordreset"
+	PasswordResetClientPath = "reset"
 )
