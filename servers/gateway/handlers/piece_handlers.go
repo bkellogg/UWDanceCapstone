@@ -21,11 +21,12 @@ func (ctx *AuthContext) PiecesHandler(w http.ResponseWriter, r *http.Request, u 
 		newPiece := &models.NewPiece{}
 		err := recieve(r, newPiece)
 		if err != nil {
-			return HTTPError("error decoding new show: "+err.Error(), http.StatusBadRequest)
+			return HTTPError("error decoding new piece: "+err.Error(), http.StatusBadRequest)
 		}
+		newPiece.CreatedBy = int(u.ID)
 		piece, err := ctx.Database.InsertNewPiece(newPiece)
 		if err != nil {
-			return HTTPError("error inserting new show:"+err.Error(), http.StatusInternalServerError)
+			return HTTPError("error inserting new piece:"+err.Error(), http.StatusInternalServerError)
 		}
 		return respond(w, piece, http.StatusCreated)
 	default:
