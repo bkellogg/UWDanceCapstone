@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom'
+//import { Switch, Route } from 'react-router-dom'
 
 import SignUp from './SignUp.js';
 import SignIn from './SignIn.js';
-import SignUpExtra from './SignUpExtra.js';
 import Main from './Main.js'
 import './styling/App.css';
 
-class App extends React.Component {
+class App extends Component {
   constructor(props) {
     super(props);
     this.registerUser = this.registerUser.bind(this);
@@ -47,8 +46,8 @@ class App extends React.Component {
   }
 
   componentDidUpdate(){
-    if(this.state.authorized == false){
-      if(this.state.user != null){
+    if(this.state.authorized === false){
+      if(this.state.user !== null){
         this.setState({
           authorized: true
         })

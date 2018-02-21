@@ -36,7 +36,7 @@ export function makeRequest(resource, payload = "", method = "GET", useAuth = fa
         method: method,
         headers: headers
     }
-    if (method != "GET") {
+    if (method !== "GET") {
         req.body = payload;
     }
     return fetch(reqURL, req);

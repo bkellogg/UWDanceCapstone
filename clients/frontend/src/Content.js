@@ -8,9 +8,9 @@ import Profile from './Profile.js';
 
 
 class Content extends Component {
-  constructor(props) {
+  /*constructor(props) {
     super(props);
-  };
+  };*/
 
   render() {
     return (

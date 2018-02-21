@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import {Button, Card} from 'react-materialize';
+//import { Link } from 'react-router-dom';
+import {Button} from 'react-materialize';
 import * as Util from './util.js';
-import img from './imgs/tresmaines.jpg'
+//import img from './imgs/tresmaines.jpg'
 import './styling/SignIn.css';
 
-class SignIn extends React.Component {
+class SignIn extends Component {
   constructor(props) {
     super(props);
     this.signIn = this.signIn.bind(this);

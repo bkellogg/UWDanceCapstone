@@ -1,47 +1,65 @@
 import React, { Component } from 'react';
-import {SideNav, SideNavItem, Button} from 'react-materialize';
-import Navigation from './Navigation.js';
-import Content from './Content.js';
+import { Switch, Route, Link } from 'react-router-dom';
+//import Navigation from './Navigation.js';
+//import Content from './Content.js';
+import Dashboard from './Dashboard';
+import NavigationElement from './NavigationElement.js';
 import 'materialize-css';
 import './styling/Main.css';
+//import $ from 'jquery';
 
 class Main extends Component {
   constructor(props) {
     super(props);
+    this.getNavigation = this.getNavigation.bind(this);
+    this.signOut = this.signOut.bind(this);
     this.state = {
-      page: 'dashboard'
+      user: JSON.parse(localStorage.user)
     }
+    console.log(this.state.user);
   };
 
   componentWillMount(){
-    $(".button-collapse").sideNav();
+    //$(".button-collapse").sideNav();
+  }
+
+  getNavigation(){
+    //this will be a for each through the active shows, for now it's just an array of shows
+    let shows = ['Faculty Dance Concert', 'Dance Majors Concert', 'MFA Concert']
+    
+    let showNav = shows.map((s, i) => {
+                    return <NavigationElement key ={i} user={this.state.user} showTitle={s} />
+                  })
+
+    return <ul className="collapsible collapsible-accordion">{showNav}</ul>
+  }
+
+  signOut(){
+    console.log("no signing out 4 u");
   }
 
   render() {
     return (
       <section>
+        <section className="routing">
+        <Switch>
+            <Route exact path='/#!Dashboard' component={Dashboard}/>
+            <Route path='/dashboard/shows' component={Dashboard}/>
+            <Route path='/dashboard/calendar' component={Dashboard}/>
+            <Route path='/dashboard/profile' component={Dashboard}/>
+        </Switch>
+      </section>
+
         <ul id="slide-out" className="side-nav fixed">
           <li><div id="logo">STAGE</div></li>
-          <li><a href="#!">Dashboard</a></li>
+          <li><Link to="#!Dashboard">Dashboard</Link></li>
           <li>
-            <ul className="collapsible collapsible-accordion">
-              <li>
-                <a className="collapsible-header" style={{paddingLeft: 32}}>Dropdown</a>
-                <div className="collapsible-body">
-                  <ul>
-                    <li><a href="#!">First</a></li>
-                    <li><a href="#!">Second</a></li>
-                    <li><a href="#!">Third</a></li>
-                    <li><a href="#!">Fourth</a></li>
-                  </ul>
-                </div>
-              </li>
-            </ul>
+              {this.getNavigation()}
           </li>
-          <li><a href="#!">Profile</a></li>
-          <li><Button>Sign Out</Button></li>
+          <li><a href="#!Profile">Profile</a></li>
+          <li><div id='signOut'>Sign Out</div></li>
         </ul>
-      <a href="#" dataActivates="slide-out" className="button-collapse"><i className="material-icons">menu</i></a>
+      <a href="#" data-activates="slide-out" className="button-collapse"><i className="material-icons">menu</i></a>
         
     {/*
         <ul id="slide-out" className="side-nav fixed">

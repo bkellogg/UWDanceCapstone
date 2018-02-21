@@ -8,9 +8,10 @@ class Dashboard extends Component {
   };
 
   render() {
+    console.log("Dashboard!");
       return(
         <section className='dashboard'>
-          <h1> Dashboard! </h1>
+          <h1 style={{textAlign:"center"}}> Dashboard! </h1>
         </section>
       )
   }

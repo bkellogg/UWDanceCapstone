@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import {Button} from 'react-materialize';
-import img from './imgs/jump.jpg';
-import * as Util from './util.js';
+//import * as Util from './util.js';
 import './styling/SignUp.css';
 
 class SignUpExtra extends Component {
