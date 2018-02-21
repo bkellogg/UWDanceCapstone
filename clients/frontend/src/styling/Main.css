@@ -1,6 +1,4 @@
-section {
-    background-color: lavender;
-}
-.logo{
-    text-align: center
+#logo{
+    text-align: center;
+    background-color: lavender
 }

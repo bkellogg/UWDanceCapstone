@@ -38,6 +38,14 @@ class App extends React.Component {
     })
   }
 
+  componentWillMount(){
+    if(localStorage.getItem("user")){
+      this.setState({
+        authorized: true
+      })
+    } 
+  }
+
   componentDidUpdate(){
     if(this.state.authorized == false){
       if(this.state.user != null){
@@ -51,7 +59,6 @@ class App extends React.Component {
   render() {
     return (  
       <section>
-        
         {this.state.authorized === false && this.state.signUp === false &&
           <SignIn onSignIn={this.registerUser} onSignUp={this.handleSignUp}/>
         }

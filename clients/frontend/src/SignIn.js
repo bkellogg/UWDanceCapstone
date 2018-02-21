@@ -47,7 +47,7 @@ class SignIn extends React.Component {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-           // Util.setLocalUser(JSON.stringify(data));
+            Util.setLocalUser(JSON.stringify(data));
             this.setState({
               auth: data
             });

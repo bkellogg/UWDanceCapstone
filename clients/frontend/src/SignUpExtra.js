@@ -9,8 +9,10 @@ class SignUpExtra extends Component {
       super(props);
       this.skip = this.skip.bind(this);
       this.signUp = this.signUp.bind(this);
+      this.inputChange = this.inputChange.bind(this);
       this.state = {
-        user: null
+        user: null,
+        bio: null
       }
       console.log(this.props.userID)
     };
@@ -69,9 +71,10 @@ class SignUpExtra extends Component {
           <form>
             <div className="row">
               <div className="input-field col s12">
-                <input type="text" name="bio" id="bio" onChange={this.inputChange}/>
+                <input type="text" name="bio" id="bio" maxLength='250' onChange={this.inputChange}/>
                 <label htmlFor="bio">Bio</label>
               </div>
+              {/*
               <div class="file-field input-field">
                 <div class="btn">
                     <span>Resume (PDF)</span>
@@ -89,7 +92,7 @@ class SignUpExtra extends Component {
                 <div class="file-path-wrapper">
                     <input class="file-path validate" type="text"/>
                 </div>
-             </div>
+              </div> */}
             </div>
           </form>
           <Button onClick={this.signUp}> Finish Sign Up </Button>
