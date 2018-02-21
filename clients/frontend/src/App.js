@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom'
 
 import SignUp from './SignUp.js';
 import SignIn from './SignIn.js';
+import SignUpExtra from './SignUpExtra.js';
 import Main from './Main.js'
 import './styling/App.css';
 
@@ -20,14 +21,15 @@ class App extends React.Component {
   };
 
   registerUser(userVal) {
-    console.log("registered");
     this.setState({
       user: userVal
     })
   };
 
   handleSignUp() {
-    this.setState({signUp: true})
+    this.setState({
+      signUp: true
+    })
   }
 
   goBack() {
@@ -35,20 +37,18 @@ class App extends React.Component {
       signUp: false
     })
   }
+
   componentDidUpdate(){
     if(this.state.authorized == false){
       if(this.state.user != null){
-        if(this.state.user.status === 200) {
-          this.setState({
-            authorized: true
-          })
-        }
+        this.setState({
+          authorized: true
+        })
       }
     }
   }
 
   render() {
-    console.log(this.state)
     return (  
       <section>
         
@@ -58,7 +58,6 @@ class App extends React.Component {
         {this.state.authorized === false && this.state.signUp === true &&
           <SignUp onSignUp={this.registerUser} goBack={this.goBack}/>
         }
-      
         {this.state.authorized === true &&
           <Main />
         }

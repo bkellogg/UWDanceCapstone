@@ -56,7 +56,7 @@ class Main extends Component {
               </li>
             </ul>
           </li>
-        </ul>
+    </ul> 
         <a href="#" data-activates="slide-out" className="button-collapse show-on-large"><i className="material-icons">menu</i></a>   
       </section>
   );
