@@ -28,10 +28,19 @@ type User struct {
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
 	Email     string    `json:"email"`
+	Bio       string    `json:"bio"`
 	PassHash  []byte    `json:"-"`
 	Role      int       `json:"role"`
 	Active    bool      `json:"active"`
 	CreatedAt time.Time `json:"createdAt"`
+}
+
+// UserUpdates defines the information that users can change
+// about their profile.
+type UserUpdates struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Bio       string `json:"bio"`
 }
 
 // ToUser takes this *NewUserRequest and returns

@@ -128,9 +128,9 @@ func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User
 }
 
 // UpdateUserByID updates the user with the given ID to match the values
-// of newValues. Returns an error if one occured.
+// of newValues. Returns an error if one occurred.
 // TODO: Implement and test this
-func (store *Database) UpdateUserByID(userID int, newValues *User) error {
+func (store *Database) UpdateUserByID(userID int, updates *UserUpdates) error {
 	return nil
 }
 
