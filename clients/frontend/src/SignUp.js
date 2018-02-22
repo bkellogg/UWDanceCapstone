@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from 'react-materialize';
-//import img from './imgs/jump.jpg';
+import img from './imgs/jump.jpg';
 import * as Util from './util.js';
 import SignUpExtra from './SignUpExtra.js'
 import './styling/SignUp.css';
@@ -42,7 +42,7 @@ class SignUp extends Component {
               return res.text().then((t) => Promise.reject(t));
           })
           .then((data) => {
-            // Util.setLocalUser(JSON.stringify(data));
+              Util.setLocalUser(JSON.stringify(data));
               this.setState({
                 auth: data,
                 signUpExtra: true
@@ -78,7 +78,7 @@ class SignUp extends Component {
         return(
         <section className="signUp">
         <div className="LogInPhoto">
-        {/*<img src={img}></img>*/}
+        <img src={img}></img>
         </div>
         <div className="Functionality">
         <div className="Logo"></div>
