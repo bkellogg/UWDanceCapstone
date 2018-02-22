@@ -8,7 +8,7 @@ import (
 // InsertNewAudition inserts a new audition and returns its id.
 func (store *Database) InsertNewAudition(newAud *NewAudition) (*Audition, error) {
 	createdTime := time.Now()
-	result, err := store.DB.Exec(`INSERT INTO Auditions (AuditionName, AuditionDate,
+	result, err := store.db.Exec(`INSERT INTO Auditions (AuditionName, AuditionDate,
 		AuditionTime, AuditionLocation,
 		Quarter, Year, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, newAud.Name, newAud.Date,
 		newAud.Time, newAud.Location, newAud.Quarter, newAud.Year, createdTime, newAud.CreatedBy, false)
@@ -41,7 +41,7 @@ func (store *Database) GetAuditionByName(name string, includeDeleted bool) (*Aud
 		query += ` AND A.IsDeleted = false`
 	}
 	audition := &Audition{}
-	err := store.DB.QueryRow(query,
+	err := store.db.QueryRow(query,
 		name).Scan(
 		&audition.ID, &audition.Name,
 		&audition.Date, &audition.Time,
@@ -64,7 +64,7 @@ func (store *Database) GetAuditionByID(id int, includeDeleted bool) (*Audition, 
 		query += ` AND A.IsDeleted = false`
 	}
 	audition := &Audition{}
-	err := store.DB.QueryRow(query,
+	err := store.db.QueryRow(query,
 		id).Scan(
 		&audition.ID, &audition.Name,
 		&audition.Date, &audition.Time,
@@ -82,6 +82,6 @@ func (store *Database) GetAuditionByID(id int, includeDeleted bool) (*Audition, 
 
 // DeleteAuditionByID marks the audition with the given ID as deleted.
 func (store *Database) DeleteAuditionByID(id int) error {
-	_, err := store.DB.Exec(`UPDATE Auditions SET IsDeleted = ? WHERE AuditionID = ?`, true, id)
+	_, err := store.db.Exec(`UPDATE Auditions SET IsDeleted = ? WHERE AuditionID = ?`, true, id)
 	return err
 }

@@ -8,7 +8,7 @@ import (
 // InsertNewShow inserts the given newShow into the database and returns the created Show
 func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 	createTime := time.Now()
-	result, err := store.DB.Exec(`INSERT INTO Shows (ShowName, AuditionID, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+	result, err := store.db.Exec(`INSERT INTO Shows (ShowName, AuditionID, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
 		newShow.Name, newShow.AuditionID, createTime, newShow.CreatedBy, false)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
 		query += ` AND S.IsDeleted = false`
 	}
 	show := &Show{}
-	err := store.DB.QueryRow(query,
+	err := store.db.QueryRow(query,
 		id).Scan(
 		&show.ID, &show.Name,
 		&show.AuditionID, &show.CreatedAt,
@@ -51,7 +51,7 @@ func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
 
 // DeleteShowByID marks the show with the given ID as deleted.
 func (store *Database) DeleteShowByID(id int) error {
-	_, err := store.DB.Exec(`UPDATE Shows SET IsDeleted = ? WHERE ShowID = ?`, true, id)
+	_, err := store.db.Exec(`UPDATE Shows SET IsDeleted = ? WHERE ShowID = ?`, true, id)
 	return err
 }
 
@@ -63,7 +63,7 @@ func (store *Database) GetShowsByAuditionID(id, page int, includeDeleted bool) (
 		query += ` AND S.IsDeleted = false`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	result, err := store.DB.Query(query, id, offset)
+	result, err := store.db.Query(query, id, offset)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil

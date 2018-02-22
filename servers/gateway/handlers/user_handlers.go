@@ -97,7 +97,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 	case "photo":
 		userID, err := parseUserID(r, u)
 		if err != nil {
-			return HTTPError(err.Message, err.Status)
+			return err
 		}
 		if r.Method == "GET" {
 			if !u.CanSeeUser(userID) {
