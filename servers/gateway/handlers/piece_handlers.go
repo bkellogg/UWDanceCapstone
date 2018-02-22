@@ -19,7 +19,7 @@ func (ctx *AuthContext) PiecesHandler(w http.ResponseWriter, r *http.Request, u 
 			return permissionDenied()
 		}
 		newPiece := &models.NewPiece{}
-		err := recieve(r, newPiece)
+		err := receive(r, newPiece)
 		if err != nil {
 			return HTTPError("error decoding new piece: "+err.Error(), http.StatusBadRequest)
 		}

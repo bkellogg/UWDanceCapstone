@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"net/mail"
+	"strings"
 	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
@@ -18,6 +19,7 @@ type NewUserRequest struct {
 	FirstName    string `json:"firstName"`
 	LastName     string `json:"lastName"`
 	Email        string `json:"email"`
+	Bio          string `json:"bio"`
 	Password     string `json:"password"`
 	PasswordConf string `json:"passwordConf"`
 }
@@ -49,15 +51,31 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 	if err := u.isReadyForUser(); err != nil {
 		return nil, err
 	}
+	if err := u.checkBioLength(); err != nil {
+		return nil, err
+	}
 	user := &User{
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Email:     u.Email,
+		Bio:       u.Bio,
 		Role:      constants.UserDefaultRole,
-		Active:    constants.UserActive,
+		Active:    true,
 		CreatedAt: time.Now(),
 	}
 	return user, user.SetPassword(u.Password)
+}
+
+// checkBioLength returns an error if the bio is too long
+// either by word count or character count.
+func (u *NewUserRequest) checkBioLength() error {
+	return checkBioLength(u.Bio)
+}
+
+// CheckBioLength returns an error if the bio is too long
+// either by word count or character count.
+func (u *UserUpdates) CheckBioLength() error {
+	return checkBioLength(u.Bio)
 }
 
 // isReadyForUser returns nil if this NewUserRequest is able to
@@ -144,4 +162,16 @@ func generateRandomUser() *User {
 	}
 	user.SetPassword(randomdata.FirstName(randomdata.RandomGender) + randomdata.Street())
 	return user
+}
+
+// checkBioLength returns an error if the bio is too long
+// either by word count or character count.
+func checkBioLength(bio string) error {
+	if len(bio) > constants.ProfileBioMaxCharacters {
+		return errors.New(constants.ErrBioTooManyCharacters)
+	}
+	if len(strings.Fields(bio)) > constants.ProfileBioMaxWords {
+		return errors.New(constants.ErrBioTooManyWords)
+	}
+	return nil
 }

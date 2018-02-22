@@ -11,4 +11,8 @@ const (
 	ErrPasswordResetTokensMismatch = "password reset tokens mismatched"
 	ErrPasswordNotLongEnough       = "password is not long enough"
 	ErrPasswordsMismatch           = "passwords do not match"
+
+	ErrReceiveIntoStructFailed = "malformed JSON prevented request decoding"
+	ErrBioTooManyCharacters    = "the provided bio contains too many characters"
+	ErrBioTooManyWords         = "the provided bio contains too many words"
 )

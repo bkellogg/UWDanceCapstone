@@ -18,7 +18,7 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 	newUser := &models.NewUserRequest{}
-	if err := recieve(r, newUser); err != nil {
+	if err := receive(r, newUser); err != nil {
 		http.Error(w, "error decoding request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -60,7 +60,7 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 	signInRequest := &models.SignInRequest{}
-	if err := recieve(r, signInRequest); err != nil {
+	if err := receive(r, signInRequest); err != nil {
 		http.Error(w, "error decoding request: "+err.Error(), http.StatusBadRequest)
 		return
 	}

@@ -32,7 +32,7 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	return respond(w, models.PaginateUsers(users, page), http.StatusOK)
 }
 
-// SpecificUserHandler handles requests for a specifc user
+// SpecificUserHandler handles requests for a specific user
 func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	userID, err := parseUserID(r, u)
 	if err != nil {
@@ -57,8 +57,18 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		if !u.CanModifyUser(userID) {
 			return permissionDenied()
 		}
-		// TODO: Implement this
-		return respond(w, "TODO: Implement This", http.StatusOK)
+		updates := &models.UserUpdates{}
+		if err := receive(r, updates); err != nil {
+			return receiveFailed()
+		}
+		if err := updates.CheckBioLength(); err != nil {
+			return HTTPError(err.Error(), http.StatusBadRequest)
+		}
+		err := ctx.Database.UpdateUserByID(userID, updates, includeInactive)
+		if err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+		return respondWithString(w, "user updated", http.StatusOK)
 	case "DELETE":
 		if !u.CanDeleteUser(userID) {
 			return permissionDenied()
@@ -69,7 +79,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 			}
 			return objectNotFound("user")
 		}
-		return respondWithString(w, "user has been deleted", 200)
+		return respondWithString(w, "user has been deleted", http.StatusOK)
 	default:
 		return methodNotAllowed()
 	}

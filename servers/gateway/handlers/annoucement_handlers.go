@@ -36,7 +36,7 @@ func (ctx *AnnoucementContext) AnnoucementsHandler(w http.ResponseWriter, r *htt
 		}
 
 		na := &models.NewAnnouncement{}
-		if err := recieve(r, na); err != nil {
+		if err := receive(r, na); err != nil {
 			return HTTPError(err.Error(), http.StatusBadRequest)
 		}
 		na.UserID = u.ID
