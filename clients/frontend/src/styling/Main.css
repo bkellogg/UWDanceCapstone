@@ -1,6 +1,7 @@
 #logo{
     text-align: center;
-    background-color: lavender
+    background-color: lavender;
+    height: 70px;
 }
 
 #signOut{
@@ -12,4 +13,19 @@
     height: 100px;
     width: 100%;
     text-align: center;
+}
+
+.main {
+    padding-left: 300px;
+  }
+
+.sub {
+    padding-left: 50px;
+    padding-top: 80px;
+}
+
+@media only screen and (max-width : 992px) {
+    .main {
+      padding-left: 0;
+    }
 }

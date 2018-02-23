@@ -4,20 +4,15 @@ import './styling/Dashboard.css';
 class Dashboard extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      pageCode: 100
-    }
-    console.log(this.state);
   };
 
   componentDidMount(){
-    //this.props.onClick(this.state.pageCode)
+    console.log("Dashboard mounted")
   }
 
   render() {
-    console.log("Dashboard!");
       return(
-        <section className='dashboard'>
+        <section className='main'>
           <h1> Dashboard! </h1>
         </section>
       )

@@ -12,6 +12,7 @@ class App extends Component {
     this.registerUser = this.registerUser.bind(this);
     this.handleSignUp = this.handleSignUp.bind(this);
     this.goBack = this.goBack.bind(this);
+    this.signOut = this.signOut.bind(this);
     this.state = {
       user: null,
       signUp: false,
@@ -34,6 +35,13 @@ class App extends Component {
   goBack() {
     this.setState({
       signUp: false
+    })
+  }
+
+  signOut(){
+    this.setState({
+      authorized: false,
+      user: null
     })
   }
 
@@ -65,7 +73,7 @@ class App extends Component {
           <SignUp onSignUp={this.registerUser} goBack={this.goBack}/>
         }
         {this.state.authorized === true &&
-          <Main />
+          <Main auth={this.signOut}/>
         }
       </section>
   );

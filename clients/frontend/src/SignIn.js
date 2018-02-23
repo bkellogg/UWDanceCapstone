@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 //import { Link } from 'react-router-dom';
 import {Button} from 'react-materialize';
 import * as Util from './util.js';
-import img from './imgs/tresmaines.jpg'
+//import img from './imgs/tresmaines.jpg'
 import './styling/SignIn.css';
 
 class SignIn extends Component {
@@ -66,7 +66,7 @@ class SignIn extends Component {
     return (
       <div className="LogInLanding" style={{height:100 + '%'}}>
         <div className="LogInPhoto">
-        <img src={img}></img>
+        {/*<img src={img}></img>*/}
         </div>
         <div className="Functionality">
         <div className="Logo"></div>

@@ -1,9 +1,26 @@
-.profile {
-    padding-left: 300px;
-  }
+.header{
+  display: flex;
+  position: relative;
+  height: 150px
+}
+
+img {
+  height: 150px;
+  width: 150px
+}
+
+.name {
+  height: 150px;
+  width: 150px
+}
+
+h1{
+  position: absolute;
+  bottom: 0px;
+  margin-bottom:0px;
+  padding-left:25px
+}
 
 @media only screen and (max-width : 992px) {
-    .profile {
-      padding-left: 0;
-    }
+
 }
