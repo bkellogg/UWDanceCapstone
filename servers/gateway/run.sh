@@ -34,7 +34,7 @@ docker run -d \
 -p 80:80 \
 -v /root/:/certs/dance/:ro \
 -v /webclients/:/webclients/:ro \
--v /static/:/static,images,images/users,resumes \
+-v /static/:/static/ \
 -e ADDR=:443 \
 -e TLSKEY=/certs/dance/dasc.capstone.ischool.uw.edu-key.pem \
 -e TLSCERT=/certs/dance/dasc.capstone.ischool.uw.edu-cert.pem \

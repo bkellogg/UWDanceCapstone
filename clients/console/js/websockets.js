@@ -9,6 +9,8 @@ const errors = document.querySelector("#errors");
 
 let auth = getAuth();
 
+refreshLocalUser();
+
 const websocket = new WebSocket("wss://" + host + "/api/v1/updates?auth=" + auth);
 websocket.addEventListener("error", function(err) {
     errors.textContent = err.message;
@@ -46,7 +48,7 @@ websocket.addEventListener("message", function(event) {
     notifications.appendChild(messageWrapper);
 });
 
-dummyAnnouncementBtn.addEventListener("click", (evt) => {
+dummyAnnouncementBtn.addEventListener("click", () => {
     fetch("https://dasc.capstone.ischool.uw.edu/api/v1/announcements/dummy?auth=" + getAuth())
     .then((res) => {
         if (!res.ok) {
