@@ -5,13 +5,11 @@ import (
 	"errors"
 	"strconv"
 	"time"
-
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 )
 
 // UserIsInPiece returns true if the given user is in the given piece or an error if one occured.
 func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
-	result, err := store.DB.Query(`SELECT * FROM UserPiece UP WHERE UP.UserID = ? AND UP.PieceID = ? AND UP.IsDeleted = ?`,
+	result, err := store.db.Query(`SELECT * FROM UserPiece UP WHERE UP.UserID = ? AND UP.PieceID = ? AND UP.IsDeleted = ?`,
 		userID, pieceID, false)
 	if result == nil {
 		return false, err
@@ -29,14 +27,14 @@ func (store *Database) AddUserToPiece(userID, pieceID int) error {
 	if exists {
 		return errors.New("user is already in this piece")
 	}
-	_, err = store.DB.Exec(`INSERT INTO UserPiece (UserID, PieceID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?)`,
+	_, err = store.db.Exec(`INSERT INTO UserPiece (UserID, PieceID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?)`,
 		userID, pieceID, addTime, false)
 	return err
 }
 
 // RemoveUserFromPiece removes the given user from the given piece.
 func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
-	result, err := store.DB.Exec(`UPDATE UserPiece UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.PieceID = ?`,
+	result, err := store.db.Exec(`UPDATE UserPiece UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.PieceID = ?`,
 		true, userID, pieceID)
 	if err == nil {
 		rowsAffected, _ := result.RowsAffected()
@@ -57,7 +55,7 @@ func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, err
 	}
 	query += `LIMIT 25 OFFSET ` + offset
 
-	return handleUsersFromDatabase(store.DB.Query(query))
+	return handleUsersFromDatabase(store.db.Query(query))
 }
 
 // ContainsUser returns true if this database contains a user with the same
@@ -74,9 +72,9 @@ func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, error) {
 // and populates the ID field of the user
 func (store *Database) InsertNewUser(user *User) error {
 	// TODO: Replace this with stored procedure
-	result, err := store.DB.Exec(
-		`INSERT INTO Users (FirstName, LastName, Email, PassHash, Role, Active, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		user.FirstName, user.LastName, user.Email, user.PassHash, user.Role, constants.UserActive, user.CreatedAt)
+	result, err := store.db.Exec(
+		`INSERT INTO Users (FirstName, LastName, Email, Bio, PassHash, Role, Active, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		user.FirstName, user.LastName, user.Email, "", user.PassHash, user.Role, true, user.CreatedAt)
 	if err != nil {
 		return err
 	}
@@ -93,9 +91,9 @@ func (store *Database) GetUserByID(id int, includeInactive bool) (*User, error) 
 		query += ` AND U.Active = true`
 	}
 	user := &User{}
-	err := store.DB.QueryRow(
+	err := store.db.QueryRow(
 		query, id).Scan(
-		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role, &user.Active, &user.CreatedAt)
+		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Bio, &user.PassHash, &user.Role, &user.Active, &user.CreatedAt)
 	if err != nil {
 		user = nil
 	}
@@ -114,10 +112,10 @@ func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User
 		query += ` AND U.Active = true`
 	}
 	user := &User{}
-	err := store.DB.QueryRow(
+	err := store.db.QueryRow(
 		query,
 		email).Scan(
-		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.PassHash, &user.Role, &user.Active, &user.CreatedAt)
+		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Bio, &user.PassHash, &user.Role, &user.Active, &user.CreatedAt)
 	if err != nil {
 		user = nil
 	}
@@ -128,9 +126,43 @@ func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User
 }
 
 // UpdateUserByID updates the user with the given ID to match the values
-// of newValues. Returns an error if one occured.
+// of newValues. Returns an error if one occurred.
 // TODO: Implement and test this
-func (store *Database) UpdateUserByID(userID int, newValues *User) error {
+func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeInactive bool) error {
+	newFirstName := len(updates.FirstName) > 0
+	newLastName := len(updates.LastName) > 0
+	newBio := len(updates.Bio) > 0
+
+	// do not build update query if there are no updates to be made
+	if !(newFirstName || newLastName || newBio) {
+		return nil
+	}
+
+	// if there is a missing field, fill it with what already exists
+	// in that field for the given user.
+	if !(newFirstName && newLastName && newBio) {
+		user, err := store.GetUserByID(userID, includeInactive)
+		if err != nil {
+			return errors.New("error updating user: " + err.Error())
+		}
+		if !newFirstName {
+			updates.FirstName = user.FirstName
+		}
+		if !newLastName {
+			updates.LastName = user.LastName
+		}
+		if !newBio {
+			updates.Bio = user.Bio
+		}
+	}
+	query := `UPDATE Users U SET U.FirstName = ?, U.LastName = ?, U.Bio = ? WHERE U.UserID = ?`
+	if !includeInactive {
+		query += ` AND U.Active = true`
+	}
+	_, err := store.db.Exec(query, updates.FirstName, updates.LastName, updates.Bio, userID)
+	if err != nil {
+		return errors.New("error updating user: " + err.Error())
+	}
 	return nil
 }
 
@@ -138,7 +170,7 @@ func (store *Database) UpdateUserByID(userID int, newValues *User) error {
 // an error if one occured.
 // TODO: Implement and test this
 func (store *Database) DeactivateUserByID(userID int) error {
-	result, err := store.DB.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, constants.UserInactive, userID)
+	result, err := store.db.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, false, userID)
 	if err != nil {
 		return err
 	}
@@ -155,7 +187,7 @@ func (store *Database) DeactivateUserByID(userID int) error {
 // ActivateUserByID marks the user with the given userID as active. Returns
 // an error if one occured.
 func (store *Database) ActivateUserByID(userID int) error {
-	_, err := store.DB.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, constants.UserActive, userID)
+	_, err := store.db.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, true, userID)
 	return err
 }
 
@@ -165,7 +197,7 @@ func (store *Database) ActivateUserByID(userID int) error {
 // Returns an error if one occured.
 func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) ([]*User, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
 	JOIN UserPiece UP On UP.UserID = U.UserID
 	JOIN Pieces P ON P.PieceID = UP.PieceID
 	JOIN Shows S ON S.ShowID = P.ShowID
@@ -176,14 +208,14 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 		AND S.IsDeleted = FALSE`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handleUsersFromDatabase(store.DB.Query(query, id, offset))
+	return handleUsersFromDatabase(store.db.Query(query, id, offset))
 }
 
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
 // Returns an error if one occured.
 func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
 	JOIN UserPiece UP On UP.UserID = U.UserID
 	JOIN Pieces P ON P.PieceID = UP.PieceID
 	WHERE P.ShowID = ?`
@@ -192,28 +224,28 @@ func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*U
 		AND P.IsDeleted = FALSE`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handleUsersFromDatabase(store.DB.Query(query, id, offset))
+	return handleUsersFromDatabase(store.db.Query(query, id, offset))
 }
 
 // GetUsersByPieceID returns a slice of users that are in the given piece, if any.
 // Returns an error if one occured.
 func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
 	JOIN UserPiece UP On UP.UserID = U.UserID
 	WHERE UP.PieceID = ?`
 	if !includeDeleted {
 		query += ` AND UP.IsDeleted = FALSE`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handleUsersFromDatabase(store.DB.Query(query, id, offset))
+	return handleUsersFromDatabase(store.db.Query(query, id, offset))
 }
 
 // UpdatePasswordByID changes the user with the given IDs passhash to the given
 // byte slice representing the new passhash.
 func (store *Database) UpdatePasswordByID(id int, passHash []byte) error {
 	query := `UPDATE Users SET PassHash = ? WhERE UserID = ?`
-	_, err := store.DB.Query(query, passHash, id)
+	_, err := store.db.Query(query, passHash, id)
 	return err
 }
 
@@ -228,7 +260,7 @@ func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, error) {
 	users := make([]*User, 0)
 	for result.Next() {
 		u := &User{}
-		if err = result.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.PassHash,
+		if err = result.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.Bio, &u.PassHash,
 			&u.Role, &u.Active, &u.CreatedAt); err != nil {
 			return nil, err
 		}

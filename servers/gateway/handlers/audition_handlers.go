@@ -22,7 +22,7 @@ func (ctx *AuthContext) AuditionsHandler(w http.ResponseWriter, r *http.Request,
 			return permissionDenied()
 		}
 		newAud := &models.NewAudition{}
-		err := recieve(r, newAud)
+		err := receive(r, newAud)
 		if err != nil {
 			return HTTPError("error decoding new audition: "+err.Error(), http.StatusBadRequest)
 		}

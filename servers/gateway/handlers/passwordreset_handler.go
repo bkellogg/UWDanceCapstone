@@ -52,7 +52,7 @@ func (ctx *AuthContext) PasswordResetHandler(w http.ResponseWriter, r *http.Requ
 		respondWithString(w, "password reset instructions will be sent to the provided email if it exists", http.StatusOK)
 	case "PATCH":
 		reset := &models.PasswordResetRequest{}
-		if err := recieve(r, reset); err != nil {
+		if err := receive(r, reset); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}

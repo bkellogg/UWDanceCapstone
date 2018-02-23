@@ -36,7 +36,7 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 
 	// if the file size is greater than 5MB, reject it
 	if fileheader.Size > constants.ProfileUploadMaxFileSize {
-		return HTTPError("filesize too large", http.StatusInternalServerError)
+		return HTTPError("filesize too large", http.StatusBadRequest)
 	}
 
 	// write the image bytes into a buffer
@@ -62,7 +62,7 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 	imgBytesBuffer.Reset()
 
 	// resize the image to 600x600
-	resizedImage := resize.Resize(500, 0, uploadedImage, resize.Lanczos3)
+	resizedImage := resize.Resize(250, 0, uploadedImage, resize.Lanczos3)
 
 	// get the user ID and create a new file for the image to be saved to.
 	userIDString := strconv.Itoa(userID)

@@ -56,6 +56,14 @@ func objectNotFound(objType string) *middleware.HTTPError {
 	}
 }
 
+// receiveFailed returns an HTTPError representing a JSON receiving failure.
+func receiveFailed() *middleware.HTTPError {
+	return &middleware.HTTPError{
+		Message: constants.ErrReceiveIntoStructFailed,
+		Status:  http.StatusBadRequest,
+	}
+}
+
 // logAndWriteError logs the error content to the given database and writes the error back
 // to the client.
 func logAndWriteError(w http.ResponseWriter, r *http.Request, message string, code int, db *models.Database) {

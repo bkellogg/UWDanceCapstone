@@ -10,7 +10,7 @@ import (
 // and returns an annoucement. Returns an error if one occured.
 func (store *Database) InsertNewAnnouncment(newAnnouncement *NewAnnouncement) (*Announcement, error) {
 	postTime := time.Now()
-	result, err := store.DB.Exec(`INSERT INTO Announcements (Message, CreatedAt, CreatedBy, IsDeleted)
+	result, err := store.db.Exec(`INSERT INTO Announcements (Message, CreatedAt, CreatedBy, IsDeleted)
 		VALUES (?, ?, ?, ?)`, newAnnouncement.Message, postTime, newAnnouncement.UserID, false)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID
 		query += ` AND A.CreatedBy = ` + strconv.Itoa(userID)
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handleAnnouncementsFromDatabase(store.DB.Query(query, offset))
+	return handleAnnouncementsFromDatabase(store.db.Query(query, offset))
 }
 
 // handleAnnouncementsFromDatabase compiles the given result and err into a slice of AnnouncementResponse or an error.

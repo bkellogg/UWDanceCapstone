@@ -33,7 +33,7 @@ function makeRequest(resource, payload = "", method = "GET", useAuth = false) {
     payload = JSON.stringify(payload)
     var headers = new Headers();
     if (useAuth) {
-        headers.append(headerAuthorization, getAuth())
+        headers.append(headerAuthorization, getAuth());
     }
     headers.append("Content-Type", "application/json");
     headers.append("Content-Length", payload.length.toString())
@@ -60,7 +60,7 @@ function refreshLocalUser() {
     })
     .catch((err) => {
         console.error(err);
-        alert(err);
+        alert("Your session has expired. Please sign in again.");
         signout();
     })
 }
