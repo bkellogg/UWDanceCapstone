@@ -55,6 +55,15 @@ func (store *Database) DeleteShowByID(id int) error {
 	return err
 }
 
+func (store *Database) GetShowsByUserID(id, page int, includeDeleted, includePast bool) {
+	offset := getSQLPageOffset(page)
+	query := `SELECT * FROM Shows S
+		JOIN Pieces P ON S.ShowID = P.ShowID
+		JOIN UserPiece UP ON P.PieceID = UP.PieceID
+		WHERE UP.UserID`
+	store.db.Exec(query)
+}
+
 // GetShowsByAuditionID returns a slice of shows that are in the given audition
 func (store *Database) GetShowsByAuditionID(id, page int, includeDeleted bool) ([]*Show, error) {
 	offset := getSQLPageOffset(page)
