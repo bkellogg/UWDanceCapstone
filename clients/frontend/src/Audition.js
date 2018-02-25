@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-class Navigation extends Component {
+class Audition extends Component {
   constructor(props) {
     super(props);
   };
@@ -9,7 +9,7 @@ class Navigation extends Component {
   render() {
       return(
         <div className="main">
-          Audition
+          <h1>Audition</h1>
         </div>
       )
   }
@@ -17,4 +17,4 @@ class Navigation extends Component {
 }
 
 
-export default Navigation;
+export default Audition;

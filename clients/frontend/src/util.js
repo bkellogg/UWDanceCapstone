@@ -66,3 +66,25 @@ export function signOut() {
     // user as invalid and clear their local storage entries anyway.
     clearAuthAndUser();
 }
+
+export function uploadPhoto(){
+    
+}
+
+export function uploadBio(val){
+    let payload = {
+        "bio": val
+    };
+    makeRequest("users/me", payload, "PATCH", true)
+        .then((res) => {
+            if (res.ok) {
+                refreshLocalUser()
+                return
+            }
+            return res.text().then((t) => Promise.reject(t));
+        })
+        .then(() => {
+            refreshLocalUser()
+        })
+        .catch((err) => {})
+}

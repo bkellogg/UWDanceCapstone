@@ -8,10 +8,10 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.getPhoto = this.getPhoto.bind(this);
-    this.getBio = this.getBio.bind(this);
     this.getHistory = this.getHistory.bind(this);
     this.getResume = this.getResume.bind(this);
     this.onClick = this.onClick.bind(this);
+    this.inputChange = this.inputChange.bind(this);
     this.state ={
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
@@ -21,7 +21,15 @@ class Profile extends Component {
       history: null,
       resume: null,
       resumeErr: null,
-      edit: false
+      fname: JSON.parse(localStorage.getItem("user")).firstName,
+      lname: JSON.parse(localStorage.getItem("user")).lastName,
+      edit: false,
+      //the following are used to update the profile
+      firstName: "",
+      lastName: "",
+      photoUpload: "",
+      bioUpload: "",
+      resumeUpload: ""
     }
   };
 
@@ -49,10 +57,6 @@ class Profile extends Component {
                 photoError: err
               })
           });
-  }
-
-  getBio(){
-    
   }
 
   getHistory(){
@@ -100,16 +104,53 @@ class Profile extends Component {
   }
 
   onClick(){
+    if(this.state.edit){
+      //is edit is true when we click this button, we are going to submit the input values
+      //flow: if the input has a value in it -> post value to server -> then get back from the server -> set state -> empty out input values
+      //We don't have a way to do first or last names atm
+      if(this.state.firstName !== ""){
+
+      }
+      if(this.state.lastName !== ""){
+
+      }
+      if(this.state.uploadPhoto !== "") { //honestly not sure what kind of data we get if we upload a photo and then remove it
+        console.log("you're going to have to ask brendan about that one")
+      }
+      if(this.state.uploadBio !== ""){
+        Util.uploadBio(this.state.bioUpload) //refreshing the local user is built in aka don't need to call the bio back from the server
+      }
+      if(this.state.uploadResume !== ""){ //same with resumes (ask b)
+
+      }
+      this.setState({
+        bio: this.state.bioUpload,
+        fname: this.state.firstName,
+        lname: this.state.lastName,
+        firstname : "",
+        lastName: "",
+        uploadPhoto: "",
+        uploadBio: "",
+        uploadResume: ""
+      })
+    }
     let editState = !this.state.edit
     this.setState({
-      edit: editState
+      edit: editState,
     })
-    this.getPhoto();
-    this.getResume();
+    //this.getPhoto();
+    //this.getResume();
+  }
+
+  inputChange(val){
+    const name = val.target.name
+    this.setState({
+      [name] : val.target.value
+    })
   }
 
   render() {
-    console.log(this.state.edit)
+    console.log(this.state.user)
     return (
       <section className="main">
         <div className="sub">
@@ -121,17 +162,17 @@ class Profile extends Component {
               {this.state.edit &&
                 <section>
                   <div> Upload a head shot as a jpg file. </div>
-                  <Input type="file"/>
+                  <Input id="photoUpload" name="photoUpload" type="file" onChange={this.inputChange}/>
                 </section>
               }
             </div>
             <div id="name">
-              {!this.state.edit && <h1 id="profileName">{this.state.user.firstName} {this.state.user.lastName}</h1>}
+              {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
               {this.state.edit &&
                 <div id="editName">
                   <Row>
-                  <Input id="firstName" s={6} label="First Name" />
-                  <Input id="lastname" s={6} label="Last Name" />
+                  <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange}/>
+                  <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange}/>
                   </Row>
                 </div>
               }
@@ -147,7 +188,7 @@ class Profile extends Component {
             }
             {this.state.edit &&
               <div id="editBio">
-                <Input s={6} placeholder="Bios should be 60 words or less"/>
+                <Input id="bioUpload" name="bioUpload" s={6} placeholder="Bios should be 60 words or less" onChange={this.inputChange}/>
               </div>
             }
           </div>
@@ -183,7 +224,7 @@ class Profile extends Component {
             {this.state.edit &&
               <section>
                 <div> Upload your dance resume as a PDF. </div>
-                <Input type="file"/>
+                <Input id="resumeUpload" name="resumeUpload" type="file"/>
               </section> 
             }
             </div>

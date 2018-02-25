@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class Piece extends Component {
+class People extends Component {
   /*constructor(props) {
     super(props);
   };*/
@@ -8,11 +8,11 @@ class Piece extends Component {
   render() {
     return (
       <section className="main">
-        <h1>My Piece</h1>
+        <h1>People</h1>
       </section>
   );
 };
 
 }
-export default Piece;
+export default People;
 

@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import {Switch, Route} from 'react-router-dom';
+import People from './People';
+import Piece from './Piece';
+import Audition from './Audition';
 import './styling/Show.css';
 
 class Show extends Component {

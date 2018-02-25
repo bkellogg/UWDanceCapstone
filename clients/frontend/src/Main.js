@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { Switch, Route, Link } from 'react-router-dom';
-//import Navigation from './Navigation.js';
+import People from './People';
+import Piece from './Piece';
 import Audition from './Audition';
-import Show from './Show'
+import Show from './Show';
 import Dashboard from './Dashboard';
 import Profile from './Profile';
+import Casting from './Casting';
 import NavigationElement from './NavigationElement';
 import {Button} from 'react-materialize';
 import * as Util from './util';
@@ -24,7 +26,6 @@ class Main extends Component {
     //onClick links will update
     this.state = {
       user: JSON.parse(localStorage.user),
-      page: 100,
       shows: null,
       routing: null
     }
@@ -34,7 +35,7 @@ class Main extends Component {
   componentWillMount(){
     this.getCurrShows();
   }
-
+/*
   componentDidMount(){
     let routing = (
       <section className="routing">
@@ -43,7 +44,7 @@ class Main extends Component {
             {this.state.shows.map((r, i) => {
               let address = "/" + r.split(' ').join('')
                 return(
-                  <div>
+                  <div key={i}>
                     <Route exact path={address} render={
                       () => (<Show id={i + 1} name={r}/>)} key={i}/>
                     <Route exact path={address + "/audition"} render={
@@ -57,7 +58,7 @@ class Main extends Component {
       route:routing
     })
   }
-
+*/
   getCurrShows(){
     //here we make the call to get current shows and format that data
     //for now it's an array of strings
@@ -95,10 +96,56 @@ class Main extends Component {
         <Switch>
           <Route exact path='/stage' component={Dashboard}/>
           <Route exact path='/profile' component={Profile}/>
-            {this.state.shows.map((r, i) => {
+          {this.state.shows.map((r, i) => {
                 return(
-                  <Route exact path={"/" + r.split(' ').join('')} render={
-                    () => (<Show id={i + 1} name={r} key={i}/>)} key={i}/>
+                    <Route exact path={"/" + r.split(' ').join('')} render={
+                      () => (<Show id={i + 1} name={r}/>)}/> 
+          )})}
+          {this.state.shows.map((r,i) =>{
+            return(
+              <Route path={"/" + r.split(' ').join('') + "/audition"} render={
+                () => (<Audition id={(10 * (i + 1))} name={r}/>)}/>
+            )
+          })}
+          {this.state.shows.map((r,i) =>{
+            return(
+              <Route path={"/" + r.split(' ').join('') + "/casting"} render={
+                () => (<Casting id={11 * (i + 1)} name={r}/>)}/>
+            )
+          })}
+          {this.state.shows.map((r,i) =>{
+            return(
+              <Route path={"/" + r.split(' ').join('') + "/piece"} render={
+                () => (<Piece id={12 * (i + 1)} name={r}/>)}/>
+            )
+          })}
+          {this.state.shows.map((r,i) =>{
+            return(
+              <Route path={"/" + r.split(' ').join('') + "/people"} render={
+                () => (<People id={13 * (i + 1)} name={r}/>)}/>
+            )
+          })}
+              {/*
+                let id = i + 1;
+                let auditionID = ((10 * id) + 1)
+                let castingID = ((10 * id) + 2)
+                let pieceID = ((10 * id) + 3)
+                let peopleID = ((10 * id) + 4) */
+                //let path = r.split(' ').join('')
+               /* return(
+                  <div key={i}>
+                    <Route exact path={"/" + r.split(' ').join('')} render={
+                    () => (<Show id={i} name={r}/>)}/>
+                      {
+                    <Route exact path={("/" + r.split(' ').join('') + "/audition")} render={
+                      () => (<Audition  name={r}/>)} />
+                    <Route exact path={"/" + r.split(' ').join('') + "/piece"} render={
+                      () => (<Piece  name={r}/>)} />
+                    <Route exact path={"/" + r.split(' ').join('') + "/casting"} render={
+                      () => (<Casting  name={r}/>)}/>
+                    <Route exact path={"/" + r.split(' ').join('') + "/casting"} render={
+                    () => (<People  name={r}/>)}/>
+                  </div> */}
                 )
             })}
         </Switch>
