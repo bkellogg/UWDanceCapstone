@@ -67,7 +67,9 @@ deployAPI () {
 	-v $CLIENTPATH:$CLIENTPATH:ro \
 	-v $IMAGEPATH:/static/images/users/ \
 	-v $STATICPATH:/static/ \
+	-v $GOPATH/src/github.com/BKellogg/UWDanceCapstone/clients/:/clients/:ro \
 	-e ADDR=:443 \
+	-e TEMPLATESPATH=/templates/ \
 	-e HTTPREDIRADDR=:80 \
 	-e CLIENTPATH=$CLIENTPATH \
 	-e TLSKEY=$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/privkey.pem \
@@ -79,6 +81,8 @@ deployAPI () {
 	-e SESSIONKEY=$SESSIONKEY \
     -e MAILUSER=$MAILUSER \
     -e MAILPASS=$MAILPASS \
+    -e RESETPASSWORDCLIENTPATH=/clients/passwordresetclient \
+    -e ADMINCONSOLEPATH=/clients/console \
 	brendankellogg/dancegateway
 
 }

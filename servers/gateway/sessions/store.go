@@ -25,4 +25,12 @@ type Store interface {
 
 	//Delete deletes all state data associated with the SessionID from the store.
 	Delete(sid SessionID) error
+
+	// NewPasswordResetToken generates a new password reset token for the given email and
+	// saves it to this redis store for the time specified by PasswordResetValidityDuration
+	NewPasswordResetToken(email string) (string, error)
+
+	// ValidatePasswordResetToken validates that the given token exists for the given
+	// email. Returns an error if no such token exists, or there was an error validating it.
+	ValidatePasswordResetToken(email, token string) (bool, error)
 }

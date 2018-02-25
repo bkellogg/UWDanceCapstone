@@ -14,6 +14,7 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/handlers"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/notify"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
 
@@ -36,6 +37,10 @@ func main() {
 	// Mail Info
 	mailUser := getRequiredENVOrExit("MAILUSER", "")
 	mailPass := getRequiredENVOrExit("MAILPASS", "")
+	templatesPath := getRequiredENVOrExit("TEMPLATESPATH", "")
+
+	resetPasswordClientPath := getRequiredENVOrExit("RESETPASSWORDCLIENTPATH", "")
+	adminConsolePath := getRequiredENVOrExit("ADMINCONSOLEPATH", "")
 
 	// Open connections to the databases
 	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
@@ -44,13 +49,26 @@ func main() {
 	}
 	redis := sessions.NewRedisStore(nil, constants.DefaultSessionDuration, redisAddr)
 
-	authContext := handlers.NewAuthContext(sessionKey, redis, db)
+	notifier := notify.NewNotifier()
+
 	mailContext := handlers.NewMailContext(mailUser, mailPass)
+	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials())
+	annoucementContext := handlers.NewAnnoucementContext(db, notifier)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
 	baseRouter := mux.NewRouter()
 	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
 	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
+	baseRouter.HandleFunc(constants.PasswordResetPath, authContext.PasswordResetHandler)
+	baseRouter.PathPrefix("/reset/").Handler(handlers.PreventDirListing(http.StripPrefix("/reset/", http.FileServer(http.Dir(resetPasswordClientPath)))))
+	baseRouter.PathPrefix("/console").Handler(handlers.AddTrailingSlash(http.StripPrefix("/console/", http.FileServer(http.Dir(adminConsolePath)))))
+
+	updatesRouter := baseRouter.PathPrefix(constants.UpdatesPath).Subrouter()
+	updatesRouter.Handle(constants.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
+
+	annoucementsRouter := baseRouter.PathPrefix(constants.AnnoucementsPath).Subrouter()
+	annoucementsRouter.Handle(constants.ResourceRoot, authorizer.Authorize(annoucementContext.AnnoucementsHandler))
+	annoucementsRouter.Handle("/dummy", authorizer.Authorize(annoucementContext.DummyAnnouncementHandler))
 
 	usersRouter := baseRouter.PathPrefix(constants.UsersPath).Subrouter()
 	usersRouter.HandleFunc(constants.ResourceRoot, authContext.UserSignUpHandler)
