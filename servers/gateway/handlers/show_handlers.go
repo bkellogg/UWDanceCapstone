@@ -20,11 +20,10 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 			return permissionDenied()
 		}
 		newShow := &models.NewShow{}
-		err := receive(r, newShow)
+		err := recieve(r, newShow)
 		if err != nil {
 			return HTTPError("error decoding new show: "+err.Error(), http.StatusBadRequest)
 		}
-		newShow.CreatedBy = int(u.ID)
 		show, err := ctx.Database.InsertNewShow(newShow)
 		if err != nil {
 			return HTTPError("error inserting new show:"+err.Error(), http.StatusInternalServerError)

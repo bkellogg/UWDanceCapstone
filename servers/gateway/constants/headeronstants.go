@@ -12,7 +12,7 @@ const (
 const (
 	CORSAllowedOrigins = "*"
 	CORSAllowedMethods = "OPTIONS, GET, POST, PATCH, DELETE, LINK, UNLINK"
-	CORSAllowedHeaders = "Content-Type, Authorization, ImageFieldName, ResumeFieldName"
+	CORSAllowedHeaders = "Content-Type, Authorization"
 	CORSExposedHeaders = "Authorization, " + HeaderStrictTransportSecurity
 )
 

@@ -1,0 +1,26 @@
+#logo{
+    text-align: center;
+    background-color: lavender;
+    height: 70px;
+}
+
+#signOut{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding-bottom:50px;
+    padding-top:20px;
+    height: 100px;
+    width: 100%;
+    text-align: center;
+}
+
+.main {
+    padding-left: 300px;
+  }
+
+@media only screen and (max-width : 992px) {
+    .main {
+      padding-left: 0;
+    }
+}

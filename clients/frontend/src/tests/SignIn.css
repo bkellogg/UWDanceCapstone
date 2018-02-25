@@ -1,0 +1,31 @@
+
+.LogInLanding {
+  background-color: purple;
+}
+
+.Functionality {
+  display: inline-block;
+  float:right;
+  min-height: 100%;
+  width:50%;
+  vertical-align: top;
+}
+
+.LogInPhoto {
+  height: 100%;
+  display: inline-block;
+  width: 50%;
+  /*background-image: url('./imgs/tresmaines.jpg');
+  background-repeat: no-repeat;
+  background-size: cover*/
+}
+/*
+.LogInPhoto > img{
+  width: 100%;
+  min-height: 100%;
+}
+*/
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
