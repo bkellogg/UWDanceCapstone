@@ -1,5 +1,5 @@
 // Simple web server that will listen for requests and then will execute git pull
-// on the host machine. Used as an API endpoint for github webhooks that will effectively
+// on the host machine. Used as an API endpoint for GitHub webhooks that will effectively
 // deploy code when a push is received on the origin repo.
 
 package main
