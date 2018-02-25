@@ -64,7 +64,6 @@ deployAPI () {
 	-p 443:443 \
 	-p 80:80 \
 	-v $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway:$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway:ro \
-	-v $CLIENTPATH:$CLIENTPATH:ro \
 	-v $IMAGEPATH:/static/images/users/ \
 	-v $STATICPATH:/static/ \
 	-v $GOPATH/src/github.com/BKellogg/UWDanceCapstone/clients/:/clients/:ro \
@@ -83,6 +82,7 @@ deployAPI () {
     -e MAILPASS=$MAILPASS \
     -e RESETPASSWORDCLIENTPATH=/clients/passwordresetclient \
     -e ADMINCONSOLEPATH=/clients/console \
+    -e FRONTENDPATH=/clients/frontend/build/ \
 	brendankellogg/dancegateway
 
 }

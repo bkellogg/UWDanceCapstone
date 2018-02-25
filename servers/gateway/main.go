@@ -41,6 +41,7 @@ func main() {
 
 	resetPasswordClientPath := getRequiredENVOrExit("RESETPASSWORDCLIENTPATH", "")
 	adminConsolePath := getRequiredENVOrExit("ADMINCONSOLEPATH", "")
+	frontEndPath := getRequiredENVOrExit("FRONTENDPATH", "")
 
 	// Open connections to the databases
 	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
@@ -62,6 +63,7 @@ func main() {
 	baseRouter.HandleFunc(constants.PasswordResetPath, authContext.PasswordResetHandler)
 	baseRouter.PathPrefix("/reset/").Handler(handlers.PreventDirListing(http.StripPrefix("/reset/", http.FileServer(http.Dir(resetPasswordClientPath)))))
 	baseRouter.PathPrefix("/console").Handler(handlers.AddTrailingSlash(http.StripPrefix("/console/", http.FileServer(http.Dir(adminConsolePath)))))
+
 
 	updatesRouter := baseRouter.PathPrefix(constants.UpdatesPath).Subrouter()
 	updatesRouter.Handle(constants.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
@@ -90,6 +92,9 @@ func main() {
 	pieceRouter := baseRouter.PathPrefix(constants.PiecesPath).Subrouter()
 	pieceRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
 	pieceRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
+
+	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath + "static/"))))
+	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath+"index.html"))
 
 	treatedRouter := middleware.EnsureHeaders(
 		middleware.LogErrors(baseRouter, db))
