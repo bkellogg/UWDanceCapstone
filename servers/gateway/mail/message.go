@@ -5,15 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"net/smtp"
-
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 )
 
 // Message defines the information needed to send a message
 type Message struct {
 	auth       smtp.Auth
 	Recipients []string `json:"recipients"`
-	sender     string   `json:"sender"`
+	Sender     string   `json:"sender"`
 	Subject    string   `json:"subject"`
 	Body       string   `json:"body"`
 }
@@ -22,27 +20,11 @@ type Message struct {
 func NewMessage(credentials *MailCredentials, sender, body, subject string, recipients []string) *Message {
 	return &Message{
 		auth:       credentials.toSMTPAuth(),
-		sender:     sender,
+		Sender:     sender,
 		Recipients: recipients,
 		Subject:    subject,
 		Body:       body,
 	}
-}
-
-// NewMessageFromTemplate creates a new
-func NewMessageFromTemplate(credentials *MailCredentials, sender, tpl, subject string,
-	tplVars interface{}, recipients []string) (*Message, error) {
-	parsedTpl, err := parseTemplate(tpl, tplVars)
-	if err != nil {
-		return nil, err
-	}
-	return &Message{
-		auth:       credentials.toSMTPAuth(),
-		sender:     constants.StageEmailAddress,
-		Recipients: recipients,
-		Subject:    subject,
-		Body:       parsedTpl,
-	}, nil
 }
 
 // NewMessageFromRequest builds and returns a new message from the given credentials
@@ -59,20 +41,32 @@ func NewMessageFromRequest(credentials *MailCredentials, r *http.Request) (*Mess
 // Send sends "this" message
 func (m *Message) Send() error {
 	m.addHeaders()
-	if len(m.sender) == 0 {
-		m.sender = constants.StageEmailAddress
-	}
-	return smtp.SendMail(gmailAddr, m.auth, m.sender, m.Recipients, []byte(m.Body))
+	m.addFooter()
+	return smtp.SendMail(gmailAddr, m.auth, m.Sender, m.Recipients, []byte(m.Body))
 }
 
 // addHeaders adds the basic headers to the message body
 func (m *Message) addHeaders() {
-	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 	subject := fmt.Sprintf("Subject: %s", "[UW STAGE] "+m.Subject)
 	from := fmt.Sprintf("From: UW STAGE <ischooldancecap@gmail.com>")
-	allHeaders := []byte(fmt.Sprintf("%s\n%s\n%s\n\n", subject, from, mime))
+	allHeaders := []byte(fmt.Sprintf("%s\n%s\n\n", subject, from))
 	bodyBytes := []byte(m.Body)
 	bodyBytes = append(allHeaders, bodyBytes...)
 	m.Body = string(bodyBytes)
 
+}
+
+// addFooter adds a no reply message to the bottom of the message
+func (m *Message) addFooter() {
+	bodyBytes := []byte(m.Body)
+	bodyBytes = append(bodyBytes, []byte(`
+
+===================
+This mail inbox is not monitored. No one will reply to messages sent to this address,
+but feel free to have a conversation with yourself. Note that you'll have to supply
+both sides of the conversation! :)
+
+Thank you,
+UW STAGE Team`)...)
+	m.Body = string(bodyBytes)
 }

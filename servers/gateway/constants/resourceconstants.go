@@ -18,10 +18,4 @@ const (
 	ResourceRoot     = ""
 	ResourceID       = "/{id}"
 	ResourceIDObject = ResourceID + "/{object}"
-
-	AnnoucementsPath = BaseAPIPath + "/announcements"
-
-	UpdatesPath = BaseAPIPath + "/updates"
-
-	PasswordResetPath = BaseAPIPath + "/passwordreset"
 )

@@ -3,8 +3,6 @@ package models
 import (
 	"errors"
 	"net/mail"
-	"strings"
-	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
 
@@ -19,30 +17,19 @@ type NewUserRequest struct {
 	FirstName    string `json:"firstName"`
 	LastName     string `json:"lastName"`
 	Email        string `json:"email"`
-	Bio          string `json:"bio"`
 	Password     string `json:"password"`
 	PasswordConf string `json:"passwordConf"`
 }
 
 // User defines the properties of a specific user in the system
 type User struct {
-	ID        int64     `json:"id"`
-	FirstName string    `json:"firstName"`
-	LastName  string    `json:"lastName"`
-	Email     string    `json:"email"`
-	Bio       string    `json:"bio"`
-	PassHash  []byte    `json:"-"`
-	Role      int       `json:"role"`
-	Active    bool      `json:"active"`
-	CreatedAt time.Time `json:"createdAt"`
-}
-
-// UserUpdates defines the information that users can change
-// about their profile.
-type UserUpdates struct {
+	ID        int64  `json:"id"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
-	Bio       string `json:"bio"`
+	Email     string `json:"email"`
+	PassHash  []byte `json:"-"`
+	Role      int    `json:"role"`
+	Active    bool   `json:"active"`
 }
 
 // ToUser takes this *NewUserRequest and returns
@@ -51,31 +38,14 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 	if err := u.isReadyForUser(); err != nil {
 		return nil, err
 	}
-	if err := u.checkBioLength(); err != nil {
-		return nil, err
-	}
 	user := &User{
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Email:     u.Email,
-		Bio:       u.Bio,
 		Role:      constants.UserDefaultRole,
-		Active:    true,
-		CreatedAt: time.Now(),
+		Active:    constants.UserActive,
 	}
 	return user, user.SetPassword(u.Password)
-}
-
-// checkBioLength returns an error if the bio is too long
-// either by word count or character count.
-func (u *NewUserRequest) checkBioLength() error {
-	return checkBioLength(u.Bio)
-}
-
-// CheckBioLength returns an error if the bio is too long
-// either by word count or character count.
-func (u *UserUpdates) CheckBioLength() error {
-	return checkBioLength(u.Bio)
 }
 
 // isReadyForUser returns nil if this NewUserRequest is able to
@@ -162,16 +132,4 @@ func generateRandomUser() *User {
 	}
 	user.SetPassword(randomdata.FirstName(randomdata.RandomGender) + randomdata.Street())
 	return user
-}
-
-// checkBioLength returns an error if the bio is too long
-// either by word count or character count.
-func checkBioLength(bio string) error {
-	if len(bio) > constants.ProfileBioMaxCharacters {
-		return errors.New(constants.ErrBioTooManyCharacters)
-	}
-	if len(strings.Fields(bio)) > constants.ProfileBioMaxWords {
-		return errors.New(constants.ErrBioTooManyWords)
-	}
-	return nil
 }

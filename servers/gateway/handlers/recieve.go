@@ -9,7 +9,7 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 )
 
-func receive(r *http.Request, v interface{}) error {
+func recieve(r *http.Request, v interface{}) error {
 	// content-type must be JSON
 	contentType := r.Header.Get("Content-Type")
 	if !strings.HasPrefix(contentType, constants.ContentTypeJSON) {

@@ -50,6 +50,7 @@ func NewSessionID(signingKey string) (SessionID, error) {
 //using the `signingKey` as the HMAC signing key
 //and returns an error if invalid, or a SessionID if valid
 func ValidateID(id string, signingKey string) (SessionID, error) {
+
 	buffer, err := base64.URLEncoding.DecodeString(id)
 	if err != nil {
 		return InvalidSessionID, err

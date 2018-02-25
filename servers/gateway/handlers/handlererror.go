@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
-
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 )
@@ -16,10 +14,21 @@ import (
 // a new error
 var HTTPError = middleware.NewHTTPError
 
+// errPermissionDenied defines the error the client will recieve
+// when attempting to access a resource they do not have permission
+// to access.
+// TODO: Comment not accurate
+const (
+	errPermissionDenied       = "you do not have access to this resource"
+	errMethodNotAllowed       = "current method is not supported on this resource"
+	errObjectTypeNotSupported = "object type is not supported on this resource"
+	errResourceDoesNotExist   = "requested esource type does not exist"
+)
+
 // permissionDenied returns a permission deined HTTPError.
 func permissionDenied() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: constants.ErrPermissionDenied,
+		Message: errPermissionDenied,
 		Status:  http.StatusForbidden,
 	}
 }
@@ -27,7 +36,7 @@ func permissionDenied() *middleware.HTTPError {
 // methodNotAllowed returns a method not allowed HTTPError.
 func methodNotAllowed() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: constants.ErrMethodNotAllowed,
+		Message: errMethodNotAllowed,
 		Status:  http.StatusMethodNotAllowed,
 	}
 }
@@ -35,7 +44,7 @@ func methodNotAllowed() *middleware.HTTPError {
 // objectTypeNotSupported returns an object type not supported HTTPError.
 func objectTypeNotSupported() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: constants.ErrObjectTypeNotSupported,
+		Message: errObjectTypeNotSupported,
 		Status:  http.StatusBadRequest,
 	}
 }
@@ -43,7 +52,7 @@ func objectTypeNotSupported() *middleware.HTTPError {
 // resourceDoesNotExist returns a resource does not exists HTTPError.
 func resourceDoesNotExist() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: constants.ErrResourceDoesNotExist,
+		Message: errResourceDoesNotExist,
 		Status:  http.StatusNotFound,
 	}
 }
@@ -53,14 +62,6 @@ func objectNotFound(objType string) *middleware.HTTPError {
 	return &middleware.HTTPError{
 		Message: fmt.Sprintf("no %s found", objType),
 		Status:  http.StatusNotFound,
-	}
-}
-
-// receiveFailed returns an HTTPError representing a JSON receiving failure.
-func receiveFailed() *middleware.HTTPError {
-	return &middleware.HTTPError{
-		Message: constants.ErrReceiveIntoStructFailed,
-		Status:  http.StatusBadRequest,
 	}
 }
 
