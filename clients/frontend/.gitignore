@@ -7,7 +7,8 @@
 /coverage
 
 # production
-/build
+# needs to be committed to github in order for auto-deploys to work
+# /build
 
 # misc
 .DS_Store
