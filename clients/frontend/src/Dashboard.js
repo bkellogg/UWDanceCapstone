@@ -4,12 +4,15 @@ import './styling/Dashboard.css';
 class Dashboard extends Component {
   constructor(props) {
     super(props);
-    console.log(this.state);
   };
+
+  componentDidMount(){
+    console.log("Dashboard mounted")
+  }
 
   render() {
       return(
-        <section className='dashboard'>
+        <section className='main'>
           <h1> Dashboard! </h1>
         </section>
       )

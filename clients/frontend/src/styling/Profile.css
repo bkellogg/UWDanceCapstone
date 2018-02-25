@@ -1,0 +1,67 @@
+.header{
+  display: flex;
+  position: relative;
+  height: 150px
+}
+
+#photo {
+  height: 150px;
+  width: 150px
+}
+
+.name {
+  height: 150px;
+  width: 150px
+}
+
+#profileName{
+  position: absolute;
+  bottom: 0px;
+  margin-bottom:0px;
+  padding-left:25px
+}
+
+.sub {
+  padding-left: 50px;
+  padding-top: 80px;
+}
+
+#bio{
+  padding-top:30px;
+}
+
+#historyTitle {
+  margin-bottom:15px
+}
+
+.showHistory {
+  margin-bottom: 15px
+}
+
+#bio, #history, #resume {
+  margin-top: 20px;
+  margin-bottom:40px
+}
+
+.subheader {
+  font-size: 20px;
+}
+
+#editName{
+  padding-left: 25px;
+  display: flex;
+  position: absolute;
+  bottom: 0px;
+  margin-bottom:0px;
+}
+
+#firstName, #lastName{
+  margin-right: 10px
+}
+
+#editBio{
+  width: 80%;
+}
+@media only screen and (max-width : 992px) {
+
+}
