@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/mail"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
@@ -13,7 +15,7 @@ import (
 // MailHandler handles all mail related requests
 func (mc *MailContext) MailHandler(w http.ResponseWriter, r *http.Request, user *models.User) *middleware.HTTPError {
 	if !user.Can(permissions.SendMail) {
-		return HTTPError(errPermissionDenied, http.StatusForbidden)
+		return HTTPError(constants.ErrPermissionDenied, http.StatusForbidden)
 
 	}
 	message, err := mail.NewMessageFromRequest(mc.AsMailCredentials(), r)

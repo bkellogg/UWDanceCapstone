@@ -98,3 +98,8 @@ func getIncludeInactiveParam(r *http.Request) bool {
 func getIncludeDeletedParam(r *http.Request) bool {
 	return r.URL.Query().Get("includeDeleted") == "true"
 }
+
+// getEmailParam returns the value of the email param in the given request.
+func getEmailParam(r *http.Request) string {
+	return r.URL.Query().Get("email")
+}

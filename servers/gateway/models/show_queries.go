@@ -1,11 +1,15 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 // InsertNewShow inserts the given newShow into the database and returns the created Show
 func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
-	result, err := store.DB.Exec(`INSERT INTO Shows (ShowName, AuditionID, IsDeleted) VALUES (?, ?, ?)`,
-		newShow.Name, newShow.AuditionID, false)
+	createTime := time.Now()
+	result, err := store.db.Exec(`INSERT INTO Shows (ShowName, AuditionID, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+		newShow.Name, newShow.AuditionID, createTime, newShow.CreatedBy, false)
 	if err != nil {
 		return nil, err
 	}
@@ -17,6 +21,9 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 		ID:         int(showID),
 		Name:       newShow.Name,
 		AuditionID: newShow.AuditionID,
+		CreatedAt:  createTime,
+		CreatedBy:  newShow.CreatedBy,
+		IsDeleted:  false,
 	}
 	return show, nil
 }
@@ -28,10 +35,11 @@ func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
 		query += ` AND S.IsDeleted = false`
 	}
 	show := &Show{}
-	err := store.DB.QueryRow(query,
+	err := store.db.QueryRow(query,
 		id).Scan(
 		&show.ID, &show.Name,
-		&show.AuditionID, &show.IsDeleted)
+		&show.AuditionID, &show.CreatedAt,
+		&show.CreatedBy, &show.IsDeleted)
 	if err != nil {
 		show = nil
 	}
@@ -43,7 +51,7 @@ func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
 
 // DeleteShowByID marks the show with the given ID as deleted.
 func (store *Database) DeleteShowByID(id int) error {
-	_, err := store.DB.Exec(`UPDATE Shows SET IsDeleted = ? WHERE ShowID = ?`, true, id)
+	_, err := store.db.Exec(`UPDATE Shows SET IsDeleted = ? WHERE ShowID = ?`, true, id)
 	return err
 }
 
@@ -55,7 +63,7 @@ func (store *Database) GetShowsByAuditionID(id, page int, includeDeleted bool) (
 		query += ` AND S.IsDeleted = false`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	result, err := store.DB.Query(query, id, offset)
+	result, err := store.db.Query(query, id, offset)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -65,7 +73,8 @@ func (store *Database) GetShowsByAuditionID(id, page int, includeDeleted bool) (
 	shows := make([]*Show, 0)
 	for result.Next() {
 		show := &Show{}
-		if err = result.Scan(&show.ID, &show.Name, &show.AuditionID, &show.IsDeleted); err != nil {
+		if err = result.Scan(&show.ID, &show.Name, &show.AuditionID, &show.CreatedAt,
+			&show.CreatedBy, &show.IsDeleted); err != nil {
 			return nil, err
 		}
 		shows = append(shows, show)

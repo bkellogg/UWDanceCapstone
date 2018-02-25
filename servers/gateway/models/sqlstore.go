@@ -10,12 +10,12 @@ import (
 
 // Database defines a sql database struct
 type Database struct {
-	DB *sql.DB
+	db *sql.DB
 }
 
-// NewDatabase returns a new Database with an open sql DB connection from the given
+// NewDatabase returns a new Database with an open sql db connection from the given
 // connection information. Returns an error if it failed to open the connection, or
-// if it fails to ping the DB after three tries
+// if it fails to ping the db after three tries
 func NewDatabase(user, password, addr, dbName string) (*Database, error) {
 	connectionInfo := mysql.Config{
 		User:      user,
@@ -29,12 +29,12 @@ func NewDatabase(user, password, addr, dbName string) (*Database, error) {
 	if err != nil {
 		return nil, errors.New("error opening connection to Database: " + err.Error())
 	}
-	return &Database{DB: db}, nil
+	return &Database{db: db}, nil
 }
 
 // LogError logs the given error to the database.
 func (store *Database) LogError(err ErrorLog) {
-	_, dbErr := store.DB.Exec(`INSERT INTO Errors (ErrTime, ErrRemoteAddr, ErrRequestMethod, ErrRequestURI, ErrCode, ErrMessage) VALUES (?, ?, ?, ?, ?, ?)`,
+	_, dbErr := store.db.Exec(`INSERT INTO Errors (ErrTime, ErrRemoteAddr, ErrRequestMethod, ErrRequestURI, ErrCode, ErrMessage) VALUES (?, ?, ?, ?, ?, ?)`,
 		err.Time, err.RemoteAddr, err.RequestMethod, err.RequestURI, err.Code, err.Message)
 	if dbErr != nil {
 		log.Println("logging failed: " + dbErr.Error())
