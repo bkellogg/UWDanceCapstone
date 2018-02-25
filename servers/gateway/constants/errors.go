@@ -15,4 +15,6 @@ const (
 	ErrReceiveIntoStructFailed = "malformed JSON prevented request decoding"
 	ErrBioTooManyCharacters    = "the provided bio contains too many characters"
 	ErrBioTooManyWords         = "the provided bio contains too many words"
+
+	ErrInvalidHistoryOption = "invalid history option"
 )

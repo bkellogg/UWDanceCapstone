@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -104,6 +105,16 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return HTTPError("error getting pieces by user id: "+err.Error(), http.StatusInternalServerError)
 		}
 		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
+	case "shows":
+		shows, err := ctx.Database.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
+		if err != nil {
+			code := http.StatusInternalServerError
+			if err.Error() == constants.ErrInvalidHistoryOption {
+				code = http.StatusBadRequest
+			}
+			return HTTPError("error getting shows by user id: "+err.Error(), code)
+		}
+		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
 	case "photo":
 		userID, err := parseUserID(r, u)
 		if err != nil {
