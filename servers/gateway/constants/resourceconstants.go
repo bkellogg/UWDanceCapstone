@@ -19,11 +19,9 @@ const (
 	ResourceID       = "/{id}"
 	ResourceIDObject = ResourceID + "/{object}"
 
-	AnnoucementsPath       = BaseAPIPath + "/announcements"
-	AnnoucementsListenPath = "/listen"
+	AnnoucementsPath = BaseAPIPath + "/announcements"
 
 	UpdatesPath = BaseAPIPath + "/updates"
 
-	PasswordResetPath       = BaseAPIPath + "/passwordreset"
-	PasswordResetClientPath = "reset"
+	PasswordResetPath = BaseAPIPath + "/passwordreset"
 )

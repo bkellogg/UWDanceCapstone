@@ -1,0 +1,10 @@
+.show {
+    padding-left: 300px;
+}
+
+@media only screen and (max-width : 992px) {
+
+    .show {
+      padding-left: 0;
+    }
+}

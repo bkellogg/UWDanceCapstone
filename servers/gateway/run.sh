@@ -33,7 +33,6 @@ docker run -d \
 -p 443:443 \
 -p 80:80 \
 -v /root/:/certs/dance/:ro \
--v /webclients/:/webclients/:ro \
 -v /static/:/static/ \
 -e ADDR=:443 \
 -e TLSKEY=/certs/dance/dasc.capstone.ischool.uw.edu-key.pem \
@@ -47,6 +46,7 @@ docker run -d \
 -e SESSIONKEY=$(uuidgen) \
 -e MAILUSER=$MAILUSER \
 -e MAILPASS=$MAILPASS \
--e RESETPASSWORDCLIENTPATH=/webclients/passwordreset/ \
--e ADMINCONSOLEPATH=/webclients/console/ \
+-e RESETPASSWORDCLIENTPATH=/static/clients/passwordreset/ \
+-e ADMINCONSOLEPATH=/static/clients/console/ \
+-e FRONTENDPATH=/static/clients/frontend/build/ \
 brendankellogg/dancegateway
