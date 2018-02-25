@@ -27,6 +27,7 @@ CREATE TABLE Shows (
     ShowID INT AUTO_INCREMENT PRIMARY KEY,
     ShowName varchar(50) NOT NULL UNIQUE KEY,
     AuditionID INT,
+    EndDate DATETIME NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
