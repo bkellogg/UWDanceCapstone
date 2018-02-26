@@ -50,7 +50,7 @@ photoForm.addEventListener("submit", (evt) => {
         }
     };
 
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/1/photo");
+    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
     xhr.setRequestHeader("Authorization", auth);
     xhr.setRequestHeader("ImageFieldName", "image");
 
