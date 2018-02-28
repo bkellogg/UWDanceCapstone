@@ -1,4 +1,4 @@
-package constants
+package appvars
 
 // UserDefaultRole is the default role privilege for new users
 const (

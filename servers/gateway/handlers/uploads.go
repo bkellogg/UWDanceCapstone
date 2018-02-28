@@ -15,7 +15,7 @@ import (
 
 	"github.com/nfnt/resize"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 )
 
@@ -35,7 +35,7 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 	}
 
 	// if the file size is greater than 5MB, reject it
-	if fileheader.Size > constants.ProfileUploadMaxFileSize {
+	if fileheader.Size > appvars.ProfileUploadMaxFileSize {
 		return HTTPError("filesize too large", http.StatusBadRequest)
 	}
 
@@ -66,7 +66,7 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 
 	// get the user ID and create a new file for the image to be saved to.
 	userIDString := strconv.Itoa(userID)
-	f, err := os.OpenFile(constants.ProfilePicturePath+userIDString+".jpg", os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile(appvars.ProfilePicturePath+userIDString+".jpg", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return HTTPError(err.Error(), http.StatusInternalServerError)
 	}
@@ -93,7 +93,7 @@ func saveResumeFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 
 	// get the user ID and create a new file for the resume to be saved to.
 	userIDString := strconv.Itoa(userID)
-	f, err := os.OpenFile(constants.ProfileResumePath+userIDString+".pdf", os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile(appvars.ProfileResumePath+userIDString+".pdf", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return HTTPError(err.Error(), http.StatusInternalServerError)
 	}
@@ -106,7 +106,7 @@ func saveResumeFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 // error occured.
 func getUserResume(userID int) ([]byte, *middleware.HTTPError) {
 	userIDString := strconv.Itoa(userID)
-	resumeBytes, err := ioutil.ReadFile(constants.ProfileResumePath + userIDString + ".pdf")
+	resumeBytes, err := ioutil.ReadFile(appvars.ProfileResumePath + userIDString + ".pdf")
 	if err != nil {
 		return nil, HTTPError("user resume not found", http.StatusNotFound)
 	}
@@ -117,7 +117,7 @@ func getUserResume(userID int) ([]byte, *middleware.HTTPError) {
 // userID as a []byte. Returns an error if one occurred.
 func getUserProfilePicture(userID int) ([]byte, *middleware.HTTPError) {
 	userIDString := strconv.Itoa(userID)
-	imageBytes, err := ioutil.ReadFile(constants.ProfilePicturePath + userIDString + ".jpg")
+	imageBytes, err := ioutil.ReadFile(appvars.ProfilePicturePath + userIDString + ".jpg")
 	if err != nil {
 		return nil, HTTPError("profile picture not found", http.StatusNotFound)
 	}

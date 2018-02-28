@@ -10,7 +10,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/handlers"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
@@ -26,12 +26,12 @@ func main() {
 	tlsCert := getRequiredENVOrExit("TLSCERT", "")
 	sessionKey := getRequiredENVOrExit("SESSIONKEY", "")
 
-	// MYSQL Database environment variables
+	// MYSQL store environment variables
 	mySQLPass := getRequiredENVOrExit("MYSQLPASS", "")
 	mySQLAddr := getRequiredENVOrExit("MYSQLADDR", "")
 	mySQLDBName := getRequiredENVOrExit("MYSQLDBNAME", "DanceDB")
 
-	// Redis Database environment variables
+	// Redis store environment variables
 	redisAddr := getRequiredENVOrExit("REDISADDR", "")
 
 	// Mail Info
@@ -48,7 +48,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error connecting to database: %v", err)
 	}
-	redis := sessions.NewRedisStore(nil, constants.DefaultSessionDuration, redisAddr)
+	redis := sessions.NewRedisStore(nil, appvars.DefaultSessionDuration, redisAddr)
 
 	notifier := notify.NewNotifier()
 
@@ -58,39 +58,39 @@ func main() {
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
 	baseRouter := mux.NewRouter()
-	baseRouter.Handle(constants.MailPath, authorizer.Authorize(mailContext.MailHandler))
-	baseRouter.HandleFunc(constants.SessionsPath, authContext.UserSignInHandler)
-	baseRouter.HandleFunc(constants.PasswordResetPath, authContext.PasswordResetHandler)
+	baseRouter.Handle(appvars.MailPath, authorizer.Authorize(mailContext.MailHandler))
+	baseRouter.HandleFunc(appvars.SessionsPath, authContext.UserSignInHandler)
+	baseRouter.HandleFunc(appvars.PasswordResetPath, authContext.PasswordResetHandler)
 	baseRouter.PathPrefix("/reset/").Handler(handlers.PreventDirListing(http.StripPrefix("/reset/", http.FileServer(http.Dir(resetPasswordClientPath)))))
 	baseRouter.PathPrefix("/console").Handler(handlers.AddTrailingSlash(http.StripPrefix("/console/", http.FileServer(http.Dir(adminConsolePath)))))
 
-	updatesRouter := baseRouter.PathPrefix(constants.UpdatesPath).Subrouter()
-	updatesRouter.Handle(constants.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
+	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()
+	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
-	annoucementsRouter := baseRouter.PathPrefix(constants.AnnoucementsPath).Subrouter()
-	annoucementsRouter.Handle(constants.ResourceRoot, authorizer.Authorize(annoucementContext.AnnoucementsHandler))
+	annoucementsRouter := baseRouter.PathPrefix(appvars.AnnoucementsPath).Subrouter()
+	annoucementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(annoucementContext.AnnoucementsHandler))
 	annoucementsRouter.Handle("/dummy", authorizer.Authorize(annoucementContext.DummyAnnouncementHandler))
 
-	usersRouter := baseRouter.PathPrefix(constants.UsersPath).Subrouter()
-	usersRouter.HandleFunc(constants.ResourceRoot, authContext.UserSignUpHandler)
-	usersRouter.Handle(constants.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
-	usersRouter.Handle(constants.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
-	usersRouter.Handle(constants.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
-	usersRouter.Handle(constants.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler))
+	usersRouter := baseRouter.PathPrefix(appvars.UsersPath).Subrouter()
+	usersRouter.HandleFunc(appvars.ResourceRoot, authContext.UserSignUpHandler)
+	usersRouter.Handle(appvars.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
+	usersRouter.Handle(appvars.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
+	usersRouter.Handle(appvars.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
+	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler))
 
-	auditionRouter := baseRouter.PathPrefix(constants.AuditionsPath).Subrouter()
-	auditionRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
-	auditionRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificAuditionHandler))
-	auditionRouter.Handle(constants.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificAuditionHandler))
+	auditionRouter := baseRouter.PathPrefix(appvars.AuditionsPath).Subrouter()
+	auditionRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
+	auditionRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificAuditionHandler))
+	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificAuditionHandler))
 
-	showRouter := baseRouter.PathPrefix(constants.ShowsPath).Subrouter()
-	showRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.ShowsHandler))                       // /api/v1/shows
-	showRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificShowHandler))                  // /api/v1/shows/{showID}
-	showRouter.Handle(constants.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificShowHandler)) // /api/v1/shows/{showID}/{object}
+	showRouter := baseRouter.PathPrefix(appvars.ShowsPath).Subrouter()
+	showRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.ShowsHandler))                       // /api/v1/shows
+	showRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificShowHandler))                  // /api/v1/shows/{showID}
+	showRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificShowHandler)) // /api/v1/shows/{showID}/{object}
 
-	pieceRouter := baseRouter.PathPrefix(constants.PiecesPath).Subrouter()
-	pieceRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
-	pieceRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
+	pieceRouter := baseRouter.PathPrefix(appvars.PiecesPath).Subrouter()
+	pieceRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
+	pieceRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
 
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
 	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath + "index.html"))

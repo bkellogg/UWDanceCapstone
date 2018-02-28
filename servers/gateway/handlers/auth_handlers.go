@@ -5,7 +5,7 @@ import (
 
 	"fmt"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 	"golang.org/x/crypto/bcrypt"
@@ -23,7 +23,7 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	userAlreadyExists, err := ctx.Database.ContainsUser(newUser)
+	userAlreadyExists, err := ctx.store.ContainsUser(newUser)
 	if err != nil {
 		http.Error(w, "error looking up user in database: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -39,7 +39,7 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err = ctx.Database.InsertNewUser(user); err != nil {
+	if err = ctx.store.InsertNewUser(user); err != nil {
 		http.Error(w, "error inserting user: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -66,7 +66,7 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	// Get the user from the database corresponding to the given email
-	user, err := ctx.Database.GetUserByEmail(signInRequest.Email, true)
+	user, err := ctx.store.GetUserByEmail(signInRequest.Email, true)
 	if err != nil {
 		http.Error(w, "error performing database lookup: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -97,6 +97,6 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 // prevent timing attacks
 func dummyAuthenticate() {
 	fmt.Println("dummy auth called")
-	hash, _ := bcrypt.GenerateFromPassword([]byte("DUMMYAUTHENTICATE"), constants.BCryptDefaultCost)
+	hash, _ := bcrypt.GenerateFromPassword([]byte("DUMMYAUTHENTICATE"), appvars.BCryptDefaultCost)
 	bcrypt.CompareHashAndPassword(hash, []byte("WRONGPASSWORD"))
 }

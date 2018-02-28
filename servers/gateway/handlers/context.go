@@ -13,7 +13,7 @@ import (
 type AuthContext struct {
 	SessionKey      string
 	SessionsStore   sessions.Store
-	Database        *models.Database
+	store           *models.Database
 	MailCredentials *mail.MailCredentials
 	TemplatePath    string
 }
@@ -23,7 +23,7 @@ func NewAuthContext(sessionKey, tp string, sessionStore sessions.Store, database
 	return &AuthContext{
 		SessionKey:      sessionKey,
 		SessionsStore:   sessionStore,
-		Database:        database,
+		store:           database,
 		MailCredentials: mc,
 		TemplatePath:    tp,
 	}

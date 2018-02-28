@@ -27,7 +27,7 @@ func (ctx *AuthContext) AuditionsHandler(w http.ResponseWriter, r *http.Request,
 			return HTTPError("error decoding new audition: "+err.Error(), http.StatusBadRequest)
 		}
 		newAud.CreatedBy = int(u.ID)
-		audition, err := ctx.Database.InsertNewAudition(newAud)
+		audition, err := ctx.store.InsertNewAudition(newAud)
 		if err != nil {
 			return HTTPError(fmt.Sprintf("error inserting new audition: %v", err), http.StatusInternalServerError)
 		}
@@ -50,7 +50,7 @@ func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.R
 		if !u.Can(permissions.SeeAuditions) {
 			return permissionDenied()
 		}
-		audition, err := ctx.Database.GetAuditionByID(audID, includeDeleted)
+		audition, err := ctx.store.GetAuditionByID(audID, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting audition by ID: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -62,7 +62,7 @@ func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.R
 		if !u.Can(permissions.DeleteAuditions) {
 			return permissionDenied()
 		}
-		err := ctx.Database.DeleteAuditionByID(audID)
+		err := ctx.store.DeleteAuditionByID(audID)
 		if err == nil {
 			return respondWithString(w, "audition deleted", http.StatusOK)
 		}
@@ -88,7 +88,7 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		return HTTPError("unparsable ID given: "+err.Error(), http.StatusBadRequest)
 	}
 	includeDeleted := getIncludeDeletedParam(r)
-	audition, err := ctx.Database.GetAuditionByID(audID, includeDeleted)
+	audition, err := ctx.store.GetAuditionByID(audID, includeDeleted)
 	if err != nil {
 		return HTTPError("error getting audition by ID: "+err.Error(), http.StatusInternalServerError)
 	}
@@ -107,7 +107,7 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		if !u.Can(permissions.SeeAllUsers) {
 			return permissionDenied()
 		}
-		users, err := ctx.Database.GetUsersByAuditionID(audID, page, includeDeleted)
+		users, err := ctx.store.GetUsersByAuditionID(audID, page, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting users by audition id: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -117,7 +117,7 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		if !u.Can(permissions.SeePieces) {
 			return permissionDenied()
 		}
-		pieces, err := ctx.Database.GetPiecesByAuditionID(audID, page, includeDeleted)
+		pieces, err := ctx.store.GetPiecesByAuditionID(audID, page, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting pieces by audition id: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -126,7 +126,7 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		if !u.Can(permissions.SeeShows) {
 			return permissionDenied()
 		}
-		shows, err := ctx.Database.GetShowsByAuditionID(audID, page, includeDeleted)
+		shows, err := ctx.store.GetShowsByAuditionID(audID, page, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting shows by audition id: "+err.Error(), http.StatusInternalServerError)
 		}

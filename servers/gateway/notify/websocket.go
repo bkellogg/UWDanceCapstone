@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
@@ -37,7 +37,7 @@ func NewWebSocketsHandler(notifier *Notifier, store sessions.Store, sessionKey s
 func (wsh *WebSocketsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	user, err := sessions.GetUserFromRequest(r, wsh.sessionKey, wsh.sessionStore)
 	if err != nil {
-		http.Error(w, constants.ErrNotSignedIn, http.StatusUnauthorized)
+		http.Error(w, appvars.ErrNotSignedIn, http.StatusUnauthorized)
 		return
 	}
 	conn, err := wsh.upgrader.Upgrade(w, r, nil)

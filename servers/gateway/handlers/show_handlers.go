@@ -25,7 +25,7 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 			return HTTPError("error decoding new show: "+err.Error(), http.StatusBadRequest)
 		}
 		newShow.CreatedBy = int(u.ID)
-		show, err := ctx.Database.InsertNewShow(newShow)
+		show, err := ctx.store.InsertNewShow(newShow)
 		if err != nil {
 			return HTTPError("error inserting new show:"+err.Error(), http.StatusInternalServerError)
 		}
@@ -48,7 +48,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 		if !u.Can(permissions.SeeShows) {
 			return permissionDenied()
 		}
-		show, err := ctx.Database.GetShowByID(showID, includeDeleted)
+		show, err := ctx.store.GetShowByID(showID, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -60,7 +60,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 		if !u.Can(permissions.DeleteShows) {
 			return permissionDenied()
 		}
-		err := ctx.Database.DeleteShowByID(showID)
+		err := ctx.store.DeleteShowByID(showID)
 		if err == nil {
 			return respondWithString(w, "show deleted", http.StatusOK)
 		}
@@ -92,7 +92,7 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 		return httperr
 	}
 
-	audition, err := ctx.Database.GetShowByID(showID, includeDeleted)
+	audition, err := ctx.store.GetShowByID(showID, includeDeleted)
 	if err != nil {
 		return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
 	}
@@ -112,7 +112,7 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 		if !u.Can(permissions.SeePieces) {
 			return permissionDenied()
 		}
-		pieces, err := ctx.Database.GetPiecesByShowID(showID, page, includeDeleted)
+		pieces, err := ctx.store.GetPiecesByShowID(showID, page, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting shows by audition id: "+err.Error(), http.StatusInternalServerError)
 		}

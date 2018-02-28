@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
@@ -19,7 +19,7 @@ var HTTPError = middleware.NewHTTPError
 // permissionDenied returns a permission deined HTTPError.
 func permissionDenied() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: constants.ErrPermissionDenied,
+		Message: appvars.ErrPermissionDenied,
 		Status:  http.StatusForbidden,
 	}
 }
@@ -27,7 +27,7 @@ func permissionDenied() *middleware.HTTPError {
 // methodNotAllowed returns a method not allowed HTTPError.
 func methodNotAllowed() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: constants.ErrMethodNotAllowed,
+		Message: appvars.ErrMethodNotAllowed,
 		Status:  http.StatusMethodNotAllowed,
 	}
 }
@@ -35,7 +35,7 @@ func methodNotAllowed() *middleware.HTTPError {
 // objectTypeNotSupported returns an object type not supported HTTPError.
 func objectTypeNotSupported() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: constants.ErrObjectTypeNotSupported,
+		Message: appvars.ErrObjectTypeNotSupported,
 		Status:  http.StatusBadRequest,
 	}
 }
@@ -43,7 +43,7 @@ func objectTypeNotSupported() *middleware.HTTPError {
 // resourceDoesNotExist returns a resource does not exists HTTPError.
 func resourceDoesNotExist() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: constants.ErrResourceDoesNotExist,
+		Message: appvars.ErrResourceDoesNotExist,
 		Status:  http.StatusNotFound,
 	}
 }
@@ -59,7 +59,7 @@ func objectNotFound(objType string) *middleware.HTTPError {
 // receiveFailed returns an HTTPError representing a JSON receiving failure.
 func receiveFailed() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: constants.ErrReceiveIntoStructFailed,
+		Message: appvars.ErrReceiveIntoStructFailed,
 		Status:  http.StatusBadRequest,
 	}
 }
@@ -68,7 +68,7 @@ func receiveFailed() *middleware.HTTPError {
 // that was unworkable.
 func unparsableIDGiven() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: constants.ErrUnparsableIDGiven,
+		Message: appvars.ErrUnparsableIDGiven,
 		Status:  http.StatusBadRequest,
 	}
 }

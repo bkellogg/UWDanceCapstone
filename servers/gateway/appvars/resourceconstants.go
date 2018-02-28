@@ -1,4 +1,4 @@
-package constants
+package appvars
 
 const (
 	BaseAPIPath = "/api/v1"

@@ -1,4 +1,4 @@
-package constants
+package appvars
 
 const (
 	ErrNotSignedIn            = "you must be signed in to use this resource"

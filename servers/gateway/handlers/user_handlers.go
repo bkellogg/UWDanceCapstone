@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -26,7 +26,7 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 		return httperror
 	}
 	includeInactive := getIncludeInactiveParam(r)
-	users, err := ctx.Database.GetAllUsers(page, includeInactive)
+	users, err := ctx.store.GetAllUsers(page, includeInactive)
 	if err != nil {
 		return HTTPError("error getting users: "+err.Error(), http.StatusInternalServerError)
 	}
@@ -45,7 +45,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		if !u.CanSeeUser(userID) {
 			return permissionDenied()
 		}
-		user, err := ctx.Database.GetUserByID(userID, includeInactive)
+		user, err := ctx.store.GetUserByID(userID, includeInactive)
 		if err != nil {
 			return HTTPError("error looking up user: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -65,7 +65,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		if err := updates.CheckBioLength(); err != nil {
 			return HTTPError(err.Error(), http.StatusBadRequest)
 		}
-		err := ctx.Database.UpdateUserByID(userID, updates, includeInactive)
+		err := ctx.store.UpdateUserByID(userID, updates, includeInactive)
 		if err != nil {
 			return HTTPError(err.Error(), http.StatusInternalServerError)
 		}
@@ -74,7 +74,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		if !u.CanDeleteUser(userID) {
 			return permissionDenied()
 		}
-		if err := ctx.Database.DeactivateUserByID(userID); err != nil {
+		if err := ctx.store.DeactivateUserByID(userID); err != nil {
 			if err != sql.ErrNoRows {
 				return HTTPError("error deleting user: "+err.Error(), http.StatusInternalServerError)
 			}
@@ -100,16 +100,16 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 	objectType := mux.Vars(r)["object"]
 	switch objectType {
 	case "pieces":
-		pieces, err := ctx.Database.GetPiecesByUserID(userID, page, includeDeleted)
+		pieces, err := ctx.store.GetPiecesByUserID(userID, page, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting pieces by user id: "+err.Error(), http.StatusInternalServerError)
 		}
 		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
 	case "shows":
-		shows, err := ctx.Database.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
+		shows, err := ctx.store.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
 		if err != nil {
 			code := http.StatusInternalServerError
-			if err.Error() == constants.ErrInvalidHistoryOption {
+			if err.Error() == appvars.ErrInvalidHistoryOption {
 				code = http.StatusBadRequest
 			}
 			return HTTPError("error getting shows by user id: "+err.Error(), code)
@@ -156,7 +156,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		}
 		return methodNotAllowed()
 	case "announcements":
-		announcements, err := ctx.Database.GetAllAnnouncements(page, includeDeleted, userID)
+		announcements, err := ctx.store.GetAllAnnouncements(page, includeDeleted, userID)
 		if err != nil {
 			return HTTPError("error looking up announcements: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -169,7 +169,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 // UserMemberShipHandler handles all requests to add or remove a user to
 // an entity.
 func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	function := ctx.Database.AddUserToAudition
+	function := ctx.store.AddUserToAudition
 	message := "user added to audition"
 	vars := mux.Vars(r)
 	objType := vars["object"]
@@ -184,17 +184,17 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 	switch r.Method {
 	case "LINK":
 		if objType == "pieces" {
-			function = ctx.Database.AddUserToPiece
+			function = ctx.store.AddUserToPiece
 			message = "user added to piece"
 		} else if objType != "auditions" {
 			return objectTypeNotSupported()
 		}
 	case "UNLINK":
 		if objType == "pieces" {
-			function = ctx.Database.RemoveUserFromPiece
+			function = ctx.store.RemoveUserFromPiece
 			message = "user removed from piece"
 		} else if objType == "auditions" {
-			function = ctx.Database.RemoveUserFromAudition
+			function = ctx.store.RemoveUserFromAudition
 			message = "user removed from audition"
 		} else {
 			return objectTypeNotSupported()
@@ -207,8 +207,8 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 		code := http.StatusInternalServerError
 		if err == sql.ErrNoRows {
 			code = http.StatusBadRequest
-		} else if err.Error() == constants.ErrPieceDoesNotExist ||
-			err.Error() == constants.ErrAuditionDoesNotExist {
+		} else if err.Error() == appvars.ErrPieceDoesNotExist ||
+			err.Error() == appvars.ErrAuditionDoesNotExist {
 			code = http.StatusNotFound
 		}
 		return HTTPError("error performing membership change: "+err.Error(), code)

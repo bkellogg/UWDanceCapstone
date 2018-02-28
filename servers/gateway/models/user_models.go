@@ -8,7 +8,7 @@ import (
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/Pallinder/go-randomdata"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -59,7 +59,7 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 		LastName:  u.LastName,
 		Email:     u.Email,
 		Bio:       u.Bio,
-		Role:      constants.UserDefaultRole,
+		Role:      appvars.UserDefaultRole,
 		Active:    true,
 		CreatedAt: time.Now(),
 	}
@@ -102,7 +102,7 @@ func (u *NewUserRequest) isReadyForUser() error {
 
 // SetPassword hashes the given password and sets it as this users passHash
 func (u *User) SetPassword(password string) error {
-	passHash, err := bcrypt.GenerateFromPassword([]byte(password), constants.BCryptDefaultCost)
+	passHash, err := bcrypt.GenerateFromPassword([]byte(password), appvars.BCryptDefaultCost)
 	if err != nil {
 		return err
 	}
@@ -158,7 +158,7 @@ func generateRandomUser() *User {
 		FirstName: randomdata.FirstName(randomdata.RandomGender),
 		LastName:  randomdata.LastName(),
 		Email:     randomdata.Email(),
-		Role:      constants.UserDefaultRole,
+		Role:      appvars.UserDefaultRole,
 	}
 	user.SetPassword(randomdata.FirstName(randomdata.RandomGender) + randomdata.Street())
 	return user
@@ -167,11 +167,11 @@ func generateRandomUser() *User {
 // checkBioLength returns an error if the bio is too long
 // either by word count or character count.
 func checkBioLength(bio string) error {
-	if len(bio) > constants.ProfileBioMaxCharacters {
-		return errors.New(constants.ErrBioTooManyCharacters)
+	if len(bio) > appvars.ProfileBioMaxCharacters {
+		return errors.New(appvars.ErrBioTooManyCharacters)
 	}
-	if len(strings.Fields(bio)) > constants.ProfileBioMaxWords {
-		return errors.New(constants.ErrBioTooManyWords)
+	if len(strings.Fields(bio)) > appvars.ProfileBioMaxWords {
+		return errors.New(appvars.ErrBioTooManyWords)
 	}
 	return nil
 }

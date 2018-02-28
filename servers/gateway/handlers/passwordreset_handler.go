@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/mail"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
@@ -15,9 +15,9 @@ func (ctx *AuthContext) PasswordResetHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "no email provided", http.StatusBadRequest)
 		return
 	}
-	user, err := ctx.Database.GetUserByEmail(email, false)
+	user, err := ctx.store.GetUserByEmail(email, false)
 	if err != nil {
-		http.Error(w, constants.ErrDatabaseLookupFailed, http.StatusInternalServerError)
+		http.Error(w, appvars.ErrDatabaseLookupFailed, http.StatusInternalServerError)
 		return
 	}
 	switch r.Method {
@@ -38,7 +38,7 @@ func (ctx *AuthContext) PasswordResetHandler(w http.ResponseWriter, r *http.Requ
 			}
 			msg, err := mail.NewMessageFromTemplate(ctx.MailCredentials,
 				"", ctx.TemplatePath+"passwordreset_tpl.html",
-				constants.PasswordResetEmailSubject, tplVars,
+				appvars.PasswordResetEmailSubject, tplVars,
 				asSlice(email))
 			if err != nil {
 				http.Error(w, "error generating email: "+err.Error(), http.StatusInternalServerError)
@@ -58,7 +58,7 @@ func (ctx *AuthContext) PasswordResetHandler(w http.ResponseWriter, r *http.Requ
 		}
 		if ok, err := ctx.SessionsStore.ValidatePasswordResetToken(email, reset.Token); !ok {
 			status := http.StatusInternalServerError
-			if err.Error() == constants.ErrPasswordResetTokensMismatch {
+			if err.Error() == appvars.ErrPasswordResetTokensMismatch {
 				status = http.StatusUnauthorized
 			}
 			http.Error(w, err.Error(), status)
@@ -72,13 +72,13 @@ func (ctx *AuthContext) PasswordResetHandler(w http.ResponseWriter, r *http.Requ
 			http.Error(w, "error changing password: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if err := ctx.Database.UpdatePasswordByID(int(user.ID), user.PassHash); err != nil {
+		if err := ctx.store.UpdatePasswordByID(int(user.ID), user.PassHash); err != nil {
 			http.Error(w, "error saving new password: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		respondWithString(w, constants.StatusPasswordResetSuccessful, http.StatusOK)
+		respondWithString(w, appvars.StatusPasswordResetSuccessful, http.StatusOK)
 	default:
-		http.Error(w, constants.ErrMethodNotAllowed, http.StatusMethodNotAllowed)
+		http.Error(w, appvars.ErrMethodNotAllowed, http.StatusMethodNotAllowed)
 	}
 
 }

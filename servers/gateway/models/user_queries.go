@@ -139,7 +139,6 @@ func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, error) {
 // InsertNewUser inserts the given new user into the store
 // and populates the ID field of the user
 func (store *Database) InsertNewUser(user *User) error {
-	// TODO: Replace this with stored procedure
 	result, err := store.db.Exec(
 		`INSERT INTO Users (FirstName, LastName, Email, Bio, PassHash, Role, Active, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 		user.FirstName, user.LastName, user.Email, "", user.PassHash, user.Role, true, user.CreatedAt)
@@ -195,7 +194,6 @@ func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User
 
 // UpdateUserByID updates the user with the given ID to match the values
 // of newValues. Returns an error if one occurred.
-// TODO: Implement and test this
 func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeInactive bool) error {
 	newFirstName := len(updates.FirstName) > 0
 	newLastName := len(updates.LastName) > 0
@@ -236,7 +234,6 @@ func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeI
 
 // DeactivateUserByID marks the user with the given userID as inactive. Returns
 // an error if one occured.
-// TODO: Implement and test this
 func (store *Database) DeactivateUserByID(userID int) error {
 	result, err := store.db.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, false, userID)
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
 // InsertNewShow inserts the given newShow into the database and returns the created Show
@@ -77,7 +77,7 @@ func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, histo
 		query += ` AND S.EndDate <= NOW()`
 	case "all", "":
 	default:
-		return nil, errors.New(constants.ErrInvalidHistoryOption)
+		return nil, errors.New(appvars.ErrInvalidHistoryOption)
 	}
 	query += ` LIMIT 25 OFFSET ?`
 	return handleShowsFromDatabase(store.db.Query(query, id, offset))
