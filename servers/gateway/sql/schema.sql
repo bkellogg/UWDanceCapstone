@@ -74,6 +74,12 @@ CREATE TABLE Errors (
     ErrMessage VARCHAR(150) NOT NULL
 );
 
+CREATE TABLE AnnouncementType (
+    AnnouncementTypeID INT AUTO_INCREMENT PRIMARY KEY,
+    AnnouncementTypeName varchar(25) NOT NULL,
+    AnnouncementTypeDesc varchar(150) NULL
+);
+
 CREATE TABLE Announcements (
     AnnouncementID INT AUTO_INCREMENT PRIMARY KEY,
     AnnouncementTypeID INT NOT NULL,
@@ -85,11 +91,6 @@ CREATE TABLE Announcements (
     FOREIGN KEY (AnnouncementTypeID) REFERENCES AnnouncementType(AnnouncementTypeID)
 );
 
-CREATE TABLE AnnouncementType (
-    AnnouncementTypeID INT AUTO_INCREMENT PRIMARY KEY,
-    AnnouncementTypeName varchar(25) NOT NULL,
-    AnnouncementTypeDesc varchar(150) NULL
-)
 
 INSERT INTO AnnouncementType(AnnouncementTypeName, AnnouncementTypeDesc) VALUES ("admin", "Announcements made by an admin."),
     ("audition", "Automated announcements about an audition"), ("show", "Automated announcements about a show"),

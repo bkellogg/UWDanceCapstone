@@ -19,4 +19,7 @@ const (
 	ErrInvalidHistoryOption = "invalid history option"
 
 	ErrUnparsableIDGiven = "unparsable ID given"
+
+	ErrPieceDoesNotExist    = "piece does not exist"
+	ErrAuditionDoesNotExist = "audition does not exist"
 )

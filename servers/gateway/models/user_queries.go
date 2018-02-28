@@ -29,6 +29,13 @@ func (store *Database) UserIsInAudition(userID, audID int) (bool, error) {
 
 // AddUserToPiece adds the given user to the given piece.
 func (store *Database) AddUserToPiece(userID, pieceID int) error {
+	piece, err := store.GetPieceByID(pieceID, false)
+	if err != nil {
+		return err
+	}
+	if piece == nil {
+		return errors.New("piece does not exist")
+	}
 	addTime := time.Now()
 	exists, err := store.UserIsInPiece(userID, pieceID)
 	if err != nil {
@@ -44,6 +51,13 @@ func (store *Database) AddUserToPiece(userID, pieceID int) error {
 
 // RemoveUserFromPiece removes the given user from the given piece.
 func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
+	piece, err := store.GetPieceByID(pieceID, false)
+	if err != nil {
+		return err
+	}
+	if piece == nil {
+		return errors.New("piece does not exist")
+	}
 	result, err := store.db.Exec(`UPDATE UserPiece UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.PieceID = ?`,
 		true, userID, pieceID)
 	if err == nil {
@@ -58,6 +72,13 @@ func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
 // AddUserToAudition adds the given user to the given audition. Returns an error
 // if one occurred.
 func (store *Database) AddUserToAudition(userID, audID int) error {
+	audition, err := store.GetAuditionByID(audID, false)
+	if err != nil {
+		return err
+	}
+	if audition == nil {
+		return errors.New("audition does not exist")
+	}
 	addTime := time.Now()
 	exists, err := store.UserIsInAudition(userID, audID)
 	if err != nil {
@@ -74,6 +95,13 @@ func (store *Database) AddUserToAudition(userID, audID int) error {
 
 // RemoveUserFromPiece removes the given user from the given audition.
 func (store *Database) RemoveUserFromAudition(userID, audID int) error {
+	audition, err := store.GetAuditionByID(audID, false)
+	if err != nil {
+		return err
+	}
+	if audition == nil {
+		return errors.New("audition does not exist")
+	}
 	result, err := store.db.Exec(`UPDATE UserAudition UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.AuditionID = ?`,
 		true, userID, audID)
 	if err == nil {

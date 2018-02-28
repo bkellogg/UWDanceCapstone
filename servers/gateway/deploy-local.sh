@@ -89,7 +89,7 @@ deployAPI () {
 
 if [[ "$1" == "" ]]; then
     deployAPI
-elif [[ "$1" == "--hard" ]]; then
+elif [[ "$1" == "--full" ]]; then
 	deployAPI hard
 elif [[ "$1" == "--nobuild" ]]; then
     deployAPI nobuild
