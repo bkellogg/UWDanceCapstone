@@ -166,42 +166,89 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-// UserMembershipInPieceHandler handles requests to change a user's membership in a piece.
-func (ctx *AuthContext) UserMembershipInPieceHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+//// UserMembershipInPieceHandler handles requests to change a user's membership in a piece.
+//func (ctx *AuthContext) UserMembershipInPieceHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+//	userID, httperr := parseUserID(r, u)
+//	if httperr != nil {
+//		return httperr
+//	}
+//	pieceIDString, found := mux.Vars(r)["pieceID"]
+//	if !found {
+//		return HTTPError("no piece ID given", http.StatusBadRequest)
+//	}
+//	pieceID, err := strconv.Atoi(pieceIDString)
+//	if err != nil {
+//		return HTTPError("unparsable piece ID given: "+err.Error(), http.StatusBadRequest)
+//	}
+//	switch r.Method {
+//	case "LINK":
+//		if !u.Can(permissions.AddUserToPiece) {
+//			return permissionDenied()
+//		}
+//		if err := ctx.Database.AddUserToPiece(userID, pieceID); err != nil {
+//			return HTTPError("error adding user to piece: "+err.Error(), http.StatusInternalServerError)
+//		}
+//		return respondWithString(w, "user added", http.StatusOK)
+//	case "UNLINK":
+//		if !u.Can(permissions.RemoveUserFromPiece) {
+//			return permissionDenied()
+//		}
+//		if err := ctx.Database.RemoveUserFromPiece(userID, pieceID); err != nil {
+//			status := http.StatusInternalServerError
+//			if err == sql.ErrNoRows {
+//				status = http.StatusBadRequest
+//			}
+//			return HTTPError("error removing user from piece: user is not in this piece", status)
+//		}
+//		return respondWithString(w, "user removed", http.StatusOK)
+//	default:
+//		return methodNotAllowed()
+//	}
+//}
+
+// UserMemberShipHandler handles all requests to add or remove a user to
+// an entity.
+func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	function := ctx.Database.AddUserToAudition
+	message := "user added to audition"
+	vars := mux.Vars(r)
+	objType := vars["object"]
+	objID, err := strconv.Atoi(vars["objectID"])
+	if err != nil {
+		return unparsableIDGiven()
+	}
 	userID, httperr := parseUserID(r, u)
 	if httperr != nil {
 		return httperr
 	}
-	pieceIDString, found := mux.Vars(r)["pieceID"]
-	if !found {
-		return HTTPError("no piece ID given", http.StatusBadRequest)
-	}
-	pieceID, err := strconv.Atoi(pieceIDString)
-	if err != nil {
-		return HTTPError("unparsable piece ID given: "+err.Error(), http.StatusBadRequest)
-	}
 	switch r.Method {
 	case "LINK":
-		if !u.Can(permissions.AddUserToPiece) {
-			return permissionDenied()
+		if objType == "piece" {
+			function = ctx.Database.AddUserToPiece
+			message = "user added to piece"
+		} else if objType != "audition" {
+			return objectTypeNotSupported()
 		}
-		if err := ctx.Database.AddUserToPiece(userID, pieceID); err != nil {
-			return HTTPError("error adding user to piece: "+err.Error(), http.StatusInternalServerError)
-		}
-		return respondWithString(w, "user added", http.StatusOK)
 	case "UNLINK":
-		if !u.Can(permissions.RemoveUserFromPiece) {
-			return permissionDenied()
+		if objType == "piece" {
+			function = ctx.Database.RemoveUserFromPiece
+			message = "user removed from piece"
+		} else if objType == "audition" {
+			function = ctx.Database.RemoveUserFromAudition
+			message = "user removed from audition"
+		} else {
+			return objectTypeNotSupported()
 		}
-		if err := ctx.Database.RemoveUserFromPiece(userID, pieceID); err != nil {
-			status := http.StatusInternalServerError
-			if err == sql.ErrNoRows {
-				status = http.StatusBadRequest
-			}
-			return HTTPError("error removing user from piece: user is not in this piece", status)
-		}
-		return respondWithString(w, "user removed", http.StatusOK)
 	default:
 		return methodNotAllowed()
 	}
+	err = function(userID, objID)
+	if err != nil {
+		code := http.StatusInternalServerError
+		if err == sql.ErrNoRows {
+			code = http.StatusBadRequest
+		}
+		return HTTPError("error performing membership change: "+err.Error(), code)
+	}
+	return respondWithString(w, message, http.StatusOK)
 }

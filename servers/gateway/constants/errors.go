@@ -17,4 +17,6 @@ const (
 	ErrBioTooManyWords         = "the provided bio contains too many words"
 
 	ErrInvalidHistoryOption = "invalid history option"
+
+	ErrUnparsableIDGiven = "unparsable ID given"
 )

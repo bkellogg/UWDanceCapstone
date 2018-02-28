@@ -76,9 +76,21 @@ CREATE TABLE Errors (
 
 CREATE TABLE Announcements (
     AnnouncementID INT AUTO_INCREMENT PRIMARY KEY,
+    AnnouncementTypeID INT NOT NULL,
     Message varchar(500) NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted Boolean NOT NULL,
-    FOREIGN KEY (CreatedBy) REFERENCES Users(UserID)
+    FOREIGN KEY (CreatedBy) REFERENCES Users(UserID),
+    FOREIGN KEY (AnnouncementTypeID) REFERENCES AnnouncementType(AnnouncementTypeID)
 );
+
+CREATE TABLE AnnouncementType (
+    AnnouncementTypeID INT AUTO_INCREMENT PRIMARY KEY,
+    AnnouncementTypeName varchar(25) NOT NULL,
+    AnnouncementTypeDesc varchar(150) NULL
+)
+
+INSERT INTO AnnouncementType(AnnouncementTypeName, AnnouncementTypeDesc) VALUES ("admin", "Announcements made by an admin."),
+    ("audition", "Automated announcements about an audition"), ("show", "Automated announcements about a show"),
+    ("piece", "Automated announcements about a piece")

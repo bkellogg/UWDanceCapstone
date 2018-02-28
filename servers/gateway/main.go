@@ -64,7 +64,6 @@ func main() {
 	baseRouter.PathPrefix("/reset/").Handler(handlers.PreventDirListing(http.StripPrefix("/reset/", http.FileServer(http.Dir(resetPasswordClientPath)))))
 	baseRouter.PathPrefix("/console").Handler(handlers.AddTrailingSlash(http.StripPrefix("/console/", http.FileServer(http.Dir(adminConsolePath)))))
 
-
 	updatesRouter := baseRouter.PathPrefix(constants.UpdatesPath).Subrouter()
 	updatesRouter.Handle(constants.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
@@ -77,7 +76,7 @@ func main() {
 	usersRouter.Handle(constants.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
 	usersRouter.Handle(constants.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
 	usersRouter.Handle(constants.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
-	usersRouter.Handle(constants.UserMembershipInPiecePath, authorizer.Authorize(authContext.UserMembershipInPieceHandler))
+	usersRouter.Handle(constants.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler))
 
 	auditionRouter := baseRouter.PathPrefix(constants.AuditionsPath).Subrouter()
 	auditionRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
@@ -93,8 +92,8 @@ func main() {
 	pieceRouter.Handle(constants.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
 	pieceRouter.Handle(constants.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
 
-	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath + "static/"))))
-	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath+"index.html"))
+	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
+	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath + "index.html"))
 
 	treatedRouter := middleware.EnsureHeaders(
 		middleware.LogErrors(baseRouter, db))

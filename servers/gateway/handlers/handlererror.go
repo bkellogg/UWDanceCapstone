@@ -64,6 +64,15 @@ func receiveFailed() *middleware.HTTPError {
 	}
 }
 
+// unparsableIDGiven returns an HTTPError representing an ID that was provided
+// that was unworkable.
+func unparsableIDGiven() *middleware.HTTPError {
+	return &middleware.HTTPError{
+		Message: constants.ErrUnparsableIDGiven,
+		Status:  http.StatusBadRequest,
+	}
+}
+
 // logAndWriteError logs the error content to the given database and writes the error back
 // to the client.
 func logAndWriteError(w http.ResponseWriter, r *http.Request, message string, code int, db *models.Database) {

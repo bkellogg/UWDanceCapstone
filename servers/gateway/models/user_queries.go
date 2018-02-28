@@ -7,10 +7,20 @@ import (
 	"time"
 )
 
-// UserIsInPiece returns true if the given user is in the given piece or an error if one occured.
+// UserIsInPiece returns true if the given user is in the given piece or an error if one occurred.
 func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
 	result, err := store.db.Query(`SELECT * FROM UserPiece UP WHERE UP.UserID = ? AND UP.PieceID = ? AND UP.IsDeleted = ?`,
 		userID, pieceID, false)
+	if result == nil {
+		return false, err
+	}
+	return result.Next(), nil
+}
+
+// UserIsInAudition returns true if the given user is in the given audition or an error if one occurred.
+func (store *Database) UserIsInAudition(userID, audID int) (bool, error) {
+	result, err := store.db.Query(`SELECT * FROM UserAudition UP WHERE UP.UserID = ? AND UP.AuditionID = ? AND UP.IsDeleted = ?`,
+		userID, audID, false)
 	if result == nil {
 		return false, err
 	}
@@ -36,6 +46,36 @@ func (store *Database) AddUserToPiece(userID, pieceID int) error {
 func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
 	result, err := store.db.Exec(`UPDATE UserPiece UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.PieceID = ?`,
 		true, userID, pieceID)
+	if err == nil {
+		rowsAffected, _ := result.RowsAffected()
+		if rowsAffected == 0 {
+			return sql.ErrNoRows
+		}
+	}
+	return err
+}
+
+// AddUserToAudition adds the given user to the given audition. Returns an error
+// if one occurred.
+func (store *Database) AddUserToAudition(userID, audID int) error {
+	addTime := time.Now()
+	exists, err := store.UserIsInAudition(userID, audID)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return errors.New("user is already in this audition")
+	}
+	_, err = store.db.Exec(`INSERT INTO
+		UserAudition(AuditionID, UserID, CreatedAt, IsDeleted)
+		VALUES (?, ?, ?, ?)`, userID, audID, addTime, false)
+	return err
+}
+
+// RemoveUserFromPiece removes the given user from the given audition.
+func (store *Database) RemoveUserFromAudition(userID, audID int) error {
+	result, err := store.db.Exec(`UPDATE UserAudition UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.AuditionID = ?`,
+		true, userID, audID)
 	if err == nil {
 		rowsAffected, _ := result.RowsAffected()
 		if rowsAffected == 0 {

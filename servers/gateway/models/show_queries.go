@@ -66,7 +66,7 @@ func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, histo
 	query := `SELECT S.ShowID, S.ShowName, S.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
 		JOIN Pieces P ON S.ShowID = P.ShowID
 		JOIN UserPiece UP ON P.PieceID = UP.PieceID
-		WHERE UP.UserID`
+		WHERE UP.UserID = ?`
 	if !includeDeleted {
 		query += ` AND S.IsDeleted = false`
 	}
@@ -80,7 +80,7 @@ func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, histo
 		return nil, errors.New(constants.ErrInvalidHistoryOption)
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handleShowsFromDatabase(store.db.Query(query, offset))
+	return handleShowsFromDatabase(store.db.Query(query, id, offset))
 }
 
 // GetShowsByAuditionID returns a slice of shows that are in the given audition
