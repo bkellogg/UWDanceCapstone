@@ -32,7 +32,7 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 			}
 			return HTTPError("error getting shows: "+err.Error(), code)
 		}
-		return respond(w, shows, http.StatusOK)
+		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
 	case "POST":
 		if !u.Can(permissions.CreateShows) {
 			return permissionDenied()

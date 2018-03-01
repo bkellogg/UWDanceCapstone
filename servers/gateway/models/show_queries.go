@@ -36,7 +36,8 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 // on the provided page, or an error if one occurred.
 func (store *Database) GetShows(page int, history string, includeDeleted bool) ([]*Show, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT * FROM Shows S`
+	// TODO: This is awful, but a quick fix for WHERE needing to be there
+	query := `SELECT * FROM Shows S WHERE 1 = 1`
 	if !includeDeleted {
 		query += ` AND S.IsDeleted = false`
 	}
