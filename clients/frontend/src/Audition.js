@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
+import RaisedButton from 'material-ui/RaisedButton';
 import './styling/Audition.css'
 
 const styles = {
@@ -57,6 +58,7 @@ class Audition extends Component {
                   rows={2}
                 />
               </div>
+              <RaisedButton style={{backgroundColor: "#BFB2E5"}}> Register </RaisedButton>
             </div>
           </div>
         </section>

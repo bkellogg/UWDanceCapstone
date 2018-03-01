@@ -60,7 +60,7 @@ class Dashboard extends Component {
           <div className='dashboard'>
             <div id='welcome'> Welcome {this.state.user.firstName}</div>
             <div id='announcements'>
-              {this.state.user.bio !== "" &&
+              {this.state.user.bio === "" &&
                     <Card>
                     <div className="warning">
                       <CardText> 
