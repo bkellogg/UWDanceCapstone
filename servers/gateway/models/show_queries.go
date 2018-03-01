@@ -32,6 +32,45 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 	return show, nil
 }
 
+// InsertNewSHowType inserts the given show type into the database and returns
+// an error if one occurred.
+func (store *Database) InsertNewShowType(showType *ShowType) error {
+	if err := showType.validate(); err != nil {
+		return errors.New("show type validation failed: " + err.Error())
+	}
+	result, err := store.db.Exec(`INSERT INTO ShowType (ShowTypeName, ShowTypeDesc, CreatedAt, CreatedBy, IsDeleted)
+		VALUES (?, ?, ?, ?, ?)`, showType.Name, showType.Desc, showType.CreatedAt, showType.CreatedBy, showType.IsDeleted)
+	if err != nil {
+		return errors.New("error inserting new show type: " + err.Error())
+	}
+	showTypeID, err := result.LastInsertId()
+	if err != nil {
+		return errors.New("error getting show type ID: " + err.Error())
+	}
+	showType.ID = int(showTypeID)
+	return nil
+}
+
+func (store *Database) GetShowTypes(includeDeleted bool) ([]*ShowType, error) {
+	query := `SELECT * FROM ShowType ST`
+	if !includeDeleted {
+		query += ` WHERE ST.IsDeleted = false`
+	}
+	result, err := store.db.Query(query)
+	if err != nil {
+		return nil, errors.New("error getting show types: " + err.Error())
+	}
+	showTypes := make([]*ShowType, 0)
+	for result.Next() {
+		st := &ShowType{}
+		if err := result.Scan(&st.ID, &st.Name, &st.Desc, &st.CreatedAt, &st.CreatedBy, &st.IsDeleted); err != nil {
+			return nil, err
+		}
+		showTypes = append(showTypes, st)
+	}
+	return showTypes, nil
+}
+
 // GetShows gets the first 25 shows that match the given history and includeDeleted filters
 // on the provided page, or an error if one occurred.
 func (store *Database) GetShows(page int, history string, includeDeleted bool) ([]*Show, error) {

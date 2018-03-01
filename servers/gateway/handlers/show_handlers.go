@@ -139,3 +139,33 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 		return objectTypeNotSupported()
 	}
 }
+
+// ShowTyoeHandler handles general requests to the showtype resource.
+func (ctx *AuthContext) ShowTypeHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	switch r.Method {
+	case "GET":
+		if !u.Can(permissions.SeeShowTypes) {
+			return permissionDenied()
+		}
+		showTypes, err := ctx.store.GetShowTypes(getIncludeDeletedParam(r))
+		if err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, showTypes, http.StatusOK)
+	case "POST":
+		if !u.Can(permissions.CreateShowTypes) {
+			return permissionDenied()
+		}
+		showType := &models.ShowType{}
+		if err := receive(r, showType); err != nil {
+			return receiveFailed()
+		}
+		showType.CreatedBy = int(u.ID)
+		if err := ctx.store.InsertNewShowType(showType); err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, showType, http.StatusCreated)
+	default:
+		return methodNotAllowed()
+	}
+}

@@ -84,6 +84,7 @@ func main() {
 	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificAuditionHandler))
 
 	showRouter := baseRouter.PathPrefix(appvars.ShowsPath).Subrouter()
+	showRouter.Handle(appvars.ShowTypesPath, authorizer.Authorize(authContext.ShowTypeHandler))
 	showRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.ShowsHandler))                       // /api/v1/shows
 	showRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificShowHandler))                  // /api/v1/shows/{showID}
 	showRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificShowHandler)) // /api/v1/shows/{showID}/{object}

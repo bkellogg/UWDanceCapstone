@@ -24,4 +24,7 @@ const (
 
 	SendAnnouncements = 70
 	SeeAnnouncements  = 10
+
+	SeeShowTypes    = SeeShows
+	CreateShowTypes = 75
 )

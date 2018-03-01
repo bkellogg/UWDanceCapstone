@@ -23,15 +23,25 @@ CREATE TABLE Auditions (
     IsDeleted BOOLEAN NOT NULL
 );
 
+CREATE TABLE ShowType (
+    ShowTypeID INT AUTO_INCREMENT PRIMARY KEY,
+    ShowTypeName varchar(50) NOT NULL UNIQUE KEY,
+    ShowTypeDesc varchar(150) NULL,
+    CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL
+);
+
 CREATE TABLE Shows (
     ShowID INT AUTO_INCREMENT PRIMARY KEY,
-    ShowName varchar(50) NOT NULL UNIQUE KEY,
+    ShowTypeID INT NOT NULL,
     AuditionID INT,
     EndDate DATETIME NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
-    FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID)
+    FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID),
+    FOREIGN KEY (ShowTypeID) REFERENCES ShowType(ShowTypeID)
 );
 
 CREATE TABLE Pieces (
@@ -90,8 +100,3 @@ CREATE TABLE Announcements (
     FOREIGN KEY (CreatedBy) REFERENCES Users(UserID),
     FOREIGN KEY (AnnouncementTypeID) REFERENCES AnnouncementType(AnnouncementTypeID)
 );
-
-
-INSERT INTO AnnouncementType(AnnouncementTypeName, AnnouncementTypeDesc) VALUES ("admin", "Announcements made by an admin."),
-    ("audition", "Automated announcements about an audition"), ("show", "Automated announcements about a show"),
-    ("piece", "Automated announcements about a piece")
