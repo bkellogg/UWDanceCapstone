@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
 	"github.com/gorilla/mux"
 
@@ -15,6 +16,23 @@ import (
 // ShowsHandler handles requests for the shows resource.
 func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
+	case "GET":
+		if !u.Can(permissions.SeeShows) {
+			return permissionDenied()
+		}
+		page, httperr := getPageParam(r)
+		if httperr != nil {
+			return httperr
+		}
+		shows, err := ctx.store.GetShows(page, getHistoryParam(r), getIncludeDeletedParam(r))
+		if err != nil {
+			code := http.StatusInternalServerError
+			if err.Error() == appvars.ErrInvalidHistoryOption {
+				code = http.StatusBadRequest
+			}
+			return HTTPError("error getting shows: "+err.Error(), code)
+		}
+		return respond(w, shows, http.StatusOK)
 	case "POST":
 		if !u.Can(permissions.CreateShows) {
 			return permissionDenied()

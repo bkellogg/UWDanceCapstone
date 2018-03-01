@@ -62,7 +62,7 @@ func main() {
 	baseRouter.HandleFunc(appvars.SessionsPath, authContext.UserSignInHandler)
 	baseRouter.HandleFunc(appvars.PasswordResetPath, authContext.PasswordResetHandler)
 	baseRouter.PathPrefix("/reset/").Handler(handlers.PreventDirListing(http.StripPrefix("/reset/", http.FileServer(http.Dir(resetPasswordClientPath)))))
-	baseRouter.PathPrefix("/console").Handler(handlers.AddTrailingSlash(http.StripPrefix("/console/", http.FileServer(http.Dir(adminConsolePath)))))
+	baseRouter.PathPrefix("/admin").Handler(handlers.AddTrailingSlash(http.StripPrefix("/admin/", http.FileServer(http.Dir(adminConsolePath)))))
 
 	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()
 	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))

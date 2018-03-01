@@ -32,6 +32,27 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 	return show, nil
 }
 
+// GetShows gets the first 25 shows that match the given history and includeDeleted filters
+// on the provided page, or an error if one occurred.
+func (store *Database) GetShows(page int, history string, includeDeleted bool) ([]*Show, error) {
+	offset := getSQLPageOffset(page)
+	query := `SELECT * FROM Shows S`
+	if !includeDeleted {
+		query += ` AND S.IsDeleted = false`
+	}
+	switch history {
+	case "current":
+		query += ` AND S.EndDate > NOW()`
+	case "past":
+		query += ` AND S.EndDate <= NOW()`
+	case "all", "":
+	default:
+		return nil, errors.New(appvars.ErrInvalidHistoryOption)
+	}
+	query += ` LIMIT 25 OFFSET ?`
+	return handleShowsFromDatabase(store.db.Query(query, offset))
+}
+
 // GetShowByID returns the show with the given ID.
 func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
 	query := `SELECT * FROM Shows S WHERE S.ShowID = ?`
