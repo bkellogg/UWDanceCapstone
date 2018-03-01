@@ -4,6 +4,10 @@ import './styling/Dashboard.css';
 class Dashboard extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      user: JSON.parse(localStorage.user),
+      auth: localStorage.auth
+    }
   };
 
   componentDidMount(){

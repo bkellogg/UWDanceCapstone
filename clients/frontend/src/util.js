@@ -71,6 +71,21 @@ export function uploadPhoto(){
     
 }
 
+export function uploadResume(val){
+    let payload = {
+        "resume": val
+    };
+    makeRequest("users/me", payload, "POST", true)
+        .then((res) =>{
+            if (res.ok) {
+                refreshLocalUser()
+                return
+            }
+            return res.text().then((t) => Promise.reject(t));
+        })
+        .catch((err) => {})
+}
+
 export function uploadBio(val){
     let payload = {
         "bio": val
@@ -88,3 +103,83 @@ export function uploadBio(val){
         })
         .catch((err) => {})
 }
+
+export function uploadFName(val){
+    let payload = {
+        "firstname": val
+    };
+    makeRequest("users/me", payload, "PATCH", true)
+        .then((res) => {
+            if (res.ok) {
+                refreshLocalUser()
+                return
+            }
+            return res.text().then((t) => Promise.reject(t));
+        })
+        .then(() => {
+            refreshLocalUser()
+        })
+        .catch((err) => {})
+}
+
+export function uploadLName(val){
+    let payload = {
+        "lastname": val
+    };
+    makeRequest("users/me", payload, "PATCH", true)
+        .then((res) => {
+            if (res.ok) {
+                refreshLocalUser()
+                return
+            }
+            return res.text().then((t) => Promise.reject(t));
+        })
+        .then(() => {
+            refreshLocalUser()
+        })
+        .catch((err) => {})
+}
+
+/*
+export function getResume(){
+  let id = this.state.user.id;
+  let auth = this.state.auth;
+  fetch(Util.API_URL_BASE + "users/" + id + "/resume?auth=" + auth)
+        .then((res) => {
+            if (res.ok) {
+                return res.blob();
+            }
+            return res.text().then((t) => Promise.reject(t));
+        })
+        .then((data) => {
+            this.setState({
+              resume : data
+            })
+        })
+        .catch((err) => {
+            this.setState({
+              resumeErr: err
+            })
+        });
+} */
+
+/*
+export function getPhoto(){
+    fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
+        .then((res) => {
+            if (res.ok) {
+                return res.blob();
+            }
+            return res.text().then((t) => Promise.reject(t));
+        })
+        .then((data) => {
+            this.setState({
+              photoSrc : URL.createObjectURL(data)
+            })
+        })
+        .catch((err) => {
+            this.setState({
+              photoError: err
+            })
+        });
+} */
