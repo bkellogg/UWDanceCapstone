@@ -14,6 +14,10 @@ export function getLocalUser() {
     return JSON.parse(localStorage.getItem("user"));
 };
 
+export function getID(){
+    return JSON.parse(localStorage.getItem("user")).id;
+}
+
 export function getAuth() {
     return localStorage.getItem("auth");
 };
@@ -75,7 +79,7 @@ export function uploadResume(val){
     let payload = {
         "resume": val
     };
-    makeRequest("users/me", payload, "POST", true)
+    makeRequest(("users" + getID()), payload, "POST", true)
         .then((res) =>{
             if (res.ok) {
                 refreshLocalUser()
@@ -90,7 +94,7 @@ export function uploadBio(val){
     let payload = {
         "bio": val
     };
-    makeRequest("users/me", payload, "PATCH", true)
+    makeRequest("users/", payload, "PATCH", true)
         .then((res) => {
             if (res.ok) {
                 refreshLocalUser()

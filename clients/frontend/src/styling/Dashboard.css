@@ -1,6 +1,28 @@
 .dashboard {
-    padding-left: 300px;
-  }
+    padding-left:25px;
+}
+
+#welcome {
+  margin-top: 50px;
+  font-size: 35px;
+}
+
+.announcement {
+  padding-top: 10px
+}
+
+.title{
+  background-color: lavender;
+}
+
+.cardBody{
+  background-color: #BFB2E5
+}
+
+.warning{
+  background-color:#F7AC69
+}
+
 
 @media only screen and (max-width : 992px) {
 

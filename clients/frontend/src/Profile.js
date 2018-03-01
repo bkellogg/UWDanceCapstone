@@ -145,8 +145,8 @@ class Profile extends Component {
               {this.state.edit &&
                 <div id="editName">
                   <Row>
-                  <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange}/>
-                  <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange}/>
+                    <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange}/>
+                    <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange}/>
                   </Row>
                 </div>
               }
