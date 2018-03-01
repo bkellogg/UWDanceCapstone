@@ -15,7 +15,7 @@ import (
 func (ctx *AuthContext) PiecesHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
 	case "POST":
-		if !u.Can(permissions.CreateShows) {
+		if !u.Can(permissions.CreatePieces) {
 			return permissionDenied()
 		}
 		newPiece := &models.NewPiece{}
