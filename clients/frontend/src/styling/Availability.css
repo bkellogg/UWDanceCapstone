@@ -1,0 +1,16 @@
+.table-drag-select td  {
+    border: 0.1rem solid transparent
+}
+
+.table-drag-select tr td {
+    /* Remove empty space at top of table */
+    border-top: 0;
+    line-height: 2px;
+    padding: 10px
+}
+
+.table-drag-select {
+    width: 80%;
+    margin-left: 0px
+}
+  
