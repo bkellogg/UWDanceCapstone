@@ -20,10 +20,28 @@
     background-color: lavender 
 }
 
-#successReg{
-    font-size: 25px;
+.success{
+    background-color: lavender
 }
 
-.success{
-    background-color: #BFB2E5;
+.successCard{
+    margin-top: 10px
+}
+
+#number{
+    font-size: 65px;
+    margin: 0
+}
+
+#regCard{
+    text-align: center;
+    width: 300px
+}
+
+#numArea{
+    padding: 0px;
+}
+
+.regNum{
+    background-color: #BFB2E5
 }

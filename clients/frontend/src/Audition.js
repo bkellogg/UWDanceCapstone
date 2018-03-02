@@ -79,12 +79,23 @@ class Audition extends Component {
             {
               this.state.registered === true &&
               <div className="registered">
-                <Card>
+                <Card className="successCard">
                   <div className="success">
+                    <CardTitle>You have successfully registered</CardTitle>
+                  </div>
                     <CardText>
-                    <h2 id="successReg"> You have successfully registered </h2>
-                      </CardText>
+                      <p>Meany Hall Studio 265</p>
+                      <p>Audition starts at 6:30</p>
+                      <p>Doors open for warmup 30 minutes prior</p>
+                    </CardText>
+                </Card>
+                <Card className="successCard" id="regCard">
+                  <div className="regNum">
+                    <CardTitle><h3>You are number</h3> </CardTitle>
                     </div>
+                    <CardText id="numArea">
+                      <p id="number">1</p>
+                    </CardText>
                 </Card>
               </div>
             }
