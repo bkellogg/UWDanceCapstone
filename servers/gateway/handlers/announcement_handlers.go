@@ -40,7 +40,7 @@ func (ctx *AnnoucementContext) AnnoucementsHandler(w http.ResponseWriter, r *htt
 			return HTTPError(err.Error(), http.StatusBadRequest)
 		}
 		na.UserID = u.ID
-		annoucement, err := ctx.Store.InsertNewAnnouncment(na)
+		annoucement, err := ctx.Store.InsertAnnouncement(na)
 		if err != nil {
 			return HTTPError(err.Error(), http.StatusInternalServerError)
 		}
@@ -51,6 +51,36 @@ func (ctx *AnnoucementContext) AnnoucementsHandler(w http.ResponseWriter, r *htt
 		}
 		ctx.Notifier.Notify(wse)
 		return respond(w, annoucement, http.StatusCreated)
+	default:
+		return methodNotAllowed()
+	}
+}
+
+// AnnouncementTypeHandler handles general requests to the announcement types resource.
+func (ctx *AuthContext) AnnouncementTypesHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	switch r.Method {
+	case "GET":
+		if !u.Can(permissions.SeeAnnouncementTypes) {
+			return permissionDenied()
+		}
+		announcementTypes, err := ctx.store.GetAnnouncementTypes(getIncludeDeletedParam(r))
+		if err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, announcementTypes, http.StatusOK)
+	case "POST":
+		if !u.Can(permissions.CreateAnnouncementTypes) {
+			return permissionDenied()
+		}
+		announcementType := &models.AnnouncementType{}
+		if err := receive(r, announcementType); err != nil {
+			return receiveFailed()
+		}
+		announcementType.CreatedBy = int(u.ID)
+		if err := ctx.store.InsertAnnouncementType(announcementType); err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, announcementType, http.StatusCreated)
 	default:
 		return methodNotAllowed()
 	}

@@ -18,7 +18,7 @@ const (
 	ResourceRoot     = ""
 	ResourceID       = "/{id}"
 	ResourceIDObject = ResourceID + "/{object}"
-	ShowTypesPath    = "/types"
+	ObjectTypesPath  = "/types"
 
 	AnnoucementsPath = BaseAPIPath + "/announcements"
 

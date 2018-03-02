@@ -69,9 +69,10 @@ func main() {
 	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()
 	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
-	annoucementsRouter := baseRouter.PathPrefix(appvars.AnnoucementsPath).Subrouter()
-	annoucementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(annoucementContext.AnnoucementsHandler))
-	annoucementsRouter.Handle("/dummy", authorizer.Authorize(annoucementContext.DummyAnnouncementHandler))
+	announcementsRouter := baseRouter.PathPrefix(appvars.AnnoucementsPath).Subrouter()
+	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(annoucementContext.AnnoucementsHandler))
+	announcementsRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.AnnouncementTypesHandler))
+	announcementsRouter.Handle("/dummy", authorizer.Authorize(annoucementContext.DummyAnnouncementHandler))
 
 	usersRouter := baseRouter.PathPrefix(appvars.UsersPath).Subrouter()
 	usersRouter.HandleFunc(appvars.ResourceRoot, authContext.UserSignUpHandler)
@@ -86,7 +87,7 @@ func main() {
 	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificAuditionHandler))
 
 	showRouter := baseRouter.PathPrefix(appvars.ShowsPath).Subrouter()
-	showRouter.Handle(appvars.ShowTypesPath, authorizer.Authorize(authContext.ShowTypeHandler))
+	showRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.ShowTypeHandler))
 	showRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.ShowsHandler))                       // /api/v1/shows
 	showRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificShowHandler))                  // /api/v1/shows/{showID}
 	showRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificShowHandler)) // /api/v1/shows/{showID}/{object}

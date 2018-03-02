@@ -87,7 +87,10 @@ CREATE TABLE Errors (
 CREATE TABLE AnnouncementType (
     AnnouncementTypeID INT AUTO_INCREMENT PRIMARY KEY,
     AnnouncementTypeName varchar(25) NOT NULL,
-    AnnouncementTypeDesc varchar(150) NULL
+    AnnouncementTypeDesc varchar(150) NULL,
+    CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL
 );
 
 CREATE TABLE Announcements (

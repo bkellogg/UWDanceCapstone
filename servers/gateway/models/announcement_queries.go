@@ -2,13 +2,14 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"strconv"
 	"time"
 )
 
-// InsertNewAnnouncment inserts the given new annoucement into the database
-// and returns an annoucement. Returns an error if one occured.
-func (store *Database) InsertNewAnnouncment(newAnnouncement *NewAnnouncement) (*Announcement, error) {
+// InsertAnnouncement inserts the given new announcement into the database
+// and returns an announcement. Returns an error if one occurred.
+func (store *Database) InsertAnnouncement(newAnnouncement *NewAnnouncement) (*Announcement, error) {
 	postTime := time.Now()
 	result, err := store.db.Exec(`INSERT INTO Announcements (Message, CreatedAt, CreatedBy, IsDeleted)
 		VALUES (?, ?, ?, ?)`, newAnnouncement.Message, postTime, newAnnouncement.UserID, false)
@@ -25,6 +26,47 @@ func (store *Database) InsertNewAnnouncment(newAnnouncement *NewAnnouncement) (*
 		CreatedAt: postTime,
 		CreatedBy: newAnnouncement.UserID,
 	}, nil
+}
+
+// InsertAnnouncementType inserts the given AnnouncementType into the database.
+// Returns an error if one occurred.
+func (store *Database) InsertAnnouncementType(at *AnnouncementType) error {
+	if err := at.Validate(); err != nil {
+		return errors.New("announcement type validation failed: " + err.Error())
+	}
+	result, err := store.db.Exec(`INSERT INTO AnnouncementType (AnnouncementTypeName, AnnouncementTypeDesc,
+		CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`, at.Name, at.Desc, at.CreatedAt, at.CreatedBy, at.IsDeleted)
+	if err != nil {
+		return errors.New("announcement type insert failed: " + err.Error())
+	}
+	atID, err := result.LastInsertId()
+	if err != nil {
+		return errors.New("failed to get ID of announcement type: " + err.Error())
+	}
+	at.ID = atID
+	return nil
+}
+
+// GetAnnouncementTypes returns a slice of AnnouncementTypes based on the filters provided.
+// Returns an error if one occurred.
+func (store *Database) GetAnnouncementTypes(includeDeleted bool) ([]*AnnouncementType, error) {
+	query := `SELECT * FROM AnnouncementType AT`
+	if !includeDeleted {
+		query += ` WHERE AT.IsDeleted = false`
+	}
+	result, err := store.db.Query(query)
+	if err != nil {
+		return nil, errors.New("error getting announcement types: " + err.Error())
+	}
+	announcementTypes := make([]*AnnouncementType, 0)
+	for result.Next() {
+		at := &AnnouncementType{}
+		if err := result.Scan(&at.ID, &at.Name, &at.Desc, &at.CreatedAt, &at.CreatedBy, &at.IsDeleted); err != nil {
+			return nil, err
+		}
+		announcementTypes = append(announcementTypes, at)
+	}
+	return announcementTypes, nil
 }
 
 // GetAllAnnouncements gets the given page of annoucements, optionally including deleted ones.

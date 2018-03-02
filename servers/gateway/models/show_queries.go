@@ -51,6 +51,8 @@ func (store *Database) InsertNewShowType(showType *ShowType) error {
 	return nil
 }
 
+// GetShowTypes returns a slice of ShowTypes based on the filters provided.
+// Returns an error if one occurred.
 func (store *Database) GetShowTypes(includeDeleted bool) ([]*ShowType, error) {
 	query := `SELECT * FROM ShowType ST`
 	if !includeDeleted {
