@@ -4,9 +4,9 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Your Password Reset</title>
-    <link rel="stylesheet" href="template_style.css">
-    <!-- <style>
+    <title>Auditions are Coming Up!</title>
+    <link rel="stylesheet" href="../assets/css/template_style.css">
+        <!-- <style>
         /*shared features*/
 
         .footer-text-wrapper,
@@ -112,17 +112,21 @@
         <div class="email-body">
             <div>
                 <p>Hello {{.Name}}, </p>
-                <p>We have received a request to reset your password. If this was you, please use the link below:\</p>
-            </div>
-            <!-- RESET PASSWORD BUTTON -->
-            <div class="main-content">
-                <div class="reset-link-button"><a class="reset-link-button" href="{{.URL}}">Reset Password</a></div>
-                <p>If you are unable to click on the link, please copy and paste this into your web browser:</p>
-                <div class="raw-url">{{.URL}}</div>
+                <p>Save the date! Auditions for the {{.Show}} are coming up!</p>
             </div>
 
-            <div>
-                <p>If this was not you, no further action is required. Your password will remain unchanged.</p>
+            <div class = "audition-details">
+                <p>Show: {{.Show}}</p>
+                <p>Date: {{.Date}}</p>
+                <p>Time: {{.Time}}</p>
+                <p>Location: {{.Location}}</p>
+            </div>
+
+            <!-- RESET PASSWORD BUTTON -->
+            <div class="main-content">
+                <p><a class="link" href="{{.URL}}">Sign in</a> to your STAGE account to register for auditions.</p>
+                <p>If you are unable to click on the link, please copy and paste this into your web browser:</p>
+                <div class="raw-url">{{.URL}}</div>
             </div>
 
             <!-- MESSAGE -->
