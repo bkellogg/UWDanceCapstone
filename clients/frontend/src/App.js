@@ -4,6 +4,7 @@ import SignUp from './SignUp.js';
 import SignIn from './SignIn.js';
 import Main from './Main.js'
 import './styling/App.css';
+import * as Util from './util.js';
 
 class App extends Component {
   constructor(props) {
@@ -18,6 +19,10 @@ class App extends Component {
       authorized: false
     };
   };
+
+  componentDidMount(){
+    Util.refreshLocalUser();
+  }
 
   registerUser(userVal) {
     this.setState({

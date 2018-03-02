@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {Button} from 'react-materialize';
+import TextField from 'material-ui/TextField';
+import {Button, Input, Row} from 'react-materialize';
 //import * as Util from './util.js';
 import './styling/SignUp.css';
 
@@ -68,31 +69,13 @@ class SignUpExtra extends Component {
         return(
         <section className="signUpExtra">
           <form>
-            <div className="row">
-              <div className="input-field col s12">
-                <input type="text" name="bio" id="bio" maxLength='250' onChange={this.inputChange}/>
-                <label htmlFor="bio">Bio</label>
-              </div>
-              {/*
-              <div class="file-field input-field">
-                <div class="btn">
-                    <span>Resume (PDF)</span>
-                    <input type="file"/>
-                </div>
-                <div class="file-path-wrapper">
-                    <input class="file-path validate" type="text"/>
-                </div>
-              </div>
-              <div class="file-field input-field">
-                <div class="btn">
-                    <span>Head Shot</span>
-                    <input type="file"/>
-                </div>
-                <div class="file-path-wrapper">
-                    <input class="file-path validate" type="text"/>
-                </div>
-              </div> */}
-            </div>
+            <p>Please upload the following information</p>
+            <p>Bio (60 words or less)</p>
+            <TextField name="bio"></TextField>
+            <p>Resume (PDF)</p>
+            <Input id="resumeUpload" name="resumeUpload" type="file"/>
+            <p>Headshot</p>
+            <Input id="headshotUpload" name="headshotUpload" type="file"/>
           </form>
           <Button onClick={this.signUp}> Finish Sign Up </Button>
           <Button onClick={this.skip}> Skip </Button>
