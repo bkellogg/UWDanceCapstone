@@ -10,3 +10,20 @@
 .row{
     display: block
 }
+
+.audition{
+    margin-bottom: 200px
+}
+
+.register{
+    margin-top: 15px;
+    background-color: lavender 
+}
+
+#successReg{
+    font-size: 25px;
+}
+
+.success{
+    background-color: #BFB2E5;
+}
