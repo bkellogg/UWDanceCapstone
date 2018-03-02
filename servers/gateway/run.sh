@@ -31,10 +31,14 @@ docker run -d \
 --name gateway \
 --network dancenet \
 -p 443:443 \
+-p 80:80 \
 -v /root/:/certs/dance/:ro \
+-v /static/:/static/ \
 -e ADDR=:443 \
 -e TLSKEY=/certs/dance/dasc.capstone.ischool.uw.edu-key.pem \
 -e TLSCERT=/certs/dance/dasc.capstone.ischool.uw.edu-cert.pem \
+-e TEMPLATESPATH=/templates/ \
+-e HTTPREDIRADDR=:80 \
 -e REDISADDR=redis:6379 \
 -e MYSQLADDR=mysql:3306 \
 -e MYSQLPASS=$MYSQLPASS \
@@ -42,4 +46,8 @@ docker run -d \
 -e SESSIONKEY=$(uuidgen) \
 -e MAILUSER=$MAILUSER \
 -e MAILPASS=$MAILPASS \
+-e RESETPASSWORDCLIENTPATH=/static/clients/passwordreset/ \
+-e ADMINCONSOLEPATH=/static/clients/console/ \
+-e FRONTENDPATH=/static/clients/frontend/build/ \
+-e ASSETSPATH=/static/assets/ \
 brendankellogg/dancegateway

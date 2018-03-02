@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/mail"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/notify"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
 
@@ -10,17 +11,37 @@ import (
 // handlers performing authentication functions will
 // need
 type AuthContext struct {
-	SessionKey    string
-	SessionsStore sessions.Store
-	Database      *models.Database
+	SessionKey      string
+	SessionsStore   sessions.Store
+	Database        *models.Database
+	MailCredentials *mail.MailCredentials
+	TemplatePath    string
 }
 
 // NewAuthContext Creates a new auth context with the given information
-func NewAuthContext(sessionKey string, sessionStore sessions.Store, database *models.Database) *AuthContext {
+func NewAuthContext(sessionKey, tp string, sessionStore sessions.Store, database *models.Database, mc *mail.MailCredentials) *AuthContext {
 	return &AuthContext{
-		SessionKey:    sessionKey,
-		SessionsStore: sessionStore,
-		Database:      database,
+		SessionKey:      sessionKey,
+		SessionsStore:   sessionStore,
+		Database:        database,
+		MailCredentials: mc,
+		TemplatePath:    tp,
+	}
+}
+
+// AnnoucementContext defines the information needed for
+// handlers performing annoucement operations.
+type AnnoucementContext struct {
+	Store    *models.Database
+	Notifier *notify.Notifier
+}
+
+// NewAnnoucementContext returns a pointer to an AnnoucementContext
+// with the given information.
+func NewAnnoucementContext(store *models.Database, notifier *notify.Notifier) *AnnoucementContext {
+	return &AnnoucementContext{
+		Store:    store,
+		Notifier: notifier,
 	}
 }
 

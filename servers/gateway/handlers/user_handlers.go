@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
 	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -32,7 +33,7 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	return respond(w, models.PaginateUsers(users, page), http.StatusOK)
 }
 
-// SpecificUserHandler handles requests for a specifc user
+// SpecificUserHandler handles requests for a specific user
 func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	userID, err := parseUserID(r, u)
 	if err != nil {
@@ -57,8 +58,18 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		if !u.CanModifyUser(userID) {
 			return permissionDenied()
 		}
-		// TODO: Implement this
-		return respond(w, "TODO: Implement This", http.StatusOK)
+		updates := &models.UserUpdates{}
+		if err := receive(r, updates); err != nil {
+			return receiveFailed()
+		}
+		if err := updates.CheckBioLength(); err != nil {
+			return HTTPError(err.Error(), http.StatusBadRequest)
+		}
+		err := ctx.Database.UpdateUserByID(userID, updates, includeInactive)
+		if err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+		return respondWithString(w, "user updated", http.StatusOK)
 	case "DELETE":
 		if !u.CanDeleteUser(userID) {
 			return permissionDenied()
@@ -69,7 +80,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 			}
 			return objectNotFound("user")
 		}
-		return respondWithString(w, "user has been deleted", 200)
+		return respondWithString(w, "user has been deleted", http.StatusOK)
 	default:
 		return methodNotAllowed()
 	}
@@ -94,10 +105,20 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return HTTPError("error getting pieces by user id: "+err.Error(), http.StatusInternalServerError)
 		}
 		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
+	case "shows":
+		shows, err := ctx.Database.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
+		if err != nil {
+			code := http.StatusInternalServerError
+			if err.Error() == constants.ErrInvalidHistoryOption {
+				code = http.StatusBadRequest
+			}
+			return HTTPError("error getting shows by user id: "+err.Error(), code)
+		}
+		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
 	case "photo":
 		userID, err := parseUserID(r, u)
 		if err != nil {
-			return HTTPError(err.Message, err.Status)
+			return err
 		}
 		if r.Method == "GET" {
 			if !u.CanSeeUser(userID) {
@@ -121,10 +142,6 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return methodNotAllowed()
 		}
 	case "resume":
-		userID, err := parseUserID(r, u)
-		if err != nil {
-			return HTTPError(err.Message, err.Status)
-		}
 		if r.Method == "GET" {
 			resumeBytes, httperr := getUserResume(userID)
 			if httperr != nil {
@@ -138,6 +155,12 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return respondWithString(w, "resume uploaded!", http.StatusCreated)
 		}
 		return methodNotAllowed()
+	case "announcements":
+		announcements, err := ctx.Database.GetAllAnnouncements(page, includeDeleted, userID)
+		if err != nil {
+			return HTTPError("error looking up announcements: "+err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, models.PaginateAnnouncementResponses(announcements, page), http.StatusOK)
 	default:
 		return objectTypeNotSupported()
 	}
@@ -175,7 +198,7 @@ func (ctx *AuthContext) UserMembershipInPieceHandler(w http.ResponseWriter, r *h
 			if err == sql.ErrNoRows {
 				status = http.StatusBadRequest
 			}
-			return HTTPError("error removing user to piece: user is not in this piece", status)
+			return HTTPError("error removing user from piece: user is not in this piece", status)
 		}
 		return respondWithString(w, "user removed", http.StatusOK)
 	default:

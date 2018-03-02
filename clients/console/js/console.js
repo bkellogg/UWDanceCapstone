@@ -15,6 +15,7 @@ var signoutButton = document.querySelector(".js-signout-btn");
 var refreshUserButton = document.querySelector(".js-refresh-user-btn");
 
 var welcome = document.createElement("p");
+var accountLink = document.createElement("a");
 var user = {};
 
 var auditionFormWrapper = $('.create-audition-form-wrapper');
@@ -28,8 +29,11 @@ var auditionForm = $('.create-audition-form');
 
 refreshLocalUser().then(() => {
     user = getLocalUser();
-    welcome.innerText = "Welcome " + user.firstName + "! Your current access level is: " + user.role + ".";
+    welcome.textContent = "Welcome " + user.firstName + "! Your current access level is: " + user.role + ".";
     content.appendChild(welcome);
+    accountLink.href = "account.html";
+    accountLink.textContent = "View Profile";
+    content.appendChild(accountLink);
 });
 
 signoutButton.addEventListener("click", signout);
