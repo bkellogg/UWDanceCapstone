@@ -59,7 +59,7 @@ export function refreshLocalUser() {
     })
     .catch((err) => {
         console.error(err);
-        alert(err);
+        //alert(err);
         signOut();
     })
 }
