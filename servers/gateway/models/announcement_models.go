@@ -28,7 +28,7 @@ type AnnouncementResponse struct {
 	IsDeleted          bool      `json:"isDeleted"`
 }
 
-// NewAnnouncement defines the structure of how an annoucement will be given to
+// NewAnnouncement defines the structure of how an announcement will be given to
 // the system to post.
 type NewAnnouncement struct {
 	Message string `json:"message"`

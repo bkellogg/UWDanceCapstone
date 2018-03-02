@@ -70,7 +70,7 @@ func main() {
 	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
 	announcementsRouter := baseRouter.PathPrefix(appvars.AnnoucementsPath).Subrouter()
-	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(annoucementContext.AnnoucementsHandler))
+	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(annoucementContext.AnnouncementsHandler))
 	announcementsRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.AnnouncementTypesHandler))
 	announcementsRouter.Handle("/dummy", authorizer.Authorize(annoucementContext.DummyAnnouncementHandler))
 

@@ -13,8 +13,8 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 )
 
-// AnnoucementsHandler handles requests related to annoucements resource.
-func (ctx *AnnoucementContext) AnnoucementsHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+// AnnouncementsHandler handles requests related to announcements resource.
+func (ctx *AnnoucementContext) AnnouncementsHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
 	case "GET":
 		if !u.Can(permissions.SeeAnnouncements) {
