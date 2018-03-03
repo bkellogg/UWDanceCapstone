@@ -155,12 +155,6 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return respondWithString(w, "resume uploaded!", http.StatusCreated)
 		}
 		return methodNotAllowed()
-	case "announcements":
-		announcements, err := ctx.store.GetAllAnnouncements(page, includeDeleted, userID)
-		if err != nil {
-			return HTTPError("error looking up announcements: "+err.Error(), http.StatusInternalServerError)
-		}
-		return respond(w, models.PaginateAnnouncementResponses(announcements, page), http.StatusOK)
 	default:
 		return objectTypeNotSupported()
 	}

@@ -99,6 +99,11 @@ func getIncludeDeletedParam(r *http.Request) bool {
 	return r.URL.Query().Get("includeDeleted") == "true"
 }
 
+// getTypeParam returns the value of the "type" param in the given request.
+func getTypeParam(r *http.Request) string {
+	return r.URL.Query().Get("type")
+}
+
 // getEmailParam returns the value of the email param in the given request.
 func getEmailParam(r *http.Request) string {
 	return r.URL.Query().Get("email")
@@ -107,4 +112,10 @@ func getEmailParam(r *http.Request) string {
 // getHistoryParam returns the value of the email param in the given request.
 func getHistoryParam(r *http.Request) string {
 	return r.URL.Query().Get("history")
+}
+
+// getStringParam gets the value of the given param from the given
+// request as a string.
+func getStringParam(r *http.Request, param string) string {
+	return r.URL.Query().Get(param)
 }

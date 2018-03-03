@@ -25,7 +25,7 @@ func (ctx *AnnoucementContext) AnnouncementsHandler(w http.ResponseWriter, r *ht
 			return httperr
 		}
 		includeDeleted := getIncludeDeletedParam(r)
-		announcements, err := ctx.Store.GetAllAnnouncements(page, includeDeleted, -1)
+		announcements, err := ctx.Store.GetAllAnnouncements(page, includeDeleted, getStringParam(r, "user"), getStringParam(r, "type"))
 		if err != nil {
 			return HTTPError("error looking up announcements: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -40,17 +40,20 @@ func (ctx *AnnoucementContext) AnnouncementsHandler(w http.ResponseWriter, r *ht
 			return HTTPError(err.Error(), http.StatusBadRequest)
 		}
 		na.UserID = u.ID
-		annoucement, err := ctx.Store.InsertAnnouncement(na)
+		if err := na.Validate(); err != nil {
+			return HTTPError("new announcement validation failed: "+err.Error(), http.StatusBadRequest)
+		}
+		announcement, err := ctx.Store.InsertAnnouncement(na)
 		if err != nil {
 			return HTTPError(err.Error(), http.StatusInternalServerError)
 		}
 		wse, err := notify.NewWebSocketEvent(notify.EventTypeAnnouncement,
-			annoucement.AsAnnouncementResponse(u))
+			announcement.AsAnnouncementResponse(u))
 		if err != nil {
 			return HTTPError("error creating web socket announcement: "+err.Error(), http.StatusInternalServerError)
 		}
 		ctx.Notifier.Notify(wse)
-		return respond(w, annoucement, http.StatusCreated)
+		return respond(w, announcement, http.StatusCreated)
 	default:
 		return methodNotAllowed()
 	}

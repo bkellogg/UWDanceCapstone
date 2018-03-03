@@ -9,7 +9,7 @@ import (
 // announcement will be stored inside of the database.
 type Announcement struct {
 	ID                 int64     `json:"id"`
-	AnnouncementTypeID int64     `json:"announcementTypeID"`
+	AnnouncementTypeID int64     `json:"typeID"`
 	Message            string    `json:"message"`
 	CreatedAt          time.Time `json:"createdAt"`
 	CreatedBy          int64     `json:"createdBy"`
@@ -21,7 +21,7 @@ type Announcement struct {
 // client.
 type AnnouncementResponse struct {
 	ID                 int64     `json:"id"`
-	AnnouncementTypeID int64     `json:"announcementTypeID"`
+	AnnouncementTypeID int64     `json:"typeID"`
 	Message            string    `json:"message"`
 	CreatedAt          time.Time `json:"createdAt"`
 	CreatedBy          *User     `json:"createdBy"`
@@ -31,8 +31,24 @@ type AnnouncementResponse struct {
 // NewAnnouncement defines the structure of how an announcement will be given to
 // the system to post.
 type NewAnnouncement struct {
-	Message string `json:"message"`
-	UserID  int64  `json:"userID"`
+	AnnouncementType string `json:"type"`
+	Message          string `json:"message"`
+	UserID           int64  `json:"userID"`
+}
+
+// Validate validates the current new announcement and returns an error
+// if one occurred.
+func (na *NewAnnouncement) Validate() error {
+	if len(na.AnnouncementType) == 0 {
+		return errors.New("new announcement must have a type")
+	}
+	if len(na.Message) == 0 {
+		return errors.New("new announcement must have a message")
+	}
+	if na.UserID == 0 {
+		return errors.New("new announcement must have a userID")
+	}
+	return nil
 }
 
 func (a *Announcement) AsAnnouncementResponse(u *User) *AnnouncementResponse {

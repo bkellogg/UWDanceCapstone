@@ -10,9 +10,16 @@ import (
 // InsertAnnouncement inserts the given new announcement into the database
 // and returns an announcement. Returns an error if one occurred.
 func (store *Database) InsertAnnouncement(newAnnouncement *NewAnnouncement) (*Announcement, error) {
+	at, err := store.getAnnouncementTypeByName(newAnnouncement.AnnouncementType, false)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, errors.New("error looking up announcement type: " + err.Error())
+	}
 	postTime := time.Now()
-	result, err := store.db.Exec(`INSERT INTO Announcements (Message, CreatedAt, CreatedBy, IsDeleted)
-		VALUES (?, ?, ?, ?)`, newAnnouncement.Message, postTime, newAnnouncement.UserID, false)
+	result, err := store.db.Exec(`INSERT INTO Announcements (AnnouncementTypeID, Message, CreatedAt, CreatedBy, IsDeleted)
+		VALUES (?, ?, ?, ?, ?)`, at.ID, newAnnouncement.Message, postTime, newAnnouncement.UserID, false)
 	if err != nil {
 		return nil, err
 	}
@@ -21,11 +28,26 @@ func (store *Database) InsertAnnouncement(newAnnouncement *NewAnnouncement) (*An
 		return nil, err
 	}
 	return &Announcement{
-		ID:        announcementID,
-		Message:   newAnnouncement.Message,
-		CreatedAt: postTime,
-		CreatedBy: newAnnouncement.UserID,
+		ID:                 announcementID,
+		AnnouncementTypeID: at.ID,
+		Message:            newAnnouncement.Message,
+		CreatedAt:          postTime,
+		CreatedBy:          newAnnouncement.UserID,
 	}, nil
+}
+
+// getAnnouncementTypeByName returns the announcementType that has that name or an error if one occurred.
+func (store *Database) getAnnouncementTypeByName(name string, includeDeleted bool) (*AnnouncementType, error) {
+	query := `SELECT * FROM AnnouncementType AT WHERE AT.AnnouncementTypeName = ?`
+	if !includeDeleted {
+		query += ` AND AT.IsDeleted = false`
+	}
+	row := store.db.QueryRow(query, name)
+	at := &AnnouncementType{}
+	if err := row.Scan(&at.ID, &at.Name, &at.Desc, &at.CreatedAt, &at.CreatedBy, &at.IsDeleted); err != nil {
+		return nil, err
+	}
+	return at, nil
 }
 
 // InsertAnnouncementType inserts the given AnnouncementType into the database.
@@ -69,18 +91,29 @@ func (store *Database) GetAnnouncementTypes(includeDeleted bool) ([]*Announcemen
 	return announcementTypes, nil
 }
 
-// GetAllAnnouncements gets the given page of annoucements, optionally including deleted ones.
+// GetAllAnnouncements gets the given page of announcements, optionally including deleted ones.
 // returns an error if one occurred.
-func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID int) ([]*AnnouncementResponse, error) {
+func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID, typeName string) ([]*AnnouncementResponse, error) {
+	var at *AnnouncementType
+	var err error
+	if len(typeName) > 0 {
+		at, err = store.getAnnouncementTypeByName(typeName, includeDeleted)
+		if err != nil {
+			return nil, errors.New("error looking up announcement type: " + err.Error())
+		}
+	}
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT A.AnnouncementID, A.Message, A.CreatedAt, A.IsDeleted,
+	query := `SELECT DISTINCT A.AnnouncementID, A.AnnouncementTypeID, A.Message, A.CreatedAt, A.IsDeleted,
 		U.UserID, U.FirstName, U.LastName, U.Email, U.Role, U.Active FROM Announcements A
 		JOIN Users U ON A.CreatedBy = U.UserID`
 	if !includeDeleted {
 		query += ` WHERE A.IsDeleted = FALSE`
 	}
-	if userID > 0 {
-		query += ` AND A.CreatedBy = ` + strconv.Itoa(userID)
+	if len(userID) > 0 {
+		query += ` AND A.CreatedBy = ` + userID
+	}
+	if at != nil {
+		query += ` AND A.AnnouncementTypeID = ` + strconv.Itoa(int(at.ID))
 	}
 	query += ` LIMIT 25 OFFSET ?`
 	return handleAnnouncementsFromDatabase(store.db.Query(query, offset))
@@ -99,7 +132,7 @@ func handleAnnouncementsFromDatabase(result *sql.Rows, err error) ([]*Announceme
 		a := &AnnouncementResponse{
 			CreatedBy: &User{},
 		}
-		if err = result.Scan(&a.ID, &a.Message, &a.CreatedAt, &a.IsDeleted,
+		if err = result.Scan(&a.ID, &a.AnnouncementTypeID, &a.Message, &a.CreatedAt, &a.IsDeleted,
 			&a.CreatedBy.ID, &a.CreatedBy.FirstName, &a.CreatedBy.LastName, &a.CreatedBy.Email,
 			&a.CreatedBy.Role, &a.CreatedBy.Active); err != nil {
 			return nil, err
