@@ -24,7 +24,7 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 		if httperr != nil {
 			return httperr
 		}
-		shows, err := ctx.store.GetShows(page, getHistoryParam(r), getIncludeDeletedParam(r))
+		shows, err := ctx.store.GetShows(page, getHistoryParam(r), getIncludeDeletedParam(r), getStringParam(r, "type"))
 		if err != nil {
 			code := http.StatusInternalServerError
 			if err.Error() == appvars.ErrInvalidHistoryOption {

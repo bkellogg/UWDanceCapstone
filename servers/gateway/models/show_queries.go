@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"strconv"
 	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
@@ -10,9 +11,16 @@ import (
 
 // InsertNewShow inserts the given newShow into the database and returns the created Show
 func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
+	st, err := store.getShowTypeByName(newShow.TypeName, false)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, errors.New("error looking up show type: " + err.Error())
+	}
 	createTime := time.Now()
-	result, err := store.db.Exec(`INSERT INTO Shows (ShowName, AuditionID, EndDate, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
-		newShow.Name, newShow.AuditionID, newShow.EndDate, createTime, newShow.CreatedBy, false)
+	result, err := store.db.Exec(`INSERT INTO Shows (ShowTypeID, AuditionID, EndDate, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
+		st.ID, newShow.AuditionID, newShow.EndDate, createTime, newShow.CreatedBy, false)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +30,7 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 	}
 	show := &Show{
 		ID:         int(showID),
-		Name:       newShow.Name,
+		TypeID:     st.ID,
 		AuditionID: newShow.AuditionID,
 		EndDate:    newShow.EndDate,
 		CreatedAt:  createTime,
@@ -30,6 +38,21 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, error) {
 		IsDeleted:  false,
 	}
 	return show, nil
+}
+
+// getShowTypeByName gets the ShowType associated with the given name, and returns an error
+// if one occurred.
+func (store *Database) getShowTypeByName(name string, includeDeleted bool) (*ShowType, error) {
+	query := `SELECT * FROM ShowType ST WHERE ST.ShowTypeName = ?`
+	if !includeDeleted {
+		query += ` AND ST.IsDeleted = false`
+	}
+	row := store.db.QueryRow(query, name)
+	st := &ShowType{}
+	if err := row.Scan(&st.ID, &st.Name, &st.Desc, &st.CreatedAt, &st.CreatedBy, &st.IsDeleted); err != nil {
+		return nil, err
+	}
+	return st, nil
 }
 
 // InsertNewSHowType inserts the given show type into the database and returns
@@ -75,7 +98,18 @@ func (store *Database) GetShowTypes(includeDeleted bool) ([]*ShowType, error) {
 
 // GetShows gets the first 25 shows that match the given history and includeDeleted filters
 // on the provided page, or an error if one occurred.
-func (store *Database) GetShows(page int, history string, includeDeleted bool) ([]*Show, error) {
+func (store *Database) GetShows(page int, history string, includeDeleted bool, typeName string) ([]*Show, error) {
+	var st *ShowType
+	var err error
+	if len(typeName) > 0 {
+		st, err = store.getShowTypeByName(typeName, includeDeleted)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil, err
+			}
+			return nil, errors.New("error looking up show type name: " + err.Error())
+		}
+	}
 	offset := getSQLPageOffset(page)
 	// TODO: This is awful, but a quick fix for WHERE needing to be there
 	query := `SELECT * FROM Shows S WHERE 1 = 1`
@@ -91,6 +125,9 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool) (
 	default:
 		return nil, errors.New(appvars.ErrInvalidHistoryOption)
 	}
+	if st != nil {
+		query += ` AND S.ShowTypeID = ` + strconv.Itoa(st.ID)
+	}
 	query += ` LIMIT 25 OFFSET ?`
 	return handleShowsFromDatabase(store.db.Query(query, offset))
 }
@@ -104,7 +141,7 @@ func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
 	show := &Show{}
 	err := store.db.QueryRow(query,
 		id).Scan(
-		&show.ID, &show.Name,
+		&show.ID, &show.TypeID,
 		&show.AuditionID, &show.EndDate, &show.CreatedAt,
 		&show.CreatedBy, &show.IsDeleted)
 	if err != nil {
@@ -126,7 +163,7 @@ func (store *Database) DeleteShowByID(id int) error {
 // if one occurred.
 func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, history string) ([]*Show, error) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT S.ShowID, S.ShowName, S.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
+	query := `SELECT S.ShowID, S.ShowTypeID, S.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
 		JOIN Pieces P ON S.ShowID = P.ShowID
 		JOIN UserPiece UP ON P.PieceID = UP.PieceID
 		WHERE UP.UserID = ?`
@@ -169,7 +206,7 @@ func handleShowsFromDatabase(result *sql.Rows, err error) ([]*Show, error) {
 	shows := make([]*Show, 0)
 	for result.Next() {
 		show := &Show{}
-		if err = result.Scan(&show.ID, &show.Name, &show.AuditionID, &show.EndDate,
+		if err = result.Scan(&show.ID, &show.TypeID, &show.AuditionID, &show.EndDate,
 			&show.CreatedAt, &show.CreatedBy, &show.IsDeleted); err != nil {
 			return nil, err
 		}
