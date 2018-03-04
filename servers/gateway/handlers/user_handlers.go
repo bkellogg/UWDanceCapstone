@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -172,6 +173,7 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 		return unparsableIDGiven()
 	}
 	userID, httperr := parseUserID(r, u)
+	fmt.Println(userID)
 	if httperr != nil {
 		return httperr
 	}

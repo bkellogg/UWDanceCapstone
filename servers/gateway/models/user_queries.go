@@ -89,7 +89,7 @@ func (store *Database) AddUserToAudition(userID, audID int) error {
 	}
 	_, err = store.db.Exec(`INSERT INTO
 		UserAudition(AuditionID, UserID, CreatedAt, IsDeleted)
-		VALUES (?, ?, ?, ?)`, userID, audID, addTime, false)
+		VALUES (?, ?, ?, ?)`, audID, userID, addTime, false)
 	return err
 }
 
