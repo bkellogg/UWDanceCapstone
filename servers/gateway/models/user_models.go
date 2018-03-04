@@ -48,8 +48,8 @@ type UserUpdates struct {
 // ToUser takes this *NewUserRequest and returns
 // a *User from it
 func (u *NewUserRequest) ToUser() (*User, error) {
-	if err := u.isReadyForUser(); err != nil {
-		return nil, err
+	if err := u.validate(); err != nil {
+		return nil, errors.New("new user validation failed: " + err.Error())
 	}
 	if err := u.checkBioLength(); err != nil {
 		return nil, err
@@ -78,10 +78,10 @@ func (u *UserUpdates) CheckBioLength() error {
 	return checkBioLength(u.Bio)
 }
 
-// isReadyForUser returns nil if this NewUserRequest is able to
+// validate returns nil if this NewUserRequest is able to
 // be turned into a user, otherwise returns an error stating
 // why it cannot be.
-func (u *NewUserRequest) isReadyForUser() error {
+func (u *NewUserRequest) validate() error {
 	if len(u.FirstName) == 0 {
 		return errors.New("new user first name must exist")
 	}
@@ -95,7 +95,7 @@ func (u *NewUserRequest) isReadyForUser() error {
 		return errors.New("new users must have a password")
 	}
 	if len(u.Password) != len(u.PasswordConf) {
-		return errors.New("passwords did not match")
+		return errors.New("passwords do not match")
 	}
 	return nil
 }

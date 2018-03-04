@@ -58,9 +58,6 @@ func (store *Database) getShowTypeByName(name string, includeDeleted bool) (*Sho
 // InsertNewSHowType inserts the given show type into the database and returns
 // an error if one occurred.
 func (store *Database) InsertNewShowType(showType *ShowType) error {
-	if err := showType.validate(); err != nil {
-		return errors.New("show type validation failed: " + err.Error())
-	}
 	result, err := store.db.Exec(`INSERT INTO ShowType (ShowTypeName, ShowTypeDesc, CreatedAt, CreatedBy, IsDeleted)
 		VALUES (?, ?, ?, ?, ?)`, showType.Name, showType.Desc, showType.CreatedAt, showType.CreatedBy, showType.IsDeleted)
 	if err != nil {

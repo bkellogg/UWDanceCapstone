@@ -3,8 +3,6 @@ package handlers
 import (
 	"net/http"
 
-	"fmt"
-
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
@@ -35,7 +33,7 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 
 	user, err := newUser.ToUser()
 	if err != nil {
-		http.Error(w, "error validating user: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -96,7 +94,6 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 // performs a dummy authentication to mimic a real authentication to
 // prevent timing attacks
 func dummyAuthenticate() {
-	fmt.Println("dummy auth called")
 	hash, _ := bcrypt.GenerateFromPassword([]byte("DUMMYAUTHENTICATE"), appvars.BCryptDefaultCost)
 	bcrypt.CompareHashAndPassword(hash, []byte("WRONGPASSWORD"))
 }

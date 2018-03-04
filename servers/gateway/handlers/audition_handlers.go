@@ -27,6 +27,9 @@ func (ctx *AuthContext) AuditionsHandler(w http.ResponseWriter, r *http.Request,
 			return HTTPError("error decoding new audition: "+err.Error(), http.StatusBadRequest)
 		}
 		newAud.CreatedBy = int(u.ID)
+		if err := newAud.Validate(); err != nil {
+			return HTTPError("new audition validation failed: "+err.Error(), http.StatusBadRequest)
+		}
 		audition, err := ctx.store.InsertNewAudition(newAud)
 		if err != nil {
 			return HTTPError(fmt.Sprintf("error inserting new audition: %v", err), http.StatusInternalServerError)

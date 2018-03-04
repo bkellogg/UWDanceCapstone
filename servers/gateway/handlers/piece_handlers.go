@@ -24,6 +24,9 @@ func (ctx *AuthContext) PiecesHandler(w http.ResponseWriter, r *http.Request, u 
 			return HTTPError("error decoding new piece: "+err.Error(), http.StatusBadRequest)
 		}
 		newPiece.CreatedBy = int(u.ID)
+		if err := newPiece.Validate(); err != nil {
+			return HTTPError("new piece validation failed: "+err.Error(), http.StatusBadRequest)
+		}
 		piece, err := ctx.store.InsertNewPiece(newPiece)
 		if err != nil {
 			return HTTPError("error inserting new piece:"+err.Error(), http.StatusInternalServerError)

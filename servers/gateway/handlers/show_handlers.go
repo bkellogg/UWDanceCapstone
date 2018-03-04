@@ -43,6 +43,9 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 			return HTTPError("error decoding new show: "+err.Error(), http.StatusBadRequest)
 		}
 		newShow.CreatedBy = int(u.ID)
+		if err := newShow.Validate(); err != nil {
+			return HTTPError("new show validation failed: "+err.Error(), http.StatusBadRequest)
+		}
 		show, err := ctx.store.InsertNewShow(newShow)
 		if err != nil {
 			return HTTPError("error inserting new show:"+err.Error(), http.StatusInternalServerError)
@@ -53,7 +56,7 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 	}
 }
 
-// SpecificShowHandler handles requests to a specifc show.
+// SpecificShowHandler handles requests to a specific show.
 func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	showIDString := mux.Vars(r)["id"]
 	showID, err := strconv.Atoi(showIDString)
@@ -140,7 +143,7 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 	}
 }
 
-// ShowTyoeHandler handles general requests to the showtype resource.
+// ShowTypeHandler handles general requests to the show type resource.
 func (ctx *AuthContext) ShowTypeHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
 	case "GET":
@@ -161,6 +164,9 @@ func (ctx *AuthContext) ShowTypeHandler(w http.ResponseWriter, r *http.Request, 
 			return receiveFailed()
 		}
 		showType.CreatedBy = int(u.ID)
+		if err := showType.Validate(); err != nil {
+			return HTTPError("show type validation failed: "+err.Error(), http.StatusBadRequest)
+		}
 		if err := ctx.store.InsertNewShowType(showType); err != nil {
 			return HTTPError(err.Error(), http.StatusInternalServerError)
 		}

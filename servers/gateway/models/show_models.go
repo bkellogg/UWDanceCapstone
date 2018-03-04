@@ -44,7 +44,7 @@ type ShowType struct {
 
 // Validate validates the current show type to check
 // if its ready to be inserted into the database.
-func (st *ShowType) validate() error {
+func (st *ShowType) Validate() error {
 	if st.Name == "" {
 		return errors.New("new show type must have a name")
 	}

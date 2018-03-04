@@ -43,6 +43,9 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 	imgBytesBuffer := bytes.NewBuffer(nil)
 	io.Copy(imgBytesBuffer, img)
 
+	// Make file upload names case insensitive
+	fileheader.Filename = strings.ToLower(fileheader.Filename)
+
 	var uploadedImage image.Image
 
 	if strings.HasSuffix(fileheader.Filename, ".png") {
