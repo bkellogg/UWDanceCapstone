@@ -12,12 +12,9 @@ CREATE TABLE Users (
 
 CREATE TABLE Auditions (
     AuditionID INT AUTO_INCREMENT PRIMARY KEY,
-    AuditionName varchar (50) NOT NULL UNIQUE KEY,
-    AuditionDate varchar(20) NOT NULL,
-    AuditionTime varchar(20) NOT NULL,
-    AuditionLocation varchar(100) NOT NULL,
-    Quarter VARCHAR(10) NOT NULL,
-    Year VARCHAR(4) NOT NULL,
+    Name varchar (50) NOT NULL UNIQUE KEY,
+    Location VARCHAR(100) NOT NULL,
+    Time DATETIME NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL

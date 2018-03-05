@@ -41,6 +41,7 @@ func (store *Database) GetPieceByID(id int, includeDeleted bool) (*Piece, error)
 	if err == sql.ErrNoRows {
 		err = nil
 	}
+	piece.CreatedAt = piece.CreatedAt.In(store.tz)
 	return piece, err
 }
 
@@ -61,7 +62,7 @@ func (store *Database) GetPiecesByUserID(id, page int, includeDeleted bool) ([]*
 		query += ` AND UP.IsDeleted = false`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
+	return store.handlePiecesFromDatabase(store.db.Query(query, id, offset))
 }
 
 // GetPiecesByShowID gets all pieces that are associated with the given show ID.
@@ -72,7 +73,7 @@ func (store *Database) GetPiecesByShowID(id, page int, includeDeleted bool) ([]*
 		query += ` AND P.IsDeleted = false`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
+	return store.handlePiecesFromDatabase(store.db.Query(query, id, offset))
 }
 
 // GetPiecesByAuditionID gets all pieces in the given audition.
@@ -85,11 +86,11 @@ func (store *Database) GetPiecesByAuditionID(id, page int, includeDeleted bool) 
 		query += ` AND P.IsDeleted = FALSE AND S.IsDeleted = FALSE`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
+	return store.handlePiecesFromDatabase(store.db.Query(query, id, offset))
 }
 
 // handlePiecesFromDatabase compiles the given result and err into a slice of pieces or an error.
-func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, error) {
+func (store *Database) handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, error) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -103,6 +104,7 @@ func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, error) {
 			&piece.CreatedAt, &piece.CreatedBy, &piece.IsDeleted); err != nil {
 			return nil, err
 		}
+		piece.CreatedAt = piece.CreatedAt.In(store.tz)
 		pieces = append(pieces, piece)
 	}
 	return pieces, nil

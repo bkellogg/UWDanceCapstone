@@ -89,7 +89,7 @@ func (ctx *AuthContext) AnnouncementTypesHandler(w http.ResponseWriter, r *http.
 	}
 }
 
-// DummyAnnouncementHandler handles requests made to make a dummy annoucement. Creates a dummy
+// DummyAnnouncementHandler handles requests made to make a dummy announcement. Creates a dummy
 // announcement and sends it over the context's notifier.
 func (ctx *AnnoucementContext) DummyAnnouncementHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	if !u.Can(permissions.SendAnnouncements) {
@@ -115,6 +115,6 @@ func (ctx *AnnoucementContext) DummyAnnouncementHandler(w http.ResponseWriter, r
 	}
 	ctx.Notifier.Notify(wse)
 	return respondWithString(w,
-		"Randomly generated annoucement send over the announcement websocket. This announcement was not persisted to the database",
+		"Randomly generated announcement send over the announcement websocket. This announcement was not persisted to the database",
 		http.StatusCreated)
 }

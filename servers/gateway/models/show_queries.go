@@ -88,6 +88,7 @@ func (store *Database) GetShowTypes(includeDeleted bool) ([]*ShowType, error) {
 		if err := result.Scan(&st.ID, &st.Name, &st.Desc, &st.CreatedAt, &st.CreatedBy, &st.IsDeleted); err != nil {
 			return nil, err
 		}
+		st.CreatedAt = st.CreatedAt.In(store.tz)
 		showTypes = append(showTypes, st)
 	}
 	return showTypes, nil
@@ -126,7 +127,7 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool, t
 		query += ` AND S.ShowTypeID = ` + strconv.Itoa(st.ID)
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handleShowsFromDatabase(store.db.Query(query, offset))
+	return store.handleShowsFromDatabase(store.db.Query(query, offset))
 }
 
 // GetShowByID returns the show with the given ID.
@@ -147,6 +148,8 @@ func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
 	if err == sql.ErrNoRows {
 		err = nil
 	}
+	show.EndDate = show.EndDate.In(store.tz)
+	show.CreatedAt = show.CreatedAt.In(store.tz)
 	return show, err
 }
 
@@ -177,7 +180,7 @@ func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, histo
 		return nil, errors.New(appvars.ErrInvalidHistoryOption)
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handleShowsFromDatabase(store.db.Query(query, id, offset))
+	return store.handleShowsFromDatabase(store.db.Query(query, id, offset))
 }
 
 // GetShowsByAuditionID returns a slice of shows that are in the given audition
@@ -188,12 +191,12 @@ func (store *Database) GetShowsByAuditionID(id, page int, includeDeleted bool) (
 		query += ` AND S.IsDeleted = false`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handleShowsFromDatabase(store.db.Query(query, id, offset))
+	return store.handleShowsFromDatabase(store.db.Query(query, id, offset))
 }
 
 // handleShowsFromDatabase returns a slice of shows from the given sql Rows, or an
 // error if one occurred.
-func handleShowsFromDatabase(result *sql.Rows, err error) ([]*Show, error) {
+func (store *Database) handleShowsFromDatabase(result *sql.Rows, err error) ([]*Show, error) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -207,6 +210,8 @@ func handleShowsFromDatabase(result *sql.Rows, err error) ([]*Show, error) {
 			&show.CreatedAt, &show.CreatedBy, &show.IsDeleted); err != nil {
 			return nil, err
 		}
+		show.EndDate = show.EndDate.In(store.tz)
+		show.CreatedAt = show.CreatedAt.In(store.tz)
 		shows = append(shows, show)
 	}
 	return shows, nil
