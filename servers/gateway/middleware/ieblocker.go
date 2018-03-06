@@ -21,7 +21,7 @@ func BlockIE(handler http.Handler) *IEBlocker {
 // the request was not made with the IE User-Agent
 func (ieb *IEBlocker) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if strings.Contains(r.Header.Get("User-Agent"), "Trident") {
-		http.Error(w, "this site does not function with internet explorer; please use a modern internet browser", http.StatusBadRequest)
+		http.Error(w, "this site does not function with internet explorer; please use a modern internet browser", http.StatusOK)
 		return
 	}
 	ieb.handler.ServeHTTP(w, r)

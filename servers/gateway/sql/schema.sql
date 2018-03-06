@@ -47,7 +47,7 @@ CREATE TABLE Pieces (
     ShowID INT,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
-    IsDeleted BOOLEAN NOT NULL,
+    IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (ShowID) REFERENCES Shows(ShowID)
 );
 
@@ -61,14 +61,39 @@ CREATE TABLE UserPiece (
     FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID)
 );
 
+CREATE TABLE UserAuditionSchedule (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Sunday VARCHAR(150) NOT NULL,
+    Monday VARCHAR(150) NOT NULL,
+    Tuesday VARCHAR(150) NOT NULL,
+    Wednesday VARCHAR(150) NOT NULL,
+    Thursday VARCHAR(150) NOT NULL,
+    Friday VARCHAR(150) NOT NULL,
+    Saturday VARCHAR(150) NOT NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT NOW(),
+    IsDeleted BOOLEAN NOT NULL DEFAULT FALSE
+);
+
 CREATE TABLE UserAudition (
     UserAuditionID INT AUTO_INCREMENT PRIMARY KEY,
     AuditionID INT NOT NULL,
     UserID INT NOT NULL,
+    ScheduleID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID)
+    FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID),
+    FOREIGN KEY (ScheduleID) REFERENCES UserAuditionSchedule(ID)
+);
+
+CREATE TABLE UserAuditionComment (
+    CommentID INT AUTO_INCREMENT PRIMARY KEY,
+    UserAuditionID INT NOT NULL,
+    Comment VARCHAR(150) NOT NULL,
+    CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (UserAuditionID) REFERENCES UserAudition(UserAuditionID)
 );
 
 CREATE TABLE Errors (
