@@ -123,7 +123,7 @@ func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, err
 	}
 	query += `LIMIT 25 OFFSET ` + offset
 
-	return store.handleUsersFromDatabase(store.db.Query(query))
+	return handleUsersFromDatabase(store.db.Query(query))
 }
 
 // ContainsUser returns true if this database contains a user with the same
@@ -167,7 +167,6 @@ func (store *Database) GetUserByID(id int, includeInactive bool) (*User, error) 
 	if err == sql.ErrNoRows {
 		err = nil
 	}
-	user.CreatedAt = user.CreatedAt.In(store.tz)
 	return user, err
 }
 
@@ -274,7 +273,7 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 		AND S.IsDeleted = FALSE`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return store.handleUsersFromDatabase(store.db.Query(query, id, offset))
+	return handleUsersFromDatabase(store.db.Query(query, id, offset))
 }
 
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
@@ -290,7 +289,7 @@ func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*U
 		AND P.IsDeleted = FALSE`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return store.handleUsersFromDatabase(store.db.Query(query, id, offset))
+	return handleUsersFromDatabase(store.db.Query(query, id, offset))
 }
 
 // GetUsersByPieceID returns a slice of users that are in the given piece, if any.
@@ -304,7 +303,7 @@ func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*
 		query += ` AND UP.IsDeleted = FALSE`
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return store.handleUsersFromDatabase(store.db.Query(query, id, offset))
+	return handleUsersFromDatabase(store.db.Query(query, id, offset))
 }
 
 // UpdatePasswordByID changes the user with the given IDs passhash to the given
@@ -316,7 +315,7 @@ func (store *Database) UpdatePasswordByID(id int, passHash []byte) error {
 }
 
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
-func (store *Database) handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, error) {
+func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, error) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -330,7 +329,6 @@ func (store *Database) handleUsersFromDatabase(result *sql.Rows, err error) ([]*
 			&u.Role, &u.Active, &u.CreatedAt); err != nil {
 			return nil, err
 		}
-		u.CreatedAt = u.CreatedAt.In(store.tz)
 		users = append(users, u)
 	}
 	return users, nil

@@ -96,6 +96,7 @@ func saveResumeFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 
 	// get the user ID and create a new file for the resume to be saved to.
 	userIDString := strconv.Itoa(userID)
+	os.Remove(appvars.ProfileResumePath + userIDString + ".pdf")
 	f, err := os.OpenFile(appvars.ProfileResumePath+userIDString+".pdf", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return HTTPError(err.Error(), http.StatusInternalServerError)
@@ -129,7 +130,7 @@ func getUserProfilePicture(userID int) ([]byte, *middleware.HTTPError) {
 
 // getUploadFromRequest gets the upload in the field of the given request that is specified
 // by the given inputHeader. Returns a file and a fileheader, or an HTTPError if an error
-// occured.
+// occurred.
 func getUploadFromRequest(r *http.Request, inputHeader string) (multipart.File, *multipart.FileHeader, *middleware.HTTPError) {
 	inputFieldName := r.Header.Get(inputHeader)
 	if len(inputFieldName) == 0 {

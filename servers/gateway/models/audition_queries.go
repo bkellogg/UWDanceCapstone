@@ -46,8 +46,6 @@ func (store *Database) GetAuditionByName(name string, includeDeleted bool) (*Aud
 	if err == sql.ErrNoRows {
 		err = nil
 	}
-	audition.CreatedAt = audition.CreatedAt.In(store.tz)
-	audition.Time = audition.Time.In(store.tz)
 	return audition, err
 }
 
@@ -69,8 +67,6 @@ func (store *Database) GetAuditionByID(id int, includeDeleted bool) (*Audition, 
 	if err == sql.ErrNoRows {
 		err = nil
 	}
-	audition.CreatedAt = audition.CreatedAt.In(store.tz)
-	audition.Time = audition.Time.In(store.tz)
 	return audition, err
 }
 

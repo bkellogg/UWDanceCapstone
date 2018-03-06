@@ -45,7 +45,7 @@ func main() {
 	assetsPath := getRequiredENVOrExit("ASSETSPATH", "")
 
 	// Open connections to the databases
-	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName, "America/Los_Angeles")
+	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
 	if err != nil {
 		log.Fatalf("error connecting to database: %v", err)
 	}

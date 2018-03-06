@@ -47,7 +47,6 @@ func (store *Database) getAnnouncementTypeByName(name string, includeDeleted boo
 	if err := row.Scan(&at.ID, &at.Name, &at.Desc, &at.CreatedAt, &at.CreatedBy, &at.IsDeleted); err != nil {
 		return nil, err
 	}
-	at.CreatedAt = at.CreatedAt.In(store.tz)
 	return at, nil
 }
 
@@ -87,7 +86,6 @@ func (store *Database) GetAnnouncementTypes(includeDeleted bool) ([]*Announcemen
 		if err := result.Scan(&at.ID, &at.Name, &at.Desc, &at.CreatedAt, &at.CreatedBy, &at.IsDeleted); err != nil {
 			return nil, err
 		}
-		at.CreatedAt = at.CreatedAt.In(store.tz)
 		announcementTypes = append(announcementTypes, at)
 	}
 	return announcementTypes, nil
@@ -118,11 +116,11 @@ func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID
 		query += ` AND A.AnnouncementTypeID = ` + strconv.Itoa(int(at.ID))
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return store.handleAnnouncementsFromDatabase(store.db.Query(query, offset))
+	return handleAnnouncementsFromDatabase(store.db.Query(query, offset))
 }
 
 // handleAnnouncementsFromDatabase compiles the given result and err into a slice of AnnouncementResponse or an error.
-func (store *Database) handleAnnouncementsFromDatabase(result *sql.Rows, err error) ([]*AnnouncementResponse, error) {
+func handleAnnouncementsFromDatabase(result *sql.Rows, err error) ([]*AnnouncementResponse, error) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -139,7 +137,6 @@ func (store *Database) handleAnnouncementsFromDatabase(result *sql.Rows, err err
 			&a.CreatedBy.Role, &a.CreatedBy.Active); err != nil {
 			return nil, err
 		}
-		a.CreatedAt = a.CreatedAt.In(store.tz)
 		announcements = append(announcements, a)
 	}
 	return announcements, nil
