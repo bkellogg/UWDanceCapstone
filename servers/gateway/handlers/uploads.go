@@ -96,7 +96,10 @@ func saveResumeFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 
 	// get the user ID and create a new file for the resume to be saved to.
 	userIDString := strconv.Itoa(userID)
-	os.Remove(appvars.ProfileResumePath + userIDString + ".pdf")
+	err := os.Remove(appvars.ProfileResumePath + userIDString + ".pdf")
+	if err != nil && !os.IsNotExist(err) {
+		return HTTPError("error removing old resume: "+err.Error(), http.StatusInternalServerError)
+	}
 	f, err := os.OpenFile(appvars.ProfileResumePath+userIDString+".pdf", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return HTTPError(err.Error(), http.StatusInternalServerError)
@@ -107,7 +110,7 @@ func saveResumeFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 }
 
 // getUserResume returns the bytes of the user's resume, or an HTTPError if an
-// error occured.
+// error occurred.
 func getUserResume(userID int) ([]byte, *middleware.HTTPError) {
 	userIDString := strconv.Itoa(userID)
 	resumeBytes, err := ioutil.ReadFile(appvars.ProfileResumePath + userIDString + ".pdf")

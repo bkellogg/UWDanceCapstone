@@ -99,8 +99,8 @@ func main() {
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
 	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath + "index.html"))
 
-	treatedRouter := middleware.EnsureHeaders(
-		middleware.LogErrors(baseRouter, db))
+	treatedRouter := middleware.EnsureHeaders(middleware.BlockIE(
+		middleware.LogErrors(baseRouter, db)))
 
 	// redirect HTTP requests to HTTPS when appropriate
 	// this needs to be done since the gateway server will need to
