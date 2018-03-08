@@ -1,6 +1,10 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"errors"
+	"strings"
+)
 
 // TimeBlock defines a single block of time
 // in a day between start and end. Should be stored in
@@ -13,13 +17,39 @@ type TimeBlock struct {
 // DayTimeBlock defines a single day which has
 // one or many time blocks.
 type DayTimeBlock struct {
-	Times []*TimeBlock `json:"times"`
+	Day   string       `json:"day,omitempty"`
+	Times []*TimeBlock `json:"times,omitempty"`
 }
 
 // WeekTimeBlock defines a block of times over the course
 // of the week in which each day has one or many blocks of time.
 type WeekTimeBlock struct {
-	Days []*DayTimeBlock `json:"days"`
+	Days []*DayTimeBlock `json:"days,omitempty"`
+}
+
+// ToSerializedDayMap returns a parsed map of the WeekTimeBlock where
+// the keys are the days and the values are serialized arrays of times
+// for those days.
+func (wtb *WeekTimeBlock) ToSerializedDayMap() (map[string]string, error) {
+	result := make(map[string]string)
+	for _, day := range wtb.Days {
+		key := strings.ToLower(day.Day)
+		val := ""
+		for i := 0; i < len(day.Times)-1; i++ {
+			serial, err := day.Times[i].Serialize()
+			if err != nil {
+				return nil, errors.New("error serializing day time: " + err.Error())
+			}
+			val += serial + ", "
+		}
+		serial, err := day.Times[len(day.Times)-1].Serialize()
+		if err != nil {
+			return nil, errors.New("error serializing day time: " + err.Error())
+		}
+		val += serial
+		result[key] = val
+	}
+	return result, nil
 }
 
 // Serialize serializes the current time block into
@@ -38,6 +68,7 @@ func ParseTimeBlock(tbString string) (*TimeBlock, error) {
 // Serialize serializes the current day time block into
 // a string where it is ready to be stored.
 func (dtb *DayTimeBlock) Serialize() (string, error) {
+	dtb.Day = strings.ToLower(dtb.Day)
 	bytes, err := json.Marshal(dtb)
 	return string(bytes), err
 }

@@ -35,8 +35,8 @@ docker run -d \
 -v /root/:/certs/dance/:ro \
 -v /static/:/static/ \
 -e ADDR=:443 \
--e TLSKEY=/certs/dance/dasc.capstone.ischool.uw.edu-key.pem \
--e TLSCERT=/certs/dance/dasc.capstone.ischool.uw.edu-cert.pem \
+-e TLSKEY=/certs/dance/privkey.pem \
+-e TLSCERT=/certs/dance/fullchain.pem \
 -e TEMPLATESPATH=/templates/ \
 -e HTTPREDIRADDR=:80 \
 -e REDISADDR=redis:6379 \

@@ -22,4 +22,6 @@ const (
 
 	ErrPieceDoesNotExist    = "piece does not exist"
 	ErrAuditionDoesNotExist = "audition does not exist"
+
+	ErrUserAlreadyInAudition = "user is already in this audition"
 )

@@ -164,8 +164,8 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 // UserMemberShipHandler handles all requests to add or remove a user to
 // an entity.
 func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	function := ctx.store.AddUserToAudition
-	message := "user added to audition"
+	function := ctx.store.AddUserToPiece
+	message := "user added to piece"
 	vars := mux.Vars(r)
 	objType := vars["object"]
 	objID, err := strconv.Atoi(vars["objectID"])
@@ -179,10 +179,16 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 	}
 	switch r.Method {
 	case "LINK":
-		if objType == "pieces" {
-			function = ctx.store.AddUserToPiece
-			message = "user added to piece"
-		} else if objType != "auditions" {
+		if objType == "auditions" {
+			ual := &models.UserAuditionLink{}
+			if err := receive(r, ual); err != nil {
+				return receiveFailed()
+			}
+			if httperr := ctx.addUserToAudition(userID, objID, int(u.ID), ual); httperr != nil {
+				return httperr
+			}
+			return respondWithString(w, "user added to audition", http.StatusOK)
+		} else if objType != "pieces" {
 			return objectTypeNotSupported()
 		}
 	case "UNLINK":
@@ -210,4 +216,20 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 		return HTTPError("error performing membership change: "+err.Error(), code)
 	}
 	return respondWithString(w, message, http.StatusOK)
+}
+
+// addUserToAudition adds the given user to the given audition with the given UserAuditionLink
+// return an HTTPError if one occurred.
+func (ctx *AuthContext) addUserToAudition(userID, audID, creatorID int, ual *models.UserAuditionLink) *middleware.HTTPError {
+	if err := ual.Validate(); err != nil {
+		return HTTPError("error validating user audition link: "+err.Error(), http.StatusBadRequest)
+	}
+	if err := ctx.store.AddUserToAudition(userID, audID, creatorID, ual.Schedule, ual.Comment); err != nil {
+		code := http.StatusInternalServerError
+		if err.Error() == appvars.ErrAuditionDoesNotExist || err.Error() == appvars.ErrUserAlreadyInAudition {
+			code = http.StatusBadRequest
+		}
+		return HTTPError("error performing membership change: "+err.Error(), code)
+	}
+	return nil
 }

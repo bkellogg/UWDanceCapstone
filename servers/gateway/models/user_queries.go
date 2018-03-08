@@ -5,6 +5,8 @@ import (
 	"errors"
 	"strconv"
 	"time"
+
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
 // UserIsInPiece returns true if the given user is in the given piece or an error if one occurred.
@@ -34,7 +36,7 @@ func (store *Database) AddUserToPiece(userID, pieceID int) error {
 		return err
 	}
 	if piece == nil {
-		return errors.New("piece does not exist")
+		return errors.New(appvars.ErrPieceDoesNotExist)
 	}
 	addTime := time.Now()
 	exists, err := store.UserIsInPiece(userID, pieceID)
@@ -71,13 +73,13 @@ func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
 
 // AddUserToAudition adds the given user to the given audition. Returns an error
 // if one occurred.
-func (store *Database) AddUserToAudition(userID, audID int) error {
+func (store *Database) AddUserToAudition(userID, audID, creatorID int, schedule *WeekTimeBlock, comment string) error {
 	audition, err := store.GetAuditionByID(audID, false)
 	if err != nil {
 		return err
 	}
 	if audition == nil {
-		return errors.New("audition does not exist")
+		return errors.New(appvars.ErrAuditionDoesNotExist)
 	}
 	addTime := time.Now()
 	exists, err := store.UserIsInAudition(userID, audID)
@@ -85,12 +87,53 @@ func (store *Database) AddUserToAudition(userID, audID int) error {
 		return err
 	}
 	if exists {
-		return errors.New("user is already in this audition")
+		return errors.New(appvars.ErrUserAlreadyInAudition)
 	}
-	_, err = store.db.Exec(`INSERT INTO
-		UserAudition(AuditionID, UserID, CreatedAt, IsDeleted)
-		VALUES (?, ?, ?, ?)`, audID, userID, addTime, false)
-	return err
+
+	dayMap, err := schedule.ToSerializedDayMap()
+	if err != nil {
+		return err
+	}
+
+	tx, err := store.db.Begin()
+	if err != nil {
+		return errors.New("error beginning DB transaction: " + err.Error())
+	}
+	res, err := tx.Exec(`INSERT INTO UserAuditionSchedule
+		(Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		dayMap["sun"], dayMap["mon"], dayMap["tues"], dayMap["wed"], dayMap["thurs"], dayMap["fri"], dayMap["sat"], addTime, false)
+	if err != nil {
+		tx.Rollback()
+		return errors.New("error inserting user audition schedule: " + err.Error())
+	}
+	schedID, err := res.LastInsertId()
+	if err != nil {
+		tx.Rollback()
+		return errors.New("error getting insert ID of new schedule: " + err.Error())
+	}
+	res, err = tx.Exec(`INSERT INTO UserAudition (AuditionID, UserID, ScheduleID, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
+		audID, userID, schedID, creatorID, addTime, false)
+	if err != nil {
+		tx.Rollback()
+		return errors.New("error inserting user audition: " + err.Error())
+	}
+	userAudID, err := res.LastInsertId()
+	if err != nil {
+		return errors.New("error getting insert ID of new UserAudition: " + err.Error())
+	}
+	if len(comment) > 0 {
+		_, err = tx.Exec(`INSERT INTO UserAuditionComment (UserAuditionID, Comment, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+			userAudID, comment, addTime, creatorID, false)
+		if err != nil {
+			tx.Rollback()
+			return errors.New("error inserting user audition comment")
+		}
+	}
+	if err = tx.Commit(); err != nil {
+		tx.Rollback()
+		return errors.New("error committing transaction: " + err.Error())
+	}
+	return nil
 }
 
 // RemoveUserFromPiece removes the given user from the given audition.

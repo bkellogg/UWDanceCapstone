@@ -45,6 +45,24 @@ type UserUpdates struct {
 	Bio       string `json:"bio"`
 }
 
+// UserAuditionLink defines the body of a request to
+// add a user to an audition.
+// UserID and AuditionID will come from request URI
+type UserAuditionLink struct {
+	Comment  string         `json:"comment"`
+	Schedule *WeekTimeBlock `json:"schedule,omitempty"`
+}
+
+// Validate validates the current UserAuditionLink and returns
+// an error if one occurred.
+// TODO: This is broke af
+func (ual *UserAuditionLink) Validate() error {
+	if ual.Schedule == nil {
+		return errors.New("cannot add user to audition with a schedule")
+	}
+	return nil
+}
+
 // ToUser takes this *NewUserRequest and returns
 // a *User from it
 func (u *NewUserRequest) ToUser() (*User, error) {
