@@ -8,4 +8,6 @@ const (
 	ProfileUploadMaxFileSize = 5242880
 	ProfileBioMaxCharacters  = 750
 	ProfileBioMaxWords       = 60
+
+	AvailMinBlockLength = 30
 )

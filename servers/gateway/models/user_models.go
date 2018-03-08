@@ -55,12 +55,8 @@ type UserAuditionLink struct {
 
 // Validate validates the current UserAuditionLink and returns
 // an error if one occurred.
-// TODO: This is broke af
 func (ual *UserAuditionLink) Validate() error {
-	if ual.Schedule == nil {
-		return errors.New("cannot add user to audition with a schedule")
-	}
-	return nil
+	return ual.Schedule.Validate()
 }
 
 // ToUser takes this *NewUserRequest and returns

@@ -3,7 +3,11 @@ package models
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
+	"strconv"
 	"strings"
+
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
 // TimeBlock defines a single block of time
@@ -14,6 +18,39 @@ type TimeBlock struct {
 	End   string `json:"end"`
 }
 
+// Validate validates tha the given TimeBlock represents
+// a valid combination of start/end times. Returns an error
+// if one occurred.
+func (tb *TimeBlock) Validate() error {
+	if len(tb.Start) != 4 {
+		return errors.New("start time must be a 4 digit military time")
+	}
+	if len(tb.End) != 4 {
+		return errors.New("end time must be a 4 digit military time")
+	}
+	start, err := strconv.Atoi(tb.Start)
+	if err != nil {
+		return errors.New("start time is not a valid time")
+	}
+	end, err := strconv.Atoi(tb.End)
+	if err != nil {
+		return errors.New("end time is not a valid time")
+	}
+	if start < 0 || end < 0 {
+		return errors.New("start/end times cannot be before the day starts")
+	}
+	if start > 2400 || end > 2400 {
+		return errors.New("start/end times cannot be after the day ends")
+	}
+	if start > end {
+		return errors.New("start time cannot be after the end time")
+	}
+	if end-start < appvars.AvailMinBlockLength {
+		return fmt.Errorf("available time blocks must be at least %s minutes", appvars.AvailMinBlockLength)
+	}
+	return nil
+}
+
 // DayTimeBlock defines a single day which has
 // one or many time blocks.
 type DayTimeBlock struct {
@@ -21,10 +58,41 @@ type DayTimeBlock struct {
 	Times []*TimeBlock `json:"times,omitempty"`
 }
 
+// Validate validates the day time block is a valid day of the week
+// with valid time blocks. Returns an error if one occurred.
+func (dtb *DayTimeBlock) Validate() error {
+	switch dtb.Day {
+	case "sun", "mon", "tues", "wed", "thurs", "fri", "sat":
+		break
+	default:
+		return errors.New("day must be a valid week day abbreviation")
+	}
+	if dtb.Times == nil {
+		return errors.New("the list of times cannot be nil")
+	}
+	for _, tb := range dtb.Times {
+		if err := tb.Validate(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // WeekTimeBlock defines a block of times over the course
 // of the week in which each day has one or many blocks of time.
 type WeekTimeBlock struct {
 	Days []*DayTimeBlock `json:"days,omitempty"`
+}
+
+// Validate validates that the week time block contains
+// valid day time blocks. Returns an error if one occurred.
+func (wtb *WeekTimeBlock) Validate() error {
+	for _, dtb := range wtb.Days {
+		if err := dtb.Validate(); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // ToSerializedDayMap returns a parsed map of the WeekTimeBlock where
