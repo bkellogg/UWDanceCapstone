@@ -55,7 +55,7 @@ func main() {
 
 	mailContext := handlers.NewMailContext(mailUser, mailPass)
 	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials())
-	annoucementContext := handlers.NewAnnoucementContext(db, notifier)
+	announcementContext := handlers.NewAnnoucementContext(db, notifier)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
 	baseRouter := mux.NewRouter()
@@ -69,17 +69,18 @@ func main() {
 	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()
 	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
-	announcementsRouter := baseRouter.PathPrefix(appvars.AnnoucementsPath).Subrouter()
-	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(annoucementContext.AnnouncementsHandler))
+	announcementsRouter := baseRouter.PathPrefix(appvars.AnnouncementsPath).Subrouter()
+	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(announcementContext.AnnouncementsHandler))
 	announcementsRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.AnnouncementTypesHandler))
-	announcementsRouter.Handle("/dummy", authorizer.Authorize(annoucementContext.DummyAnnouncementHandler))
+	announcementsRouter.Handle("/dummy", authorizer.Authorize(announcementContext.DummyAnnouncementHandler))
 
 	usersRouter := baseRouter.PathPrefix(appvars.UsersPath).Subrouter()
 	usersRouter.HandleFunc(appvars.ResourceRoot, authContext.UserSignUpHandler)
 	usersRouter.Handle(appvars.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
 	usersRouter.Handle(appvars.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
 	usersRouter.Handle(appvars.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
-	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler))
+	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler)).Methods("LINK", "UNLINK")
+	usersRouter.Handle(appvars.UserMembershipActionPath, authorizer.Authorize(authContext.UserMembershipActionDispatcher))
 
 	auditionRouter := baseRouter.PathPrefix(appvars.AuditionsPath).Subrouter()
 	auditionRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
@@ -96,6 +97,7 @@ func main() {
 	pieceRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
 	pieceRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
 
+	baseRouter.Handle(appvars.BaseAPIPath, http.NotFoundHandler())
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
 	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath + "index.html"))
 

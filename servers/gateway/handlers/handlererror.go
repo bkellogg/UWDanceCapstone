@@ -40,6 +40,14 @@ func objectTypeNotSupported() *middleware.HTTPError {
 	}
 }
 
+// actionTypeNotSupported returns an object type not supported HTTPError.
+func actionTypeNotSupported() *middleware.HTTPError {
+	return &middleware.HTTPError{
+		Message: appvars.ErrActionTypeNotSupported,
+		Status:  http.StatusBadRequest,
+	}
+}
+
 // resourceDoesNotExist returns a resource does not exists HTTPError.
 func resourceDoesNotExist() *middleware.HTTPError {
 	return &middleware.HTTPError{

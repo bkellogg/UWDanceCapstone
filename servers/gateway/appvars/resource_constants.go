@@ -3,11 +3,12 @@ package appvars
 const (
 	BaseAPIPath = "/api/v1"
 
-	UsersPath          = BaseAPIPath + "/users"
-	AllUsersPath       = "/all"
-	SpecificUserPath   = "/{userID}"
-	UserObjectsPath    = SpecificUserPath + "/{object}"
-	UserMembershipPath = UserObjectsPath + "/{objectID}"
+	UsersPath                = BaseAPIPath + "/users"
+	AllUsersPath             = "/all"
+	SpecificUserPath         = "/{userID}"
+	UserObjectsPath          = SpecificUserPath + "/{object}"
+	UserMembershipPath       = UserObjectsPath + "/{objectID}"
+	UserMembershipActionPath = UserMembershipPath + "/{action}"
 
 	SessionsPath  = BaseAPIPath + "/sessions"
 	MailPath      = BaseAPIPath + "/mail"
@@ -20,7 +21,7 @@ const (
 	ResourceIDObject = ResourceID + "/{object}"
 	ObjectTypesPath  = "/types"
 
-	AnnoucementsPath = BaseAPIPath + "/announcements"
+	AnnouncementsPath = BaseAPIPath + "/announcements"
 
 	UpdatesPath = BaseAPIPath + "/updates"
 

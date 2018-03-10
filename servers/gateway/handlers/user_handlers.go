@@ -161,6 +161,75 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+// UserMembershipActionDispatcher acts a second layer mux that filters requests about a user membership
+// requests specific object types and actions.
+func (ctx *AuthContext) UserMembershipActionDispatcher(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	vars := mux.Vars(r)
+	objType := vars["object"]
+	objID, err := strconv.Atoi(vars["objectID"])
+	if err != nil {
+		return unparsableIDGiven()
+	}
+	userID, httperr := parseUserID(r, u)
+	if httperr != nil {
+		return httperr
+	}
+	action := vars["action"]
+	switch {
+	case objType == "auditions" && action == "comments":
+		return ctx.handleUserAuditionComment(userID, objID, u, w, r)
+	default:
+		return actionTypeNotSupported()
+	}
+}
+
+// handleUserAuditionComment handles requests related to comments on a User Audition
+func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.User, w http.ResponseWriter, r *http.Request) *middleware.HTTPError {
+	switch r.Method {
+	case "POST":
+		if !u.Can(permissions.CommentOnUserAudition) {
+			return permissionDenied()
+		}
+		newComment := &models.AuditionComment{}
+		if receive(r, newComment) != nil {
+			return receiveFailed()
+		}
+		comment, err := ctx.store.InsertUserAuditionComment(userID, audID, int(u.ID), newComment.Comment)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return HTTPError(appvars.ErrUserAuditionDoesNotExist, http.StatusNotFound)
+			}
+			return HTTPError("error inserting audition comment: "+err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, comment, http.StatusCreated)
+	case "GET":
+		if !u.Can(permissions.SeeCommentsOnUserAudition) {
+			return permissionDenied()
+		}
+		includeDeleted := getIncludeDeletedParam(r)
+		page, httperr := getPageParam(r)
+		if httperr != nil {
+			return httperr
+		}
+		creator, httperr := getCreatorParam(r)
+		if httperr != nil {
+			return httperr
+		}
+		comments, err := ctx.store.GetUserAuditionComments(userID, audID, creator, page, includeDeleted)
+		if err != nil {
+			if err.Error() == appvars.ErrUserAuditionDoesNotExist {
+				return HTTPError(appvars.ErrUserAuditionDoesNotExist, http.StatusNotFound)
+			} else if err == sql.ErrNoRows {
+				return HTTPError(appvars.ErrNoResultsMatchedGivenFilters, http.StatusNotFound)
+			}
+			return HTTPError("error getting user audition comments: "+err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, models.PaginateUserAuditionComments(comments, page), http.StatusOK)
+	default:
+		return methodNotAllowed()
+	}
+}
+
 // UserMemberShipHandler handles all requests to add or remove a user to
 // an entity.
 func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
@@ -180,6 +249,9 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 	switch r.Method {
 	case "LINK":
 		if objType == "auditions" {
+			if !u.Can(permissions.AddUserToAudition) {
+				return permissionDenied()
+			}
 			ual := &models.UserAuditionLink{}
 			if err := receive(r, ual); err != nil {
 				return receiveFailed()
@@ -188,14 +260,24 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 				return httperr
 			}
 			return respondWithString(w, "user added to audition", http.StatusOK)
-		} else if objType != "pieces" {
+		} else if objType == "pieces" {
+			if !u.Can(permissions.AddUserToPiece) {
+				return permissionDenied()
+			}
+		} else {
 			return objectTypeNotSupported()
 		}
 	case "UNLINK":
 		if objType == "pieces" {
+			if !u.Can(permissions.RemoveUserFromPiece) {
+				return permissionDenied()
+			}
 			function = ctx.store.RemoveUserFromPiece
 			message = "user removed from piece"
 		} else if objType == "auditions" {
+			if !u.Can(permissions.RemoveUserFromAudition) {
+				return permissionDenied()
+			}
 			function = ctx.store.RemoveUserFromAudition
 			message = "user removed from audition"
 		} else {

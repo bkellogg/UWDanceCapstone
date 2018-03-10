@@ -5,6 +5,7 @@ const (
 	ErrPermissionDenied       = "you do not have access to this resource"
 	ErrMethodNotAllowed       = "request method is not supported on this resource"
 	ErrObjectTypeNotSupported = "object type is not supported on this resource"
+	ErrActionTypeNotSupported = "action type is not supported on the given object type"
 	ErrResourceDoesNotExist   = "requested esource type does not exist"
 	ErrDatabaseLookupFailed   = "error retrieving information from the database"
 
@@ -20,8 +21,10 @@ const (
 
 	ErrUnparsableIDGiven = "unparsable ID given"
 
-	ErrPieceDoesNotExist    = "piece does not exist"
-	ErrAuditionDoesNotExist = "audition does not exist"
+	ErrPieceDoesNotExist        = "piece does not exist"
+	ErrAuditionDoesNotExist     = "audition does not exist"
+	ErrUserAlreadyInAudition    = "user is already in this audition"
+	ErrUserAuditionDoesNotExist = "combination of user id and audition id does not exist"
 
-	ErrUserAlreadyInAudition = "user is already in this audition"
+	ErrNoResultsMatchedGivenFilters = "no results matched the given filters"
 )
