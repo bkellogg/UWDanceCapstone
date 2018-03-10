@@ -114,19 +114,40 @@ func (store *Database) InsertUserAuditionComment(userID, audID, creatorID int, c
 
 // GetUserAuditionComments returns a slice of UserAuditionComments that match the given filters, or an
 // error if one occurred.
-func (store *Database) GetUserAuditionComments(userID, audID, creatorID, page int, includeDeleted bool) ([]*UserAuditionComment, error) {
-	rows, err := store.db.Query(`SELECT UserAuditionID FROM UserAudition UA
-		WHERE UA.AuditionID = ? AND UA.UserID = ? AND UA.IsDeleted = FALSE`, audID, userID)
-	if err != nil {
-		return nil, err
-	}
+func (store *Database) GetUserAuditionComments(userID, audID, creatorID, uaID, page int, includeDeleted bool) ([]*UserAuditionComment, error) {
 	userAudID := 0
-	if rows.Next() {
-		if err = rows.Scan(&userAudID); err != nil {
+	// if a specific UserAuditionID is not given, look up the one that is associated
+	// with the given user id and audition id
+	if uaID < 1 {
+		rows, err := store.db.Query(`SELECT UserAuditionID FROM UserAudition UA
+		WHERE UA.AuditionID = ? AND UA.UserID = ? AND UA.IsDeleted = FALSE`, audID, userID)
+		if err != nil {
 			return nil, err
 		}
+		if rows.Next() {
+			if err = rows.Scan(&userAudID); err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, errors.New(appvars.ErrUserAuditionDoesNotExist)
+		}
 	} else {
-		return nil, errors.New(appvars.ErrUserAuditionDoesNotExist)
+		rows, err := store.db.Query(`SELECT * FROM UserAudition UA WHERE UA.UserAuditionID = ?`, uaID)
+		if err != nil {
+			return nil, err
+		}
+		ua := &UserAudition{}
+		if rows.Next() {
+			if err = rows.Scan(&ua.ID, &ua.AuditionID, &ua.UserID, &ua.ScheduleID, &ua.CreatedBy, &ua.CreatedAt, &ua.IsDeleted); err != nil {
+				return nil, err
+			}
+			if ua.UserID != userID || ua.AuditionID != audID {
+				return nil, errors.New(appvars.ErrUserAuditionDoesNotMatch)
+			}
+			userAudID = uaID
+		} else {
+			return nil, errors.New(appvars.ErrUserAuditionDoesNotExist)
+		}
 	}
 	offset := getSQLPageOffset(page)
 	query := `SELECT UAC.CommentID, UAC.UserAuditionID, UAC.Comment, UAC.CreatedAt, UAC.CreatedBy, UAC.IsDeleted

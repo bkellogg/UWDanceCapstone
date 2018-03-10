@@ -53,6 +53,18 @@ type UserAuditionLink struct {
 	Schedule *WeekTimeBlock `json:"schedule,omitempty"`
 }
 
+// UserAudition represents how a link between a user and an audition
+// is stored.
+type UserAudition struct {
+	ID         int       `json:"id"`
+	AuditionID int       `json:"auditionID"`
+	UserID     int       `json:"userID"`
+	ScheduleID int       `json:"scheduleID"`
+	CreatedAt  time.Time `json:"createdAt"`
+	CreatedBy  int       `json:"createdBy"`
+	IsDeleted  bool      `json:"isDeleted"`
+}
+
 // Validate validates the current UserAuditionLink and returns
 // an error if one occurred.
 func (ual *UserAuditionLink) Validate() error {

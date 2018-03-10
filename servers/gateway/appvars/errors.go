@@ -25,6 +25,7 @@ const (
 	ErrAuditionDoesNotExist     = "audition does not exist"
 	ErrUserAlreadyInAudition    = "user is already in this audition"
 	ErrUserAuditionDoesNotExist = "combination of user id and audition id does not exist"
+	ErrUserAuditionDoesNotMatch = "combination of user id and audition id does not match the given user audition id"
 
 	ErrNoResultsMatchedGivenFilters = "no results matched the given filters"
 )
