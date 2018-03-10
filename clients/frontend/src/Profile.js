@@ -9,7 +9,6 @@ class Profile extends Component {
     super(props);
     this.getPhoto = this.getPhoto.bind(this);
     this.getHistory = this.getHistory.bind(this);
-    this.getResume = this.getResume.bind(this);
     this.onClick = this.onClick.bind(this);
     this.inputChange = this.inputChange.bind(this);
     this.state ={
@@ -34,11 +33,12 @@ class Profile extends Component {
   };
 
   componentDidMount(){
-    this.getPhoto();
+    //this.getPhoto();
     this.getHistory();
-    this.getResume();
+    //this.getResume();
   }
 
+  //want to move this to util eventually
   getPhoto(){
       fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
           .then((res) => {
@@ -59,6 +59,7 @@ class Profile extends Component {
           });
   }
 
+  //also want to move to util
   getHistory(){
     //dummy data - this needs to be fleshed out
     let pieces = [
@@ -81,76 +82,49 @@ class Profile extends Component {
       })
   }
 
-  getResume(){
-    let id = this.state.user.id;
-    let auth = this.state.auth;
-    fetch(Util.API_URL_BASE + "users/" + id + "/resume?auth=" + auth)
-          .then((res) => {
-              if (res.ok) {
-                  return res.blob();
-              }
-              return res.text().then((t) => Promise.reject(t));
-          })
-          .then((data) => {
-              this.setState({
-                resume : data
-              })
-          })
-          .catch((err) => {
-              this.setState({
-                resumeErr: err
-              })
-          });
-  }
-
   onClick(){
     if(this.state.edit){
-      //is edit is true when we click this button, we are going to submit the input values
-      //flow: if the input has a value in it -> post value to server -> then get back from the server -> set state -> empty out input values
-      //We don't have a way to do first or last names atm
       if(this.state.firstName !== ""){
-
+        Util.uploadFName(this.state.firstName);
+        this.setState({fname: this.state.firstName})
       }
       if(this.state.lastName !== ""){
-
+        Util.uploadLName(this.state.lastName)
+        this.setState({lname: this.state.lastName})
       }
-      if(this.state.uploadPhoto !== "") { //honestly not sure what kind of data we get if we upload a photo and then remove it
+      if(this.state.photoUpload !== "") { //honestly not sure what kind of data we get if we upload a photo and then remove it
         console.log("you're going to have to ask brendan about that one")
       }
-      if(this.state.uploadBio !== ""){
+      if(this.state.bioUpload !== ""){
         Util.uploadBio(this.state.bioUpload) //refreshing the local user is built in aka don't need to call the bio back from the server
+        this.setState({bio: this.state.bioUpload})
       }
-      if(this.state.uploadResume !== ""){ //same with resumes (ask b)
-
+      if(this.state.resumeUpload !== ""){
+        Util.uploadResume(this.state.resumeUpload) //doesn't work
+        this.setState({resume: this.state.resumeUpload})
       }
       this.setState({
-        bio: this.state.bioUpload,
-        fname: this.state.firstName,
-        lname: this.state.lastName,
-        firstname : "",
+        firstName : "",
         lastName: "",
-        uploadPhoto: "",
-        uploadBio: "",
-        uploadResume: ""
+        photoUpload: "",
+        bioUpload: "",
+        resumeUpload: ""
       })
     }
     let editState = !this.state.edit
     this.setState({
-      edit: editState,
+      edit: editState
     })
-    //this.getPhoto();
-    //this.getResume();
   }
 
   inputChange(val){
-    const name = val.target.name
+    let name = val.target.name
     this.setState({
       [name] : val.target.value
     })
   }
 
   render() {
-    console.log(this.state.user)
     return (
       <section className="main">
         <div className="sub">
@@ -171,8 +145,8 @@ class Profile extends Component {
               {this.state.edit &&
                 <div id="editName">
                   <Row>
-                  <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange}/>
-                  <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange}/>
+                    <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange}/>
+                    <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange}/>
                   </Row>
                 </div>
               }
@@ -182,8 +156,8 @@ class Profile extends Component {
             <div className="subheader"><b>Bio:</b></div>
             {!this.state.edit && 
               <section>
-                {this.state.bio.length > 0 && this.state.bio} 
-                {this.state.bio.length === 0 && "  No bio available"}
+                {this.state.bio !== "" && this.state.bio} 
+                {this.state.bio === "" && " Dancer has no bio"}
               </section>
             }
             {this.state.edit &&
@@ -224,7 +198,7 @@ class Profile extends Component {
             {this.state.edit &&
               <section>
                 <div> Upload your dance resume as a PDF. </div>
-                <Input id="resumeUpload" name="resumeUpload" type="file"/>
+                <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.inputChange}/>
               </section> 
             }
             </div>

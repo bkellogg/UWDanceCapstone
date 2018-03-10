@@ -94,7 +94,7 @@ class Main extends Component {
       <section>
         <section className="routing">
         <Switch>
-          <Route exact path='/stage' component={Dashboard}/>
+          <Route exact path='/' component={Dashboard}/>
           <Route exact path='/profile' component={Profile}/>
           {this.state.shows.map((r, i) => {
                 return(
@@ -152,7 +152,7 @@ class Main extends Component {
     </section>
         <ul id="slide-out" className="side-nav fixed">
           <li><div id="logo">STAGE</div></li>
-          <li><Link to="/stage">Dashboard</Link></li>
+          <li><Link to="/">Dashboard</Link></li>
           <li>
               {this.getNavigation()}
           </li>

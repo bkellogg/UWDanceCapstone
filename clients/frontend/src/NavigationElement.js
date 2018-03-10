@@ -14,12 +14,22 @@ class NavigationElement extends Component {
             <Link className="collapsible-header" style={{paddingLeft: 32}} to={{pathname: address}}>{this.props.showTitle}</Link>
             <div className="collapsible-body">
                 <ul>
-                    {this.props.user.role === 100 &&
+                    {/*Dancer (new user)*/}
+                    {this.props.user.role === 10 && 
                         <li><Link to={{pathname: address + "/audition"}}>Audition</Link></li>
                     }
-                    {this.props.user.role === 200 &&
+                    {/*Choreographer*/}
+                    {this.props.user.role === 70 && 
                         <li><Link to={{pathname:address + "/casting"}}>Casting</Link></li> &&
                         <li><Link to={{pathname:address + "/people"}}>People</Link></li>
+                    }
+                    {/*Admin*/}
+                    {this.props.user.role === 100 && 
+                        <section>
+                        <li><Link to={{pathname:address + "/casting"}}>Casting</Link></li> 
+                        <li><Link to={{pathname:address + "/people"}}>People</Link></li>
+                        <li><Link to={{pathname: address + "/audition"}}>Audition</Link></li>
+                        </section>
                     }
                     <li><Link to={{pathname:address + "/piece"}}>My Piece</Link></li>
                 </ul>

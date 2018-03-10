@@ -1,8 +1,4 @@
 import React, { Component } from 'react';
-import {Switch, Route} from 'react-router-dom';
-import People from './People';
-import Piece from './Piece';
-import Audition from './Audition';
 import './styling/Show.css';
 
 class Show extends Component {
@@ -19,7 +15,9 @@ class Show extends Component {
   render() {
     return (
       <section className="main">
-        <h1>{this.props.name}</h1>
+        <div className="show">
+          <h1 id='showTitle'>{this.props.name}</h1>
+        </div>
       </section>
     );
   };
