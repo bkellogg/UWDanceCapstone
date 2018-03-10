@@ -185,10 +185,6 @@ func (ctx *AuthContext) UserMembershipActionDispatcher(w http.ResponseWriter, r 
 
 // handleUserAuditionComment handles requests related to comments on a User Audition
 func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.User, w http.ResponseWriter, r *http.Request) *middleware.HTTPError {
-	uaID, httperr := getUserAudIDParam(r)
-	if httperr != nil {
-		return httperr
-	}
 	switch r.Method {
 	case "POST":
 		if !u.Can(permissions.CommentOnUserAudition) {
@@ -219,7 +215,7 @@ func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.U
 		if httperr != nil {
 			return httperr
 		}
-		comments, err := ctx.store.GetUserAuditionComments(userID, audID, creator, uaID, page, includeDeleted)
+		comments, err := ctx.store.GetUserAuditionComments(userID, audID, creator, page, includeDeleted)
 		if err != nil {
 			if err == sql.ErrNoRows ||
 				err.Error() == appvars.ErrUserAuditionDoesNotMatch ||

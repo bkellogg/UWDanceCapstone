@@ -87,12 +87,6 @@ func getIntParam(r *http.Request, param string) (int, *middleware.HTTPError) {
 	return page, nil
 }
 
-// getUserAudIDParam gets the value of uaID from the given request.
-// Returns an HTTPError if an error occurred.
-func getUserAudIDParam(r *http.Request) (int, *middleware.HTTPError) {
-	return getIntParam(r, "uaID")
-}
-
 // getPageFromRequest gets the value of the page query parameter
 // used in pagination. Returns an error if one occurred.
 func getPageParam(r *http.Request) (int, *middleware.HTTPError) {
