@@ -116,9 +116,13 @@ func (ra *RawAvailability) toWeekTimeBlock() (*WeekTimeBlock, error) {
 			if err != nil {
 				return nil, err
 			}
-			dayBlock.Times = append(dayBlock.Times, tb)
+			if tb != nil {
+				dayBlock.Times = append(dayBlock.Times, tb)
+			}
 		}
-		wtbr.Days = append(wtbr.Days, dayBlock)
+		if len(dayBlock.Times) > 0 {
+			wtbr.Days = append(wtbr.Days, dayBlock)
+		}
 	}
 	return wtbr, nil
 }
@@ -144,6 +148,10 @@ func (wtb *WeekTimeBlock) ToSerializedDayMap() (map[string]string, error) {
 	result := make(map[string]string)
 	for _, day := range wtb.Days {
 		key := strings.ToLower(day.Day)
+		if len(day.Times) == 0 {
+			result[key] = "{}"
+			continue
+		}
 		val := ""
 		for i := 0; i < len(day.Times)-1; i++ {
 			serial, err := day.Times[i].Serialize()
@@ -171,6 +179,9 @@ func (tb *TimeBlock) Serialize() (string, error) {
 
 // ParseTimeBlock parses the given string into a TimeBlock.
 func ParseTimeBlock(tbString string) (*TimeBlock, error) {
+	if tbString == "{}" {
+		return nil, nil
+	}
 	tb := &TimeBlock{}
 	return tb, json.Unmarshal([]byte(tbString), tb)
 }
