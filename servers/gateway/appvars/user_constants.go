@@ -10,4 +10,6 @@ const (
 	ProfileBioMaxWords       = 60
 
 	AvailMinBlockLength = 30
+
+	MaxAvailabiityTimeSlots = 7
 )

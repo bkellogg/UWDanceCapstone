@@ -71,6 +71,9 @@ func (dtb *DayTimeBlock) Validate() error {
 	if dtb.Times == nil {
 		return errors.New("the list of times cannot be nil")
 	}
+	if len(dtb.Times) > appvars.MaxAvailabiityTimeSlots {
+		return errors.New("the number of time blocks exceeds the limit")
+	}
 	for _, tb := range dtb.Times {
 		if err := tb.Validate(); err != nil {
 			return err

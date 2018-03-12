@@ -78,7 +78,7 @@ func (store *Database) UpdateUserAuditionAvailability(userID, audID int, availab
 func (store *Database) getUserAuditionID(userID, audID int) (int, error) {
 	// Get AvailabilityID
 	result, err := store.db.Query(`SELECT AvailabilityID FROM UserAudition UA
-		WHERE UA.AuditionID = ? AND UA.UserID = ? AND Ua.IsDeleted = FALSE`, audID, userID)
+		WHERE UA.AuditionID = ? AND UA.UserID = ? AND UA.IsDeleted = FALSE`, audID, userID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return -1, errors.New(appvars.ErrUserAuditionDoesNotExist)
