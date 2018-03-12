@@ -37,7 +37,7 @@ docker run -d \
 -e ADDR=:443 \
 -e TLSKEY=/certs/dance/privkey.pem \
 -e TLSCERT=/certs/dance/fullchain.pem \
--e TEMPLATESPATH=/templates/ \
+-e TEMPLATESPATH=/static/assets/tpl/ \
 -e HTTPREDIRADDR=:80 \
 -e REDISADDR=redis:6379 \
 -e MYSQLADDR=mysql:3306 \

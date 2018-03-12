@@ -1,11 +1,12 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/mail"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
-	"net/http"
 )
 
 // PasswordResetHandler handles requests that will initiate a password reset.
@@ -37,7 +38,7 @@ func (ctx *AuthContext) PasswordResetHandler(w http.ResponseWriter, r *http.Requ
 				URL:  "https://dasc.capstone.ischool.uw.edu/reset/reset.html?email=" + email + "&token=" + token,
 			}
 			msg, err := mail.NewMessageFromTemplate(ctx.MailCredentials,
-				"", ctx.TemplatePath+"passwordreset_tpl.html",
+				ctx.TemplatePath+"passwordreset_tpl.html",
 				appvars.PasswordResetEmailSubject, tplVars,
 				asSlice(email))
 			if err != nil {

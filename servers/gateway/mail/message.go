@@ -30,7 +30,7 @@ func NewMessage(credentials *MailCredentials, sender, body, subject string, reci
 }
 
 // NewMessageFromTemplate creates a new
-func NewMessageFromTemplate(credentials *MailCredentials, sender, tpl, subject string,
+func NewMessageFromTemplate(credentials *MailCredentials, tpl, subject string,
 	tplVars interface{}, recipients []string) (*Message, error) {
 	parsedTpl, err := parseTemplate(tpl, tplVars)
 	if err != nil {
