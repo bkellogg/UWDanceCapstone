@@ -126,6 +126,9 @@ func (ra *RawAvailability) toWeekTimeBlock() (*WeekTimeBlock, error) {
 // Validate validates that the week time block contains
 // valid day time blocks. Returns an error if one occurred.
 func (wtb *WeekTimeBlock) Validate() error {
+	if len(wtb.Days) > 7 {
+		return errors.New("week time block cannot contain more than 7 days")
+	}
 	for _, dtb := range wtb.Days {
 		if err := dtb.Validate(); err != nil {
 			return err

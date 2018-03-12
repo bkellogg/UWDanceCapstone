@@ -238,33 +238,12 @@ func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User
 // UpdateUserByID updates the user with the given ID to match the values
 // of newValues. Returns an error if one occurred.
 func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeInactive bool) error {
-	newFirstName := len(updates.FirstName) > 0
-	newLastName := len(updates.LastName) > 0
-	newBio := len(updates.Bio) > 0
-
-	// do not build update query if there are no updates to be made
-	if !(newFirstName || newLastName || newBio) {
-		return nil
-	}
-
-	// if there is a missing field, fill it with what already exists
-	// in that field for the given user.
-	if !(newFirstName && newLastName && newBio) {
-		user, err := store.GetUserByID(userID, includeInactive)
-		if err != nil {
-			return errors.New("error updating user: " + err.Error())
-		}
-		if !newFirstName {
-			updates.FirstName = user.FirstName
-		}
-		if !newLastName {
-			updates.LastName = user.LastName
-		}
-		if !newBio {
-			updates.Bio = user.Bio
-		}
-	}
-	query := `UPDATE Users U SET U.FirstName = ?, U.LastName = ?, U.Bio = ? WHERE U.UserID = ?`
+	query := `
+		UPDATE Users U SET 
+		U.FirstName = COALESCE(NULLIF(?, ''), FirstName),
+		U.LastName = COALESCE(NULLIF(?, ''), LastName),
+		U.Bio = COALESCE(NULLIF(?, ''), Bio)
+		WHERE U.UserID = ?`
 	if !includeInactive {
 		query += ` AND U.Active = true`
 	}

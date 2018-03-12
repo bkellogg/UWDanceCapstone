@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/gorilla/mux"
@@ -205,7 +206,19 @@ func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *mod
 		if !u.Can(permissions.ChangeUserAvailability) {
 			return permissionDenied()
 		}
-		return methodNotAllowed()
+		wtb := &models.WeekTimeBlock{}
+		if err := receive(r, wtb); err != nil {
+			return receiveFailed()
+		}
+		if err := ctx.store.UpdateUserAuditionAvailability(userID, audID, wtb); err != nil {
+			code := http.StatusInternalServerError
+			if err.Error() == appvars.ErrUserAuditionDoesNotExist ||
+				strings.Contains(err.Error(), "validation failed") {
+				code = http.StatusBadRequest
+			}
+			return HTTPError(err.Error(), code)
+		}
+		return respondWithString(w, "availability updated", http.StatusOK)
 	default:
 		return methodNotAllowed()
 	}
