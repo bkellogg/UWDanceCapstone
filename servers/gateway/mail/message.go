@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/smtp"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
 // Message defines the information needed to send a message
@@ -30,7 +30,7 @@ func NewMessage(credentials *MailCredentials, sender, body, subject string, reci
 }
 
 // NewMessageFromTemplate creates a new
-func NewMessageFromTemplate(credentials *MailCredentials, sender, tpl, subject string,
+func NewMessageFromTemplate(credentials *MailCredentials, tpl, subject string,
 	tplVars interface{}, recipients []string) (*Message, error) {
 	parsedTpl, err := parseTemplate(tpl, tplVars)
 	if err != nil {
@@ -38,7 +38,7 @@ func NewMessageFromTemplate(credentials *MailCredentials, sender, tpl, subject s
 	}
 	return &Message{
 		auth:       credentials.toSMTPAuth(),
-		sender:     constants.StageEmailAddress,
+		sender:     appvars.StageEmailAddress,
 		Recipients: recipients,
 		Subject:    subject,
 		Body:       parsedTpl,
@@ -60,7 +60,7 @@ func NewMessageFromRequest(credentials *MailCredentials, r *http.Request) (*Mess
 func (m *Message) Send() error {
 	m.addHeaders()
 	if len(m.sender) == 0 {
-		m.sender = constants.StageEmailAddress
+		m.sender = appvars.StageEmailAddress
 	}
 	return smtp.SendMail(gmailAddr, m.auth, m.sender, m.Recipients, []byte(m.Body))
 }

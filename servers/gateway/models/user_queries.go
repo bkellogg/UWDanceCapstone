@@ -5,9 +5,11 @@ import (
 	"errors"
 	"strconv"
 	"time"
+
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
-// UserIsInPiece returns true if the given user is in the given piece or an error if one occured.
+// UserIsInPiece returns true if the given user is in the given piece or an error if one occurred.
 func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
 	result, err := store.db.Query(`SELECT * FROM UserPiece UP WHERE UP.UserID = ? AND UP.PieceID = ? AND UP.IsDeleted = ?`,
 		userID, pieceID, false)
@@ -17,8 +19,25 @@ func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
 	return result.Next(), nil
 }
 
+// UserIsInAudition returns true if the given user is in the given audition or an error if one occurred.
+func (store *Database) UserIsInAudition(userID, audID int) (bool, error) {
+	result, err := store.db.Query(`SELECT * FROM UserAudition UP WHERE UP.UserID = ? AND UP.AuditionID = ? AND UP.IsDeleted = ?`,
+		userID, audID, false)
+	if result == nil {
+		return false, err
+	}
+	return result.Next(), nil
+}
+
 // AddUserToPiece adds the given user to the given piece.
 func (store *Database) AddUserToPiece(userID, pieceID int) error {
+	piece, err := store.GetPieceByID(pieceID, false)
+	if err != nil {
+		return err
+	}
+	if piece == nil {
+		return errors.New(appvars.ErrPieceDoesNotExist)
+	}
 	addTime := time.Now()
 	exists, err := store.UserIsInPiece(userID, pieceID)
 	if err != nil {
@@ -34,8 +53,100 @@ func (store *Database) AddUserToPiece(userID, pieceID int) error {
 
 // RemoveUserFromPiece removes the given user from the given piece.
 func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
+	piece, err := store.GetPieceByID(pieceID, false)
+	if err != nil {
+		return err
+	}
+	if piece == nil {
+		return errors.New("piece does not exist")
+	}
 	result, err := store.db.Exec(`UPDATE UserPiece UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.PieceID = ?`,
 		true, userID, pieceID)
+	if err == nil {
+		rowsAffected, _ := result.RowsAffected()
+		if rowsAffected == 0 {
+			return sql.ErrNoRows
+		}
+	}
+	return err
+}
+
+// AddUserToAudition adds the given user to the given audition. Returns an error
+// if one occurred.
+func (store *Database) AddUserToAudition(userID, audID, creatorID int, availability *WeekTimeBlock, comment string) error {
+	audition, err := store.GetAuditionByID(audID, false)
+	if err != nil {
+		return err
+	}
+	if audition == nil {
+		return errors.New(appvars.ErrAuditionDoesNotExist)
+	}
+	addTime := time.Now()
+	exists, err := store.UserIsInAudition(userID, audID)
+	if err != nil {
+		return err
+	}
+	if exists {
+		return errors.New(appvars.ErrUserAlreadyInAudition)
+	}
+
+	dayMap, err := availability.ToSerializedDayMap()
+	if err != nil {
+		return err
+	}
+
+	tx, err := store.db.Begin()
+	if err != nil {
+		return errors.New("error beginning DB transaction: " + err.Error())
+	}
+	res, err := tx.Exec(`INSERT INTO UserAuditionAvailability
+		(Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		dayMap["sun"], dayMap["mon"], dayMap["tues"], dayMap["wed"], dayMap["thurs"], dayMap["fri"], dayMap["sat"], addTime, false)
+	if err != nil {
+		tx.Rollback()
+		return errors.New("error inserting user audition availability: " + err.Error())
+	}
+	availID, err := res.LastInsertId()
+	if err != nil {
+		tx.Rollback()
+		return errors.New("error getting insert ID of new availability: " + err.Error())
+	}
+	res, err = tx.Exec(`INSERT INTO UserAudition (AuditionID, UserID, AvailabilityID, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
+		audID, userID, availID, creatorID, addTime, false)
+	if err != nil {
+		tx.Rollback()
+		return errors.New("error inserting user audition: " + err.Error())
+	}
+	userAudID, err := res.LastInsertId()
+	if err != nil {
+		return errors.New("error getting insert ID of new UserAudition: " + err.Error())
+	}
+	if len(comment) > 0 {
+		_, err = tx.Exec(`INSERT INTO UserAuditionComment (UserAuditionID, Comment, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+			userAudID, comment, addTime, creatorID, false)
+		if err != nil {
+			tx.Rollback()
+			return errors.New("error inserting user audition comment")
+		}
+	}
+	if err = tx.Commit(); err != nil {
+		tx.Rollback()
+		return errors.New("error committing transaction: " + err.Error())
+	}
+	return nil
+}
+
+// RemoveUserFromPiece removes the given user from the given audition.
+func (store *Database) RemoveUserFromAudition(userID, audID int) error {
+	audition, err := store.GetAuditionByID(audID, false)
+	if err != nil {
+		return err
+	}
+	if audition == nil {
+		return errors.New("audition does not exist")
+	}
+	result, err := store.db.Exec(`UPDATE UserAudition UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.AuditionID = ?`,
+		true, userID, audID)
 	if err == nil {
 		rowsAffected, _ := result.RowsAffected()
 		if rowsAffected == 0 {
@@ -71,7 +182,6 @@ func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, error) {
 // InsertNewUser inserts the given new user into the store
 // and populates the ID field of the user
 func (store *Database) InsertNewUser(user *User) error {
-	// TODO: Replace this with stored procedure
 	result, err := store.db.Exec(
 		`INSERT INTO Users (FirstName, LastName, Email, Bio, PassHash, Role, Active, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 		user.FirstName, user.LastName, user.Email, "", user.PassHash, user.Role, true, user.CreatedAt)
@@ -127,35 +237,13 @@ func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User
 
 // UpdateUserByID updates the user with the given ID to match the values
 // of newValues. Returns an error if one occurred.
-// TODO: Implement and test this
 func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeInactive bool) error {
-	newFirstName := len(updates.FirstName) > 0
-	newLastName := len(updates.LastName) > 0
-	newBio := len(updates.Bio) > 0
-
-	// do not build update query if there are no updates to be made
-	if !(newFirstName || newLastName || newBio) {
-		return nil
-	}
-
-	// if there is a missing field, fill it with what already exists
-	// in that field for the given user.
-	if !(newFirstName && newLastName && newBio) {
-		user, err := store.GetUserByID(userID, includeInactive)
-		if err != nil {
-			return errors.New("error updating user: " + err.Error())
-		}
-		if !newFirstName {
-			updates.FirstName = user.FirstName
-		}
-		if !newLastName {
-			updates.LastName = user.LastName
-		}
-		if !newBio {
-			updates.Bio = user.Bio
-		}
-	}
-	query := `UPDATE Users U SET U.FirstName = ?, U.LastName = ?, U.Bio = ? WHERE U.UserID = ?`
+	query := `
+		UPDATE Users U SET 
+		U.FirstName = COALESCE(NULLIF(?, ''), FirstName),
+		U.LastName = COALESCE(NULLIF(?, ''), LastName),
+		U.Bio = COALESCE(NULLIF(?, ''), Bio)
+		WHERE U.UserID = ?`
 	if !includeInactive {
 		query += ` AND U.Active = true`
 	}
@@ -168,7 +256,6 @@ func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeI
 
 // DeactivateUserByID marks the user with the given userID as inactive. Returns
 // an error if one occured.
-// TODO: Implement and test this
 func (store *Database) DeactivateUserByID(userID int) error {
 	result, err := store.db.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, false, userID)
 	if err != nil {
@@ -212,7 +299,7 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 }
 
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
-// Returns an error if one occured.
+// Returns an error if one occurred.
 func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, error) {
 	offset := getSQLPageOffset(page)
 	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
@@ -228,7 +315,7 @@ func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*U
 }
 
 // GetUsersByPieceID returns a slice of users that are in the given piece, if any.
-// Returns an error if one occured.
+// Returns an error if one occurred.
 func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, error) {
 	offset := getSQLPageOffset(page)
 	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U

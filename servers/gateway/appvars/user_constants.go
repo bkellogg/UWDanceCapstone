@@ -1,4 +1,4 @@
-package constants
+package appvars
 
 // UserDefaultRole is the default role privilege for new users
 const (
@@ -8,4 +8,8 @@ const (
 	ProfileUploadMaxFileSize = 5242880
 	ProfileBioMaxCharacters  = 750
 	ProfileBioMaxWords       = 60
+
+	AvailMinBlockLength = 30
+
+	MaxAvailabiityTimeSlots = 7
 )

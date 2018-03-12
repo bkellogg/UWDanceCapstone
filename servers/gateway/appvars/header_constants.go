@@ -1,4 +1,4 @@
-package constants
+package appvars
 
 const (
 	HeaderContentType                = "Content-Type"
