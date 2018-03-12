@@ -174,13 +174,42 @@ func (ctx *AuthContext) UserMembershipActionDispatcher(w http.ResponseWriter, r 
 	if httperr != nil {
 		return httperr
 	}
-	action := vars["action"]
+	subObject := vars["subObject"]
 	switch {
-	case objType == "auditions" && action == "comments":
+	case objType == "auditions" && subObject == "comments":
 		return ctx.handleUserAuditionComment(userID, objID, u, w, r)
+	case objType == "auditions" && subObject == "availability":
+		return ctx.handleUserAuditionAvailability(userID, objID, u, w, r)
 	default:
-		return actionTypeNotSupported()
+		return subObjectNotSupported()
 	}
+}
+
+// handleUserAuditionAvailability handles requests related to availability on a User Audition
+func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *models.User, w http.ResponseWriter, r *http.Request) *middleware.HTTPError {
+	switch r.Method {
+	case "GET":
+		if !u.Can(permissions.SeeUserAvailability) {
+			return permissionDenied()
+		}
+		avail, err := ctx.store.GetUserAuditionAvailability(userID, audID)
+		if err != nil {
+			code := http.StatusInternalServerError
+			if err.Error() == appvars.ErrUserAuditionDoesNotExist {
+				code = http.StatusBadRequest
+			}
+			return HTTPError(err.Error(), code)
+		}
+		return respond(w, avail, http.StatusOK)
+	case "PATCH":
+		if !u.Can(permissions.ChangeUserAvailability) {
+			return permissionDenied()
+		}
+		return methodNotAllowed()
+	default:
+		return methodNotAllowed()
+	}
+	return nil
 }
 
 // handleUserAuditionComment handles requests related to comments on a User Audition
@@ -306,7 +335,7 @@ func (ctx *AuthContext) addUserToAudition(userID, audID, creatorID int, ual *mod
 	if err := ual.Validate(); err != nil {
 		return HTTPError("error validating user audition link: "+err.Error(), http.StatusBadRequest)
 	}
-	if err := ctx.store.AddUserToAudition(userID, audID, creatorID, ual.Schedule, ual.Comment); err != nil {
+	if err := ctx.store.AddUserToAudition(userID, audID, creatorID, ual.Availability, ual.Comment); err != nil {
 		code := http.StatusInternalServerError
 		if err.Error() == appvars.ErrAuditionDoesNotExist || err.Error() == appvars.ErrUserAlreadyInAudition {
 			code = http.StatusBadRequest

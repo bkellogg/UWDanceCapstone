@@ -73,7 +73,7 @@ func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
 
 // AddUserToAudition adds the given user to the given audition. Returns an error
 // if one occurred.
-func (store *Database) AddUserToAudition(userID, audID, creatorID int, schedule *WeekTimeBlock, comment string) error {
+func (store *Database) AddUserToAudition(userID, audID, creatorID int, availability *WeekTimeBlock, comment string) error {
 	audition, err := store.GetAuditionByID(audID, false)
 	if err != nil {
 		return err
@@ -90,7 +90,7 @@ func (store *Database) AddUserToAudition(userID, audID, creatorID int, schedule 
 		return errors.New(appvars.ErrUserAlreadyInAudition)
 	}
 
-	dayMap, err := schedule.ToSerializedDayMap()
+	dayMap, err := availability.ToSerializedDayMap()
 	if err != nil {
 		return err
 	}
@@ -99,20 +99,20 @@ func (store *Database) AddUserToAudition(userID, audID, creatorID int, schedule 
 	if err != nil {
 		return errors.New("error beginning DB transaction: " + err.Error())
 	}
-	res, err := tx.Exec(`INSERT INTO UserAuditionSchedule
+	res, err := tx.Exec(`INSERT INTO UserAuditionAvailability
 		(Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		dayMap["sun"], dayMap["mon"], dayMap["tues"], dayMap["wed"], dayMap["thurs"], dayMap["fri"], dayMap["sat"], addTime, false)
 	if err != nil {
 		tx.Rollback()
-		return errors.New("error inserting user audition schedule: " + err.Error())
+		return errors.New("error inserting user audition availability: " + err.Error())
 	}
-	schedID, err := res.LastInsertId()
+	availID, err := res.LastInsertId()
 	if err != nil {
 		tx.Rollback()
-		return errors.New("error getting insert ID of new schedule: " + err.Error())
+		return errors.New("error getting insert ID of new availability: " + err.Error())
 	}
-	res, err = tx.Exec(`INSERT INTO UserAudition (AuditionID, UserID, ScheduleID, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
-		audID, userID, schedID, creatorID, addTime, false)
+	res, err = tx.Exec(`INSERT INTO UserAudition (AuditionID, UserID, AvailabilityID, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
+		audID, userID, availID, creatorID, addTime, false)
 	if err != nil {
 		tx.Rollback()
 		return errors.New("error inserting user audition: " + err.Error())
@@ -320,7 +320,7 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 }
 
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
-// Returns an error if one occured.
+// Returns an error if one occurred.
 func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, error) {
 	offset := getSQLPageOffset(page)
 	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
@@ -336,7 +336,7 @@ func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*U
 }
 
 // GetUsersByPieceID returns a slice of users that are in the given piece, if any.
-// Returns an error if one occured.
+// Returns an error if one occurred.
 func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, error) {
 	offset := getSQLPageOffset(page)
 	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U

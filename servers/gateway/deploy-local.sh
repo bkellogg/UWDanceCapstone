@@ -81,7 +81,7 @@ deployAPI () {
 	-e SESSIONKEY=$SESSIONKEY \
     -e MAILUSER=$MAILUSER \
     -e MAILPASS=$MAILPASS \
-    -e RESETPASSWORDCLIENTPATH=/clients/passwordresetclient \
+    -e RESETPASSWORDCLIENTPATH=/clients/passwordreset \
     -e ASSETSPATH=/assets/ \
     -e ADMINCONSOLEPATH=/clients/console \
     -e FRONTENDPATH=/clients/frontend/build/ \

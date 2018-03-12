@@ -49,26 +49,26 @@ type UserUpdates struct {
 // add a user to an audition.
 // UserID and AuditionID will come from request URI
 type UserAuditionLink struct {
-	Comment  string         `json:"comment"`
-	Schedule *WeekTimeBlock `json:"schedule,omitempty"`
+	Comment      string         `json:"comment"`
+	Availability *WeekTimeBlock `json:"availability,omitempty"`
 }
 
 // UserAudition represents how a link between a user and an audition
 // is stored.
 type UserAudition struct {
-	ID         int       `json:"id"`
-	AuditionID int       `json:"auditionID"`
-	UserID     int       `json:"userID"`
-	ScheduleID int       `json:"scheduleID"`
-	CreatedAt  time.Time `json:"createdAt"`
-	CreatedBy  int       `json:"createdBy"`
-	IsDeleted  bool      `json:"isDeleted"`
+	ID             int       `json:"id"`
+	AuditionID     int       `json:"auditionID"`
+	UserID         int       `json:"userID"`
+	AvailabilityID int       `json:"availabilityID"`
+	CreatedAt      time.Time `json:"createdAt"`
+	CreatedBy      int       `json:"createdBy"`
+	IsDeleted      bool      `json:"isDeleted"`
 }
 
 // Validate validates the current UserAuditionLink and returns
 // an error if one occurred.
 func (ual *UserAuditionLink) Validate() error {
-	return ual.Schedule.Validate()
+	return ual.Availability.Validate()
 }
 
 // ToUser takes this *NewUserRequest and returns

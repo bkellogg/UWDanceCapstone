@@ -40,10 +40,10 @@ func objectTypeNotSupported() *middleware.HTTPError {
 	}
 }
 
-// actionTypeNotSupported returns an object type not supported HTTPError.
-func actionTypeNotSupported() *middleware.HTTPError {
+// subObjectNotSupported returns an object type not supported HTTPError.
+func subObjectNotSupported() *middleware.HTTPError {
 	return &middleware.HTTPError{
-		Message: appvars.ErrActionTypeNotSupported,
+		Message: appvars.ErrSubObjectTypeNotSupported,
 		Status:  http.StatusBadRequest,
 	}
 }

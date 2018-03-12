@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
@@ -81,7 +82,45 @@ func (dtb *DayTimeBlock) Validate() error {
 // WeekTimeBlock defines a block of times over the course
 // of the week in which each day has one or many blocks of time.
 type WeekTimeBlock struct {
-	Days []*DayTimeBlock `json:"days,omitempty"`
+	Days      []*DayTimeBlock `json:"days,omitempty"`
+	CreatedAt time.Time       `json:"createdAt,omitempty"`
+	IsDeleted bool            `json:"isDeleted,omitempty"`
+}
+
+// RawAvailability represents how the availability is
+// stored in an unparsed format inside the database.
+type RawAvailability struct {
+	ID        int
+	Sunday    string
+	Monday    string
+	Tuesday   string
+	Wednesday string
+	Thursday  string
+	Friday    string
+	Saturday  string
+	CreatedAt time.Time
+	IsDeleted bool
+}
+
+// toWeekTimeBlock turns the current RawAvailability into a WeekTimeBlock
+// nd returns it. Returns an error if one occurred.
+func (ra *RawAvailability) toWeekTimeBlock() (*WeekTimeBlock, error) {
+	wtbr := &WeekTimeBlock{}
+	wtbr.IsDeleted = ra.IsDeleted
+	wtbr.CreatedAt = ra.CreatedAt
+	for i, day := range []string{ra.Sunday, ra.Monday, ra.Tuesday, ra.Wednesday, ra.Thursday, ra.Friday, ra.Saturday} {
+		dayBlock := &DayTimeBlock{}
+		dayBlock.Day = time.Weekday(i).String()
+		for _, timeBlock := range strings.Split(day, ", ") {
+			tb, err := ParseTimeBlock(timeBlock)
+			if err != nil {
+				return nil, err
+			}
+			dayBlock.Times = append(dayBlock.Times, tb)
+		}
+		wtbr.Days = append(wtbr.Days, dayBlock)
+	}
+	return wtbr, nil
 }
 
 // Validate validates that the week time block contains

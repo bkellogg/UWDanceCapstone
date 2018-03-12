@@ -14,6 +14,9 @@ const (
 	CommentOnUserAudition     = 70
 	SeeCommentsOnUserAudition = 20
 
+	SeeUserAvailability    = 70
+	ChangeUserAvailability = 100
+
 	SeeAuditions    = 20
 	CreateAuditions = 70
 	DeleteAuditions = 70

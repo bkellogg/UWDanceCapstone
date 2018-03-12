@@ -61,7 +61,7 @@ CREATE TABLE UserPiece (
     FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID)
 );
 
-CREATE TABLE UserAuditionSchedule (
+CREATE TABLE UserAuditionAvailability (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     Sunday VARCHAR(150) NOT NULL,
     Monday VARCHAR(150) NOT NULL,
@@ -78,12 +78,12 @@ CREATE TABLE UserAudition (
     UserAuditionID INT AUTO_INCREMENT PRIMARY KEY,
     AuditionID INT NOT NULL,
     UserID INT NOT NULL,
-    ScheduleID INT NOT NULL,
+    AvailabilityID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID),
-    FOREIGN KEY (ScheduleID) REFERENCES UserAuditionSchedule(ID)
+    FOREIGN KEY (AvailabilityID) REFERENCES UserAuditionAvailability(ID)
 );
 
 CREATE TABLE UserAuditionComment (
