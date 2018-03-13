@@ -6,94 +6,127 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>{{.GeneralAnnouncementTitle}}</title>
     <link rel="stylesheet" href="https://dasc.capstone.ischool.uw.edu/assets/css/template_style.css">
-    <!-- <style>
-        /*shared features*/
+    <style>
+    /* SHARED STYLES */
+    .footer-text-wrapper,
+    .footer-img-wrapper,
+    .email-body {
+        padding-left: 10%;
+    }
 
-        .footer-text-wrapper,
-        .footer-img-wrapper,
-        .email-body {
-            padding-left: 10%;
-        }
+    .signature-top, 
+    .footer-bar {
+        margin-top: 10px;
+    }
 
-        body {
-            font-family: "Lato", "sans-serif";
-            margin-left: 15px;
-        }
+    /* BODY */
+    body {
+        font-family: "Lato", "sans-serif";
+        margin-left: 15px;
+    }
 
-        .email-template {
-            width: 600px;
-            margin-left: 30%;
-            margin-right: 30%;
+    /* EMAIL TEMPLATE  */
+    .email-template {
+        border-style: solid;
+        border-width: 1px;
+        border-color: #799FB0;
+        width: 600px;
+    }
 
-        }
+    /* HEADER BANNER */
+    .logo {
+        background-color: #799FB0;
+        padding-bottom: 10px;
+        padding-top: 40px;
+        text-align: center;
+        font-weight: 200;
+        font-size: 1.5em;
+        margin-bottom: 20px;
+        color: white;
+        /*font color*/
+    }
 
-        .logo {
-            background-color: #799FB0;
-            padding-bottom: 10px;
-            padding-top: 40px;
-            text-align: center;
-            font-weight: 200;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-            color: white;
-            /*font color*/
-        }
+    /* EMAIL BODY*/
+    .email-body {
+        margin-top: 50px;
+        margin-bottom: 30px;
+        padding-right: 10%;
+        font-size: 0.875em;
+    }
 
-        .email-body {
-            margin-top: 30px;
-            margin-bottom: 30px;
-            padding-right: 10%;
-            font-size: 0.875em;
-        }
+    .raw-url {
+        margin-left: 10px;
+    }
 
-        .footer-img-wrapper,
-        footer-text-wrapper {
-            display: inline-block;
-        }
+    /* FUN NO-RESPONSE MESSAGE */
+    .no-response-message {
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
 
-        .signature-top {
-            margin-top: 10px;
-        }
+    .small-message {
+        color: #799FB0;
+        font-weight: 400;
 
-        .footer-bar {
-            margin-top: 10px;
-        }
+    }
 
-        .footer-name {
-            font-weight: 600;
-        }
+    /* FOOTER BANNER*/
+    .signature-wrapper {
+        background-color: #799FB0;
+        color: white;
+        font-size: 0.875em;
+    }
 
-        .reset-content {
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
+    .footer-text-wrapper {
+        padding-bottom: 15px;
+        padding-top: 10px;
+    }
 
-        .accept-reject-link{
-            color: #EA6336;
-            font-weight: 600;
-        
-        }
+    .footer-name {
+        font-weight: 600;
+    }
 
-        .reset-raw-url {
-            margin-left: 10px;
-        }
+    .footer-img-wrapper {
+        padding-bottom: 40px;
+    }
 
-        .signature-wrapper {
-            background-color: #799FB0;
-            color: white;
-            /*font color*/
-        }
+    .footer-img-wrapper {
+        display: inline-block;
+        size: 50%;
+    }
 
-        .footer-text-wrapper {
-            padding-bottom: 15px;
-            padding-top: 10px;
 
-        }
+    /* SPECIAL STYLES THAT GO IN DIFFERENT HTML FILES*/
+    /* BUTTON  IN passwordreset_tpl.html */
+    .reset-link-button {
+        background-color: #EA6336;
+        width: 110px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        padding: 2%;
+        border-radius: 10px;
+        color: white;
+        text-align: center;
+        font-weight: 100;
+        letter-spacing: .5px;
+        text-decoration: none;
 
-        .footer-img-wrapper {
-            padding-bottom: 40px;
-        }
-    </style> -->
+    }
+
+    /* LINKS */
+    .link{
+        color: #EA6336;
+        font-weight: 600;
+    }
+
+    .audition-details{
+        padding-left: 20px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        font-weight: 600;
+        color: #EA6336;
+    }
+    </style>
 </head>
 
 <body>
