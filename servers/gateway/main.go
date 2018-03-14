@@ -64,6 +64,7 @@ func main() {
 	baseRouter.HandleFunc(appvars.PasswordResetPath, authContext.PasswordResetHandler)
 	baseRouter.PathPrefix("/reset/").Handler(handlers.PreventDirListing(http.StripPrefix("/reset/", http.FileServer(http.Dir(resetPasswordClientPath)))))
 	baseRouter.PathPrefix("/admin").Handler(handlers.AddTrailingSlash(http.StripPrefix("/admin/", http.FileServer(http.Dir(adminConsolePath)))))
+	baseRouter.PathPrefix("/assets/tpl/").Handler(http.NotFoundHandler()) // don't serve the assets/tpl directory
 	baseRouter.PathPrefix("/assets/").Handler(handlers.PreventDirListing(http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsPath)))))
 
 	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()

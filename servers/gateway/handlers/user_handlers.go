@@ -157,6 +157,11 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return respondWithString(w, "resume uploaded!", http.StatusCreated)
 		}
 		return methodNotAllowed()
+	case "role":
+		if !u.Can(permissions.ChangeUserRole) {
+			return permissionDenied()
+		}
+		return ctx.handleUserRole(w, r, userID)
 	default:
 		return objectTypeNotSupported()
 	}
@@ -356,4 +361,26 @@ func (ctx *AuthContext) addUserToAudition(userID, audID, creatorID int, ual *mod
 		return HTTPError("error performing membership change: "+err.Error(), code)
 	}
 	return nil
+}
+
+// handleUserRole handles all requests to change a user's role.
+func (ctx *AuthContext) handleUserRole(w http.ResponseWriter, r *http.Request, userID int) *middleware.HTTPError {
+	if r.Method != http.MethodPatch {
+		return methodNotAllowed()
+	}
+	role := &models.Role{}
+	if err := receive(r, role); err != nil {
+		return receiveFailed()
+	}
+	if err := role.Validate(); err != nil {
+		return HTTPError("role validation failed: "+err.Error(), http.StatusBadRequest)
+	}
+	err := ctx.store.ChangeUserRole(userID, role.Role)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return HTTPError("user not found", http.StatusNotFound)
+		}
+		return HTTPError("error changing user role: "+err.Error(), http.StatusInternalServerError)
+	}
+	return respondWithString(w, "user role updated", http.StatusOK)
 }

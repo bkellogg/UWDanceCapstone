@@ -51,6 +51,13 @@ func (store *Database) AddUserToPiece(userID, pieceID int) error {
 	return err
 }
 
+// ChangeUserRole sets the role of the given user ID to role.
+// Returns an error if one occurred.
+func (store *Database) ChangeUserRole(userID, role int) error {
+	_, err := store.db.Exec(`UPDATE Users U SET u.Role = ? WHERE U.UserID = ?`, role, userID)
+	return err
+}
+
 // RemoveUserFromPiece removes the given user from the given piece.
 func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
 	piece, err := store.GetPieceByID(pieceID, false)

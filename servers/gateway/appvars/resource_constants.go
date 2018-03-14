@@ -6,6 +6,7 @@ const (
 	UsersPath                        = BaseAPIPath + "/users"
 	AllUsersPath                     = "/all"
 	SpecificUserPath                 = "/{userID}"
+	UserRolePath                     = SpecificUserPath + "/role"
 	UserObjectsPath                  = SpecificUserPath + "/{object}"
 	UserMembershipPath               = UserObjectsPath + "/{objectID}"
 	UserMembershipObjectPath         = UserMembershipPath + "/{subObject}"

@@ -65,6 +65,19 @@ type UserAudition struct {
 	IsDeleted      bool      `json:"isDeleted"`
 }
 
+// Role defines how a role is sent to the server
+type Role struct {
+	Role int `json:"role"`
+}
+
+// Validate validates the current role and returns an error if one occurred.
+func (r *Role) Validate() error {
+	if r.Role < 0 || r.Role > 100 {
+		return errors.New("role must be between 0 and 100")
+	}
+	return nil
+}
+
 // Validate validates the current UserAuditionLink and returns
 // an error if one occurred.
 func (ual *UserAuditionLink) Validate() error {
