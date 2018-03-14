@@ -365,7 +365,7 @@ func (ctx *AuthContext) addUserToAudition(userID, audID, creatorID int, ual *mod
 
 // handleUserRole handles all requests to change a user's role.
 func (ctx *AuthContext) handleUserRole(w http.ResponseWriter, r *http.Request, userID int) *middleware.HTTPError {
-	if r.Method != http.MethodPatch {
+	if r.Method != "PATCH" {
 		return methodNotAllowed()
 	}
 	role := &models.Role{}
