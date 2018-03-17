@@ -36,6 +36,7 @@ class SignUpExtra extends Component {
         let photo = Util.uploadPhoto(this.state.photoUpload)
         console.log(photo)
       }
+      this.props.skip()
     }
 
     inputChange(val){

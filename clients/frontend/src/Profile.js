@@ -34,8 +34,26 @@ class Profile extends Component {
 
   componentDidMount(){
     //this.getPhoto();
-    this.getHistory();
-    //this.getResume();
+    //this.getHistory();
+    //Util.getResume();
+
+    //TODO deal with the fact that there are going to be pages
+    Util.makeRequest("users/1/shows?history=all", {}, "GET", true)
+    .then((res) => {
+      if(res.ok){
+        return res.json()
+      }
+    })
+    .then((res) => {
+      this.setState({
+        history: res.shows
+      })
+      console.log(this.state.history)
+      res.shows
+    })
+    .catch((err) => {
+      console.log("whoops!")
+    })
   }
 
   //want to move this to util eventually
@@ -62,24 +80,7 @@ class Profile extends Component {
   //also want to move to util
   getHistory(){
     //dummy data - this needs to be fleshed out
-    let pieces = [
-      {
-        show: "Faculty Dance Concert",
-        year: 2018,
-        choreographer: "Bruce McCormick"
-      },{
-        show: "Faculty Dance Concert",
-        year: 2017,
-        choreographer: "Rachael Lincoln"
-      },{
-        show: "MFA Dance Concert",
-        year:2016,
-        choreographer: "Kyle Craig-Bogard"
-      }]
     
-      this.setState({
-        history: pieces
-      })
   }
 
   onClick(){
@@ -168,7 +169,7 @@ class Profile extends Component {
           </div>
           <div id="history">
             <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-            {this.state.history !== null && this.state.history.map((p, i) => {
+            {/*this.state.history !== null && this.state.history.map((p, i) => {
               return(
                 <div className="showHistory" key={i}>
                   <div>
@@ -182,7 +183,7 @@ class Profile extends Component {
                   </div>
                 </div>
               )
-            })}
+            })*/}
             {this.state.history === null &&
             <p> Dancer has no piece history </p>
             }

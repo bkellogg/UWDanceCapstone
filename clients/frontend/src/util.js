@@ -79,16 +79,11 @@ export function uploadPhoto(val){
             console.log(this.responseText);
         }
     });
-
-    //let photoResult = document.querySelector(".photo-result");
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
-                //photoResult.textContent = xhr.responseText;
-                //getImage();
                 return xhr.responseText
             } else {
-                //photoResult.textContent = "ERROR: " + xhr.responseText;
                 return "get fucked"
             }
         }
@@ -114,15 +109,11 @@ export function uploadResume(val){
         }
     });
 
-    //let photoResult = document.querySelector(".photo-result");
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
-                //photoResult.textContent = xhr.responseText;
-                //getImage();
                 return xhr.responseText
             } else {
-                //photoResult.textContent = "ERROR: " + xhr.responseText;
                 return "get fucked"
             }
         }
@@ -187,4 +178,32 @@ export function uploadLName(val){
             refreshLocalUser()
         })
         .catch((err) => {})
+}
+
+//TODO - needs to use the resume header? not sure how we're going to display this
+export function getResume(){
+    return makeRequest("users/me/resume", {}, "GET", true)
+    .then((res) => {
+        if (res.ok) {
+            console.log(res)
+            return res.json();
+        }
+        //return res.text().then((t) => Promise.reject(t));
+    })
+    .catch((err) => {
+        console.error(err);
+    })
+}
+
+//TODO - this is a TEST, change uid 1 to me to get the actual current users history
+export function getDancerHistory(){
+  return makeRequest("users/1/shows?history=all", {}, "GET", true)
+  .then((res) => {
+      if(res.ok){
+          return res.json()
+      }
+      return "Whoops!"
+  }).catch((err) => {
+    console.log(err)
+  })
 }
