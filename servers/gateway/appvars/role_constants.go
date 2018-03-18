@@ -1,9 +1,9 @@
 package appvars
 
 const (
-	RoleDancer        = "dancer"
+	RoleDancer        = "user"
 	RoleAdmin         = "admin"
-	RoleChoreographer = "choreographer"
+	RoleChoreographer = "chor"
 
 	PermDancer        = 10
 	PermChoreographer = 70

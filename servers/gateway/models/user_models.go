@@ -30,7 +30,7 @@ type User struct {
 	Email     string    `json:"email"`
 	Bio       string    `json:"bio"`
 	PassHash  []byte    `json:"-"`
-	Role      int       `json:"role"`
+	RoleID    int       `json:"roleID"`
 	Active    bool      `json:"active"`
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -63,13 +63,13 @@ type UserAudition struct {
 	IsDeleted      bool      `json:"isDeleted"`
 }
 
-// Role defines how a role is sent to the server
-type Role struct {
+// RoleChange defines how a role is sent to the server
+type RoleChange struct {
 	Role int `json:"role"`
 }
 
 // Validate validates the current role and returns an error if one occurred.
-func (r *Role) Validate() error {
+func (r *RoleChange) Validate() error {
 	return nil
 }
 
@@ -93,7 +93,7 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 		LastName:  u.LastName,
 		Email:     u.Email,
 		Bio:       u.Bio,
-		Role:      appvars.UserDefaultRole,
+		RoleID:    appvars.UserDefaultRole,
 		Active:    true,
 		CreatedAt: time.Now(),
 	}
@@ -159,7 +159,7 @@ func generateRandomUser() *User {
 		FirstName: randomdata.FirstName(randomdata.RandomGender),
 		LastName:  randomdata.LastName(),
 		Email:     randomdata.Email(),
-		Role:      appvars.UserDefaultRole,
+		RoleID:    appvars.UserDefaultRole,
 	}
 	user.SetPassword(randomdata.FirstName(randomdata.RandomGender) + randomdata.Street())
 	return user

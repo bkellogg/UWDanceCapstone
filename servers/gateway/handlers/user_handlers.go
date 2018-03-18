@@ -384,19 +384,19 @@ func (ctx *AuthContext) handleUserRole(w http.ResponseWriter, r *http.Request, u
 	if r.Method != "PATCH" {
 		return methodNotAllowed()
 	}
-	role := &models.Role{}
-	if err := receive(r, role); err != nil {
+	roleChange := &models.RoleChange{}
+	if err := receive(r, roleChange); err != nil {
 		return receiveFailed()
 	}
-	if err := role.Validate(); err != nil {
-		return HTTPError("role validation failed: "+err.Error(), http.StatusBadRequest)
+	if err := roleChange.Validate(); err != nil {
+		return HTTPError("roleChange validation failed: "+err.Error(), http.StatusBadRequest)
 	}
-	err := ctx.store.ChangeUserRole(userID, role.Role)
+	err := ctx.store.ChangeUserRole(userID, roleChange.Role)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return HTTPError("user not found", http.StatusNotFound)
 		}
-		return HTTPError("error changing user role: "+err.Error(), http.StatusInternalServerError)
+		return HTTPError("error changing user roleChange: "+err.Error(), http.StatusInternalServerError)
 	}
-	return respondWithString(w, "user role updated", http.StatusOK)
+	return respondWithString(w, "user roleChange updated", http.StatusOK)
 }

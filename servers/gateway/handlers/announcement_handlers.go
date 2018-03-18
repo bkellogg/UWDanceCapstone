@@ -99,7 +99,7 @@ func (ctx *AnnoucementContext) DummyAnnouncementHandler(w http.ResponseWriter, r
 		FirstName: randomdata.FirstName(randomdata.RandomGender),
 		LastName:  randomdata.LastName(),
 		Email:     randomdata.Email(),
-		Role:      randomdata.Number(0, 100),
+		RoleID:    randomdata.Number(0, 100),
 		Active:    true,
 	}
 	wsa := &models.AnnouncementResponse{

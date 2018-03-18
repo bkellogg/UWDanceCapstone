@@ -104,7 +104,7 @@ func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID
 	}
 	offset := getSQLPageOffset(page)
 	query := `SELECT DISTINCT A.AnnouncementID, A.AnnouncementTypeID, A.Message, A.CreatedAt, A.IsDeleted,
-		U.UserID, U.FirstName, U.LastName, U.Email, U.Role, U.Active FROM Announcements A
+		U.UserID, U.FirstName, U.LastName, U.Email, U.RoleChange, U.Active FROM Announcements A
 		JOIN Users U ON A.CreatedBy = U.UserID`
 	if !includeDeleted {
 		query += ` WHERE A.IsDeleted = FALSE`
@@ -134,7 +134,7 @@ func handleAnnouncementsFromDatabase(result *sql.Rows, err error) ([]*Announceme
 		}
 		if err = result.Scan(&a.ID, &a.AnnouncementTypeID, &a.Message, &a.CreatedAt, &a.IsDeleted,
 			&a.CreatedBy.ID, &a.CreatedBy.FirstName, &a.CreatedBy.LastName, &a.CreatedBy.Email,
-			&a.CreatedBy.Role, &a.CreatedBy.Active); err != nil {
+			&a.CreatedBy.RoleID, &a.CreatedBy.Active); err != nil {
 			return nil, err
 		}
 		announcements = append(announcements, a)

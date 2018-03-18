@@ -124,7 +124,7 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 	object := muxVars["object"]
 	switch object {
 	case "users":
-		// TODO: Change this to "permissions to see users in audition"
+		// TODO: Change this to "permissions to see users in show"
 		if !ctx.permChecker.UserCan(u, permissions.SeeAllUsers) {
 			return permissionDenied()
 		}
