@@ -15,6 +15,7 @@ type AuthContext struct {
 	SessionsStore   sessions.Store
 	store           *models.Database
 	MailCredentials *mail.MailCredentials
+	permChecker     *models.PermissionChecker
 	TemplatePath    string
 }
 
@@ -25,23 +26,26 @@ func NewAuthContext(sessionKey, tp string, sessionStore sessions.Store, database
 		SessionsStore:   sessionStore,
 		store:           database,
 		MailCredentials: mc,
+		permChecker:     models.NewPermissionChecker(database),
 		TemplatePath:    tp,
 	}
 }
 
-// AnnoucementContext defines the information needed for
-// handlers performing annoucement operations.
+// AnnouncementContext defines the information needed for
+// handlers performing announcement operations.
 type AnnoucementContext struct {
-	Store    *models.Database
-	Notifier *notify.Notifier
+	Store       *models.Database
+	Notifier    *notify.Notifier
+	permChecker *models.PermissionChecker
 }
 
-// NewAnnoucementContext returns a pointer to an AnnoucementContext
+// NewAnnouncementContext returns a pointer to an AnnouncementContext
 // with the given information.
 func NewAnnoucementContext(store *models.Database, notifier *notify.Notifier) *AnnoucementContext {
 	return &AnnoucementContext{
-		Store:    store,
-		Notifier: notifier,
+		Store:       store,
+		Notifier:    notifier,
+		permChecker: models.NewPermissionChecker(store),
 	}
 }
 
@@ -62,10 +66,11 @@ func NewHandlerContext(store *models.Database) *HandlerContext {
 type MailContext mail.MailCredentials
 
 // NewMailContext returns a new mail context from the given information
-func NewMailContext(user, password string) *MailContext {
+func NewMailContext(user, password string, db *models.Database) *MailContext {
 	return &MailContext{
-		User:     user,
-		Password: password,
+		User:        user,
+		Password:    password,
+		PermChecker: models.NewPermissionChecker(db),
 	}
 }
 

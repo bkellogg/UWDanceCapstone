@@ -30,7 +30,7 @@ func (store *Database) UserIsInAudition(userID, audID int) (bool, error) {
 }
 
 // AddUserToPiece adds the given user to the given piece.
-func (store *Database) AddUserToPiece(userID, pieceID int) error {
+func (store *Database) AddUserToPiece(userID, pieceID int, role string) error {
 	piece, err := store.GetPieceByID(pieceID, false)
 	if err != nil {
 		return err
@@ -46,8 +46,8 @@ func (store *Database) AddUserToPiece(userID, pieceID int) error {
 	if exists {
 		return errors.New("user is already in this piece")
 	}
-	_, err = store.db.Exec(`INSERT INTO UserPiece (UserID, PieceID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?)`,
-		userID, pieceID, addTime, false)
+	_, err = store.db.Exec(`INSERT INTO UserPiece (UserID, PieceID, Role, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+		userID, pieceID, role, addTime, false)
 	return err
 }
 
@@ -341,6 +341,26 @@ func (store *Database) UpdatePasswordByID(id int, passHash []byte) error {
 	query := `UPDATE Users SET PassHash = ? WhERE UserID = ?`
 	_, err := store.db.Query(query, passHash, id)
 	return err
+}
+
+// getUserRoleLevel gets the role level of the given user.
+// Returns an error if one occurred.
+func (store *Database) getUserRoleLevel(userID int64) (int, error) {
+	rows, err := store.db.Query(`
+		SELECT RoleLevel FROM Role R
+			JOIN Users U ON U.RoleID = R.RoleID
+			WHERE U.UserID = ?`, userID)
+	if err != nil {
+		return -1, err
+	}
+	if !rows.Next() {
+		return -1, sql.ErrNoRows
+	}
+	role := 0
+	if err = rows.Scan(&role); err != nil {
+		return -1, err
+	}
+	return role, nil
 }
 
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.

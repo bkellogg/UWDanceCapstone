@@ -18,7 +18,7 @@ deployAPI () {
 	fi
 
 	if [[ "$1" == "hard" ]]; then
-		docker pull redis
+		# docker pull redis
 
 		if [ "$(docker ps -aq --filter name=mysql)" ]; then
 			docker rm -f mysql

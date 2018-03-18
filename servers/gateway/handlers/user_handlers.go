@@ -20,7 +20,7 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	if r.Method != "GET" {
 		return methodNotAllowed()
 	}
-	if !u.Can(permissions.SeeAllUsers) {
+	if !ctx.permChecker.UserCan(u, permissions.SeeAllUsers) {
 		return permissionDenied()
 	}
 	page, httperror := getPageParam(r)
@@ -44,7 +44,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 	includeInactive := getIncludeInactiveParam(r)
 	switch r.Method {
 	case "GET":
-		if !u.CanSeeUser(userID) {
+		if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
 			return permissionDenied()
 		}
 		user, err := ctx.store.GetUserByID(userID, includeInactive)
@@ -57,7 +57,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 
 		return respond(w, user, http.StatusOK)
 	case "PATCH":
-		if !u.CanModifyUser(userID) {
+		if !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
 			return permissionDenied()
 		}
 		updates := &models.UserUpdates{}
@@ -73,7 +73,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		}
 		return respondWithString(w, "user updated", http.StatusOK)
 	case "DELETE":
-		if !u.CanDeleteUser(userID) {
+		if !!ctx.permChecker.UserCanDeleteUser(u, int64(userID)) {
 			return permissionDenied()
 		}
 		if err := ctx.store.DeactivateUserByID(userID); err != nil {
@@ -123,7 +123,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return err
 		}
 		if r.Method == "GET" {
-			if !u.CanSeeUser(userID) {
+			if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
 				return permissionDenied()
 			}
 			imageBytes, err := getUserProfilePicture(userID)
@@ -132,7 +132,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			}
 			return respondWithImage(w, imageBytes, http.StatusOK)
 		} else if r.Method == "POST" {
-			if !u.CanModifyUser(userID) {
+			if !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
 				return permissionDenied()
 			}
 			err = saveImageFromRequest(r, userID)
@@ -158,7 +158,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		}
 		return methodNotAllowed()
 	case "role":
-		if !u.Can(permissions.ChangeUserRole) {
+		if !ctx.permChecker.UserCan(u, permissions.ChangeUserRole) {
 			return permissionDenied()
 		}
 		return ctx.handleUserRole(w, r, userID)
@@ -195,7 +195,7 @@ func (ctx *AuthContext) UserMembershipActionDispatcher(w http.ResponseWriter, r 
 func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *models.User, w http.ResponseWriter, r *http.Request) *middleware.HTTPError {
 	switch r.Method {
 	case "GET":
-		if !u.Can(permissions.SeeUserAvailability) {
+		if !!ctx.permChecker.UserCan(u, permissions.SeeUserAvailability) {
 			return permissionDenied()
 		}
 		avail, err := ctx.store.GetUserAuditionAvailability(userID, audID)
@@ -208,7 +208,7 @@ func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *mod
 		}
 		return respond(w, avail, http.StatusOK)
 	case "PATCH":
-		if !u.Can(permissions.ChangeUserAvailability) {
+		if !!ctx.permChecker.UserCan(u, permissions.ChangeUserAvailability) {
 			return permissionDenied()
 		}
 		wtb := &models.WeekTimeBlock{}
@@ -234,7 +234,7 @@ func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *mod
 func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.User, w http.ResponseWriter, r *http.Request) *middleware.HTTPError {
 	switch r.Method {
 	case "POST":
-		if !u.Can(permissions.CommentOnUserAudition) {
+		if !ctx.permChecker.UserCan(u, permissions.CommentOnUserAudition) {
 			return permissionDenied()
 		}
 		newComment := &models.AuditionComment{}
@@ -250,7 +250,7 @@ func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.U
 		}
 		return respond(w, comment, http.StatusCreated)
 	case "GET":
-		if !u.Can(permissions.SeeCommentsOnUserAudition) {
+		if !ctx.permChecker.UserCan(u, permissions.SeeCommentsOnUserAudition) {
 			return permissionDenied()
 		}
 		includeDeleted := getIncludeDeletedParam(r)
@@ -280,8 +280,8 @@ func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.U
 // UserMemberShipHandler handles all requests to add or remove a user to
 // an entity.
 func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	function := ctx.store.AddUserToPiece
-	message := "user added to piece"
+	function := ctx.store.RemoveUserFromPiece
+	message := "user removed from piece"
 	vars := mux.Vars(r)
 	objType := vars["object"]
 	objID, err := strconv.Atoi(vars["objectID"])
@@ -296,7 +296,7 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 	switch r.Method {
 	case "LINK":
 		if objType == "auditions" {
-			if !u.Can(permissions.AddUserToAudition) {
+			if !ctx.permChecker.UserCan(u, permissions.AddUserToAudition) {
 				return permissionDenied()
 			}
 			ual := &models.UserAuditionLink{}
@@ -308,21 +308,37 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 			}
 			return respondWithString(w, "user added to audition", http.StatusOK)
 		} else if objType == "pieces" {
-			if !u.Can(permissions.AddUserToPiece) {
+			if !ctx.permChecker.UserCan(u, permissions.AddUserToPiece) {
 				return permissionDenied()
 			}
+			role := getRoleParam(r)
+			switch role {
+			case appvars.RoleChoreographer:
+				if !ctx.permChecker.UserCan(u, permissions.AddStaffToPiece) {
+					return permissionDenied()
+				}
+			case "":
+				role = appvars.RoleDancer
+			default:
+				return HTTPError(role+" is not a valid role", http.StatusBadRequest)
+			}
+			err := ctx.store.AddUserToPiece(userID, objID, role)
+			if err != nil {
+				return HTTPError("error adding user to piece: "+err.Error(), http.StatusBadRequest)
+			}
+			return respondWithString(w, "user added to piece as a(n) "+role, http.StatusOK)
 		} else {
 			return objectTypeNotSupported()
 		}
 	case "UNLINK":
 		if objType == "pieces" {
-			if !u.Can(permissions.RemoveUserFromPiece) {
+			if !ctx.permChecker.UserCan(u, permissions.RemoveUserFromPiece) {
 				return permissionDenied()
 			}
 			function = ctx.store.RemoveUserFromPiece
 			message = "user removed from piece"
 		} else if objType == "auditions" {
-			if !u.Can(permissions.RemoveUserFromAudition) {
+			if !ctx.permChecker.UserCan(u, permissions.RemoveUserFromAudition) {
 				return permissionDenied()
 			}
 			function = ctx.store.RemoveUserFromAudition

@@ -17,7 +17,7 @@ import (
 func (ctx *AnnoucementContext) AnnouncementsHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
 	case "GET":
-		if !u.Can(permissions.SeeAnnouncements) {
+		if !ctx.permChecker.UserCan(u, permissions.SeeAnnouncements) {
 			return permissionDenied()
 		}
 		page, httperr := getPageParam(r)
@@ -31,7 +31,7 @@ func (ctx *AnnoucementContext) AnnouncementsHandler(w http.ResponseWriter, r *ht
 		}
 		return respond(w, models.PaginateAnnouncementResponses(announcements, page), http.StatusOK)
 	case "POST":
-		if !u.Can(permissions.SendAnnouncements) {
+		if !ctx.permChecker.UserCan(u, permissions.SendAnnouncements) {
 			return permissionDenied()
 		}
 
@@ -63,7 +63,7 @@ func (ctx *AnnoucementContext) AnnouncementsHandler(w http.ResponseWriter, r *ht
 func (ctx *AuthContext) AnnouncementTypesHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
 	case "GET":
-		if !u.Can(permissions.SeeAnnouncementTypes) {
+		if !ctx.permChecker.UserCan(u, permissions.SeeAnnouncementTypes) {
 			return permissionDenied()
 		}
 		announcementTypes, err := ctx.store.GetAnnouncementTypes(getIncludeDeletedParam(r))
@@ -72,7 +72,7 @@ func (ctx *AuthContext) AnnouncementTypesHandler(w http.ResponseWriter, r *http.
 		}
 		return respond(w, announcementTypes, http.StatusOK)
 	case "POST":
-		if !u.Can(permissions.CreateAnnouncementTypes) {
+		if !ctx.permChecker.UserCan(u, permissions.CreateAnnouncementTypes) {
 			return permissionDenied()
 		}
 		announcementType := &models.AnnouncementType{}
@@ -92,7 +92,7 @@ func (ctx *AuthContext) AnnouncementTypesHandler(w http.ResponseWriter, r *http.
 // DummyAnnouncementHandler handles requests made to make a dummy announcement. Creates a dummy
 // announcement and sends it over the context's notifier.
 func (ctx *AnnoucementContext) DummyAnnouncementHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	if !u.Can(permissions.SendAnnouncements) {
+	if !ctx.permChecker.UserCan(u, permissions.SendAnnouncements) {
 		return permissionDenied()
 	}
 	dummyUser := &models.User{

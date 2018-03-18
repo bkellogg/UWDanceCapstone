@@ -18,7 +18,7 @@ import (
 func (ctx *AuthContext) AuditionsHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
 	case "POST":
-		if !u.Can(permissions.CreateAuditions) {
+		if !ctx.permChecker.UserCan(u, permissions.CreateAuditions) {
 			return permissionDenied()
 		}
 		newAud := &models.NewAudition{}
@@ -50,7 +50,7 @@ func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.R
 	includeDeleted := getIncludeDeletedParam(r)
 	switch r.Method {
 	case "GET":
-		if !u.Can(permissions.SeeAuditions) {
+		if !ctx.permChecker.UserCan(u, permissions.SeeAuditions) {
 			return permissionDenied()
 		}
 		audition, err := ctx.store.GetAuditionByID(audID, includeDeleted)
@@ -62,7 +62,7 @@ func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.R
 		}
 		return respond(w, audition, http.StatusOK)
 	case "DELETE":
-		if !u.Can(permissions.DeleteAuditions) {
+		if !ctx.permChecker.UserCan(u, permissions.DeleteAuditions) {
 			return permissionDenied()
 		}
 		err := ctx.store.DeleteAuditionByID(audID)
@@ -107,7 +107,7 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 	switch object {
 	case "users":
 		// TODO: Change this to "permissions to see users in audition"
-		if !u.Can(permissions.SeeAllUsers) {
+		if !ctx.permChecker.UserCan(u, permissions.SeeAllUsers) {
 			return permissionDenied()
 		}
 		users, err := ctx.store.GetUsersByAuditionID(audID, page, includeDeleted)
@@ -117,7 +117,7 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		return respond(w, models.PaginateUsers(users, page), http.StatusOK)
 	case "pieces":
 		// TODO: Change this to "permissions to see pieces in audition"
-		if !u.Can(permissions.SeePieces) {
+		if !ctx.permChecker.UserCan(u, permissions.SeePieces) {
 			return permissionDenied()
 		}
 		pieces, err := ctx.store.GetPiecesByAuditionID(audID, page, includeDeleted)
@@ -126,7 +126,7 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		}
 		return respond(w, pieces, http.StatusOK)
 	case "shows":
-		if !u.Can(permissions.SeeShows) {
+		if !ctx.permChecker.UserCan(u, permissions.SeeShows) {
 			return permissionDenied()
 		}
 		shows, err := ctx.store.GetShowsByAuditionID(audID, page, includeDeleted)

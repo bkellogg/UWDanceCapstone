@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-// InsertNewPiece inserts the given NewPieve into the database and returns the
-// created Piece, or an error if one occured.
+// InsertNewPiece inserts the given NewPiece into the database and returns the
+// created Piece, or an error if one occurred.
 func (store *Database) InsertNewPiece(newPiece *NewPiece) (*Piece, error) {
 	createTime := time.Now()
 	result, err := store.db.Exec(`INSERT INTO Pieces (PieceName, ShowID, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
@@ -87,6 +87,14 @@ func (store *Database) GetPiecesByAuditionID(id, page int, includeDeleted bool) 
 	query += ` LIMIT 25 OFFSET ?`
 	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
 }
+
+//func (store *Database) AssignStaffToPiece(userID, pieceID int) error {
+//	tx, err := store.db.Begin()
+//	if err != nil {
+//		return errors.New("error beginning db transaction: " + err.Error())
+//	}
+//	user := &User{}
+//}
 
 // handlePiecesFromDatabase compiles the given result and err into a slice of pieces or an error.
 func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, error) {

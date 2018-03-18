@@ -135,3 +135,8 @@ func getHistoryParam(r *http.Request) string {
 func getStringParam(r *http.Request, param string) string {
 	return r.URL.Query().Get(param)
 }
+
+// getRole gets the value of the role query parameter.
+func getRoleParam(r *http.Request) string {
+	return getStringParam(r, "role")
+}

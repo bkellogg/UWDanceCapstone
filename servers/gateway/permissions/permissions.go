@@ -9,6 +9,7 @@ const (
 	ChangeUserRole            = 100
 	DeleteUsers               = 70
 	AddUserToPiece            = 70
+	AddStaffToPiece           = 75
 	RemoveUserFromPiece       = 70
 	AddUserToAudition         = 70
 	RemoveUserFromAudition    = 70

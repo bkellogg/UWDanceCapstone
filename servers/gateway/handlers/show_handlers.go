@@ -17,7 +17,7 @@ import (
 func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
 	case "GET":
-		if !u.Can(permissions.SeeShows) {
+		if !ctx.permChecker.UserCan(u, permissions.SeeShows) {
 			return permissionDenied()
 		}
 		page, httperr := getPageParam(r)
@@ -34,7 +34,7 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 		}
 		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
 	case "POST":
-		if !u.Can(permissions.CreateShows) {
+		if !ctx.permChecker.UserCan(u, permissions.CreateShows) {
 			return permissionDenied()
 		}
 		newShow := &models.NewShow{}
@@ -66,7 +66,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 	includeDeleted := getIncludeDeletedParam(r)
 	switch r.Method {
 	case "GET":
-		if !u.Can(permissions.SeeShows) {
+		if !ctx.permChecker.UserCan(u, permissions.SeeShows) {
 			return permissionDenied()
 		}
 		show, err := ctx.store.GetShowByID(showID, includeDeleted)
@@ -78,7 +78,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 		}
 		return respond(w, show, http.StatusOK)
 	case "DELETE":
-		if !u.Can(permissions.DeleteShows) {
+		if !ctx.permChecker.UserCan(u, permissions.DeleteShows) {
 			return permissionDenied()
 		}
 		err := ctx.store.DeleteShowByID(showID)
@@ -125,12 +125,12 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 	switch object {
 	case "users":
 		// TODO: Change this to "permissions to see users in audition"
-		if !u.Can(permissions.SeeAllUsers) {
+		if !ctx.permChecker.UserCan(u, permissions.SeeAllUsers) {
 			return permissionDenied()
 		}
 		return respondWithString(w, "TODO: Implement the users resource for shows", http.StatusNotImplemented)
 	case "pieces":
-		if !u.Can(permissions.SeePieces) {
+		if ctx.permChecker.UserCan(u, permissions.SeePieces) {
 			return permissionDenied()
 		}
 		pieces, err := ctx.store.GetPiecesByShowID(showID, page, includeDeleted)
@@ -147,7 +147,7 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 func (ctx *AuthContext) ShowTypeHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
 	case "GET":
-		if !u.Can(permissions.SeeShowTypes) {
+		if !ctx.permChecker.UserCan(u, permissions.SeeShowTypes) {
 			return permissionDenied()
 		}
 		showTypes, err := ctx.store.GetShowTypes(getIncludeDeletedParam(r))
@@ -156,7 +156,7 @@ func (ctx *AuthContext) ShowTypeHandler(w http.ResponseWriter, r *http.Request, 
 		}
 		return respond(w, showTypes, http.StatusOK)
 	case "POST":
-		if !u.Can(permissions.CreateShowTypes) {
+		if !ctx.permChecker.UserCan(u, permissions.CreateShowTypes) {
 			return permissionDenied()
 		}
 		showType := &models.ShowType{}

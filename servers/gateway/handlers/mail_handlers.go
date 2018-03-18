@@ -13,8 +13,8 @@ import (
 )
 
 // MailHandler handles all mail related requests
-func (mc *MailContext) MailHandler(w http.ResponseWriter, r *http.Request, user *models.User) *middleware.HTTPError {
-	if !user.Can(permissions.SendMail) {
+func (mc *MailContext) MailHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	if !mc.PermChecker.UserCan(u, permissions.SendMail) {
 		return HTTPError(appvars.ErrPermissionDenied, http.StatusForbidden)
 
 	}

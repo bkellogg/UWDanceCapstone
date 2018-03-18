@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
-
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/Pallinder/go-randomdata"
 	"golang.org/x/crypto/bcrypt"
@@ -72,9 +70,6 @@ type Role struct {
 
 // Validate validates the current role and returns an error if one occurred.
 func (r *Role) Validate() error {
-	if r.Role < 0 || r.Role > 100 {
-		return errors.New("role must be between 0 and 100")
-	}
 	return nil
 }
 
@@ -156,39 +151,6 @@ func (u *User) Authenticate(password string) error {
 		return errors.New("invalid credentials")
 	}
 	return nil
-}
-
-// Can returns true if the user has permissions to perform
-// the given action
-func (u *User) Can(action int) bool {
-	return action <= u.Role
-}
-
-// CanSeeUser returns true if the user has permissions
-// to view the user with the given ID
-func (u *User) CanSeeUser(id int) bool {
-	return u.hasPermissionTo(permissions.SeeAllUsers, id)
-}
-
-// CanModifyUser returns true if the user has permissions
-// to modify the user with the given ID
-func (u *User) CanModifyUser(id int) bool {
-	return u.hasPermissionTo(permissions.ModifyUsers, id)
-}
-
-// CanDeleteUser returns true if the user has permissions
-// to delete the user with the given ID
-func (u *User) CanDeleteUser(id int) bool {
-	return u.hasPermissionTo(permissions.DeleteUsers, id)
-}
-
-// hasPermissionTo returns true if the user can perform the given
-// action on the given user id
-func (u *User) hasPermissionTo(action, id int) bool {
-	if int(u.ID) == id {
-		return true
-	}
-	return u.Role >= action
 }
 
 // generateRandomUser creates a random user and returns it

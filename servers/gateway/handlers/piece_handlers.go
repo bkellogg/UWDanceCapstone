@@ -15,7 +15,7 @@ import (
 func (ctx *AuthContext) PiecesHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
 	case "POST":
-		if !u.Can(permissions.CreatePieces) {
+		if !ctx.permChecker.UserCan(u, permissions.CreatePieces) {
 			return permissionDenied()
 		}
 		newPiece := &models.NewPiece{}
@@ -47,7 +47,7 @@ func (ctx *AuthContext) SpecificPieceHandler(w http.ResponseWriter, r *http.Requ
 	includeDeleted := getIncludeDeletedParam(r)
 	switch r.Method {
 	case "GET":
-		if !u.Can(permissions.SeePieces) {
+		if !ctx.permChecker.UserCan(u, permissions.SeePieces) {
 			return permissionDenied()
 		}
 		piece, err := ctx.store.GetPieceByID(pieceID, includeDeleted)
@@ -59,7 +59,7 @@ func (ctx *AuthContext) SpecificPieceHandler(w http.ResponseWriter, r *http.Requ
 		}
 		return respond(w, piece, http.StatusOK)
 	case "DELETE":
-		if !u.Can(permissions.DeletePieces) {
+		if !ctx.permChecker.UserCan(u, permissions.DeletePieces) {
 			return permissionDenied()
 		}
 		err := ctx.store.DeletePieceByID(pieceID)

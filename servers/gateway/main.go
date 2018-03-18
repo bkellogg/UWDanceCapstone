@@ -53,7 +53,7 @@ func main() {
 
 	notifier := notify.NewNotifier()
 
-	mailContext := handlers.NewMailContext(mailUser, mailPass)
+	mailContext := handlers.NewMailContext(mailUser, mailPass, db)
 	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials())
 	announcementContext := handlers.NewAnnoucementContext(db, notifier)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)

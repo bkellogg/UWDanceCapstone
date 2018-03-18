@@ -1,3 +1,10 @@
+CREATE TABLE Role (
+    RoleID INT AUTO_INCREMENT PRIMARY KEY,
+    RoleName VARCHAR(20) NOT NULL,
+    RoleDisplayName varchar(25) NOT NULL,
+    RoleLevel INT NOT NULL
+);
+
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     FirstName VARCHAR(50) NOT NULL,
@@ -5,9 +12,10 @@ CREATE TABLE Users (
     Email VARCHAR(100) NOT NULL UNIQUE KEY,
     Bio VARCHAR(750) NOT NULL,
     PassHash BINARY(60) NOT NULL,
-    Role TINYINT NOT NULL,
+    RoleID INT NOT NULL,
     Active BOOLEAN NOT NULL,
-    CreatedAt DATETIME NOT NULL
+    CreatedAt DATETIME NOT NULL,
+    FOREIGN KEY (RoleID) REFERENCES Role(RoleID)
 );
 
 CREATE TABLE Auditions (
@@ -55,10 +63,12 @@ CREATE TABLE UserPiece (
     UserPieceID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT NOT NULL,
     PieceID INT NOT NULL,
+    RoleID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID)
+    FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID),
+    FOREIGN KEY (RoleID) REFERENCES Role(RoleID)
 );
 
 CREATE TABLE UserAuditionAvailability (
@@ -125,3 +135,9 @@ CREATE TABLE Announcements (
     FOREIGN KEY (CreatedBy) REFERENCES Users(UserID),
     FOREIGN KEY (AnnouncementTypeID) REFERENCES AnnouncementType(AnnouncementTypeID)
 );
+
+-- CREATE DEFAULT NECESSARY VALUES
+INSERT INTO Role (RoleName, RoleDisplayName, RoleLevel) VALUES
+    ('admin', 'Administrator', 100),
+    ('chor', 'Choreographer', 70),
+    ('user', 'Dancer', 10)
