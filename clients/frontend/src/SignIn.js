@@ -25,6 +25,10 @@ class SignIn extends Component {
     this.setState({
       [name] : val.target.value
     })
+
+    if (val.key === "Enter"){
+      this.signIn(val)
+    }
   }
 
   signUp(){
@@ -86,7 +90,7 @@ class SignIn extends Component {
                             <label htmlFor="email">Email</label>
                         </div>
                         <div className="input-field col s12">
-                            <input id="password" type="password" name="password" className="validate" onChange={this.inputChange}/>
+                            <input id="password" type="password" name="password" className="validate" onChange={this.inputChange} onKeyPress={this.inputChange}/>
                             <label htmlFor="password">Password</label>
                         </div>
                     </div>
@@ -95,6 +99,8 @@ class SignIn extends Component {
               <Button onClick={this.signIn}>Sign In</Button>
               <Button onClick ={this.signUp}>Sign Up</Button>
             </div>
+            {/*TODO hook this up*/}
+              <div className="forgot">Forgot your password?</div>
             </div>
           </div>
         </div>

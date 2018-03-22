@@ -8,9 +8,9 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.getPhoto = this.getPhoto.bind(this);
-    this.getHistory = this.getHistory.bind(this);
     this.onClick = this.onClick.bind(this);
     this.inputChange = this.inputChange.bind(this);
+    this.formatHistory = this.formatHistory.bind(this);
     this.state ={
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
@@ -49,10 +49,22 @@ class Profile extends Component {
         history: res.shows
       })
       console.log(this.state.history)
-      res.shows
+      this.formatHistory(res.shows)
     })
     .catch((err) => {
       console.log("whoops!")
+    })
+  }
+
+  formatHistory(shows){
+    shows.forEach(function(p){
+      console.log(p.id)
+      //get the show type based on the type id
+       //then display the name of the show, the year it happened (using start date)
+       //put a placeholder for choreographer
+
+
+
     })
   }
 
@@ -75,12 +87,6 @@ class Profile extends Component {
                 photoError: err
               })
           });
-  }
-
-  //also want to move to util
-  getHistory(){
-    //dummy data - this needs to be fleshed out
-    
   }
 
   onClick(){
@@ -169,21 +175,13 @@ class Profile extends Component {
           </div>
           <div id="history">
             <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-            {/*this.state.history !== null && this.state.history.map((p, i) => {
+            {this.state.history !== null && this.state.history.map((p, i) => {
               return(
                 <div className="showHistory" key={i}>
-                  <div>
-                    <b>Show: </b> {p.show}
-                  </div>
-                  <div>
-                    <b>Year: </b> {p.year}
-                  </div>
-                  <div>
-                    <b>Choreographer: </b> {p.choreographer}
-                  </div>
+                  <p>p</p>
                 </div>
               )
-            })*/}
+            })}
             {this.state.history === null &&
             <p> Dancer has no piece history </p>
             }

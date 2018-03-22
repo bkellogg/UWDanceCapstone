@@ -12,7 +12,7 @@ class SignUp extends Component {
       this.inputChange = this.inputChange.bind(this);
       this.goBack = this.goBack.bind(this);
       this.skip = this.skip.bind(this);
-      this.state ={
+      this.state = {
         firstname: null,
         lastname: null,
         email: null,
@@ -48,13 +48,37 @@ class SignUp extends Component {
                 signUpExtra: true
               });
           })
-          .then((data) => {
-              //this.props.onSignUp(this.state.auth)
-          })
           .catch((err) => {
+            let error = err
+            console.log(error)
+            if(error.indexOf("new user first name must exist") >= 0){
+              this.setState({
+                error: "A first name must be supplied"
+              })
+            } else if(error.indexOf("new user last name must exist") >= 0){
+              this.setState({
+                error: "A last name must be supplied"
+              })
+            } else if(error.indexOf("new users must supply a valid email address") >= 0){
+              this.setState({
+                error: "A valid email must be supplied"
+              })
+            } else if(error.indexOf("new users must have a password") >= 0){
+              this.setState({
+                error: "A password of 8 or more characters must be supplied"
+              })
+            } else if(error.indexOf("passwords do not match") >= 0){
+              this.setState({
+                error: "Passwords must match"
+              })
+            } else if(error.indexOf("user already exists with that email") >= 0){
+              this.setState({
+                error: "A user already exists with that email."
+              })
+            } else {
             this.setState({
-              error: true
-            })
+              error: "An error occurred"
+            })}
           })
     }
 
@@ -64,6 +88,10 @@ class SignUp extends Component {
       this.setState({
         [name] : val.target.value
       })
+
+      if (val.key === "Enter"){
+        this.onClick(val)
+      }
     }
 
     goBack(){
@@ -85,10 +113,15 @@ class SignUp extends Component {
         <div className='content'>
         <h5 className='title'> Sign up </h5>
         <div className="error">
-          {this.state.auth != null}
+          {
+          this.state.error !== null &&
+            <p>{this.state.error}</p>
+          }
         </div>
-        {this.state.signUpExtra === false &&
+        {
+        this.state.signUpExtra === false &&
           <div>
+            <div>
           <form>
             <div className="row">
               <div className="input-field col s12">
@@ -100,7 +133,7 @@ class SignUp extends Component {
                 <label htmlFor="lastname">Last Name</label>
               </div>
               <div className="input-field col s12">
-                <input type="email" name="email" id="email" onChange={this.inputChange}/>
+                <input type="email" name="email" id="email" className ="validate" onChange={this.inputChange}/>
                 <label htmlFor="email">Email</label>
               </div>
               <div className="input-field col s12">
@@ -108,18 +141,22 @@ class SignUp extends Component {
                 <label htmlFor="password">Password</label>
               </div>
               <div className="input-field col s12">
-                <input type="password" name="passwordConf" id="passwordConf" onChange={this.inputChange}/>
+                <input type="password" name="passwordConf" id="passwordConf" onChange={this.inputChange} onKeyPress={this.inputChange}/>
                 <label htmlFor="passwordConf">Confirm Password</label>
               </div>
             </div>
           </form>
           <Button onClick={this.goBack}> Back </Button>
           <Button onClick={this.onClick}> Sign Up </Button> 
-          </div> }
-        {this.state.signUpExtra === true && this.state.auth != null &&
-          <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
+          </div> 
+          <div className="forgot">Forgot your password?</div>
+          </div>
         }
 
+        {
+        this.state.signUpExtra === true && this.state.auth != null &&
+          <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
+        }
         </div>
         </div>
         </section>
