@@ -1,3 +1,17 @@
 .curr-user-btns {
     margin-top: 25px;
 }
+
+h1 {
+    text-align: left;
+}
+
+h3 {
+    background: rgb(202, 217, 226);
+    margin-bottom: 5px;
+}
+
+a {
+    display: block;
+    margin-bottom: 5px;
+}

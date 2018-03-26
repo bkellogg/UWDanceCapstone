@@ -13,7 +13,7 @@ let bioInput = document.querySelector("#bio-input");
 let imgLoc = document.querySelector(".image-loc");
 
 let name = document.createElement("p");
-name.textContent = "Welcome " + user.firstName;
+name.textContent = "Welcome " + user.firstName + "!";
 content.appendChild(name);
 
 if (!user.bio) {
@@ -39,7 +39,7 @@ photoForm.addEventListener("submit", (evt) => {
     });
 
     let photoResult = document.querySelector(".photo-result");
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
                 photoResult.textContent = xhr.responseText;

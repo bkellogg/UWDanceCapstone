@@ -4,11 +4,11 @@ var resetForm = document.querySelector(".reset-form");
 var errorBox = document.querySelector(".js-error");
 var emailInput = document.getElementById("email-input");
 
-resetForm.addEventListener("submit", function(evt) {
+resetForm.addEventListener("submit", function (evt) {
     errorBox.textContent = "";
     evt.preventDefault();
     fetch(API_URL_BASE + "passwordreset?email=" + emailInput.value)
-        .then(function(res) {
+        .then(function (res) {
             if (res.ok) {
                 return res.text();
             }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UW Stage Admin Console</title>
+</head>
+
+<body>
+    <a href="console.html">Console Home</a>
+    <h1>Create New User</h1>
+    <form class="signup-form">
+        <div class="fname">
+            <label for="fname-input">First Name</label>
+            <input id="fname-input" type="text">
+        </div>
+        <div class="lname">
+            <label for="lname-input">Last Name</label>
+            <input id="lname-input" type="text">
+        </div>
+        <div class="email">
+            <label for="email-input">Email</label>
+            <input id="email-input" type="text">
+        </div>
+        <div class="password">
+            <label for="password-input">Password</label>
+            <input id="password-input" type="password">
+        </div>
+        <div class="passwordconf">
+            <label for="passwordconf-input">Confirm Password</label>
+            <input id="passwordconf-input" type="password">
+        </div>
+        <button type="submit">Sign Up</button>
+    </form>
+    <div class="js-error"></div>
+</body>
+<script src="js/common.js"></script>
+<script src="js/signup.js"></script>
+
+</html>

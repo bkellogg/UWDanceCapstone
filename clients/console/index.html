@@ -1,14 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $("#email-input, #password-input").bind("change keyup",
+                function () {
+                    if ($("#email-input").val() != "" && $("#password-input").val() != "")
+                        $(this).closest("form").find(":submit").removeAttr("disabled");
+                    else
+                        $(this).closest("form").find(":submit").attr("disabled", "disabled");
+                });
+        });
+    </script>
+
 </head>
-    <body>
-        <h1>UW Stage Admin Console</h1>
-        <a href="./signin.html">Sign In</a>
-        <a href="./signup.html">Sign Up</a>
-    </body>
+
+<body>
+    <h1>UW Stage Admin Console Login</h1>
+    <form class="signin-form">
+        <div class="imgcontainer">
+            <img src="img/admin_temp.jpg" alt="Admin" class="admin">
+        </div>
+
+        <div class="email">
+            <h2>Email:</h2>
+            <input id="email-input" type="text" placeholder="Enter Email">
+        </div>
+
+        <div class="password">
+            <h2>Password:</h2>
+            <input id="password-input" type="password" placeholder="Enter Password">
+        </div>
+
+        <input type="submit" id="signin" value="Sign In" disabled="disabled" />
+    </form>
+
+    <div class="js-error"></div>
+    <div class="reset-password">
+        <a href="./reset.html">Forgot Password?</a>
+    </div>
+</body>
+<script src="js/common.js"></script>
+<script src="js/signin.js"></script>
+
 </html>

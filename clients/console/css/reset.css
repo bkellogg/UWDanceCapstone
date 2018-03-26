@@ -1,0 +1,46 @@
+body {
+    margin:0px;
+    text-align: center;
+}
+
+.reset-form {
+    margin: 0 auto;
+    max-width: 400px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 300%;
+}
+
+.email {
+    text-align: center;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+h2 {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.reset-form input[type="text"] {
+    max-width: 400px;
+    width: 100%;
+    line-height: 2em;
+    border:1px solid #504e4e;
+    border-radius:5px;
+    padding-left: 10px;
+}
+
+#passwordemail {
+    margin-top: 2em;
+    height: 30px;
+    width: 200px;
+    border:1px solid #080808;
+    border-radius:10px;
+}
+
+.signin-return {
+    padding-top: 10px;
+}

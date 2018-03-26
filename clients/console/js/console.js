@@ -32,7 +32,7 @@ refreshLocalUser().then(() => {
     welcome.textContent = "Welcome " + user.firstName + "! Your current access level is: " + user.role + ".";
     content.appendChild(welcome);
     accountLink.href = "account.html";
-    accountLink.textContent = "View Profile";
+    accountLink.textContent = "Profile";
     content.appendChild(accountLink);
 });
 
@@ -65,19 +65,19 @@ createAuditionForm.addEventListener("submit", (evt) => {
         "year": parseInt($('#aud-year-input').val())
     };
     makeRequest("auditions", payload, "POST", true)
-    .then((res) => {
-        if (res.ok) {
-            return res.json();
-        } else {
-            return res.text().then((t) => Promise.reject(t));
-        }
-    })
-    .then((data) => {
-        resBox.text("Success! The new audition's ID is: " + data.id);
-    })
-    .catch((err) => {
-        resBox.text("Failed to create audition: " + err);
-    })
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            } else {
+                return res.text().then((t) => Promise.reject(t));
+            }
+        })
+        .then((data) => {
+            resBox.text("Success! The new audition's ID is: " + data.id);
+        })
+        .catch((err) => {
+            resBox.text("Failed to create audition: " + err);
+        })
 });
 
 createShowForm.addEventListener("submit", (evt) => {
@@ -88,19 +88,19 @@ createShowForm.addEventListener("submit", (evt) => {
         "auditionid": parseInt($('#show-audid-input').val())
     };
     makeRequest("shows", payload, "POST", true)
-    .then((res) => {
-        if (res.ok) {
-            return res.json();
-        } else {
-            return res.text().then((t) => Promise.reject(t));
-        }
-    })
-    .then((data) => {
-        resBox.text("Success! The new show's ID is: " + data.id);
-    })
-    .catch((err) => {
-        resBox.text("Failed to create show: " + err);
-    })
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            } else {
+                return res.text().then((t) => Promise.reject(t));
+            }
+        })
+        .then((data) => {
+            resBox.text("Success! The new show's ID is: " + data.id);
+        })
+        .catch((err) => {
+            resBox.text("Failed to create show: " + err);
+        })
 });
 
 createPieceForm.addEventListener("submit", (evt) => {
@@ -111,17 +111,17 @@ createPieceForm.addEventListener("submit", (evt) => {
         "showID": parseInt($('#piece-showid-input').val())
     };
     makeRequest("pieces", payload, "POST", true)
-    .then((res) => {
-        if (res.ok) {
-            return res.json();
-        } else {
-            return res.text().then((t) => Promise.reject(t));
-        }
-    })
-    .then((data) => {
-        resBox.text("Success! The new show's ID is: " + data.id);
-    })
-    .catch((err) => {
-        resBox.text("Failed to create show: " + err);
-    })
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            } else {
+                return res.text().then((t) => Promise.reject(t));
+            }
+        })
+        .then((data) => {
+            resBox.text("Success! The new show's ID is: " + data.id);
+        })
+        .catch((err) => {
+            resBox.text("Failed to create show: " + err);
+        })
 });
