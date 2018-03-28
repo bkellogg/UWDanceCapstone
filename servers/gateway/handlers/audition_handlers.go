@@ -114,7 +114,12 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		if err != nil {
 			return HTTPError("error getting users by audition id: "+err.Error(), http.StatusInternalServerError)
 		}
-		return respond(w, models.PaginateUsers(users, page), http.StatusOK)
+
+		userResponses, err := ctx.permChecker.ConvertUserSliceToUserResponseSlice(users)
+		if err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, models.PaginateUserResponses(userResponses, page), http.StatusOK)
 	case "pieces":
 		// TODO: Change this to "permissions to see pieces in audition"
 		if !ctx.permChecker.UserCan(u, permissions.SeePieces) {

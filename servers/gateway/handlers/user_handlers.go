@@ -32,7 +32,11 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	if err != nil {
 		return HTTPError("error getting users: "+err.Error(), http.StatusInternalServerError)
 	}
-	return respond(w, models.PaginateUsers(users, page), http.StatusOK)
+	userResponses, err := ctx.permChecker.ConvertUserSliceToUserResponseSlice(users)
+	if err != nil {
+		return HTTPError(err.Error(), http.StatusInternalServerError)
+	}
+	return respond(w, models.PaginateUserResponses(userResponses, page), http.StatusOK)
 }
 
 // SpecificUserHandler handles requests for a specific user
@@ -55,7 +59,12 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 			return objectNotFound("user")
 		}
 
-		return respond(w, user, http.StatusOK)
+		userResponse, err := ctx.permChecker.ConvertUserToUserResponse(user)
+		if err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+
+		return respond(w, userResponse, http.StatusOK)
 	case "PATCH":
 		if !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
 			return permissionDenied()

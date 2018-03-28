@@ -164,7 +164,7 @@ func (store *Database) RemoveUserFromAudition(userID, audID int) error {
 }
 
 // GetAllUsers returns a slice of users of every user in the database, active or not.
-// Returns an error if one occured
+// Returns an error if one occurred
 func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, error) {
 	offset := strconv.Itoa((page - 1) * 25)
 	query := `SELECT * FROM Users U `

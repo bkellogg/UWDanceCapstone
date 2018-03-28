@@ -48,7 +48,12 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	respond(w, user, http.StatusCreated)
+	userResponse, err := ctx.permChecker.ConvertUserToUserResponse(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	respond(w, userResponse, http.StatusCreated)
 }
 
 // UserSignInHandler handles requests for user sign ins
@@ -88,7 +93,12 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	respond(w, user, http.StatusOK)
+	userResponse, err := ctx.permChecker.ConvertUserToUserResponse(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	respond(w, userResponse, http.StatusOK)
 }
 
 // performs a dummy authentication to mimic a real authentication to

@@ -48,6 +48,12 @@ func (pc *PermissionChecker) buildRoleCache() error {
 	if pc.rc == nil {
 		return errors.New("cannot build a role cache on an empty role cache")
 	}
+
+	// we need to lock this early because
+	// we need to ensure that old roles are not being
+	// accessed while we are building the new roleCache
+	pc.rc.mx.Lock()
+	defer pc.rc.mx.Unlock()
 	roles, err := pc.db.GetRoles()
 	if err != nil {
 		return err
@@ -58,11 +64,51 @@ func (pc *PermissionChecker) buildRoleCache() error {
 		roleMap[r.ID] = r
 	}
 
-	pc.rc.mx.Lock()
 	pc.rc.roles = roleMap
-	pc.rc.mx.Unlock()
 
 	return nil
+}
+
+// ConvertUserSliceToUserResponseSlice converts the given slice of users to a slice of
+// UserResponses. Returns an error if one occurred.
+// TODO: THIS FUNCTION SHOULD NOT BE IN THE PERMISSION CHECKER
+func (pc *PermissionChecker) ConvertUserSliceToUserResponseSlice(users []*User) ([]*UserResponse, error) {
+	urs := make([]*UserResponse, len(users))
+	for _, u := range users {
+		ur, err := pc.ConvertUserToUserResponse(u)
+		if err != nil {
+			return nil, errors.New("error converting user to UserResponse: " + err.Error())
+		}
+		urs = append(urs, ur)
+	}
+	return urs, nil
+}
+
+// ConvertUserToUserResponse converts the given User to a UserResponse.
+// Returns an error if the given User contains an a RoleID that doesn't
+// correspond to a Role.
+// TODO: THIS FUNCTION SHOULD NOT BE IN THE PERMISSION CHECKER
+func (pc *PermissionChecker) ConvertUserToUserResponse(u *User) (*UserResponse, error) {
+	role := pc.rc.getRole(int64(u.RoleID))
+	if role == nil {
+		return nil, errors.New("user's roleID does not correspond to a Role")
+	}
+	return &UserResponse{
+		ID:        u.ID,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Bio:       u.Bio,
+		Role:      role,
+		Active:    u.Active,
+		CreatedAt: u.CreatedAt,
+	}, nil
+}
+
+// FlushRoleCache flushes the role cache inside of the permission
+// checker and forces it to rebuild
+func (pc *PermissionChecker) FlushRoleCache() error {
+	return pc.buildRoleCache()
 }
 
 // NewPermissionChecker returns a new permission checker hooked up
