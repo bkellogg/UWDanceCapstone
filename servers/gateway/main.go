@@ -53,9 +53,14 @@ func main() {
 
 	notifier := notify.NewNotifier()
 
-	mailContext := handlers.NewMailContext(mailUser, mailPass, db)
-	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials())
-	announcementContext := handlers.NewAnnoucementContext(db, notifier)
+	permChecker, err := models.NewPermissionChecker(db)
+	if err != nil {
+		log.Fatalf("error creating permission checker: %v", err)
+	}
+
+	mailContext := handlers.NewMailContext(mailUser, mailPass, permChecker)
+	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials(), permChecker)
+	announcementContext := handlers.NewAnnouncementContext(db, notifier, permChecker)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
 	baseRouter := mux.NewRouter()

@@ -14,7 +14,7 @@ import (
 )
 
 // AnnouncementsHandler handles requests related to announcements resource.
-func (ctx *AnnoucementContext) AnnouncementsHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+func (ctx *AnnouncementContext) AnnouncementsHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
 	case "GET":
 		if !ctx.permChecker.UserCan(u, permissions.SeeAnnouncements) {
@@ -91,7 +91,7 @@ func (ctx *AuthContext) AnnouncementTypesHandler(w http.ResponseWriter, r *http.
 
 // DummyAnnouncementHandler handles requests made to make a dummy announcement. Creates a dummy
 // announcement and sends it over the context's notifier.
-func (ctx *AnnoucementContext) DummyAnnouncementHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+func (ctx *AnnouncementContext) DummyAnnouncementHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	if !ctx.permChecker.UserCan(u, permissions.SendAnnouncements) {
 		return permissionDenied()
 	}

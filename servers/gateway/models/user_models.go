@@ -35,6 +35,19 @@ type User struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
+// UserResponse defines how a user is encoded back
+// the the client.
+type UserResponse struct {
+	ID        int64     `json:"id"`
+	FirstName string    `json:"firstName"`
+	LastName  string    `json:"lastName"`
+	Email     string    `json:"email"`
+	Bio       string    `json:"bio"`
+	Role      *Role     `json:"role"`
+	Active    bool      `json:"active"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
 // UserUpdates defines the information that users can change
 // about their profile.
 type UserUpdates struct {
@@ -47,7 +60,7 @@ type UserUpdates struct {
 // add a user to an audition.
 // UserID and AuditionID will come from request URI
 type UserAuditionLink struct {
-	Comment      string         `json:"comment"`
+	Comment      string         `json:"comment,omitempty"`
 	Availability *WeekTimeBlock `json:"availability,omitempty"`
 }
 
@@ -151,6 +164,26 @@ func (u *User) Authenticate(password string) error {
 		return errors.New("invalid credentials")
 	}
 	return nil
+}
+
+// ConvertUserToUserResponse converts the given user to a User
+// prepared to be written back to the client.
+func (store *Database) ConvertUserToUserResponse(u *User) (*UserResponse, error) {
+	userResponse := &UserResponse{
+		ID:        u.ID,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Bio:       u.Bio,
+		Active:    u.Active,
+		CreatedAt: u.CreatedAt,
+	}
+	role, err := store.GetRoleByID(u.RoleID)
+	if err != nil {
+		return nil, err
+	}
+	userResponse.Role = role
+	return userResponse, nil
 }
 
 // generateRandomUser creates a random user and returns it

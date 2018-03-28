@@ -37,3 +37,29 @@ func (store *Database) GetRoleByID(id int) (*Role, error) {
 	}
 	return role, nil
 }
+
+// GetRoles returns a slice of pointers to roles that are in
+// the database, or an error if one occurred. If there are no
+// roles, an empty slice is returned but no error.
+func (store *Database) GetRoles() ([]*Role, error) {
+	return parseRolesFromDatabase(store.db.Query(`SELECT * FROM Role R`))
+}
+
+// parseRolesFromDatabase compiles the given result and err into a slice of roles or an error.
+func parseRolesFromDatabase(result *sql.Rows, err error) ([]*Role, error) {
+	roles := make([]*Role, 0)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return roles, nil
+		}
+		return nil, err
+	}
+	for result.Next() {
+		r := &Role{}
+		if err = result.Scan(&r.ID, &r.Name, &r.DisplayName, &r.Level); err != nil {
+			return nil, err
+		}
+		roles = append(roles, r)
+	}
+	return roles, nil
+}

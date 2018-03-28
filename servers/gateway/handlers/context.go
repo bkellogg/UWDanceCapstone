@@ -20,20 +20,20 @@ type AuthContext struct {
 }
 
 // NewAuthContext Creates a new auth context with the given information
-func NewAuthContext(sessionKey, tp string, sessionStore sessions.Store, database *models.Database, mc *mail.MailCredentials) *AuthContext {
+func NewAuthContext(sessionKey, tp string, sessionStore sessions.Store, database *models.Database, mc *mail.MailCredentials, pc *models.PermissionChecker) *AuthContext {
 	return &AuthContext{
 		SessionKey:      sessionKey,
 		SessionsStore:   sessionStore,
 		store:           database,
 		MailCredentials: mc,
-		permChecker:     models.NewPermissionChecker(database),
+		permChecker:     pc,
 		TemplatePath:    tp,
 	}
 }
 
 // AnnouncementContext defines the information needed for
 // handlers performing announcement operations.
-type AnnoucementContext struct {
+type AnnouncementContext struct {
 	Store       *models.Database
 	Notifier    *notify.Notifier
 	permChecker *models.PermissionChecker
@@ -41,11 +41,11 @@ type AnnoucementContext struct {
 
 // NewAnnouncementContext returns a pointer to an AnnouncementContext
 // with the given information.
-func NewAnnoucementContext(store *models.Database, notifier *notify.Notifier) *AnnoucementContext {
-	return &AnnoucementContext{
+func NewAnnouncementContext(store *models.Database, notifier *notify.Notifier, pc *models.PermissionChecker) *AnnouncementContext {
+	return &AnnouncementContext{
 		Store:       store,
 		Notifier:    notifier,
-		permChecker: models.NewPermissionChecker(store),
+		permChecker: pc,
 	}
 }
 
@@ -66,11 +66,11 @@ func NewHandlerContext(store *models.Database) *HandlerContext {
 type MailContext mail.MailCredentials
 
 // NewMailContext returns a new mail context from the given information
-func NewMailContext(user, password string, db *models.Database) *MailContext {
+func NewMailContext(user, password string, pc *models.PermissionChecker) *MailContext {
 	return &MailContext{
 		User:        user,
 		Password:    password,
-		PermChecker: models.NewPermissionChecker(db),
+		PermChecker: pc,
 	}
 }
 
