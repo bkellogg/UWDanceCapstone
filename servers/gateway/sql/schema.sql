@@ -1,7 +1,7 @@
 CREATE TABLE Role (
     RoleID INT AUTO_INCREMENT PRIMARY KEY,
-    RoleName VARCHAR(20) NOT NULL,
-    RoleDisplayName varchar(25) NOT NULL,
+    RoleName VARCHAR(20) NOT NULL UNIQUE KEY,
+    RoleDisplayName varchar(25) NOT NULL UNIQUE KEY,
     RoleLevel INT NOT NULL
 );
 

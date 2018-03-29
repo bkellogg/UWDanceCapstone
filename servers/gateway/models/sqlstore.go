@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"time"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -30,6 +32,40 @@ func NewDatabase(user, password, addr, dbName string) (*Database, error) {
 		return nil, errors.New("error opening connection to store: " + err.Error())
 	}
 	return &Database{db: db}, nil
+}
+
+// BootstrapInitialAdminUser adds an initial admin user with the given information
+func (store *Database) BootstrapInitialAdminUser(fName, lName, email, password string) error {
+	result, err := store.db.Query(`SELECT * FROM Users U JOIN Role R ON U.RoleID = R.RoleID WHERE R.RoleLevel = 100`)
+	if err != nil {
+		return errors.New("error looking up current admins: " + err.Error())
+	}
+	defer result.Close()
+	if result.Next() {
+		// do nothing since admin users already exist, but don't report an error
+		return nil
+	}
+	user := &User{
+		FirstName: fName,
+		LastName:  lName,
+		Email:     email,
+		Active:    true,
+		CreatedAt: time.Now(),
+	}
+	role, err := store.GetRoleByName(appvars.RoleAdmin)
+	if err != nil {
+		return errors.New("error getting admin role from database: " + err.Error())
+	}
+	user.RoleID = int(role.ID)
+	user.SetPassword(password)
+	_, err = store.db.Exec(`INSERT INTO Users
+		(FirstName, LastName, Email, Bio, PassHash, RoleID, Active, CreatedAt)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		user.FirstName, user.LastName, user.Email, user.Bio, user.PassHash, role.ID, true, time.Now())
+	if err != nil {
+		return errors.New("error inserting admin user: " + err.Error())
+	}
+	return nil
 }
 
 // LogError logs the given error to the database.

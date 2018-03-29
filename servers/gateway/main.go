@@ -44,11 +44,22 @@ func main() {
 	frontEndPath := getRequiredENVOrExit("FRONTENDPATH", "")
 	assetsPath := getRequiredENVOrExit("ASSETSPATH", "")
 
+	// admin user info
+	adminFName := getRequiredENVOrExit("STAGE_ADMIN_FIRSTNAME", "")
+	adminLName := getRequiredENVOrExit("STAGE_ADMIN_LASTNAME", "")
+	adminEmail := getRequiredENVOrExit("STAGE_ADMIN_EMAIL", "")
+	adminPaswd := getRequiredENVOrExit("STAGE_ADMIN_PASSWORD", "")
+
 	// Open connections to the databases
 	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
 	if err != nil {
 		log.Fatalf("error connecting to database: %v", err)
 	}
+
+	if err = db.BootstrapInitialAdminUser(adminFName, adminLName, adminEmail, adminPaswd); err != nil {
+		log.Fatalf("error bootstrapping initial admin user: %v", err)
+	}
+
 	redis := sessions.NewRedisStore(nil, appvars.DefaultSessionDuration, redisAddr)
 
 	notifier := notify.NewNotifier()
@@ -102,6 +113,9 @@ func main() {
 	pieceRouter := baseRouter.PathPrefix(appvars.PiecesPath).Subrouter()
 	pieceRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
 	pieceRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
+
+	rolesRouter := baseRouter.PathPrefix(appvars.RolesPath).Subrouter()
+	rolesRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.RolesHandler))
 
 	baseRouter.Handle(appvars.BaseAPIPath, http.NotFoundHandler())
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))

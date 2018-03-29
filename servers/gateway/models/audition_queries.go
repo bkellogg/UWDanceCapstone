@@ -102,6 +102,7 @@ func (store *Database) InsertUserAuditionComment(userID, audID, creatorID int, c
 	if err != nil {
 		return nil, err
 	}
+	rows.Close()
 	return &UserAuditionComment{
 		ID:             int(commentID),
 		UserAuditionID: userAudID,

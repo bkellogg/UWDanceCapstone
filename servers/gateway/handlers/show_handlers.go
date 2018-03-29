@@ -38,14 +38,11 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 			return permissionDenied()
 		}
 		newShow := &models.NewShow{}
-		err := receive(r, newShow)
-		if err != nil {
-			return HTTPError("error decoding new show: "+err.Error(), http.StatusBadRequest)
+		httperr := receive(r, newShow)
+		if httperr != nil {
+			return httperr
 		}
 		newShow.CreatedBy = int(u.ID)
-		if err := newShow.Validate(); err != nil {
-			return HTTPError("new show validation failed: "+err.Error(), http.StatusBadRequest)
-		}
 		show, err := ctx.store.InsertNewShow(newShow)
 		if err != nil {
 			return HTTPError("error inserting new show:"+err.Error(), http.StatusInternalServerError)
@@ -161,12 +158,9 @@ func (ctx *AuthContext) ShowTypeHandler(w http.ResponseWriter, r *http.Request, 
 		}
 		showType := &models.ShowType{}
 		if err := receive(r, showType); err != nil {
-			return receiveFailed()
+			return err
 		}
 		showType.CreatedBy = int(u.ID)
-		if err := showType.Validate(); err != nil {
-			return HTTPError("show type validation failed: "+err.Error(), http.StatusBadRequest)
-		}
 		if err := ctx.store.InsertNewShowType(showType); err != nil {
 			return HTTPError(err.Error(), http.StatusInternalServerError)
 		}

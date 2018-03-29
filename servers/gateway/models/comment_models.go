@@ -48,5 +48,6 @@ func parseUACommentsFromDatabase(result *sql.Rows, err error) ([]*UserAuditionCo
 		}
 		comments = append(comments, c)
 	}
+	result.Close()
 	return comments, nil
 }

@@ -16,7 +16,9 @@ func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
 	if result == nil {
 		return false, err
 	}
-	return result.Next(), nil
+	returnVal := result.Next()
+	result.Close()
+	return returnVal, nil
 }
 
 // UserIsInAudition returns true if the given user is in the given audition or an error if one occurred.
@@ -26,7 +28,9 @@ func (store *Database) UserIsInAudition(userID, audID int) (bool, error) {
 	if result == nil {
 		return false, err
 	}
-	return result.Next(), nil
+	returnVal := result.Next()
+	result.Close()
+	return returnVal, nil
 }
 
 // AddUserToPiece adds the given user to the given piece.
@@ -53,9 +57,64 @@ func (store *Database) AddUserToPiece(userID, pieceID int, role string) error {
 
 // ChangeUserRole sets the role of the given user ID to role.
 // Returns an error if one occurred.
-func (store *Database) ChangeUserRole(userID, role int) error {
-	_, err := store.db.Exec(`UPDATE Users U SET u.RoleID = ? WHERE U.UserID = ?`, role, userID)
-	return err
+func (store *Database) ChangeUserRole(userID int, roleName string) error {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return errors.New("error beginning transaction: " + err.Error())
+	}
+
+	rows, err := tx.Query(`SELECT * FROM Role R WHERE R.RoleName = ?`, roleName)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return errors.New(appvars.ErrNoRoleFound)
+		}
+		return errors.New("error querying role: " + err.Error())
+	}
+	role := &Role{}
+	if rows.Next() {
+		err = rows.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level)
+		if err != nil {
+			return errors.New("error scanning role query into role: " + err.Error())
+		}
+	} else {
+		return errors.New(appvars.ErrNoRoleFound)
+	}
+	rows.Close()
+
+	rows, err = tx.Query(`SELECT * FROM Users U Where U.UserID = ?`, userID)
+	if err != nil {
+		tx.Rollback()
+		if err == sql.ErrNoRows {
+			return errors.New(appvars.ErrNoUserFound)
+		}
+		return errors.New("error querying user: " + err.Error())
+	}
+	if !rows.Next() {
+		return errors.New(appvars.ErrNoUserFound)
+	}
+	rows.Close()
+
+	res, err := tx.Exec(`UPDATE Users U SET U.RoleID = ? WHERE U.UserID = ?`, role.ID, userID)
+	if err != nil {
+		tx.Rollback()
+		return errors.New("error updating user: " + err.Error())
+	}
+
+	numRows, err := res.RowsAffected()
+	if err != nil {
+		tx.Rollback()
+		return errors.New("error getting number of rows affected: " + err.Error())
+	}
+
+	if numRows != 1 {
+		tx.Rollback()
+		return errors.New("unexpected number of rows affected; transaction not saved")
+	}
+
+	if err = tx.Commit(); err != nil {
+		return errors.New("error committing transaction: " + err.Error())
+	}
+	return nil
 }
 
 // RemoveUserFromPiece removes the given user from the given piece.
@@ -118,7 +177,7 @@ func (store *Database) AddUserToAudition(userID, audID, creatorID int, availabil
 		tx.Rollback()
 		return errors.New("error getting insert ID of new availability: " + err.Error())
 	}
-	res, err = tx.Exec(`INSERT INTO UserAudition (AuditionID, UserID, AvailabilityID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+	res, err = tx.Exec(`INSERT INTO UserAudition (AuditionID, UserID, AvailabilityID, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
 		audID, userID, availID, creatorID, addTime, false)
 	if err != nil {
 		tx.Rollback()

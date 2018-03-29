@@ -71,7 +71,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		}
 		updates := &models.UserUpdates{}
 		if err := receive(r, updates); err != nil {
-			return receiveFailed()
+			return err
 		}
 		if err := updates.CheckBioLength(); err != nil {
 			return HTTPError(err.Error(), http.StatusBadRequest)
@@ -222,7 +222,7 @@ func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *mod
 		}
 		wtb := &models.WeekTimeBlock{}
 		if err := receive(r, wtb); err != nil {
-			return receiveFailed()
+			return err
 		}
 		if err := ctx.store.UpdateUserAuditionAvailability(userID, audID, wtb); err != nil {
 			code := http.StatusInternalServerError
@@ -247,8 +247,8 @@ func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.U
 			return permissionDenied()
 		}
 		newComment := &models.AuditionComment{}
-		if receive(r, newComment) != nil {
-			return receiveFailed()
+		if err := receive(r, newComment); err != nil {
+			return err
 		}
 		comment, err := ctx.store.InsertUserAuditionComment(userID, audID, int(u.ID), newComment.Comment)
 		if err != nil {
@@ -310,7 +310,7 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 			}
 			ual := &models.UserAuditionLink{}
 			if err := receive(r, ual); err != nil {
-				return receiveFailed()
+				return err
 			}
 			if httperr := ctx.addUserToAudition(userID, objID, int(u.ID), ual); httperr != nil {
 				return httperr
@@ -375,9 +375,6 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 // addUserToAudition adds the given user to the given audition with the given UserAuditionLink
 // return an HTTPError if one occurred.
 func (ctx *AuthContext) addUserToAudition(userID, audID, creatorID int, ual *models.UserAuditionLink) *middleware.HTTPError {
-	if err := ual.Validate(); err != nil {
-		return HTTPError("error validating user audition link: "+err.Error(), http.StatusBadRequest)
-	}
 	if err := ctx.store.AddUserToAudition(userID, audID, creatorID, ual.Availability, ual.Comment); err != nil {
 		code := http.StatusInternalServerError
 		if err.Error() == appvars.ErrAuditionDoesNotExist || err.Error() == appvars.ErrUserAlreadyInAudition {
@@ -395,17 +392,14 @@ func (ctx *AuthContext) handleUserRole(w http.ResponseWriter, r *http.Request, u
 	}
 	roleChange := &models.RoleChange{}
 	if err := receive(r, roleChange); err != nil {
-		return receiveFailed()
+		return err
 	}
-	if err := roleChange.Validate(); err != nil {
-		return HTTPError("roleChange validation failed: "+err.Error(), http.StatusBadRequest)
-	}
-	err := ctx.store.ChangeUserRole(userID, roleChange.Role)
+	err := ctx.store.ChangeUserRole(userID, roleChange.RoleName)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return HTTPError("user not found", http.StatusNotFound)
 		}
-		return HTTPError("error changing user roleChange: "+err.Error(), http.StatusInternalServerError)
+		return HTTPError("error changing user role: "+err.Error(), http.StatusInternalServerError)
 	}
-	return respondWithString(w, "user roleChange updated", http.StatusOK)
+	return respondWithString(w, "user role updated", http.StatusOK)
 }

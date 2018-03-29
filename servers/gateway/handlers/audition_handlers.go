@@ -22,14 +22,11 @@ func (ctx *AuthContext) AuditionsHandler(w http.ResponseWriter, r *http.Request,
 			return permissionDenied()
 		}
 		newAud := &models.NewAudition{}
-		err := receive(r, newAud)
-		if err != nil {
-			return HTTPError("error decoding new audition: "+err.Error(), http.StatusBadRequest)
+		httperr := receive(r, newAud)
+		if httperr != nil {
+			return httperr
 		}
 		newAud.CreatedBy = int(u.ID)
-		if err := newAud.Validate(); err != nil {
-			return HTTPError("new audition validation failed: "+err.Error(), http.StatusBadRequest)
-		}
 		audition, err := ctx.store.InsertNewAudition(newAud)
 		if err != nil {
 			return HTTPError(fmt.Sprintf("error inserting new audition: %v", err), http.StatusInternalServerError)
@@ -40,7 +37,7 @@ func (ctx *AuthContext) AuditionsHandler(w http.ResponseWriter, r *http.Request,
 	}
 }
 
-// SpecificAuditionHandler handles requests to a specifc audition.
+// SpecificAuditionHandler handles requests to a specific audition.
 func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	audIDString := mux.Vars(r)["id"]
 	audID, err := strconv.Atoi(audIDString)

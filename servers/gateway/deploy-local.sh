@@ -3,22 +3,9 @@ set -e
 
 deployAPI () {
     cd $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway
-    if [[ "$1" != "nobuild" ]]; then
-        echo >&2 "building gateway executable..."
-        GOOS=linux go build
-
-        echo >&2 "building gateway docker container..."
-        docker build -t brendankellogg/dancegateway .
-
-        go clean
-    fi
-
-	if [ "$(docker ps -aq --filter name=gateway)" ]; then
-		docker rm -f gateway
-	fi
 
 	if [[ "$1" == "hard" ]]; then
-		# docker pull redis
+		docker pull redis
 
 		if [ "$(docker ps -aq --filter name=mysql)" ]; then
 			docker rm -f mysql
@@ -53,8 +40,27 @@ deployAPI () {
         --network dance-net \
         --name mysql \
         brendankellogg/dance-mysql --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+	fi
 
-        sleep 8s
+	if [[ "$1" != "nobuild" ]]; then
+        cd $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway
+
+        echo >&2 "building gateway executable..."
+        GOOS=linux go build
+
+        echo >&2 "building gateway docker container..."
+        docker build -t brendankellogg/dancegateway .
+
+        go clean
+    fi
+
+	if [ "$(docker ps -aq --filter name=gateway)" ]; then
+		docker rm -f gateway
+	fi
+
+	if [[ "$1" == "hard" ]]; then
+	    echo >&2 "waiting for mysql to be ready for connections..."
+	    sleep 15s
 	fi
 
 	echo >&2 "starting dance gateway server..."
@@ -85,6 +91,10 @@ deployAPI () {
     -e ASSETSPATH=/assets/ \
     -e ADMINCONSOLEPATH=/clients/console \
     -e FRONTENDPATH=/clients/frontend/build/ \
+    -e STAGE_ADMIN_FIRSTNAME=Brendan \
+    -e STAGE_ADMIN_LASTNAME=Kellogg \
+    -e STAGE_ADMIN_EMAIL=brendan6@uw.edu \
+    -e STAGE_ADMIN_PASSWORD=$STAGE_ADMIN_PASSWORD \
 	brendankellogg/dancegateway
 
 }

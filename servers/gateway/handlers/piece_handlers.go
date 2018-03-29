@@ -19,14 +19,11 @@ func (ctx *AuthContext) PiecesHandler(w http.ResponseWriter, r *http.Request, u 
 			return permissionDenied()
 		}
 		newPiece := &models.NewPiece{}
-		err := receive(r, newPiece)
-		if err != nil {
-			return HTTPError("error decoding new piece: "+err.Error(), http.StatusBadRequest)
+		httperr := receive(r, newPiece)
+		if httperr != nil {
+			return httperr
 		}
 		newPiece.CreatedBy = int(u.ID)
-		if err := newPiece.Validate(); err != nil {
-			return HTTPError("new piece validation failed: "+err.Error(), http.StatusBadRequest)
-		}
 		piece, err := ctx.store.InsertNewPiece(newPiece)
 		if err != nil {
 			return HTTPError("error inserting new piece:"+err.Error(), http.StatusInternalServerError)
@@ -37,7 +34,7 @@ func (ctx *AuthContext) PiecesHandler(w http.ResponseWriter, r *http.Request, u 
 	}
 }
 
-// SpecificPieceHandler handles requests to a specifc piece.
+// SpecificPieceHandler handles requests to a specific piece.
 func (ctx *AuthContext) SpecificPieceHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	pieceIDString := mux.Vars(r)["id"]
 	pieceID, err := strconv.Atoi(pieceIDString)

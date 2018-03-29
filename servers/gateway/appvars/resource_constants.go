@@ -17,6 +17,7 @@ const (
 	AuditionsPath = BaseAPIPath + "/auditions"
 	ShowsPath     = BaseAPIPath + "/shows"
 	PiecesPath    = BaseAPIPath + "/pieces"
+	RolesPath     = BaseAPIPath + "/roles"
 
 	ResourceRoot     = ""
 	ResourceID       = "/{id}"

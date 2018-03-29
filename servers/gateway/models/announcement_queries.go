@@ -53,9 +53,6 @@ func (store *Database) getAnnouncementTypeByName(name string, includeDeleted boo
 // InsertAnnouncementType inserts the given AnnouncementType into the database.
 // Returns an error if one occurred.
 func (store *Database) InsertAnnouncementType(at *AnnouncementType) error {
-	if err := at.Validate(); err != nil {
-		return errors.New("announcement type validation failed: " + err.Error())
-	}
 	result, err := store.db.Exec(`INSERT INTO AnnouncementType (AnnouncementTypeName, AnnouncementTypeDesc,
 		CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`, at.Name, at.Desc, at.CreatedAt, at.CreatedBy, at.IsDeleted)
 	if err != nil {

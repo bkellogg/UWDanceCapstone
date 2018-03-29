@@ -78,7 +78,7 @@ type UserAudition struct {
 
 // RoleChange defines how a role is sent to the server
 type RoleChange struct {
-	Role int `json:"role"`
+	RoleName string `json:"roleName"`
 }
 
 // Validate validates the current role and returns an error if one occurred.

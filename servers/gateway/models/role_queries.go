@@ -1,6 +1,9 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"errors"
+)
 
 // GetRoleByName gets the role associated with that name. Returns
 // an error if one occurred.
@@ -25,12 +28,15 @@ func (store *Database) GetRoleByName(name string) (*Role, error) {
 func (store *Database) GetRoleByID(id int) (*Role, error) {
 	res, err := store.db.Query(`SELECT * FROM Role R Where R.RoleID = ?`, id)
 	if err != nil {
-		return nil, err
+		if err == sql.ErrNoRows {
+			return nil, err
+		}
+		return nil, errors.New("error selecting roles: " + err.Error())
 	}
 	role := &Role{}
 	if res.Next() {
 		if err = res.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level); err != nil {
-			return nil, err
+			return nil, errors.New("error scanning row into role: " + err.Error())
 		}
 	} else {
 		return nil, sql.ErrNoRows

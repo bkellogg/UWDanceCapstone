@@ -37,12 +37,9 @@ func (ctx *AnnouncementContext) AnnouncementsHandler(w http.ResponseWriter, r *h
 
 		na := &models.NewAnnouncement{}
 		if err := receive(r, na); err != nil {
-			return HTTPError(err.Error(), http.StatusBadRequest)
+			return err
 		}
 		na.UserID = u.ID
-		if err := na.Validate(); err != nil {
-			return HTTPError("new announcement validation failed: "+err.Error(), http.StatusBadRequest)
-		}
 		announcement, err := ctx.Store.InsertAnnouncement(na)
 		if err != nil {
 			return HTTPError(err.Error(), http.StatusInternalServerError)
@@ -77,7 +74,7 @@ func (ctx *AuthContext) AnnouncementTypesHandler(w http.ResponseWriter, r *http.
 		}
 		announcementType := &models.AnnouncementType{}
 		if err := receive(r, announcementType); err != nil {
-			return receiveFailed()
+			return err
 		}
 		announcementType.CreatedBy = int(u.ID)
 		if err := ctx.store.InsertAnnouncementType(announcementType); err != nil {
