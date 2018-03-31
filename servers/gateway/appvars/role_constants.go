@@ -9,6 +9,6 @@ const (
 	PermChoreographer = 70
 	PermAdmin         = 100
 
-	MaxRoleNameLength        = 5
-	MaxRoleDisplayNameLength = 15
+	MaxRoleNameLength        = 25
+	MaxRoleDisplayNameLength = 25
 )

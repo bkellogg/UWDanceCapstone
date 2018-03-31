@@ -144,8 +144,8 @@ func (u *NewUserRequest) validate() error {
 	if len(u.Password) != len(u.PasswordConf) {
 		return errors.New("passwords do not match")
 	}
-	u.FirstName = strings.ToTitle(u.FirstName)
-	u.LastName = strings.ToTitle(u.LastName)
+	u.FirstName = strings.Title(u.FirstName)
+	u.LastName = strings.Title(u.LastName)
 	u.Email = strings.ToLower(u.Email)
 	return nil
 }
@@ -183,7 +183,7 @@ func (store *Database) ConvertUserToUserResponse(u *User) (*UserResponse, error)
 	}
 	role, err := store.GetRoleByID(u.RoleID)
 	if err != nil {
-		return nil, err
+		return nil, errors.New(err.Message)
 	}
 	userResponse.Role = role
 	return userResponse, nil

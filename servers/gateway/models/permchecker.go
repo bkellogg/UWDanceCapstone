@@ -56,7 +56,7 @@ func (pc *PermissionChecker) buildRoleCache() error {
 	defer pc.rc.mx.Unlock()
 	roles, err := pc.db.GetRoles()
 	if err != nil {
-		return err
+		return errors.New(err.Message)
 	}
 
 	roleMap := make(map[int64]*Role)

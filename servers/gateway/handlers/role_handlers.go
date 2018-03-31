@@ -19,7 +19,7 @@ func (ctx *AuthContext) RolesHandler(w http.ResponseWriter, r *http.Request, u *
 		if targetRole == "all" || targetRole == "" {
 			roles, err := ctx.store.GetRoles()
 			if err != nil {
-				return err.ToHTTPErrorContext("error querying roles")
+				return middleware.HTTPErrorFromDBErrorContext(err, "error querying roles")
 			}
 			return respond(w, roles, http.StatusOK)
 		}
@@ -31,11 +31,20 @@ func (ctx *AuthContext) RolesHandler(w http.ResponseWriter, r *http.Request, u *
 		}
 		role, dbErr := ctx.store.GetRoleByID(targetRoleInt)
 		if dbErr != nil {
-			return dbErr.ToHTTPErrorContext("error getting role by id")
+			return middleware.HTTPErrorFromDBErrorContext(dbErr, "error querying roles")
 		}
 		return respond(w, role, http.StatusOK)
 	case "POST":
-		return methodNotAllowed()
+		newRole := &models.NewRole{}
+		err := receive(r, newRole)
+		if err != nil {
+			return err
+		}
+		role, dbErr := ctx.store.InsertRole(newRole)
+		if dbErr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dbErr, "error querying roles")
+		}
+		return respond(w, role, http.StatusCreated)
 	default:
 		return methodNotAllowed()
 	}

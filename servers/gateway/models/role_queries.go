@@ -6,6 +6,48 @@ import (
 	"net/http"
 )
 
+// InsertRole inserts the given role into the database and returns
+// the resulting role. Returns an error if one occurred.
+func (store *Database) InsertRole(role *NewRole) (*Role, *DBError) {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return nil, NewDBError("error beginning transaction: "+err.Error(), http.StatusInternalServerError)
+	}
+	roles, dbErr := parseRolesFromDatabase(tx.Query(`SELECT * FROM ROLE R
+		Where R.RoleName = ? OR R.RoleDisplayName = ?`, role.Name, role.DisplayName))
+	if dbErr != nil {
+		tx.Rollback()
+		return nil, dbErr
+	}
+	// if we found roles, then one exists with that name or display name
+	if len(roles) != 0 {
+		tx.Rollback()
+		return nil, NewDBError("role already exists with that name or display name", http.StatusBadRequest)
+	}
+	result, err := tx.Exec(`INSERT INTO Role (RoleName, RoleDisplayName, RoleLevel, IsDeleted) VALUES (?, ?, ?, ?)`,
+		role.Name, role.DisplayName, role.Level, false)
+	if err != nil {
+		tx.Rollback()
+	}
+	insertID, err := result.LastInsertId()
+	if err != nil {
+		tx.Rollback()
+		return nil, NewDBError("error getting insert id of role: "+err.Error(), http.StatusInternalServerError)
+	}
+	if err = tx.Commit(); err != nil {
+		tx.Rollback()
+		return nil, NewDBError("error commiting transaction: "+err.Error(), http.StatusInternalServerError)
+	}
+	insertedRole := &Role{
+		ID:          insertID,
+		Name:        role.Name,
+		DisplayName: role.DisplayName,
+		Level:       role.Level,
+		IsDeleted:   false,
+	}
+	return insertedRole, nil
+}
+
 // GetRoleByName gets the role associated with that name. Returns
 // an error if one occurred.
 func (store *Database) GetRoleByName(name string) (*Role, *DBError) {
@@ -20,7 +62,7 @@ func (store *Database) GetRoleByName(name string) (*Role, *DBError) {
 	}
 	role := &Role{}
 	if res.Next() {
-		if err = res.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level); err != nil {
+		if err = res.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level, &role.IsDeleted); err != nil {
 			return nil, NewDBError("error scanning result into role: "+err.Error(), http.StatusInternalServerError)
 		}
 	} else {
@@ -41,7 +83,7 @@ func (store *Database) GetRoleByID(id int) (*Role, *DBError) {
 	}
 	role := &Role{}
 	if res.Next() {
-		if err = res.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level); err != nil {
+		if err = res.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level, &role.IsDeleted); err != nil {
 			return nil, NewDBError("error scanning result into role: "+err.Error(), http.StatusInternalServerError)
 		}
 	} else {
@@ -68,10 +110,11 @@ func parseRolesFromDatabase(result *sql.Rows, err error) ([]*Role, *DBError) {
 	}
 	for result.Next() {
 		r := &Role{}
-		if err = result.Scan(&r.ID, &r.Name, &r.DisplayName, &r.Level); err != nil {
+		if err = result.Scan(&r.ID, &r.Name, &r.DisplayName, &r.Level, &r.IsDeleted); err != nil {
 			return nil, NewDBError("error scanning result into role: "+err.Error(), http.StatusInternalServerError)
 		}
 		roles = append(roles, r)
 	}
+	result.Close()
 	return roles, nil
 }

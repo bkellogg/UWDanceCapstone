@@ -52,9 +52,9 @@ func (store *Database) BootstrapInitialAdminUser(fName, lName, email, password s
 		Active:    true,
 		CreatedAt: time.Now(),
 	}
-	role, err := store.GetRoleByName(appvars.RoleAdmin)
-	if err != nil {
-		return errors.New("error getting admin role from database: " + err.Error())
+	role, dbErr := store.GetRoleByName(appvars.RoleAdmin)
+	if dbErr != nil {
+		return errors.New("error getting admin role from database: " + dbErr.Message)
 	}
 	user.RoleID = int(role.ID)
 	user.SetPassword(password)

@@ -31,7 +31,7 @@ func receive(r *http.Request, v interface{}) *middleware.HTTPError {
 	// if the request body is a validator, validate it
 	if validator, ok := v.(Validator); ok {
 		if err := validator.Validate(); err != nil {
-			return HTTPError("error validating request: "+err.Error(), http.StatusInternalServerError)
+			return HTTPError("error validating request: "+err.Error(), http.StatusBadRequest)
 		}
 	}
 	return nil
