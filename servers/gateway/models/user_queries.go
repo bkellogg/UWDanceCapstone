@@ -248,9 +248,9 @@ func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, error) {
 // InsertNewUser inserts the given new user into the store
 // and populates the ID field of the user
 func (store *Database) InsertNewUser(user *User) error {
-	role, err := store.GetRoleByName(appvars.RoleDancer)
-	if err != nil {
-		return err
+	role, dbErr := store.GetRoleByName(appvars.RoleDancer)
+	if dbErr != nil {
+		return errors.New(dbErr.Message)
 	}
 	result, err := store.db.Exec(
 		`INSERT INTO Users (FirstName, LastName, Email, Bio, PassHash, RoleID, Active, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,

@@ -144,6 +144,9 @@ func (u *NewUserRequest) validate() error {
 	if len(u.Password) != len(u.PasswordConf) {
 		return errors.New("passwords do not match")
 	}
+	u.FirstName = strings.ToTitle(u.FirstName)
+	u.LastName = strings.ToTitle(u.LastName)
+	u.Email = strings.ToLower(u.Email)
 	return nil
 }
 

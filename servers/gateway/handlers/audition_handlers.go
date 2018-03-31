@@ -75,7 +75,7 @@ func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.R
 	}
 }
 
-// ResourceForSpecificAuditionHandler handles requests for a specifc resource on a specific audition.
+// ResourceForSpecificAuditionHandler handles requests for a specific resource on a specific audition.
 func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	if r.Method != "GET" {
 		return methodNotAllowed()

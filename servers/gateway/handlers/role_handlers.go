@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -20,7 +19,7 @@ func (ctx *AuthContext) RolesHandler(w http.ResponseWriter, r *http.Request, u *
 		if targetRole == "all" || targetRole == "" {
 			roles, err := ctx.store.GetRoles()
 			if err != nil {
-				return HTTPError("error getting all roles: "+err.Error(), http.StatusInternalServerError)
+				return err.ToHTTPErrorContext("error querying roles")
 			}
 			return respond(w, roles, http.StatusOK)
 		}
@@ -30,13 +29,9 @@ func (ctx *AuthContext) RolesHandler(w http.ResponseWriter, r *http.Request, u *
 		if err != nil {
 			return unparsableIDGiven()
 		}
-		role, err := ctx.store.GetRoleByID(targetRoleInt)
-		if err != nil {
-			code := http.StatusInternalServerError
-			if err == sql.ErrNoRows {
-				code = http.StatusBadRequest
-			}
-			return HTTPError("error getting role by id: "+err.Error(), code)
+		role, dbErr := ctx.store.GetRoleByID(targetRoleInt)
+		if dbErr != nil {
+			return dbErr.ToHTTPErrorContext("error getting role by id")
 		}
 		return respond(w, role, http.StatusOK)
 	case "POST":
