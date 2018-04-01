@@ -34,6 +34,7 @@ type UserAuditionComment struct {
 
 // parseUACommentsFromDatabase compiles the given result and err into a slice of UAComments or an error.
 func parseUACommentsFromDatabase(result *sql.Rows, err error) ([]*UserAuditionComment, error) {
+	defer result.Close()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil

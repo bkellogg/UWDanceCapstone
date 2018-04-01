@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/startup"
 	"github.com/gorilla/mux"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -19,6 +21,14 @@ import (
 )
 
 func main() {
+
+	settings, err := startup.ParseSettingsFromINI("")
+	if err != nil {
+		log.Fatalf("error parsing settings from ini: %v", err)
+	}
+	fmt.Println("successfully loaded app settings!")
+	fmt.Printf("%+v", settings)
+
 	// Gateway server environment variables
 	addr := getRequiredENVOrExit("ADDR", ":443")
 	httpRedirAddr := getRequiredENVOrExit("HTTPREDIRADDR", ":80")
@@ -37,8 +47,8 @@ func main() {
 	// Mail Info
 	mailUser := getRequiredENVOrExit("MAILUSER", "")
 	mailPass := getRequiredENVOrExit("MAILPASS", "")
-	templatesPath := getRequiredENVOrExit("TEMPLATESPATH", "")
 
+	templatesPath := getRequiredENVOrExit("TEMPLATESPATH", "")
 	resetPasswordClientPath := getRequiredENVOrExit("RESETPASSWORDCLIENTPATH", "")
 	adminConsolePath := getRequiredENVOrExit("ADMINCONSOLEPATH", "")
 	frontEndPath := getRequiredENVOrExit("FRONTENDPATH", "")

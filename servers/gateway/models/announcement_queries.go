@@ -74,6 +74,7 @@ func (store *Database) GetAnnouncementTypes(includeDeleted bool) ([]*Announcemen
 		query += ` WHERE AT.IsDeleted = false`
 	}
 	result, err := store.db.Query(query)
+	defer result.Close()
 	if err != nil {
 		return nil, errors.New("error getting announcement types: " + err.Error())
 	}
@@ -118,6 +119,7 @@ func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID
 
 // handleAnnouncementsFromDatabase compiles the given result and err into a slice of AnnouncementResponse or an error.
 func handleAnnouncementsFromDatabase(result *sql.Rows, err error) ([]*AnnouncementResponse, error) {
+	defer result.Close()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
