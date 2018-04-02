@@ -5,6 +5,12 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Card, CardText, CardTitle} from 'material-ui/Card';
 import Availability from './Availability';
+import Checkbox from 'material-ui/Checkbox';
+import ActionFavorite from 'material-ui/svg-icons/action/favorite';
+import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
+import Visibility from 'material-ui/svg-icons/action/visibility';
+import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
+
 import './styling/Audition.css';
 
 const styles = {
@@ -56,8 +62,12 @@ class Audition extends Component {
                   <br />
                   <div className="row">
                     <div>You must be enrolled in a class during the quarter the production is occurring.<br/>
-                    Confirm what class you are enrolled in:</div>
-                    <TextField name="class"/><br />
+                   </div>
+                   <br />
+                    <Checkbox
+                      label="I confirm I am enrolled in a class for the quarter during which the show is occuring."
+                      
+                    />
                   </div>
                   <br/>
                   <div className="row">

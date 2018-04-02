@@ -21,7 +21,7 @@ class Main extends Component {
     this.signOut = this.signOut.bind(this);
     this.updatePage = this.updatePage.bind(this);
     this.getCurrShows = this.getCurrShows.bind(this);
-    this.handleNav = this.handleNav.bind(this);
+
     //"page" lets me know what page we are looking at, numerically encoded so I don't have to deal with strings
     //starts on dashboard (100)
     //onClick links will update
@@ -76,16 +76,6 @@ class Main extends Component {
       this.setState({
         page: pageNum
       })
-    }
-  }
-
-  handleNav(){
-    console.log(this.state.firstRender)
-    if(this.state.firstRender === true){
-      this.setState({
-        firstRender: false
-      })
-      //window.location.reload()
     }
   }
 

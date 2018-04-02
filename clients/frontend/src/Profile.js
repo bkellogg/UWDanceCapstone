@@ -62,6 +62,12 @@ class Profile extends Component {
       //get the show type based on the type id
        //then display the name of the show, the year it happened (using start date)
        //put a placeholder for choreographer
+       fetch(Util.API_URL_BASE + "shows/types?includeDeleted=true")
+       .then((res) => {
+         console.log(res.json())
+       })
+
+       
 
 
 
