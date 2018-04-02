@@ -57,21 +57,34 @@ class Profile extends Component {
   }
 
   formatHistory(shows){
-    shows.forEach(function(p){
-      console.log(p.id)
-      //get the show type based on the type id
-       //then display the name of the show, the year it happened (using start date)
-       //put a placeholder for choreographer
-       fetch(Util.API_URL_BASE + "shows/types?includeDeleted=true")
+    let showTypes = {};
+    Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
        .then((res) => {
-         console.log(res.json())
+         if(res.ok){
+           return res.json()
+         }
        })
+       .then((data) => {
+         data.map(function(show){
+            showTypes[show.id] = show.desc
+         })
 
-       
+      })
+      .then(
+        shows.forEach(function(p){
+          let typeID = p.typeID
+          let showName = showTypes.typeID
+          console.log(showTypes)
+            //get the show type based on the type id
+            //then display the name of the show, the year it happened (using start date)
+            //put a placeholder for choreographer
+
+          
 
 
 
-    })
+        }) 
+      )
   }
 
   //want to move this to util eventually
