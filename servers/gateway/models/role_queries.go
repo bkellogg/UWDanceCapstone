@@ -52,7 +52,6 @@ func (store *Database) InsertRole(role *NewRole) (*Role, *DBError) {
 // an error if one occurred.
 func (store *Database) GetRoleByName(name string) (*Role, *DBError) {
 	res, err := store.db.Query(`SELECT * FROM Role R Where R.RoleName = ?`, name)
-	defer res.Close()
 	if err != nil {
 		dbErr := NewDBError(err.Error(), http.StatusInternalServerError)
 		if err == sql.ErrNoRows {
@@ -61,6 +60,7 @@ func (store *Database) GetRoleByName(name string) (*Role, *DBError) {
 		}
 		return nil, dbErr
 	}
+	defer res.Close()
 	role := &Role{}
 	if res.Next() {
 		if err = res.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level, &role.IsDeleted); err != nil {
@@ -76,13 +76,13 @@ func (store *Database) GetRoleByName(name string) (*Role, *DBError) {
 // an error if one occurred.
 func (store *Database) GetRoleByID(id int) (*Role, *DBError) {
 	res, err := store.db.Query(`SELECT * FROM Role R Where R.RoleID = ?`, id)
-	defer res.Close()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, NewDBError(fmt.Sprintf("no role found with id '%s'", id), http.StatusNotFound)
 		}
 		return nil, NewDBError("error querying role by id: "+err.Error(), http.StatusInternalServerError)
 	}
+	defer res.Close()
 	role := &Role{}
 	if res.Next() {
 		if err = res.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level, &role.IsDeleted); err != nil {
@@ -103,7 +103,6 @@ func (store *Database) GetRoles() ([]*Role, *DBError) {
 
 // parseRolesFromDatabase compiles the given result and err into a slice of roles or an error.
 func parseRolesFromDatabase(result *sql.Rows, err error) ([]*Role, *DBError) {
-	defer result.Close()
 	roles := make([]*Role, 0)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -111,6 +110,7 @@ func parseRolesFromDatabase(result *sql.Rows, err error) ([]*Role, *DBError) {
 		}
 		return nil, NewDBError("error querying roles: "+err.Error(), http.StatusInternalServerError)
 	}
+	defer result.Close()
 	for result.Next() {
 		r := &Role{}
 		if err = result.Scan(&r.ID, &r.Name, &r.DisplayName, &r.Level, &r.IsDeleted); err != nil {

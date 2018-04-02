@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -13,7 +14,7 @@ func (store *Database) InsertAnnouncement(newAnnouncement *NewAnnouncement) (*An
 	at, err := store.getAnnouncementTypeByName(newAnnouncement.AnnouncementType, false)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, err
+			return nil, fmt.Errorf("no AnnouncementType was found with the name '%s", newAnnouncement.AnnouncementType)
 		}
 		return nil, errors.New("error looking up announcement type: " + err.Error())
 	}
@@ -74,10 +75,10 @@ func (store *Database) GetAnnouncementTypes(includeDeleted bool) ([]*Announcemen
 		query += ` WHERE AT.IsDeleted = false`
 	}
 	result, err := store.db.Query(query)
-	defer result.Close()
 	if err != nil {
 		return nil, errors.New("error getting announcement types: " + err.Error())
 	}
+	defer result.Close()
 	announcementTypes := make([]*AnnouncementType, 0)
 	for result.Next() {
 		at := &AnnouncementType{}
@@ -97,12 +98,15 @@ func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID
 	if len(typeName) > 0 {
 		at, err = store.getAnnouncementTypeByName(typeName, includeDeleted)
 		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil, fmt.Errorf("no announcement type found with name '%s'", typeName)
+			}
 			return nil, errors.New("error looking up announcement type: " + err.Error())
 		}
 	}
 	offset := getSQLPageOffset(page)
 	query := `SELECT DISTINCT A.AnnouncementID, A.AnnouncementTypeID, A.Message, A.CreatedAt, A.IsDeleted,
-		U.UserID, U.FirstName, U.LastName, U.Email, U.RoleChange, U.Active FROM Announcements A
+		U.UserID, U.FirstName, U.LastName, U.Email, U.RoleID, U.Active FROM Announcements A
 		JOIN Users U ON A.CreatedBy = U.UserID`
 	if !includeDeleted {
 		query += ` WHERE A.IsDeleted = FALSE`
@@ -119,13 +123,13 @@ func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID
 
 // handleAnnouncementsFromDatabase compiles the given result and err into a slice of AnnouncementResponse or an error.
 func handleAnnouncementsFromDatabase(result *sql.Rows, err error) ([]*AnnouncementResponse, error) {
-	defer result.Close()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, err
 	}
+	defer result.Close()
 	announcements := make([]*AnnouncementResponse, 0)
 	for result.Next() {
 		a := &AnnouncementResponse{

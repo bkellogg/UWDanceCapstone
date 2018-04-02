@@ -13,10 +13,10 @@ import (
 func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
 	result, err := store.db.Query(`SELECT * FROM UserPiece UP WHERE UP.UserID = ? AND UP.PieceID = ? AND UP.IsDeleted = ?`,
 		userID, pieceID, false)
-	defer result.Close()
 	if result == nil {
 		return false, err
 	}
+	defer result.Close()
 	returnVal := result.Next()
 	return returnVal, nil
 }
@@ -25,10 +25,10 @@ func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
 func (store *Database) UserIsInAudition(userID, audID int) (bool, error) {
 	result, err := store.db.Query(`SELECT * FROM UserAudition UP WHERE UP.UserID = ? AND UP.AuditionID = ? AND UP.IsDeleted = ?`,
 		userID, audID, false)
-	defer result.Close()
 	if result == nil {
 		return false, err
 	}
+	defer result.Close()
 	return result.Next(), nil
 }
 
@@ -429,13 +429,13 @@ func (store *Database) getUserRoleLevel(userID int64) (int, error) {
 
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
 func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, error) {
-	defer result.Close()
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
 		return nil, err
 	}
+	defer result.Close()
 	users := make([]*User, 0)
 	for result.Next() {
 		u := &User{}

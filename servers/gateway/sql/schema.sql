@@ -140,4 +140,4 @@ CREATE TABLE Announcements (
 INSERT INTO Role (RoleName, RoleDisplayName, RoleLevel) VALUES
     ('admin', 'Administrator', 100),
     ('chor', 'Choreographer', 70),
-    ('user', 'Dancer', 10)
+    ('user', 'Dancer', 10);

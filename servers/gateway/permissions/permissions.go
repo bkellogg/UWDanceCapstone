@@ -36,6 +36,6 @@ const (
 	SeeAnnouncementTypes    = SeeAnnouncements
 	CreateAnnouncementTypes = 80
 
-	SeeShowTypes    = SeeShows
+	SeeShowTypes    = 10
 	CreateShowTypes = 75
 )

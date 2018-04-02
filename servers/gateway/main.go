@@ -20,14 +20,18 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
 
+const UseAppINI = false
+
 func main() {
 
-	settings, err := startup.ParseSettingsFromINI("")
-	if err != nil {
-		log.Fatalf("error parsing settings from ini: %v", err)
+	if UseAppINI {
+		settings, err := startup.ParseSettingsFromINI("")
+		if err != nil {
+			log.Fatalf("error parsing settings from ini: %v", err)
+		}
+		fmt.Println("successfully loaded app settings!")
+		fmt.Printf("%+v", settings)
 	}
-	fmt.Println("successfully loaded app settings!")
-	fmt.Printf("%+v", settings)
 
 	// Gateway server environment variables
 	addr := getRequiredENVOrExit("ADDR", ":443")
