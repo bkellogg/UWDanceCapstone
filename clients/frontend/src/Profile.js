@@ -48,8 +48,9 @@ class Profile extends Component {
       this.setState({
         history: res.shows
       })
-      console.log(this.state.history)
+
       this.formatHistory(res.shows)
+
     })
     .catch((err) => {
       console.log("whoops!")
@@ -58,6 +59,7 @@ class Profile extends Component {
 
   formatHistory(shows){
     let showTypes = {};
+  
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
        .then((res) => {
          if(res.ok){
@@ -66,25 +68,28 @@ class Profile extends Component {
        })
        .then((data) => {
          data.map(function(show){
-            showTypes[show.id] = show.desc
+            showTypes[show.id.toString()] = show.desc
          })
+         return showTypes
 
       })
-      .then(
+      .then(showTypes => {
+        let showHistory = [];
         shows.forEach(function(p){
           let typeID = p.typeID
-          let showName = showTypes.typeID
-          console.log(showTypes)
-            //get the show type based on the type id
-            //then display the name of the show, the year it happened (using start date)
-            //put a placeholder for choreographer
-
-          
-
-
-
-        }) 
-      )
+          let showName = showTypes[typeID]
+          let showYear = p.createdAt.substring(0,4)
+          let show = {"name": showName, "year": showYear}
+          showHistory.push(show) 
+        })
+        return showHistory
+      }) 
+      .then( showHistory => {
+        this.setState({
+          history: showHistory
+        })
+      })
+      
   }
 
   //want to move this to util eventually
@@ -196,8 +201,10 @@ class Profile extends Component {
             <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
             {this.state.history !== null && this.state.history.map((p, i) => {
               return(
+                //TODO STYLE THESE
                 <div className="showHistory" key={i}>
-                  <p>p</p>
+                  <p>{p.name}</p>
+                  <p>{p.year}</p>
                 </div>
               )
             })}
