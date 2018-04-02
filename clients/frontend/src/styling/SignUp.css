@@ -1,6 +1,10 @@
+body {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
 .content {
     margin-left:100px;
-    margin-top:35%;
+    margin-top:25%;
     width: 320px;
   }
   

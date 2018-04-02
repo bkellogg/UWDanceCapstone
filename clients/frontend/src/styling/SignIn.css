@@ -1,3 +1,5 @@
+
+
 .LogInLanding {
   background-color: lavender;
 }
@@ -10,18 +12,21 @@
   vertical-align: top;
 }
 
+
 .LogInPhoto {
   height: 100%;
   display: inline-block;
   width: 50%;
   background-image: url('../imgs/tresmaines.jpg');
   background-repeat: no-repeat;
-  background-size: cover
+  background-size: cover;
 }
 
 .LogInPhoto > img{
-  width: 100%;
-  min-height: 100%;
+  /* width: 100%;
+  min-height: 100%; */
+  object-fit: fill;
+  height: 50%;
 }
 
 .content {
@@ -32,6 +37,7 @@
 
 .title {
   color:grey;
+  padding-bottom: 10%;
 }
 
 Button {

@@ -141,7 +141,7 @@ class Profile extends Component {
               }
             </div>
             <div id="name">
-              {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+              {!this.state.edit && <h2 id="profileName">{this.state.fname} {this.state.lname}</h2>}
               {this.state.edit &&
                 <div id="editName">
                   <Row>

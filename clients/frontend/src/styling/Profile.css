@@ -1,3 +1,7 @@
+body {
+  font-family: Trebuchet, sans-serif;
+}
+
 .header{
   display: flex;
   position: relative;
@@ -44,7 +48,9 @@
 }
 
 .subheader {
-  font-size: 20px;
+  font-size: 15px;
+  text-transform: uppercase;
+  color: #799FB0;
 }
 
 #editName{

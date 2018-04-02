@@ -12,3 +12,8 @@ html {
 #root {
   height:100%
 }
+
+
+.btn, .btn-large{
+  background-color: #799FB0;
+}
