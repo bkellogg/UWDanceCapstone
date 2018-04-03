@@ -2,7 +2,8 @@ CREATE TABLE Role (
     RoleID INT AUTO_INCREMENT PRIMARY KEY,
     RoleName VARCHAR(20) NOT NULL UNIQUE KEY,
     RoleDisplayName varchar(25) NOT NULL UNIQUE KEY,
-    RoleLevel INT NOT NULL
+    RoleLevel INT NOT NULL,
+    IsDeleted BOOLEAN DEFAULT FALSE NOT NULL
 );
 
 CREATE TABLE Users (
@@ -20,9 +21,10 @@ CREATE TABLE Users (
 
 CREATE TABLE Auditions (
     AuditionID INT AUTO_INCREMENT PRIMARY KEY,
-    Name varchar (50) NOT NULL UNIQUE KEY,
-    Location VARCHAR(100) NOT NULL,
+    Name VARCHAR (50) NOT NULL UNIQUE KEY,
     Time DATETIME NOT NULL,
+    Location VARCHAR(100) NOT NULL,
+    Quarter VARCHAR(10) NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL
@@ -137,7 +139,7 @@ CREATE TABLE Announcements (
 );
 
 -- CREATE DEFAULT NECESSARY VALUES
-INSERT INTO Role (RoleName, RoleDisplayName, RoleLevel) VALUES
-    ('admin', 'Administrator', 100),
-    ('chor', 'Choreographer', 70),
-    ('user', 'Dancer', 10);
+INSERT INTO Role (RoleName, RoleDisplayName, RoleLevel, IsDeleted) VALUES
+    ('admin', 'Administrator', 100, FALSE),
+    ('chor', 'Choreographer', 70, FALSE),
+    ('user', 'Dancer', 10, FALSE);
