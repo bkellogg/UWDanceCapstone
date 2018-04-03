@@ -2,6 +2,7 @@ export const headerAuthorization = "Authorization";
 
 export const API_URL_BASE = "https://dasc.capstone.ischool.uw.edu/api/v1/";
 
+
 export function saveAuth(auth) {
     localStorage.setItem("auth", auth);
 };
@@ -206,4 +207,23 @@ export function getDancerHistory(){
   }).catch((err) => {
     console.log(err)
   })
+}
+
+export function getShowTypes(){
+    let showTypes = {};
+    return makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
+    .then((res) => {
+      if(res.ok){
+        return res.json()
+      }
+    })
+    .then((data) => {
+      data.map(function(show){
+         showTypes[show.id.toString()] = show.desc
+      })
+      return showTypes
+   })
+   .catch((err) => {
+       console.log(err)
+   })
 }
