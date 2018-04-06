@@ -20,8 +20,15 @@ signinForm.addEventListener("submit", function (evt) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            setLocalUser(JSON.stringify(data));
-            window.location.href = "console.html";
+            if (data.role.level == 100) {
+                setLocalUser(JSON.stringify(data));
+                window.location.href = "console.html";
+            } else {
+                var message = document.createElement('p');
+                message.textContent = "Your account does not have the proper role to access this console. Please contact your system admin if you have any questions.";
+                document.body.appendChild(message);
+                $('#email-input, #password-input').val('');
+            }
         })
         .catch((err) => {
             errorBox.textContent = err;

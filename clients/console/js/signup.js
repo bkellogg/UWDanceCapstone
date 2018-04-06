@@ -20,14 +20,23 @@ signupForm.addEventListener("submit", function (evt) {
     makeRequest("users", payload, "POST", false)
         .then((res) => {
             if (res.ok) {
-                saveAuth(res.headers.get(headerAuthorization));
                 return res.json();
             }
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            setLocalUser(JSON.stringify(data));
-            window.location.href = "console.html";
+            var message = document.createElement('p');
+            message.textContent = " User " + data.firstName + " " + 
+            data.lastName + " with the role of " + data.role.displayName + " successfully created.";
+            document.body.appendChild(message);
+            
+            var newUserName = document.createElement('p');
+            var newUserPassword = document.createElement('p');
+            newUserName.textContent = "Username: " + data.email;
+            newUserPassword.textContent += "Password: " + password.value;
+            document.body.appendChild(newUserName);
+            document.body.appendChild(newUserPassword);
+            $('input').val('');
         })
         .catch((err) => {
             errorBox.textContent = err;

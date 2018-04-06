@@ -7,19 +7,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>UW Stage Admin Console</title>
     <link rel="stylesheet" href="css/index.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-    <script type="text/javascript">
-        $(function () {
-            $("#email-input, #password-input").bind("change keyup",
-                function () {
-                    if ($("#email-input").val() != "" && $("#password-input").val() != "")
-                        $(this).closest("form").find(":submit").removeAttr("disabled");
-                    else
-                        $(this).closest("form").find(":submit").attr("disabled", "disabled");
-                });
-        });
-    </script>
 
 </head>
 
@@ -48,7 +35,21 @@
         <a href="./reset.html">Forgot Password?</a>
     </div>
 </body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/signin.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#email-input, #password-input").bind("change keyup",
+            function () {
+                if ($("#email-input").val() != "" && $("#password-input").val() != "")
+                    $(this).closest("form").find(":submit").removeAttr("disabled");
+                else
+                    $(this).closest("form").find(":submit").attr("disabled", "disabled");
+            });
+    });
+</script>
 
 </html>
