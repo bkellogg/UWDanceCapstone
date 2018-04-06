@@ -6,14 +6,14 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
 func receive(r *http.Request, v interface{}) error {
 	// content-type must be JSON
 	contentType := r.Header.Get("Content-Type")
-	if !strings.HasPrefix(contentType, constants.ContentTypeJSON) {
-		return fmt.Errorf("`%s` is not a supported Content-Type; must be `%s`", contentType, constants.ContentTypeJSONUTF8)
+	if !strings.HasPrefix(contentType, appvars.ContentTypeJSON) {
+		return fmt.Errorf("`%s` is not a supported Content-Type; must be `%s`", contentType, appvars.ContentTypeJSONUTF8)
 	}
 
 	// decode the request body into v

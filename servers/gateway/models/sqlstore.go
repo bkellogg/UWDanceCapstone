@@ -8,12 +8,12 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
-// Database defines a sql database struct
+// store defines a sql database struct
 type Database struct {
 	db *sql.DB
 }
 
-// NewDatabase returns a new Database with an open sql db connection from the given
+// NewDatabase returns a new store with an open sql db connection from the given
 // connection information. Returns an error if it failed to open the connection, or
 // if it fails to ping the db after three tries
 func NewDatabase(user, password, addr, dbName string) (*Database, error) {
@@ -27,7 +27,7 @@ func NewDatabase(user, password, addr, dbName string) (*Database, error) {
 	}
 	db, err := sql.Open("mysql", connectionInfo.FormatDSN())
 	if err != nil {
-		return nil, errors.New("error opening connection to Database: " + err.Error())
+		return nil, errors.New("error opening connection to store: " + err.Error())
 	}
 	return &Database{db: db}, nil
 }

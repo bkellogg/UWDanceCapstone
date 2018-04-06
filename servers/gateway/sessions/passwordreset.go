@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"strings"
 )
 
@@ -19,7 +19,7 @@ func (rs *RedisStore) NewPasswordResetToken(email string) (string, error) {
 	if len(email) == 0 {
 		return "", errors.New("email cannot be 0 length")
 	}
-	randomBytes := make([]byte, constants.PasswordResetTokenLength)
+	randomBytes := make([]byte, appvars.PasswordResetTokenLength)
 	_, err := rand.Read(randomBytes)
 	if err != nil {
 		return "", errors.New("error generating password reset token")
@@ -28,7 +28,7 @@ func (rs *RedisStore) NewPasswordResetToken(email string) (string, error) {
 	token := base64.StdEncoding.EncodeToString(randomBytes)
 
 	if err := rs.Client.Set(passwordResetPrefix+email,
-		token, constants.PasswordResetValidityDuration).Err(); err != nil {
+		token, appvars.PasswordResetValidityDuration).Err(); err != nil {
 		return "", err
 	}
 	return token, nil
@@ -40,13 +40,13 @@ func (rs *RedisStore) ValidatePasswordResetToken(email, token string) (bool, err
 	cmd := rs.Client.Get(passwordResetPrefix + email)
 	err := cmd.Err()
 	if err != nil {
-		return false, errors.New(constants.ErrPasswordResetTokensMismatch)
+		return false, errors.New(appvars.ErrPasswordResetTokensMismatch)
 	}
 	storedTokenBytes, _ := cmd.Bytes()
 	storedToken := string(storedTokenBytes)
 	storedToken = strings.TrimPrefix(storedToken, passwordResetPrefix)
 	if token != storedToken {
-		return false, errors.New(constants.ErrPasswordResetTokensMismatch)
+		return false, errors.New(appvars.ErrPasswordResetTokensMismatch)
 	}
 	rs.Client.Del(passwordResetPrefix + email)
 	return true, nil
@@ -55,11 +55,11 @@ func (rs *RedisStore) ValidatePasswordResetToken(email, token string) (bool, err
 // ValidatePasswords returns true if the password and passwordConf
 // combination are valid, false and an error if otherwise.
 func ValidatePasswords(password, passwordConf string) (bool, error) {
-	if len(password) < constants.PasswordMinLength {
-		return false, errors.New(constants.ErrPasswordNotLongEnough)
+	if len(password) < appvars.PasswordMinLength {
+		return false, errors.New(appvars.ErrPasswordNotLongEnough)
 	}
 	if password != passwordConf {
-		return false, errors.New(constants.ErrPasswordsMismatch)
+		return false, errors.New(appvars.ErrPasswordsMismatch)
 	}
 	return true, nil
 }

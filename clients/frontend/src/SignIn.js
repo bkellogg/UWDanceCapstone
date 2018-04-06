@@ -72,11 +72,12 @@ class SignIn extends Component {
   render() {
     return (
       <div className="LogInLanding" style={{height:100 + '%'}}>
-        <div className="LogInPhoto">
+        {/* <div className="LogInPhoto">
         <img src={img}></img>
-        </div>
+        </div> */}
         <div className="Functionality">
-        <div className="Logo"></div>
+        <div className="Logo">
+        </div>
           <div className="content">
           <h5 className="title">Sign in</h5>
           <div className='error'>
@@ -99,11 +100,15 @@ class SignIn extends Component {
                     </div>
             </form>
             <div className="Buttons">
+            {/* forgot password?? */}
               <Button onClick={this.signIn}>Sign In</Button>
-              <Button onClick ={this.signUp}>Sign Up</Button>
+              {/* <Button onClick ={this.signUp}>Sign Up</Button> */}
             </div>
-            {/*TODO hook this up*/}
-              <div className="forgot">Forgot your password?</div>
+            <div className="Link">
+            {/* forgot password?? */}
+              <a className="signlink" onClick ={this.signUp}> Sign Up </a>
+            </div>
+
             </div>
           </div>
         </div>

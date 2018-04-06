@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
 	"github.com/gorilla/mux"
 
@@ -15,6 +16,23 @@ import (
 // ShowsHandler handles requests for the shows resource.
 func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {
+	case "GET":
+		if !u.Can(permissions.SeeShows) {
+			return permissionDenied()
+		}
+		page, httperr := getPageParam(r)
+		if httperr != nil {
+			return httperr
+		}
+		shows, err := ctx.store.GetShows(page, getHistoryParam(r), getIncludeDeletedParam(r), getStringParam(r, "type"))
+		if err != nil {
+			code := http.StatusInternalServerError
+			if err.Error() == appvars.ErrInvalidHistoryOption {
+				code = http.StatusBadRequest
+			}
+			return HTTPError("error getting shows: "+err.Error(), code)
+		}
+		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
 	case "POST":
 		if !u.Can(permissions.CreateShows) {
 			return permissionDenied()
@@ -25,7 +43,10 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 			return HTTPError("error decoding new show: "+err.Error(), http.StatusBadRequest)
 		}
 		newShow.CreatedBy = int(u.ID)
-		show, err := ctx.Database.InsertNewShow(newShow)
+		if err := newShow.Validate(); err != nil {
+			return HTTPError("new show validation failed: "+err.Error(), http.StatusBadRequest)
+		}
+		show, err := ctx.store.InsertNewShow(newShow)
 		if err != nil {
 			return HTTPError("error inserting new show:"+err.Error(), http.StatusInternalServerError)
 		}
@@ -35,7 +56,7 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 	}
 }
 
-// SpecificShowHandler handles requests to a specifc show.
+// SpecificShowHandler handles requests to a specific show.
 func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	showIDString := mux.Vars(r)["id"]
 	showID, err := strconv.Atoi(showIDString)
@@ -48,7 +69,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 		if !u.Can(permissions.SeeShows) {
 			return permissionDenied()
 		}
-		show, err := ctx.Database.GetShowByID(showID, includeDeleted)
+		show, err := ctx.store.GetShowByID(showID, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
 		}
@@ -60,7 +81,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 		if !u.Can(permissions.DeleteShows) {
 			return permissionDenied()
 		}
-		err := ctx.Database.DeleteShowByID(showID)
+		err := ctx.store.DeleteShowByID(showID)
 		if err == nil {
 			return respondWithString(w, "show deleted", http.StatusOK)
 		}
@@ -92,7 +113,7 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 		return httperr
 	}
 
-	audition, err := ctx.Database.GetShowByID(showID, includeDeleted)
+	audition, err := ctx.store.GetShowByID(showID, includeDeleted)
 	if err != nil {
 		return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
 	}
@@ -112,12 +133,45 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 		if !u.Can(permissions.SeePieces) {
 			return permissionDenied()
 		}
-		pieces, err := ctx.Database.GetPiecesByShowID(showID, page, includeDeleted)
+		pieces, err := ctx.store.GetPiecesByShowID(showID, page, includeDeleted)
 		if err != nil {
 			return HTTPError("error getting shows by audition id: "+err.Error(), http.StatusInternalServerError)
 		}
 		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
 	default:
 		return objectTypeNotSupported()
+	}
+}
+
+// ShowTypeHandler handles general requests to the show type resource.
+func (ctx *AuthContext) ShowTypeHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	switch r.Method {
+	case "GET":
+		if !u.Can(permissions.SeeShowTypes) {
+			return permissionDenied()
+		}
+		showTypes, err := ctx.store.GetShowTypes(getIncludeDeletedParam(r))
+		if err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, showTypes, http.StatusOK)
+	case "POST":
+		if !u.Can(permissions.CreateShowTypes) {
+			return permissionDenied()
+		}
+		showType := &models.ShowType{}
+		if err := receive(r, showType); err != nil {
+			return receiveFailed()
+		}
+		showType.CreatedBy = int(u.ID)
+		if err := showType.Validate(); err != nil {
+			return HTTPError("show type validation failed: "+err.Error(), http.StatusBadRequest)
+		}
+		if err := ctx.store.InsertNewShowType(showType); err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+		return respond(w, showType, http.StatusCreated)
+	default:
+		return methodNotAllowed()
 	}
 }

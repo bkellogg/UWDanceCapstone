@@ -104,62 +104,76 @@ class SignUp extends Component {
   
     render() {
         return(
-        <section className="signUp">
-        <div className="LogInPhoto">
-        <img src={img}></img>
-        </div>
-        <div className="Functionality">
-        <div className="Logo"></div>
-        <div className='content'>
-        <h5 className='title'> Sign up </h5>
-        <div className="error">
-          {
-          this.state.error !== null &&
-            <p>{this.state.error}</p>
-          }
-        </div>
-        {
-        this.state.signUpExtra === false &&
-          <div>
-            <div>
-          <form>
-            <div className="row">
-              <div className="input-field col s12">
-                <input type="text" name="firstname" id="firstname" onChange={this.inputChange}/>
-                <label htmlFor="firstname">First Name</label>
-              </div>
-              <div className="input-field col s12">
-                <input type="text" name="lastname" id="lastname" onChange={this.inputChange}/>
-                <label htmlFor="lastname">Last Name</label>
-              </div>
-              <div className="input-field col s12">
-                <input type="email" name="email" id="email" className ="validate" onChange={this.inputChange}/>
-                <label htmlFor="email">Email</label>
-              </div>
-              <div className="input-field col s12">
-                <input type="password" name="password" id="password" onChange={this.inputChange}/>
-                <label htmlFor="password">Password</label>
-              </div>
-              <div className="input-field col s12">
-                <input type="password" name="passwordConf" id="passwordConf" onChange={this.inputChange} onKeyPress={this.inputChange}/>
-                <label htmlFor="passwordConf">Confirm Password</label>
-              </div>
-            </div>
-          </form>
-          <Button onClick={this.goBack}> Back </Button>
-          <Button onClick={this.onClick}> Sign Up </Button> 
-          </div> 
-          <div className="forgot">Forgot your password?</div>
-          </div>
-        }
+          <div className="LogInLanding" style={{height:100 + '%'}}>
+            <section className="signUp">
+            {/* <div className="LogInPhoto">
+            <img src={img}></img>
+            </div> */}
+              <div className="Functionality">
+                <div className="Logo"></div>
+                <div className='content'>
+                  <h5 className='title'> Sign up </h5>
+                  <div className="error">
+                    {
+                    this.state.error !== null &&
+                      <p>{this.state.error}</p>
+                    }
+                  </div>
+                  {
+                  this.state.signUpExtra === false &&
+                    <div>
+                      <div>
+                        <form>
+                          <div className="row">
+                            <div className="input-field col s12">
+                              <input type="text" name="firstname" id="firstname" onChange={this.inputChange}/>
+                              <label htmlFor="firstname">First Name</label>
+                            </div>
+                            <div className="input-field col s12">
+                              <input type="text" name="lastname" id="lastname" onChange={this.inputChange}/>
+                              <label htmlFor="lastname">Last Name</label>
+                            </div>
+                            <div className="input-field col s12">
+                              <input type="email" name="email" id="email" className ="validate" onChange={this.inputChange}/>
+                              <label htmlFor="email">Email</label>
+                            </div>
+                            <div className="input-field col s12">
+                              <input type="password" name="password" id="password" onChange={this.inputChange}/>
+                              <label htmlFor="password">Password</label>
+                            </div>
+                            <div className="input-field col s12">
+                              <input type="password" name="passwordConf" id="passwordConf" onChange={this.inputChange} onKeyPress={this.inputChange}/>
+                              <label htmlFor="passwordConf">Confirm Password</label>
+                            </div>
+                          </div>
+                        </form>
 
-        {
-        this.state.signUpExtra === true && this.state.auth != null &&
-          <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
-        }
-        </div>
-        </div>
-        </section>
+
+                        {/* <Button onClick={this.goBack}> Back </Button> */}
+                        <Button onClick={this.onClick}> Sign Up </Button> 
+                        
+                        <div className="Link">
+                          {/* forgot password?? */}
+                          <a className="signlink" onClick ={this.goBack}> Sign In </a>
+                        </div>
+
+                      </div> 
+                    </div>
+                  }
+
+                  {
+                    this.state.signUpExtra === true && this.state.auth != null &&
+                    <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
+                  }
+
+                  {
+                    this.state.signUpExtra === true && this.state.auth != null &&
+                    <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
+                  }
+                </div>
+              </div>
+            </section>
+          </div>
         )
     };
 }
