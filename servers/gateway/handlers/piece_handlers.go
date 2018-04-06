@@ -26,7 +26,7 @@ func (ctx *AuthContext) PiecesHandler(w http.ResponseWriter, r *http.Request, u 
 		newPiece.CreatedBy = int(u.ID)
 		piece, err := ctx.store.InsertNewPiece(newPiece)
 		if err != nil {
-			return HTTPError("error inserting new piece:"+err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, piece, http.StatusCreated)
 	default:
@@ -49,7 +49,7 @@ func (ctx *AuthContext) SpecificPieceHandler(w http.ResponseWriter, r *http.Requ
 		}
 		piece, err := ctx.store.GetPieceByID(pieceID, includeDeleted)
 		if err != nil {
-			return HTTPError("error getting piece by ID: "+err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		if piece == nil {
 			return objectNotFound("piece")

@@ -124,7 +124,7 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		}
 		pieces, err := ctx.store.GetPiecesByAuditionID(audID, page, includeDeleted)
 		if err != nil {
-			return HTTPError("error getting pieces by audition id: "+err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, pieces, http.StatusOK)
 	case "shows":
@@ -133,7 +133,7 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		}
 		shows, err := ctx.store.GetShowsByAuditionID(audID, page, includeDeleted)
 		if err != nil {
-			return HTTPError("error getting shows by audition id: "+err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
 	default:

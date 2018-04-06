@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -33,25 +35,22 @@ func (store *Database) UserIsInAudition(userID, audID int) (bool, error) {
 }
 
 // AddUserToPiece adds the given user to the given piece.
-func (store *Database) AddUserToPiece(userID, pieceID int, role string) error {
-	piece, err := store.GetPieceByID(pieceID, false)
-	if err != nil {
-		return err
-	}
-	if piece == nil {
-		return errors.New(appvars.ErrPieceDoesNotExist)
+func (store *Database) AddUserToPiece(userID, pieceID int, role string) *DBError {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return dberr
 	}
 	addTime := time.Now()
 	exists, err := store.UserIsInPiece(userID, pieceID)
 	if err != nil {
-		return err
+		return NewDBError(fmt.Sprintf("error checking if a user is in piece: %v", err), http.StatusInternalServerError)
 	}
 	if exists {
-		return errors.New("user is already in this piece")
+		return NewDBError("user is already in this piece", http.StatusBadRequest)
 	}
 	_, err = store.db.Exec(`INSERT INTO UserPiece (UserID, PieceID, RoleID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
 		userID, pieceID, role, addTime, false)
-	return err
+	return NewDBError(fmt.Sprintf("error isnerting user piece link: %v", err), http.StatusInternalServerError)
 }
 
 // ChangeUserRole sets the role of the given user ID to role.
@@ -117,23 +116,17 @@ func (store *Database) ChangeUserRole(userID int, roleName string) error {
 }
 
 // RemoveUserFromPiece removes the given user from the given piece.
-func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
-	piece, err := store.GetPieceByID(pieceID, false)
-	if err != nil {
-		return err
+func (store *Database) RemoveUserFromPiece(userID, pieceID int) *DBError {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return dberr
 	}
-	if piece == nil {
-		return errors.New("piece does not exist")
-	}
-	result, err := store.db.Exec(`UPDATE UserPiece UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.PieceID = ?`,
+	_, err := store.db.Exec(`UPDATE UserPiece UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.PieceID = ?`,
 		true, userID, pieceID)
-	if err == nil {
-		rowsAffected, _ := result.RowsAffected()
-		if rowsAffected == 0 {
-			return sql.ErrNoRows
-		}
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error removing user from piece: %v", err), http.StatusInternalServerError)
 	}
-	return err
+	return nil
 }
 
 // AddUserToAudition adds the given user to the given audition. Returns an error
@@ -202,23 +195,17 @@ func (store *Database) AddUserToAudition(userID, audID, creatorID int, availabil
 }
 
 // RemoveUserFromPiece removes the given user from the given audition.
-func (store *Database) RemoveUserFromAudition(userID, audID int) error {
-	audition, dberr := store.GetAuditionByID(audID, false)
+func (store *Database) RemoveUserFromAudition(userID, audID int) *DBError {
+	_, dberr := store.GetAuditionByID(audID, false)
 	if dberr != nil {
-		return errors.New(dberr.Message)
+		return dberr
 	}
-	if audition == nil {
-		return errors.New("audition does not exist")
-	}
-	result, err := store.db.Exec(`UPDATE UserAudition UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.AuditionID = ?`,
+	_, err := store.db.Exec(`UPDATE UserAudition UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.AuditionID = ?`,
 		true, userID, audID)
-	if err == nil {
-		rowsAffected, _ := result.RowsAffected()
-		if rowsAffected == 0 {
-			return sql.ErrNoRows
-		}
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error removing user from audition: %v", err), http.StatusInternalServerError)
 	}
-	return err
+	return nil
 }
 
 // GetAllUsers returns a slice of users of every user in the database, active or not.

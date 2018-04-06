@@ -113,17 +113,13 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 	case "pieces":
 		pieces, err := ctx.store.GetPiecesByUserID(userID, page, includeDeleted)
 		if err != nil {
-			return HTTPError("error getting pieces by user id: "+err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
 	case "shows":
 		shows, err := ctx.store.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
 		if err != nil {
-			code := http.StatusInternalServerError
-			if err.Error() == appvars.ErrInvalidHistoryOption {
-				code = http.StatusBadRequest
-			}
-			return HTTPError("error getting shows by user id: "+err.Error(), code)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
 	case "photo":
@@ -325,7 +321,7 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 			}
 			err := ctx.store.AddUserToPiece(userID, objID, role)
 			if err != nil {
-				return HTTPError("error adding user to piece: "+err.Error(), http.StatusBadRequest)
+				return HTTPError(err.Message, err.HTTPStatus)
 			}
 			return respondWithString(w, "user added to piece as a(n) "+role, http.StatusOK)
 		} else {
@@ -350,16 +346,9 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 	default:
 		return methodNotAllowed()
 	}
-	err = function(userID, objID)
-	if err != nil {
-		code := http.StatusInternalServerError
-		if err == sql.ErrNoRows {
-			code = http.StatusBadRequest
-		} else if err.Error() == appvars.ErrPieceDoesNotExist ||
-			err.Error() == appvars.ErrAuditionDoesNotExist {
-			code = http.StatusNotFound
-		}
-		return HTTPError("error performing membership change: "+err.Error(), code)
+	dberr := function(userID, objID)
+	if dberr != nil {
+		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
 	return respondWithString(w, message, http.StatusOK)
 }

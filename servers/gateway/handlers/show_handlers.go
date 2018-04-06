@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
 	"github.com/gorilla/mux"
 
@@ -26,11 +25,7 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 		}
 		shows, err := ctx.store.GetShows(page, getHistoryParam(r), getIncludeDeletedParam(r), getStringParam(r, "type"))
 		if err != nil {
-			code := http.StatusInternalServerError
-			if err.Error() == appvars.ErrInvalidHistoryOption {
-				code = http.StatusBadRequest
-			}
-			return HTTPError("error getting shows: "+err.Error(), code)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
 	case "POST":
@@ -45,7 +40,7 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 		newShow.CreatedBy = int(u.ID)
 		show, err := ctx.store.InsertNewShow(newShow)
 		if err != nil {
-			return HTTPError("error inserting new show:"+err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, show, http.StatusCreated)
 	default:
@@ -132,7 +127,7 @@ func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r 
 		}
 		pieces, err := ctx.store.GetPiecesByShowID(showID, page, includeDeleted)
 		if err != nil {
-			return HTTPError("error getting shows by audition id: "+err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
 	default:
@@ -149,7 +144,7 @@ func (ctx *AuthContext) ShowTypeHandler(w http.ResponseWriter, r *http.Request, 
 		}
 		showTypes, err := ctx.store.GetShowTypes(getIncludeDeletedParam(r))
 		if err != nil {
-			return HTTPError(err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, showTypes, http.StatusOK)
 	case "POST":
@@ -162,7 +157,7 @@ func (ctx *AuthContext) ShowTypeHandler(w http.ResponseWriter, r *http.Request, 
 		}
 		showType.CreatedBy = int(u.ID)
 		if err := ctx.store.InsertNewShowType(showType); err != nil {
-			return HTTPError(err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, showType, http.StatusCreated)
 	default:
