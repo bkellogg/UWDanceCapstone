@@ -1,8 +1,11 @@
 .LogInLanding {
-  /* background-image: url('../imgs/bg-100.jpg'); */
-  background-color: #799FB0;
+  background-image: url('../imgs/dance-bw.jpg');
+
+  /* background-color: #799FB0; */
   background-repeat: no-repeat;
+  background-attachment: fixed;
   background-size: 100%;
+  background-position: 50% 65%; 
   
 }
 

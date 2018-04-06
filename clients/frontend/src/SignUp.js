@@ -76,6 +76,7 @@ class SignUp extends Component {
   
     render() {
         return(
+          <div className="LogInLanding" style={{height:100 + '%'}}>
         <section className="signUp">
         {/* <div className="LogInPhoto">
         <img src={img}></img>
@@ -131,6 +132,7 @@ class SignUp extends Component {
         </div>
         </div>
         </section>
+        </div>
         )
     };
 }
