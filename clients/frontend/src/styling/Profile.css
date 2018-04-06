@@ -1,10 +1,37 @@
 body {
   font-family: sans-serif;}
 
-.header{
+.headerBorder{
   display: flex;
   position: relative;
-  height: 150px
+  height: 100%;
+  border-bottom: 1px solid grey;
+  width: 100%;
+}
+
+.header, .mainContentBorder{
+  width: 100%;
+  margin-bottom: 3%;
+  padding: 2%;
+  position: relative;
+}
+
+.photoContainerWrap {
+  position: relative;
+  display: inline-block;
+  margin-right: 3%;
+}
+
+.nameAndBioWrap{
+  width: 70%;
+  position: relative;
+  display: inline-block;
+}
+
+#edit {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 #photo {
@@ -12,27 +39,24 @@ body {
   width: 150px
 }
 
-.name {
-  height: 150px;
-  width: 150px;
+.name, .bio{
+  width: auto;
 }
 
-#profileName{
-  position: absolute;
-  bottom: 0px;
-  margin-bottom:0px;
-  padding-left:25px;
+.name, #editName {
+  z-index: 1;
   text-transform: capitalize;
+}
 
+.bio, #editBio{
+  z-index: 2;
 }
 
 .sub {
-  padding-left: 50px;
+  padding-left: 5%;
+  padding-right: 5%;
   padding-top: 80px;
-}
-
-#bio{
-  padding-top:30px;
+  margin-bottom: 20%;
 }
 
 #historyTitle {
@@ -43,7 +67,7 @@ body {
   margin-bottom: 15px
 }
 
-#bio, #history, #resume {
+#history, #resume {
   margin-top: 20px;
   margin-bottom:40px
 }
@@ -54,21 +78,21 @@ body {
   color: #799FB0;
 }
 
-#editName{
+/* #editName{
   padding-left: 25px;
   display: flex;
   position: absolute;
   bottom: 0px;
   margin-bottom:0px;
-}
+} */
 
 #firstName, #lastName{
   margin-right: 10px
 }
 
-#editBio{
+/* #editBio{
   width: 80%;
-}
+} */
 @media only screen and (max-width : 992px) {
 
 }

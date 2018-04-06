@@ -1,7 +1,9 @@
+body {
+  font-weight: 400;
+}
+
 .LogInLanding {
   background-image: url('../imgs/dance-bw.jpg');
-
-  /* background-color: #799FB0; */
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: 100%;

@@ -128,8 +128,11 @@ class Profile extends Component {
     return (
       <section className="main">
         <div className="sub">
+
+        <div className="headerBorder">
           <div className="header">
-            <div id="photoContainer">
+          <div className ="photoContainerWrap">
+            <div id="photoContainer" className="photoContainer">
               {!this.state.edit &&
                 <img id="photo" src={this.state.photoSrc}></img>
               }
@@ -140,7 +143,10 @@ class Profile extends Component {
                 </section>
               }
             </div>
-            <div id="name">
+            </div>
+
+              <div className="nameAndBioWrap">
+            <div id="name" className="name">
               {!this.state.edit && <h3 id="profileName">{this.state.fname} {this.state.lname}</h3>}
               {this.state.edit &&
                 <div id="editName">
@@ -151,8 +157,8 @@ class Profile extends Component {
                 </div>
               }
             </div>
-          </div>
-          <div id="bio">
+
+          <div id="bio" className="bio">
             <div className="subheader"><b>Bio:</b></div>
             {!this.state.edit && 
               <section>
@@ -162,52 +168,75 @@ class Profile extends Component {
             }
             {this.state.edit &&
               <div id="editBio">
-                <Input id="bioUpload" name="bioUpload" s={6} placeholder="Bios should be 60 words or less" onChange={this.inputChange}/>
+
+              <div class="row">
+                <form class="col s12">
+                  <div class="row">
+                    <div class="input-field col s12">
+                      <textarea id="textarea1" name="bioUpload" s={6} class="materialize-textarea" onChange={this.inputChange}></textarea>
+                      <label for="textarea1">Bios should be 60 words or less</label>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+                {/* <Input id="bioUpload" name="bioUpload" s={6} placeholder="Bios should be 60 words or less" onChange={this.inputChange}/> */}
               </div>
             }
           </div>
-          <div id="history">
-            <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-            {this.state.history !== null && this.state.history.map((p, i) => {
-              return(
-                <div className="showHistory" key={i}>
-                  <div>
-                    <b>Show: </b> {p.show}
-                  </div>
-                  <div>
-                    <b>Year: </b> {p.year}
-                  </div>
-                  <div>
-                    <b>Choreographer: </b> {p.choreographer}
-                  </div>
-                </div>
-              )
-            })}
-            {this.state.history === null &&
-            <p> Dancer has no piece history </p>
-            }
-          </div>
-          <div id="resume">
-            <div className="subheader"><b>Resume: </b></div>
-            {!this.state.edit && 
-              <section>
-                {this.state.resume !== null && <p>This is where the resume will go!</p>}
-                {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-              </section>
+
+            </div>
+            {!this.state.edit &&
+              <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                <i className="large material-icons"> mode_edit </i>
+              </Button>
             }
             {this.state.edit &&
-              <section>
-                <div> Upload your dance resume as a PDF. </div>
-                <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.inputChange}/>
-              </section> 
-            }
+              <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                <i className="large material-icons"> check </i>
+              </Button>
+            } 
+          </div>
+          </div>
+
+          <div className="mainContentBorder">
+            <div id="history">
+              <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+              {this.state.history !== null && this.state.history.map((p, i) => {
+                return(
+                  <div className="showHistory" key={i}>
+                    <div>
+                      <b>Show: </b> {p.show}
+                    </div>
+                    <div>
+                      <b>Year: </b> {p.year}
+                    </div>
+                    <div>
+                      <b>Choreographer: </b> {p.choreographer}
+                    </div>
+                  </div>
+                )
+              })}
+              {this.state.history === null &&
+              <p> Dancer has no piece history </p>
+              }
             </div>
-          {!this.state.edit &&
-            <Button id="edit" onClick={() => this.onClick()}>Edit profile</Button>
-          }
-          {this.state.edit &&
-            <Button id="edit" onClick={() => this.onClick()}>Save changes</Button>
-          }
+            <div id="resume">
+              <div className="subheader"><b>Resume: </b></div>
+              {!this.state.edit && 
+                <section>
+                  {this.state.resume !== null && <p>This is where the resume will go!</p>}
+                  {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                </section>
+              }
+              {this.state.edit &&
+                <section>
+                  <div> Upload your dance resume as a PDF. </div>
+                  <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.inputChange}/>
+                </section> 
+              }
+              </div>
+          </div>
         </div>
       </section>
     );
