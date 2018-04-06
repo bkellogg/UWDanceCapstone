@@ -26,25 +26,25 @@ uploadResumeFormWrapper.hide();
 
 photoButton.addEventListener("click", () => {
     changePhotoFormWrapper.toggle();
-    if($('.change-bio-form').is(':visible')) {
+    if ($('.change-bio-form').is(':visible')) {
         changeBioFormWrapper.toggle();
-    } if($('.upload-resume-form').is(':visible')) {
+    } if ($('.upload-resume-form').is(':visible')) {
         uploadResumeFormWrapper.toggle();
     }
 });
 bioButton.addEventListener("click", () => {
     changeBioFormWrapper.toggle();
-    if($('.change-photo-form').is(':visible')) {
+    if ($('.change-photo-form').is(':visible')) {
         changePhotoFormWrapper.toggle();
-    } if($('.upload-resume-form').is(':visible')) {
+    } if ($('.upload-resume-form').is(':visible')) {
         uploadResumeFormWrapper.toggle();
     }
 });
 resumeButton.addEventListener("click", () => {
     uploadResumeFormWrapper.toggle();
-    if($('.change-bio-form').is(':visible')) {
+    if ($('.change-bio-form').is(':visible')) {
         changeBioFormWrapper.toggle();
-    } if($('.change-photo-form').is(':visible')) {
+    } if ($('.change-photo-form').is(':visible')) {
         changePhotoFormWrapper.toggle();
     }
 });
@@ -109,7 +109,7 @@ bioForm.addEventListener("submit", (evt) => {
                 user = getLocalUser();
                 bioContent.textContent = user.bio;
             })
-            $('#photo-selector').val('');
+            $('#bio-input').val('');
         })
         .catch((err) => {
             bioRes.textContent = "ERROR: " + err;
@@ -178,10 +178,6 @@ function getImage() {
 
 function getResume() {
     let resume = document.querySelector(".resume");
-    if (!resume) {
-        resume = document.createElement("a");
-        resume.classList.add("user-resume");
-    }
     fetch(API_URL_BASE + "users/me/resume?auth=" + auth)
         .then((res) => {
             if (res.ok) {
@@ -197,10 +193,11 @@ function getResume() {
         });
 }
 
+
 function showFile(blob) {
-    const data2 = window.URL.createObjectURL(blob);
+    var data2 = URL.createObjectURL(blob);
     var link = document.createElement('a');
     link.href = data2;
     link.download = user.firstName + "_" + user.lastName + "_resume.pdf";
     link.click();
-}
+} 
