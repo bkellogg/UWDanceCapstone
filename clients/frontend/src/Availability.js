@@ -102,9 +102,9 @@ class Availability extends Component {
               }
             })
             if (dayExists){
-              let currEndTime = a[dayLocation].time[a[dayLocation].time.length - 1].end
+              let currEndTime = a[dayLocation].times[a[dayLocation].times.length - 1].end
               if (currEndTime == timeVal){
-                a[dayLocation].time[a[dayLocation].time.length - 1].end = endTime
+                a[dayLocation].times[a[dayLocation].times.length - 1].end = endTime
               } else {
                 a[dayLocation].time.push({
                   "start" : timeVal,
@@ -114,7 +114,7 @@ class Availability extends Component {
             } else {
               a.push({
                 "day" : dayVal,
-                "time" : [{"start" : timeVal, "end": endTime}]
+                "times" : [{"start" : timeVal, "end": endTime}]
               })
             }
           }
