@@ -147,7 +147,7 @@ class Profile extends Component {
 
               <div className="nameAndBioWrap">
             <div id="name" className="name">
-              {!this.state.edit && <h3 id="profileName">{this.state.fname} {this.state.lname}</h3>}
+              {!this.state.edit && <h4 id="profileName">{this.state.fname} {this.state.lname}</h4>}
               {this.state.edit &&
                 <div id="editName">
                   <Row>
