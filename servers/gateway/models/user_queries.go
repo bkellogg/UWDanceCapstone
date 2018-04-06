@@ -139,9 +139,9 @@ func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
 // AddUserToAudition adds the given user to the given audition. Returns an error
 // if one occurred.
 func (store *Database) AddUserToAudition(userID, audID, creatorID int, availability *WeekTimeBlock, comment string) error {
-	audition, err := store.GetAuditionByID(audID, false)
-	if err != nil {
-		return err
+	audition, dberr := store.GetAuditionByID(audID, false)
+	if dberr != nil {
+		return errors.New(dberr.Message)
 	}
 	if audition == nil {
 		return errors.New(appvars.ErrAuditionDoesNotExist)
@@ -203,9 +203,9 @@ func (store *Database) AddUserToAudition(userID, audID, creatorID int, availabil
 
 // RemoveUserFromPiece removes the given user from the given audition.
 func (store *Database) RemoveUserFromAudition(userID, audID int) error {
-	audition, err := store.GetAuditionByID(audID, false)
-	if err != nil {
-		return err
+	audition, dberr := store.GetAuditionByID(audID, false)
+	if dberr != nil {
+		return errors.New(dberr.Message)
 	}
 	if audition == nil {
 		return errors.New("audition does not exist")

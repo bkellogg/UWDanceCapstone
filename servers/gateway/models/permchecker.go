@@ -136,6 +136,14 @@ func (pc *PermissionChecker) UserCanSeeUser(u *User, target int64) bool {
 	return pc.userHasPermissionTo(u, target, permissions.SeeAllUsers)
 }
 
+func (pc *PermissionChecker) UserCanSeeAvailability(u *User, target int64) bool {
+	return pc.userHasPermissionTo(u, target, permissions.SeeUserAvailability)
+}
+
+func (pc *PermissionChecker) UserCanAddToAudition(u *User, target int64) bool {
+	return pc.userHasPermissionTo(u, target, permissions.AddUserToAudition)
+}
+
 // UserCanModifyUser returns true if the given user can modify the target user,
 // false if otherwise.
 func (pc *PermissionChecker) UserCanModifyUser(u *User, target int64) bool {

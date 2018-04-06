@@ -91,6 +91,7 @@ CREATE TABLE UserAudition (
     AuditionID INT NOT NULL,
     UserID INT NOT NULL,
     AvailabilityID INT NOT NULL,
+    CreatedBy INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),

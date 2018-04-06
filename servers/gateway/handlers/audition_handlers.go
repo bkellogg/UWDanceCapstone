@@ -50,9 +50,9 @@ func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.R
 		if !ctx.permChecker.UserCan(u, permissions.SeeAuditions) {
 			return permissionDenied()
 		}
-		audition, err := ctx.store.GetAuditionByID(audID, includeDeleted)
-		if err != nil {
-			return HTTPError("error getting audition by ID: "+err.Error(), http.StatusInternalServerError)
+		audition, dberr := ctx.store.GetAuditionByID(audID, includeDeleted)
+		if dberr != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		if audition == nil {
 			return objectNotFound("audition")
@@ -88,9 +88,9 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		return HTTPError("unparsable ID given: "+err.Error(), http.StatusBadRequest)
 	}
 	includeDeleted := getIncludeDeletedParam(r)
-	audition, err := ctx.store.GetAuditionByID(audID, includeDeleted)
-	if err != nil {
-		return HTTPError("error getting audition by ID: "+err.Error(), http.StatusInternalServerError)
+	audition, dberr := ctx.store.GetAuditionByID(audID, includeDeleted)
+	if dberr != nil {
+		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
 	if audition == nil {
 		return objectNotFound("audition")

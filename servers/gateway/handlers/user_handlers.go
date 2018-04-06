@@ -204,7 +204,7 @@ func (ctx *AuthContext) UserMembershipActionDispatcher(w http.ResponseWriter, r 
 func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *models.User, w http.ResponseWriter, r *http.Request) *middleware.HTTPError {
 	switch r.Method {
 	case "GET":
-		if !!ctx.permChecker.UserCan(u, permissions.SeeUserAvailability) {
+		if !ctx.permChecker.UserCanSeeAvailability(u, int64(userID)) {
 			return permissionDenied()
 		}
 		avail, err := ctx.store.GetUserAuditionAvailability(userID, audID)
@@ -252,10 +252,7 @@ func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.U
 		}
 		comment, err := ctx.store.InsertUserAuditionComment(userID, audID, int(u.ID), newComment.Comment)
 		if err != nil {
-			if err == sql.ErrNoRows {
-				return HTTPError(appvars.ErrUserAuditionDoesNotExist, http.StatusNotFound)
-			}
-			return HTTPError("error inserting audition comment: "+err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, comment, http.StatusCreated)
 	case "GET":
@@ -273,12 +270,7 @@ func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.U
 		}
 		comments, err := ctx.store.GetUserAuditionComments(userID, audID, creator, page, includeDeleted)
 		if err != nil {
-			if err == sql.ErrNoRows ||
-				err.Error() == appvars.ErrUserAuditionDoesNotMatch ||
-				err.Error() == appvars.ErrUserAuditionDoesNotExist {
-				return HTTPError(err.Error(), http.StatusNotFound)
-			}
-			return HTTPError("error getting user audition comments: "+err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, models.PaginateUserAuditionComments(comments, page), http.StatusOK)
 	default:
@@ -305,7 +297,7 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 	switch r.Method {
 	case "LINK":
 		if objType == "auditions" {
-			if !ctx.permChecker.UserCan(u, permissions.AddUserToAudition) {
+			if !ctx.permChecker.UserCanAddToAudition(u, int64(userID)) {
 				return permissionDenied()
 			}
 			ual := &models.UserAuditionLink{}
