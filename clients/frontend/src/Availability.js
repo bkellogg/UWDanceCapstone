@@ -42,7 +42,11 @@ class Availability extends Component {
           };
     }
 
-    handleChange = cells => this.setState({ cells });
+    handleChange = cells => {
+      this.setState({ cells })
+      this.calculateTimes()
+      this.props.availability(this.state.availability)
+    };
 
     handleClick = () => {
       const cells = 
@@ -75,34 +79,53 @@ class Availability extends Component {
 
     };
 
-    calculateTimes(){
-      //the first for each gives us the TIMES
-      this.state.cells.forEach(time => {
-        time.forEach(day =>{
-          
-        })
-      });
-
+    calculateTimes(){ 
       //we can skip 0 because the first row is always going to be false
       //lets do this
-      //{day: [{times}{times}{times}]
-      let availability = {"mon":[]};
+      let a = []
       for(let i = 1; i <= times.length; i++){
         for(let j = 1; j <= days.length; j++){
+          let dayVal = days[j - 1]
+          let timeVal = times[i - 1]
+          let endTime = (parseInt(timeVal) + 30).toString()
+          if (endTime[2] == "6"){
+            let end = (parseInt(endTime.substring(0,2)) + 1).toString()
+            endTime = end + "00"
+          }
           if(this.state.cells[i][j]){
-            if(availability[days[j-1]] == null){
-              let timeSlot = []
-              availability[days[j-1]] = timeSlot
+            let dayExists = false;
+            let dayLocation = 0;
+            a.forEach((d, i) => {
+              if (d.day == dayVal){
+                dayExists = true
+                dayLocation = i
+              }
+            })
+            if (dayExists){
+              let currEndTime = a[dayLocation].time[a[dayLocation].time.length - 1].end
+              if (currEndTime == timeVal){
+                a[dayLocation].time[a[dayLocation].time.length - 1].end = endTime
+              } else {
+                a[dayLocation].time.push({
+                  "start" : timeVal,
+                  "end" : endTime
+                })
+              }
+            } else {
+              a.push({
+                "day" : dayVal,
+                "time" : [{"start" : timeVal, "end": endTime}]
+              })
             }
-            availability[days[j-1]].push(times[i - 1])
           }
         }
       }
-      console.log(availability) 
+      this.setState({
+        availability : a
+      })
     }
 
     render() {
-      this.calculateTimes()
         return(
             <div>
                 <div className="table">
