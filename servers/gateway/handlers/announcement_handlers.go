@@ -25,9 +25,9 @@ func (ctx *AnnouncementContext) AnnouncementsHandler(w http.ResponseWriter, r *h
 			return httperr
 		}
 		includeDeleted := getIncludeDeletedParam(r)
-		announcements, err := ctx.Store.GetAllAnnouncements(page, includeDeleted, getStringParam(r, "user"), getStringParam(r, "type"))
-		if err != nil {
-			return HTTPError("error looking up announcements: "+err.Error(), http.StatusInternalServerError)
+		announcements, dberr := ctx.Store.GetAllAnnouncements(page, includeDeleted, getStringParam(r, "user"), getStringParam(r, "type"))
+		if dberr != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		return respond(w, models.PaginateAnnouncementResponses(announcements, page), http.StatusOK)
 	case "POST":
@@ -40,9 +40,9 @@ func (ctx *AnnouncementContext) AnnouncementsHandler(w http.ResponseWriter, r *h
 			return err
 		}
 		na.UserID = u.ID
-		announcement, err := ctx.Store.InsertAnnouncement(na)
-		if err != nil {
-			return HTTPError(err.Error(), http.StatusInternalServerError)
+		announcement, dberr := ctx.Store.InsertAnnouncement(na)
+		if dberr != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		wse, err := notify.NewWebSocketEvent(notify.EventTypeAnnouncement,
 			announcement.AsAnnouncementResponse(u))
@@ -65,7 +65,7 @@ func (ctx *AuthContext) AnnouncementTypesHandler(w http.ResponseWriter, r *http.
 		}
 		announcementTypes, err := ctx.store.GetAnnouncementTypes(getIncludeDeletedParam(r))
 		if err != nil {
-			return HTTPError(err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, announcementTypes, http.StatusOK)
 	case "POST":
@@ -78,7 +78,7 @@ func (ctx *AuthContext) AnnouncementTypesHandler(w http.ResponseWriter, r *http.
 		}
 		announcementType.CreatedBy = int(u.ID)
 		if err := ctx.store.InsertAnnouncementType(announcementType); err != nil {
-			return HTTPError(err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, announcementType, http.StatusCreated)
 	default:

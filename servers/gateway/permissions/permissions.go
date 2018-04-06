@@ -19,15 +19,15 @@ const (
 	SeeUserAvailability    = 70
 	ChangeUserAvailability = 100
 
-	SeeAuditions    = 20
+	SeeAuditions    = 10
 	CreateAuditions = 70
 	DeleteAuditions = 70
 
-	SeeShows    = 20
+	SeeShows    = 10
 	CreateShows = 70
 	DeleteShows = 70
 
-	SeePieces    = 20
+	SeePieces    = 10
 	CreatePieces = 70
 	DeletePieces = 70
 
