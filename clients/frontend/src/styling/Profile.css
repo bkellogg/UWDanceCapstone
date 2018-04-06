@@ -1,6 +1,5 @@
 body {
-  font-family: Trebuchet, sans-serif;
-}
+  font-family: sans-serif;}
 
 .header{
   display: flex;
@@ -15,14 +14,16 @@ body {
 
 .name {
   height: 150px;
-  width: 150px
+  width: 150px;
 }
 
 #profileName{
   position: absolute;
   bottom: 0px;
   margin-bottom:0px;
-  padding-left:25px
+  padding-left:25px;
+  text-transform: capitalize;
+
 }
 
 .sub {

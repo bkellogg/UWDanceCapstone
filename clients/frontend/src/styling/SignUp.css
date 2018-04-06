@@ -1,7 +1,4 @@
-body {
-  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-
+/* 
 .content {
     margin-left:100px;
     margin-top:25%;
@@ -14,16 +11,16 @@ body {
   
   Button {
     margin: 10px;
-  }
-
+  } */
+/* 
   .Functionality {
     display: inline-block;
     float:right;
     min-height: 100%;
     width:50%;
     vertical-align: top;
-  }
-
+  } */
+/* 
   LogInPhoto {
     height: 100%;
     display: inline-block;
@@ -31,13 +28,15 @@ body {
     background-image: url('../imgs/tresmaines.jpg');
     background-repeat: no-repeat;
     background-size: cover
-  }
+  } */
   
-  .LogInPhoto > img{
+  /* .LogInPhoto > img{
     width: 100%;
     min-height: 100%;
-  }
+  } */
 
-  .signUp, .signUpExtra {
-    background-color: lavender;
-  }
+  /* .signUp, .signUpExtra {
+    background-image: url('../imgs/bg-100.jpg');
+  background-repeat: no-repeat;
+  background-size: 100%;
+  } */
