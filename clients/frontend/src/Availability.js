@@ -141,7 +141,7 @@ class Availability extends Component {
           <td disabled>Sunday</td>
         </tr>
         <tr>
-          <td disabled>10:00</td>
+          <td disabled>10:00 AM</td>
           <td />
           <td />
           <td />
@@ -161,7 +161,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>11:00</td>
+          <td disabled>11:00 AM</td>
           <td />
           <td />
           <td />
@@ -181,7 +181,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>12:00</td>
+          <td disabled>12:00 PM</td>
           <td />
           <td />
           <td />
@@ -201,7 +201,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>13:00</td>
+          <td disabled>1:00 PM</td>
           <td />
           <td />
           <td />
@@ -221,7 +221,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>14:00</td>
+          <td disabled>2:00 PM</td>
           <td />
           <td />
           <td />
@@ -241,7 +241,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>15:00</td>
+          <td disabled>3:00 PM </td>
           <td />
           <td />
           <td />
@@ -261,7 +261,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>16:00</td>
+          <td disabled>4:00 PM</td>
           <td />
           <td />
           <td />
@@ -281,7 +281,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>17:00</td>
+          <td disabled>5:00 PM</td>
           <td />
           <td />
           <td />
@@ -301,7 +301,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>18:00</td>
+          <td disabled>6:00 PM</td>
           <td />
           <td />
           <td />
@@ -321,7 +321,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>19:00</td>
+          <td disabled>7:00 PM</td>
           <td />
           <td />
           <td />
@@ -341,7 +341,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>20:00</td>
+          <td disabled>8:00 PM </td>
           <td />
           <td />
           <td />
@@ -361,7 +361,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>21:00</td>
+          <td disabled>9:00 PM</td>
           <td />
           <td />
           <td />
