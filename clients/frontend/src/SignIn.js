@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 //import { Link } from 'react-router-dom';
 import {Button} from 'react-materialize';
 import * as Util from './util.js';
-import img from './imgs/tresmaines.jpg'
+import img from './imgs/tresmaines.jpg';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import './styling/SignIn.css';
 
 class SignIn extends Component {
