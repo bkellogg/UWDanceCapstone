@@ -1,11 +1,13 @@
 package appvars
 
+// HTTP resource URL paths
 const (
 	BaseAPIPath = "/api/v1"
 
 	UsersPath                        = BaseAPIPath + "/users"
 	AllUsersPath                     = "/all"
 	SpecificUserPath                 = "/{userID}"
+	UserRolePath                     = SpecificUserPath + "/role"
 	UserObjectsPath                  = SpecificUserPath + "/{object}"
 	UserMembershipPath               = UserObjectsPath + "/{objectID}"
 	UserMembershipObjectPath         = UserMembershipPath + "/{subObject}"
@@ -16,6 +18,7 @@ const (
 	AuditionsPath = BaseAPIPath + "/auditions"
 	ShowsPath     = BaseAPIPath + "/shows"
 	PiecesPath    = BaseAPIPath + "/pieces"
+	RolesPath     = BaseAPIPath + "/roles"
 
 	ResourceRoot     = ""
 	ResourceID       = "/{id}"
@@ -27,4 +30,8 @@ const (
 	UpdatesPath = BaseAPIPath + "/updates"
 
 	PasswordResetPath = BaseAPIPath + "/passwordreset"
+)
+
+const (
+	DefaultAppINILocation = "/config/app.ini"
 )

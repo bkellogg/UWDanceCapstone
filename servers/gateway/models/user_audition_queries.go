@@ -42,9 +42,6 @@ func (store *Database) GetUserAuditionAvailability(userID, audID int) (*WeekTime
 // UpdateUserAuditionAvailability updates the availability for the UserAudition that is related
 // the given userID and audID to the given WeekTImeBlock.
 func (store *Database) UpdateUserAuditionAvailability(userID, audID int, availability *WeekTimeBlock) error {
-	if err := availability.Validate(); err != nil {
-		return errors.New("availability validation failed: " + err.Error())
-	}
 	availID, err := store.getUserAuditionID(userID, audID)
 	if err != nil {
 		return err

@@ -48,9 +48,6 @@ func (st *ShowType) Validate() error {
 	if st.Name == "" {
 		return errors.New("new show type must have a name")
 	}
-	if st.CreatedBy == 0 {
-		return errors.New("new show type must have a createdBy value")
-	}
 	if len(st.Name) > 3 {
 		return errors.New("new show type name can only be 3 characters long")
 	}

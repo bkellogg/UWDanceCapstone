@@ -25,9 +25,6 @@ func (na *NewAudition) Validate() error {
 	if na.Time.IsZero() {
 		return errors.New("new audition must have a time")
 	}
-	if na.CreatedBy <= 0 {
-		return errors.New("new audition must have a created by ID of greater than 0")
-	}
 	if len(na.Location) == 0 {
 		return errors.New("new audition must have a location")
 	}
