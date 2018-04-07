@@ -28,9 +28,9 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 		return httperror
 	}
 	includeInactive := getIncludeInactiveParam(r)
-	users, err := ctx.store.GetAllUsers(page, includeInactive)
-	if err != nil {
-		return HTTPError("error getting users: "+err.Error(), http.StatusInternalServerError)
+	users, dberr := ctx.store.GetAllUsers(page, includeInactive)
+	if dberr != nil {
+		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
 	userResponses, err := ctx.permChecker.ConvertUserSliceToUserResponseSlice(users)
 	if err != nil {
@@ -51,9 +51,9 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
 			return permissionDenied()
 		}
-		user, err := ctx.store.GetUserByID(userID, includeInactive)
-		if err != nil {
-			return HTTPError("error looking up user: "+err.Error(), http.StatusInternalServerError)
+		user, dberr := ctx.store.GetUserByID(userID, includeInactive)
+		if dberr != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		if user == nil {
 			return objectNotFound("user")
@@ -76,20 +76,17 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		if err := updates.CheckBioLength(); err != nil {
 			return HTTPError(err.Error(), http.StatusBadRequest)
 		}
-		err := ctx.store.UpdateUserByID(userID, updates, includeInactive)
-		if err != nil {
-			return HTTPError(err.Error(), http.StatusInternalServerError)
+		dberr := ctx.store.UpdateUserByID(userID, updates, includeInactive)
+		if dberr != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		return respondWithString(w, "user updated", http.StatusOK)
 	case "DELETE":
 		if !!ctx.permChecker.UserCanDeleteUser(u, int64(userID)) {
 			return permissionDenied()
 		}
-		if err := ctx.store.DeactivateUserByID(userID); err != nil {
-			if err != sql.ErrNoRows {
-				return HTTPError("error deleting user: "+err.Error(), http.StatusInternalServerError)
-			}
-			return objectNotFound("user")
+		if dberr := ctx.store.DeactivateUserByID(userID); err != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		return respondWithString(w, "user has been deleted", http.StatusOK)
 	default:
@@ -356,12 +353,8 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 // addUserToAudition adds the given user to the given audition with the given UserAuditionLink
 // return an HTTPError if one occurred.
 func (ctx *AuthContext) addUserToAudition(userID, audID, creatorID int, ual *models.UserAuditionLink) *middleware.HTTPError {
-	if err := ctx.store.AddUserToAudition(userID, audID, creatorID, ual.Availability, ual.Comment); err != nil {
-		code := http.StatusInternalServerError
-		if err.Error() == appvars.ErrAuditionDoesNotExist || err.Error() == appvars.ErrUserAlreadyInAudition {
-			code = http.StatusBadRequest
-		}
-		return HTTPError("error performing membership change: "+err.Error(), code)
+	if dberr := ctx.store.AddUserToAudition(userID, audID, creatorID, ual.Availability, ual.Comment); dberr != nil {
+		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
 	return nil
 }

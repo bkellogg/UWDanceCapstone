@@ -107,9 +107,9 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 		if !ctx.permChecker.UserCan(u, permissions.SeeAllUsers) {
 			return permissionDenied()
 		}
-		users, err := ctx.store.GetUsersByAuditionID(audID, page, includeDeleted)
+		users, dberr := ctx.store.GetUsersByAuditionID(audID, page, includeDeleted)
 		if err != nil {
-			return HTTPError("error getting users by audition id: "+err.Error(), http.StatusInternalServerError)
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 
 		userResponses, err := ctx.permChecker.ConvertUserSliceToUserResponseSlice(users)
