@@ -13,7 +13,7 @@ func (store *Database) InsertRole(role *NewRole) (*Role, *DBError) {
 	if err != nil {
 		return nil, NewDBError("error beginning transaction: "+err.Error(), http.StatusInternalServerError)
 	}
-	roles, dbErr := parseRolesFromDatabase(tx.Query(`SELECT * FROM ROLE R
+	roles, dbErr := parseRolesFromDatabase(tx.Query(`SELECT * FROM Role R
 		Where R.RoleName = ? OR R.RoleDisplayName = ?`, role.Name, role.DisplayName))
 	if dbErr != nil {
 		tx.Rollback()

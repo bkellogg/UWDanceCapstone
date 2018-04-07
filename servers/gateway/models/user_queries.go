@@ -69,7 +69,7 @@ func (store *Database) ChangeUserRole(userID int, roleName string) error {
 	}
 	role := &Role{}
 	if rows.Next() {
-		err = rows.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level)
+		err = rows.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level, &role.IsDeleted)
 		if err != nil {
 			return errors.New("error scanning role query into role: " + err.Error())
 		}
@@ -91,21 +91,10 @@ func (store *Database) ChangeUserRole(userID int, roleName string) error {
 	}
 	rows.Close()
 
-	res, err := tx.Exec(`UPDATE Users U SET U.RoleID = ? WHERE U.UserID = ?`, role.ID, userID)
+	_, err = tx.Exec(`UPDATE Users U SET U.RoleID = ? WHERE U.UserID = ?`, role.ID, userID)
 	if err != nil {
 		tx.Rollback()
 		return errors.New("error updating user: " + err.Error())
-	}
-
-	numRows, err := res.RowsAffected()
-	if err != nil {
-		tx.Rollback()
-		return errors.New("error getting number of rows affected: " + err.Error())
-	}
-
-	if numRows != 1 {
-		tx.Rollback()
-		return errors.New("unexpected number of rows affected; transaction not saved")
 	}
 
 	if err = tx.Commit(); err != nil {
@@ -348,7 +337,7 @@ func (store *Database) DeactivateUserByID(userID int) *DBError {
 	}
 	numRows, err := result.RowsAffected()
 	if err != nil {
-		return NewDBError(fmt.Sprintf("error retrieving rows affectedL %v", err), http.StatusInternalServerError)
+		return NewDBError(fmt.Sprintf("error retrieving rows affected %v", err), http.StatusInternalServerError)
 	}
 	if numRows == 0 {
 		return NewDBError("no user exists with the given id", http.StatusNotFound)
@@ -366,8 +355,9 @@ func (store *Database) ActivateUserByID(userID int) *DBError {
 // TODO: Modularize these GetUsersByX functions...
 
 // GetUsersByAuditionID returns a slice of users that are in the given audition, if any.
-// Returns an error if one occured.
+// Returns an error if one occurred.
 func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) ([]*User, *DBError) {
+	return nil, NewDBError("brendan needs to fix this", http.StatusNotImplemented)
 	offset := getSQLPageOffset(page)
 	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
 	JOIN UserPiece UP On UP.UserID = U.UserID

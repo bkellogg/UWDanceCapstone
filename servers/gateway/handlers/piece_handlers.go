@@ -82,6 +82,9 @@ func (ctx *AuthContext) PieceChoreographerHandler(w http.ResponseWriter, r *http
 	if !ctx.permChecker.UserCan(u, permissions.AddStaffToPiece) {
 		return permissionDenied()
 	}
+	if r.Method != "PUT" {
+		return methodNotAllowed()
+	}
 	vars := mux.Vars(r)
 	pieceIDString := vars["id"]
 	pieceID, err := strconv.Atoi(pieceIDString)
