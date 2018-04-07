@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 //import { Link } from 'react-router-dom';
 import {Button} from 'react-materialize';
 import * as Util from './util.js';
-import img from './imgs/tresmaines.jpg'
+import img from './imgs/tresmaines.jpg';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
 import './styling/SignIn.css';
 
 class SignIn extends Component {
@@ -12,10 +16,12 @@ class SignIn extends Component {
     this.signUp = this.signUp.bind(this);
     this.inputChange = this.inputChange.bind(this);
     this.state = {
+      forgotemail: "",
       email: null,
       password: null,
       auth: null,
-      error: false
+      error: false,
+      open: false
     }
   };
 
@@ -25,6 +31,10 @@ class SignIn extends Component {
     this.setState({
       [name] : val.target.value
     })
+
+    if (val.key === "Enter"){
+      this.signIn(val)
+    }
   }
 
   signUp(){
@@ -62,7 +72,57 @@ class SignIn extends Component {
         })
   };
 
+  forgotPassword = () => {
+    if(this.state.forgotemail !== "") {
+      Util.makeRequest("passwordreset?email=" + this.state.forgotemail, "", "GET", false)
+      .then(res => {
+        if (res.ok) {
+          return res.text();
+      }
+      return res.text().then((t) => Promise.reject(t));
+      })
+      .then(
+        this.setState({
+          forgotemail: ""
+        }),
+        this.handleClose()
+      )
+      .catch(err => {
+        console.log(err)
+      })
+    }
+  }
+
+  handleOpen = () => {
+    this.setState({open: true});
+  };
+
+  handleClose = () => {
+    this.setState({open: false});
+  };
+
+  getEmail = (event) => {
+    this.setState({forgotemail: event.target.value})
+  }
+
   render() {
+    const actions = [
+      <TextField
+       hintText="Account Email"
+       onChange={this.getEmail}
+      />,
+      /*<FlatButton
+        label="Cancel"
+        primary={true}
+        onClick={this.handleClose}
+      />,*/
+      <FlatButton
+        label="Submit"
+        primary={true}
+        onClick={this.forgotPassword}
+      />,
+    ];
+
     return (
       <div className="LogInLanding" style={{height:100 + '%'}}>
         {/* <div className="LogInPhoto">
@@ -87,18 +147,29 @@ class SignIn extends Component {
                             <label htmlFor="email">Email</label>
                         </div>
                         <div className="input-field col s12">
-                            <input id="password" type="password" name="password" className="validate" onChange={this.inputChange}/>
+                            <input id="password" type="password" name="password" className="validate" onChange={this.inputChange} onKeyPress={this.inputChange}/>
                             <label htmlFor="password">Password</label>
                         </div>
                     </div>
             </form>
             <div className="Buttons">
-            {/* forgot password?? */}
+
               <Button onClick={this.signIn}>Sign In</Button>
               {/* <Button onClick ={this.signUp}>Sign Up</Button> */}
             </div>
             <div className="Link">
-            {/* forgot password?? */}
+              <a className="signlink" onClick ={this.handleOpen}> Forgot password? </a>
+              <div>
+                <Dialog
+                  title="Password Reset"
+                  actions={actions}
+                  modal={false}
+                  open={this.state.open}
+                  onRequestClose={this.handleClose}
+                >
+                  Enter the email address associated with your account. You will recieve an email with instructions on how to reset your password.
+                </Dialog>
+              </div>
               <a className="signlink" onClick ={this.signUp}> Sign Up </a>
             </div>
 

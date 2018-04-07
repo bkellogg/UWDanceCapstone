@@ -61,6 +61,10 @@ class Dashboard extends Component {
             <div id='welcome'> Welcome {this.state.user.firstName}</div>
             <div id='announcements'>
               {this.state.user.bio === "" &&
+               /*this.state.user.resume &&
+                  this.state.user.photo DON'T exist
+                  idea: have a boolean indicating if they've uploaded one that get's set
+                  during the upload process in SignUpExtra*/
                     <Card>
                     <div className="warning">
                       <CardText> 
