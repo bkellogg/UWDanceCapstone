@@ -130,6 +130,17 @@ func (pc *PermissionChecker) UserCan(u *User, action int) bool {
 	return role.Level >= int64(action)
 }
 
+// UserIs returns true if the given user is the given role
+// or higher. False if otherwise, or if there was an error
+// determining this.
+func (pc *PermissionChecker) UserIs(u *User, role int) bool {
+	actualRole, err := pc.getUserRoleLevel(u.ID)
+	if err != nil {
+		return false
+	}
+	return actualRole >= role
+}
+
 // UserCanSeeUser returns true if the given user can see the given target user,
 // false if otherwise.
 func (pc *PermissionChecker) UserCanSeeUser(u *User, target int64) bool {

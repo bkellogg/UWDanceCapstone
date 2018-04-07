@@ -7,10 +7,9 @@ import (
 
 // NewShow defines the information needed to create a new show.
 type NewShow struct {
-	TypeName   string    `json:"typeName"`
-	AuditionID int       `json:"auditionID,omitempty"`
-	EndDate    time.Time `json:"endDate"`
-	CreatedBy  int       `json:"-"`
+	TypeName  string    `json:"typeName"`
+	EndDate   time.Time `json:"endDate"`
+	CreatedBy int       `json:"-"`
 }
 
 // Validate validates the current new show and returns an error if one occurred.
@@ -18,18 +17,20 @@ func (ns *NewShow) Validate() error {
 	if len(ns.TypeName) == 0 {
 		return errors.New("new show must have a type")
 	}
+	if ns.EndDate.IsZero() {
+		return errors.New("new show must have an end date")
+	}
 	return nil
 }
 
 // Show defines the information needed to store a show.
 type Show struct {
-	ID         int       `json:"id"`
-	TypeID     int       `json:"typeID"`
-	AuditionID int       `json:"auditionID"`
-	EndDate    time.Time `json:"endDate"`
-	CreatedAt  time.Time `json:"createdAt"`
-	CreatedBy  int       `json:"createdBy"`
-	IsDeleted  bool      `json:"isDeleted"`
+	ID        int       `json:"id"`
+	TypeID    int       `json:"typeID"`
+	EndDate   time.Time `json:"endDate"`
+	CreatedAt time.Time `json:"createdAt"`
+	CreatedBy int       `json:"createdBy"`
+	IsDeleted bool      `json:"isDeleted"`
 }
 
 // ShowType defines how a ShowType will be stored in the database.

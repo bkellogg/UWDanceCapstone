@@ -117,25 +117,6 @@ func (ctx *AuthContext) ResourceForSpecificAuditionHandler(w http.ResponseWriter
 			return HTTPError(err.Error(), http.StatusInternalServerError)
 		}
 		return respond(w, models.PaginateUserResponses(userResponses, page), http.StatusOK)
-	case "pieces":
-		// TODO: Change this to "permissions to see pieces in audition"
-		if !ctx.permChecker.UserCan(u, permissions.SeePieces) {
-			return permissionDenied()
-		}
-		pieces, err := ctx.store.GetPiecesByAuditionID(audID, page, includeDeleted)
-		if err != nil {
-			return HTTPError(err.Message, err.HTTPStatus)
-		}
-		return respond(w, pieces, http.StatusOK)
-	case "shows":
-		if !ctx.permChecker.UserCan(u, permissions.SeeShows) {
-			return permissionDenied()
-		}
-		shows, err := ctx.store.GetShowsByAuditionID(audID, page, includeDeleted)
-		if err != nil {
-			return HTTPError(err.Message, err.HTTPStatus)
-		}
-		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
 	default:
 		return objectTypeNotSupported()
 	}

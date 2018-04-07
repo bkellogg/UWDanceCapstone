@@ -42,19 +42,18 @@ CREATE TABLE ShowType (
 CREATE TABLE Shows (
     ShowID INT AUTO_INCREMENT PRIMARY KEY,
     ShowTypeID INT NOT NULL,
-    AuditionID INT,
     EndDate DATETIME NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
-    FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID),
     FOREIGN KEY (ShowTypeID) REFERENCES ShowType(ShowTypeID)
 );
 
 CREATE TABLE Pieces (
     PieceID INT AUTO_INCREMENT PRIMARY KEY,
+    ChoreographerID INT,
     PieceName varchar(50) NOT NULL UNIQUE KEY,
-    ShowID INT,
+    ShowID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,

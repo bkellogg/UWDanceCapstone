@@ -69,7 +69,7 @@ func (store *Database) ChangeUserRole(userID int, roleName string) error {
 	}
 	role := &Role{}
 	if rows.Next() {
-		err = rows.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level, &role.IsDeleted)
+		err = rows.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level)
 		if err != nil {
 			return errors.New("error scanning role query into role: " + err.Error())
 		}
@@ -226,7 +226,7 @@ func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, *DBError) {
 		}
 		return false, err
 	}
-	return user != nil, nil
+	return user == nil, nil
 }
 
 // InsertNewUser inserts the given new user into the store

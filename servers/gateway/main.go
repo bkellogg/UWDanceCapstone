@@ -127,6 +127,7 @@ func main() {
 	pieceRouter := baseRouter.PathPrefix(appvars.PiecesPath).Subrouter()
 	pieceRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
 	pieceRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
+	pieceRouter.Handle(appvars.ResourceIDObjectID, authorizer.Authorize(authContext.PieceChoreographerHandler)).Methods("PUT")
 
 	rolesRouter := baseRouter.PathPrefix(appvars.RolesPath).Subrouter()
 	rolesRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.RolesHandler))
