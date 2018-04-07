@@ -30,6 +30,7 @@ class Audition extends Component {
       value: 1,
       registered: false
     }
+    console.log(this.props.audition)
   };
 
   handleChange = (event, index, value) => this.setState({value});
@@ -47,8 +48,8 @@ class Audition extends Component {
         "days": this.state.availability
       }
     }
-    console.log(body)
-    Util.makeRequest("users/me/auditions/1", body, "LINK", true)
+
+    Util.makeRequest("users/me/auditions/" + this.props.auditionID, body, "LINK", true)
     .then(res => {
       if (res.ok) {
         return res.json();

@@ -9,7 +9,7 @@ class Show extends Component {
   componentDidMount(){
     //get everything together to show the 
     console.log(this.props.name)
-    console.log(this.props.id)
+
   }
 
   render() {
