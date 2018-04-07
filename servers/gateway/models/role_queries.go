@@ -36,7 +36,7 @@ func (store *Database) InsertRole(role *NewRole) (*Role, *DBError) {
 	}
 	if err = tx.Commit(); err != nil {
 		tx.Rollback()
-		return nil, NewDBError("error commiting transaction: "+err.Error(), http.StatusInternalServerError)
+		return nil, NewDBError("error committing transaction: "+err.Error(), http.StatusInternalServerError)
 	}
 	insertedRole := &Role{
 		ID:          insertID,

@@ -142,19 +142,22 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool, t
 	}
 	defer tx.Rollback()
 
-	res, err := tx.Query(`SELECT ShowTypeID FROM ShowType ST WHERE ST.ShowTypeName = ?`, typeName)
-	if err != nil {
-		if err == sql.ErrNoRows {
+	shouldFilterByType := len(typeName) != 0 && typeName != "all"
+	st := &ShowType{}
+	if shouldFilterByType {
+		res, err := tx.Query(`SELECT ShowTypeID FROM ShowType ST WHERE ST.ShowTypeName = ?`, typeName)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return nil, NewDBError("invalid show type", http.StatusNotFound)
+			}
+			return nil, NewDBError(fmt.Sprintf("error retrieving show type from database: %v", err), http.StatusInternalServerError)
+		}
+		if !res.Next() {
 			return nil, NewDBError("invalid show type", http.StatusNotFound)
 		}
-		return nil, NewDBError(fmt.Sprintf("error retrieving show type from database: %v", err), http.StatusInternalServerError)
-	}
-	if !res.Next() {
-		return nil, NewDBError("invalid show type", http.StatusNotFound)
-	}
-	st := &ShowType{}
-	if err = res.Scan(&st.ID); err != nil {
-		return nil, NewDBError(fmt.Sprintf("error scanning result into show type: %v", err), http.StatusInternalServerError)
+		if err = res.Scan(&st.ID); err != nil {
+			return nil, NewDBError(fmt.Sprintf("error scanning result into show type: %v", err), http.StatusInternalServerError)
+		}
 	}
 
 	offset := getSQLPageOffset(page)
@@ -172,7 +175,7 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool, t
 	default:
 		return nil, NewDBError(appvars.ErrInvalidHistoryOption, http.StatusBadRequest)
 	}
-	if st != nil {
+	if shouldFilterByType {
 		query += ` AND S.ShowTypeID = ` + strconv.Itoa(st.ID)
 	}
 	query += ` LIMIT 25 OFFSET ?`
