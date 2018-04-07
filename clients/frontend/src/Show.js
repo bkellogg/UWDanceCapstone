@@ -2,15 +2,7 @@ import React, { Component } from 'react';
 import './styling/Show.css';
 
 class Show extends Component {
-  constructor(props) {
-    super(props);
-  };
 
-  componentDidMount(){
-    //get everything together to show the 
-    console.log(this.props.name)
-
-  }
 
   render() {
     return (

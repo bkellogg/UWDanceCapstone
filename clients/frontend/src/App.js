@@ -19,12 +19,6 @@ class App extends Component {
       authorized: false
     };
   };
-
-//TODO test to see if this will fix the problem of an unauthorized user being able to see stuff in the app
-  componentWillMount(){
-    Util.refreshLocalUser();
-  }
-
   componentDidMount(){
     Util.refreshLocalUser();
   }
@@ -55,6 +49,7 @@ class App extends Component {
   }
 
   componentWillMount(){
+    Util.refreshLocalUser();
     if(localStorage.getItem("user")){
       this.setState({
         authorized: true

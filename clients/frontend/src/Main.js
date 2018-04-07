@@ -47,8 +47,6 @@ class Main extends Component {
 
   getCurrShows(){
     //TODO deal with the fact that there's going to be pages
-
-    let currShows = []
     Util.makeRequest("shows?history=all&includeDeleted=false", {}, "GET", true)
     .then(res => {
       if (res.ok) {
@@ -68,17 +66,14 @@ class Main extends Component {
       let currShows = []
       this.state.shows.map(s => {
         console.log(s)
-        currShows.push({"name" : this.state.showTypes[s.typeID], "auditionID": s.auditionID})
+        currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID})
       })
       return currShows
     })
     .then(currShows => {
-      // this.setState({
-      //   currShows: currShows
-      // })
-       this.setState({
-         currShows: [{"name": "Faculty", "audition": "1"}, {"name": "MFA", "audition": "2"}]
-       })
+      this.setState({
+        currShows: currShows
+      })
     })
     .catch(err => console.log(err))
   }
@@ -137,6 +132,7 @@ class Main extends Component {
           {this.state.currShows.map((show, i) => {
             let showName = show.name
             let path = "/" + showName.split(' ').join('')
+            console.log(show.audition)
             return( 
               <Switch key = {i}>
                 <Route exact path={path} render={
