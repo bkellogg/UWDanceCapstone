@@ -5,6 +5,14 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Card, CardText, CardTitle} from 'material-ui/Card';
 import Availability from './Availability';
+import Checkbox from 'material-ui/Checkbox';
+import ActionFavorite from 'material-ui/svg-icons/action/favorite';
+import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
+import Visibility from 'material-ui/svg-icons/action/visibility';
+import VisibilityOff from 'material-ui/svg-icons/action/visibility-off';
+
+import * as Util from './util.js';
+
 import './styling/Audition.css';
 
 const styles = {
@@ -26,12 +34,33 @@ class Audition extends Component {
 
   handleChange = (event, index, value) => this.setState({value});
 
+  setAvailability = (availability) => this.setState({availability: availability});
+
+  addComment = (e) => this.setState({comments: e.target.value})
+
   handleRegister (){
     //MAKE POST
     //.then set state isRegistered to true, which will cause the page to rerender
-    this.setState({
-      registered: true
+    let body = {
+      "comment" : this.state.comments,
+      "availability" : {
+        "days": this.state.availability
+      }
+    }
+    console.log(body)
+    Util.makeRequest("users/me/auditions/1", body, "LINK", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      return res.text().then((t) => Promise.reject(t));
     })
+    .then(res => {
+      this.setState({
+        registered: true
+      })
+    })
+    .catch(err => console.log(err))
   }
 
   render() {
@@ -56,19 +85,24 @@ class Audition extends Component {
                   <br />
                   <div className="row">
                     <div>You must be enrolled in a class during the quarter the production is occurring.<br/>
-                    Confirm what class you are enrolled in:</div>
-                    <TextField name="class"/><br />
+                   </div>
+                   <br />
+                    <Checkbox
+                      label="I confirm I am enrolled in a class for the quarter during which the show is occuring."
+                      
+                    />
                   </div>
                   <br/>
                   <div className="row">
                     <div><p>Availability [click & drag to indicate when you are <b>available</b> to rehearse]</p></div>
-                    <Availability />
+                    <Availability availability = {this.setAvailability}/>
                   </div>
                   <br/>
                   <div className="row">
                     <div><p>Please indicate any additional notes below</p></div>
                     <TextField
                       name="comments"
+                      onChange = {this.addComment}
                       multiLine={true}
                       rows={2}
                     />

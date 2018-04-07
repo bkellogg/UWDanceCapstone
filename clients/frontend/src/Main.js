@@ -21,54 +21,92 @@ class Main extends Component {
     this.signOut = this.signOut.bind(this);
     this.updatePage = this.updatePage.bind(this);
     this.getCurrShows = this.getCurrShows.bind(this);
+    this.getShowTypes = this.getShowTypes.bind(this);
+
     //"page" lets me know what page we are looking at, numerically encoded so I don't have to deal with strings
     //starts on dashboard (100)
     //onClick links will update
     this.state = {
       user: JSON.parse(localStorage.user),
       shows: null,
-      routing: null
+      routing: null,
+      firstRender: true,
+      showTypes: null,
+      currShows: []
     }
-    console.log(this.state.user);
   };
 
   componentWillMount(){
+    this.getShowTypes();
     this.getCurrShows();
   }
-/*
+
   componentDidMount(){
-    let routing = (
-      <section className="routing">
-        <Switch>
-          <Route exact path='/stage' component={Dashboard}/>
-            {this.state.shows.map((r, i) => {
-              let address = "/" + r.split(' ').join('')
-                return(
-                  <div key={i}>
-                    <Route exact path={address} render={
-                      () => (<Show id={i + 1} name={r}/>)} key={i}/>
-                    <Route exact path={address + "/audition"} render={
-                      () => (<Audition id={10 * (i + 1)} name={r}/>)} key={(i + 1) * 10}/>
-                  </div>
-                )
-            })}
-        </Switch>
-    </section>)
-    this.setState({
-      route:routing
-    })
+    if(window.localStorage){
+      if(!localStorage.getItem('firstLoad')){
+        localStorage['firstLoad'] = true;
+        window.location.reload()
+      } else {
+        localStorage.removeItem('firstLoad')
+      }
+    }
   }
-*/
+
   getCurrShows(){
-    //here we make the call to get current shows and format that data
-    //for now it's an array of strings
-    this.setState({
-      shows: ['Faculty Dance Concert', 'Dance Majors Concert', 'MFA Concert']
+    //TODO deal with the fact that there's going to be pages
+
+    let currShows = []
+    Util.makeRequest("shows?history=all&includeDeleted=false", {}, "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+    })
+    .then(data => {
+      this.setState({
+        shows: data.shows
+      })
+    })
+    .then(
+      this.getShowTypes()
+    )
+    .then( showTypes => {
+      let currShows = []
+      this.state.shows.map(s => {
+        currShows.push(this.state.showTypes[s.typeID])
+      })
+      return currShows
+    })
+    .then(currShows => {
+      this.setState({
+        currShows: currShows
+      })
     })
   }
 
+  getShowTypes(shows){
+    Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
+    .then((res) => {
+      if(res.ok){
+        return res.json()
+      }
+    })
+    .then((data) => {
+      let showTypes = {};
+      data.map(function(show){
+         showTypes[show.id.toString()] = show.desc
+      })
+      return showTypes
+   })
+   .then((showTypes) => {
+      this.setState({
+          showTypes: showTypes
+      })
+   }) 
+  }
+
   getNavigation(){
-    let showNav = this.state.shows.map((s, i) => {
+    let showNav = this.state.currShows.map((s, i) => {
                     return <NavigationElement key ={i} user={this.state.user} showTitle={s} />
                   })
 
@@ -96,58 +134,35 @@ class Main extends Component {
         <Switch>
           <Route exact path='/' component={Dashboard}/>
           <Route exact path='/profile' component={Profile}/>
-          {this.state.shows.map((r, i) => {
+          {this.state.currShows.map((r, i) => {
                 return(
                     <Route exact path={"/" + r.split(' ').join('')} render={
                       () => (<Show id={i + 1} name={r}/>)}/> 
           )})}
-          {this.state.shows.map((r,i) =>{
+          {this.state.currShows.map((r,i) =>{
             return(
               <Route path={"/" + r.split(' ').join('') + "/audition"} render={
                 () => (<Audition id={(10 * (i + 1))} name={r}/>)}/>
             )
           })}
-          {this.state.shows.map((r,i) =>{
+          {this.state.currShows.map((r,i) =>{
             return(
               <Route path={"/" + r.split(' ').join('') + "/casting"} render={
                 () => (<Casting id={11 * (i + 1)} name={r}/>)}/>
             )
           })}
-          {this.state.shows.map((r,i) =>{
+          {this.state.currShows.map((r,i) =>{
             return(
               <Route path={"/" + r.split(' ').join('') + "/piece"} render={
                 () => (<Piece id={12 * (i + 1)} name={r}/>)}/>
             )
           })}
-          {this.state.shows.map((r,i) =>{
+          {this.state.currShows.map((r,i) =>{
             return(
               <Route path={"/" + r.split(' ').join('') + "/people"} render={
                 () => (<People id={13 * (i + 1)} name={r}/>)}/>
             )
           })}
-              {/*
-                let id = i + 1;
-                let auditionID = ((10 * id) + 1)
-                let castingID = ((10 * id) + 2)
-                let pieceID = ((10 * id) + 3)
-                let peopleID = ((10 * id) + 4) */
-                //let path = r.split(' ').join('')
-               /* return(
-                  <div key={i}>
-                    <Route exact path={"/" + r.split(' ').join('')} render={
-                    () => (<Show id={i} name={r}/>)}/>
-                      {
-                    <Route exact path={("/" + r.split(' ').join('') + "/audition")} render={
-                      () => (<Audition  name={r}/>)} />
-                    <Route exact path={"/" + r.split(' ').join('') + "/piece"} render={
-                      () => (<Piece  name={r}/>)} />
-                    <Route exact path={"/" + r.split(' ').join('') + "/casting"} render={
-                      () => (<Casting  name={r}/>)}/>
-                    <Route exact path={"/" + r.split(' ').join('') + "/casting"} render={
-                    () => (<People  name={r}/>)}/>
-                  </div> */}
-                )
-            })}
         </Switch>
     </section>
         <ul id="slide-out" className="side-nav fixed">

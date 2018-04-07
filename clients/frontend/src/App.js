@@ -20,6 +20,11 @@ class App extends Component {
     };
   };
 
+//TODO test to see if this will fix the problem of an unauthorized user being able to see stuff in the app
+  componentWillMount(){
+    Util.refreshLocalUser();
+  }
+
   componentDidMount(){
     Util.refreshLocalUser();
   }

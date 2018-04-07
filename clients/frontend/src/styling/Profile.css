@@ -1,3 +1,6 @@
+body {
+  font-family: sans-serif;}
+
 .header{
   display: flex;
   position: relative;
@@ -11,14 +14,16 @@
 
 .name {
   height: 150px;
-  width: 150px
+  width: 150px;
 }
 
 #profileName{
   position: absolute;
   bottom: 0px;
   margin-bottom:0px;
-  padding-left:25px
+  padding-left:25px;
+  text-transform: capitalize;
+
 }
 
 .sub {
@@ -44,7 +49,9 @@
 }
 
 .subheader {
-  font-size: 20px;
+  font-size: 15px;
+  text-transform: uppercase;
+  color: #799FB0;
 }
 
 #editName{

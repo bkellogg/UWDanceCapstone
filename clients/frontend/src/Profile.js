@@ -8,9 +8,9 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.getPhoto = this.getPhoto.bind(this);
-    this.getHistory = this.getHistory.bind(this);
     this.onClick = this.onClick.bind(this);
     this.inputChange = this.inputChange.bind(this);
+    this.formatHistory = this.formatHistory.bind(this);
     this.state ={
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
@@ -34,8 +34,62 @@ class Profile extends Component {
 
   componentDidMount(){
     //this.getPhoto();
-    this.getHistory();
-    //this.getResume();
+    //this.getHistory();
+    //Util.getResume();
+
+    //TODO deal with the fact that there are going to be pages
+    Util.makeRequest("users/1/shows?history=all", {}, "GET", true)
+    .then((res) => {
+      if(res.ok){
+        return res.json()
+      }
+    })
+    .then((res) => {
+      this.setState({
+        history: res.shows
+      })
+
+      this.formatHistory(res.shows)
+
+    })
+    .catch((err) => {
+      console.log("whoops!")
+    })
+  }
+
+  formatHistory(shows){
+    let showTypes = {};
+  
+    Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
+       .then((res) => {
+         if(res.ok){
+           return res.json()
+         }
+       })
+       .then((data) => {
+         data.map(function(show){
+            showTypes[show.id.toString()] = show.desc
+         })
+         return showTypes
+
+      })
+      .then(showTypes => {
+        let showHistory = [];
+        shows.forEach(function(p){
+          let typeID = p.typeID
+          let showName = showTypes[typeID]
+          let showYear = p.createdAt.substring(0,4)
+          let show = {"name": showName, "year": showYear}
+          showHistory.push(show) 
+        })
+        return showHistory
+      }) 
+      .then( showHistory => {
+        this.setState({
+          history: showHistory
+        })
+      })
+      
   }
 
   //want to move this to util eventually
@@ -57,29 +111,6 @@ class Profile extends Component {
                 photoError: err
               })
           });
-  }
-
-  //also want to move to util
-  getHistory(){
-    //dummy data - this needs to be fleshed out
-    let pieces = [
-      {
-        show: "Faculty Dance Concert",
-        year: 2018,
-        choreographer: "Bruce McCormick"
-      },{
-        show: "Faculty Dance Concert",
-        year: 2017,
-        choreographer: "Rachael Lincoln"
-      },{
-        show: "MFA Dance Concert",
-        year:2016,
-        choreographer: "Kyle Craig-Bogard"
-      }]
-    
-      this.setState({
-        history: pieces
-      })
   }
 
   onClick(){
@@ -141,7 +172,7 @@ class Profile extends Component {
               }
             </div>
             <div id="name">
-              {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+              {!this.state.edit && <h3 id="profileName">{this.state.fname} {this.state.lname}</h3>}
               {this.state.edit &&
                 <div id="editName">
                   <Row>
@@ -170,16 +201,10 @@ class Profile extends Component {
             <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
             {this.state.history !== null && this.state.history.map((p, i) => {
               return(
+                //TODO STYLE THESE
                 <div className="showHistory" key={i}>
-                  <div>
-                    <b>Show: </b> {p.show}
-                  </div>
-                  <div>
-                    <b>Year: </b> {p.year}
-                  </div>
-                  <div>
-                    <b>Choreographer: </b> {p.choreographer}
-                  </div>
+                  <p>{p.name}</p>
+                  <p>{p.year}</p>
                 </div>
               )
             })}

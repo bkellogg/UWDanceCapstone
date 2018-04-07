@@ -1,39 +1,72 @@
 .LogInLanding {
-  background-color: lavender;
+  background-image: url('../imgs/dance-bw.jpg');
+
+  /* background-color: #799FB0; */
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100%;
+  background-position: 50% 65%; 
+  
 }
 
-.Functionality {
+/* .Functionality {
   display: inline-block;
   float:right;
   min-height: 100%;
-  width:50%;
-  vertical-align: top;
-}
-
-.LogInPhoto {
-  height: 100%;
-  display: inline-block;
+  background-color: white;
+  margin: 0 auto;
   width: 50%;
-  background-image: url('../imgs/tresmaines.jpg');
-  background-repeat: no-repeat;
-  background-size: cover
-}
+} */
 
-.LogInPhoto > img{
+/* 
+.content {
+  width: 50%; 
+    height: auto;
+    margin: 0 auto;
+    padding: 10px;
+    position: relative;
+} */
+
+.Functionality{
   width: 100%;
-  min-height: 100%;
+  padding: 30px;
+  text-align: center;
 }
 
 .content {
-  margin-left:100px;
-  margin-top:35%;
-  width: 320px;
+  background-color: white;
+  width: auto;
+  display: inline-block;
+  padding: 50px;
+  margin: 8%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.authenticate {
+  text-align: left;
 }
 
 .title {
-  color:grey;
+  text-align: center;
+  padding-bottom: 10%;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: #333333;
 }
 
 Button {
   margin: 10px;
+}
+
+.Link{
+  padding-top: 3%;
+}
+
+.signlink {
+  color: #799FB0;
+}
+
+.signlink:hover{
+  text-decoration: underline;
 }
