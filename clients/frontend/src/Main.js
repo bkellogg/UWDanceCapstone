@@ -12,7 +12,9 @@ import {Button} from 'react-materialize';
 import * as Util from './util';
 import 'materialize-css';
 import './styling/Main.css';
-//import $ from 'jquery';
+import { findDOMNode } from 'react-dom';
+import $ from 'jquery';
+
 
 class Main extends Component {
   constructor(props) {
@@ -34,10 +36,14 @@ class Main extends Component {
       showTypes: null,
       currShows: []
     }
+
+    
   };
 
   componentWillMount(){
-
+    M.AutoInit();
+    var elem = document.querySelector('.sidenav');
+    var instance = M.Sidenav.init(elem, options);
   }
 
   componentDidMount(){
@@ -124,6 +130,7 @@ class Main extends Component {
   render() {
     return (
       <section>
+        <Link to="#" data-activates="slide-out" className="button-collapse"><i className="material-icons">menu</i></Link>
         <section className="routing">
         <Switch>
           <Route exact path='/' component={Dashboard}/>
@@ -164,7 +171,6 @@ class Main extends Component {
           <li><Link to={{pathname:"/profile"}}>Profile</Link></li>
           <li><Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button></li>
         </ul>
-      <Link to="#" data-activates="slide-out" className="button-collapse"><i className="material-icons">menu</i></Link>
       </section>
   );
 };
