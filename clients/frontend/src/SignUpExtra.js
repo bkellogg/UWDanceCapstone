@@ -1,8 +1,6 @@
-"use strict";
-
 import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
-import {Button, Input, Row} from 'react-materialize';
+import {Button, Input} from 'react-materialize';
 import * as Util from './util.js';
 import './styling/SignUp.css';
 
@@ -24,15 +22,15 @@ class SignUpExtra extends Component {
 
     signUp(event){
       event.preventDefault()
-      if(this.state.bio != null && this.state.bio != ""){
+      if(this.state.bio !== null && this.state.bio !== ""){
         console.log(this.state.bio);
         Util.uploadBio(this.state.bio)
       }
-      if(this.state.resumeUpload != null){
+      if(this.state.resumeUpload !== null){
         let resume = Util.uploadResume(this.state.resumeUpload)
         console.log(resume)
       }
-      if(this.state.photoUpload != null){
+      if(this.state.photoUpload !== null){
         let photo = Util.uploadPhoto(this.state.photoUpload)
         console.log(photo)
       }

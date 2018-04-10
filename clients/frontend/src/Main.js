@@ -12,7 +12,9 @@ import {Button} from 'react-materialize';
 import * as Util from './util';
 import 'materialize-css';
 import './styling/Main.css';
-//import $ from 'jquery';
+import { findDOMNode } from 'react-dom';
+import $ from 'jquery';
+
 
 class Main extends Component {
   constructor(props) {
@@ -34,33 +36,29 @@ class Main extends Component {
       showTypes: null,
       currShows: []
     }
+
+    
   };
 
   componentWillMount(){
+    M.AutoInit();
+    var elem = document.querySelector('.sidenav');
+    var instance = M.Sidenav.init(elem, options);
+  }
+
+  componentDidMount(){
     this.getShowTypes();
     this.getCurrShows();
   }
 
-  componentDidMount(){
-    if(window.localStorage){
-      if(!localStorage.getItem('firstLoad')){
-        localStorage['firstLoad'] = true;
-        window.location.reload()
-      } else {
-        localStorage.removeItem('firstLoad')
-      }
-    }
-  }
-
   getCurrShows(){
     //TODO deal with the fact that there's going to be pages
-
-    let currShows = []
     Util.makeRequest("shows?history=all&includeDeleted=false", {}, "GET", true)
     .then(res => {
       if (res.ok) {
         return res.json()
       }
+      return res.text().then((t) => Promise.reject(t));
     })
     .then(data => {
       this.setState({
@@ -73,7 +71,8 @@ class Main extends Component {
     .then( showTypes => {
       let currShows = []
       this.state.shows.map(s => {
-        currShows.push(this.state.showTypes[s.typeID])
+        console.log(s)
+        currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID})
       })
       return currShows
     })
@@ -82,6 +81,7 @@ class Main extends Component {
         currShows: currShows
       })
     })
+    .catch(err => console.log(err))
   }
 
   getShowTypes(shows){
@@ -107,7 +107,7 @@ class Main extends Component {
 
   getNavigation(){
     let showNav = this.state.currShows.map((s, i) => {
-                    return <NavigationElement key ={i} user={this.state.user} showTitle={s} />
+                    return <NavigationElement key ={i} user={this.state.user} showTitle={s.name} />
                   })
 
     return <ul className="collapsible collapsible-accordion">{showNav}</ul>
@@ -130,40 +130,37 @@ class Main extends Component {
   render() {
     return (
       <section>
+        <Link to="#" data-activates="slide-out" className="button-collapse"><i className="material-icons">menu</i></Link>
         <section className="routing">
         <Switch>
           <Route exact path='/' component={Dashboard}/>
           <Route exact path='/profile' component={Profile}/>
-          {this.state.currShows.map((r, i) => {
-                return(
-                    <Route exact path={"/" + r.split(' ').join('')} render={
-                      () => (<Show id={i + 1} name={r}/>)}/> 
-          )})}
-          {this.state.currShows.map((r,i) =>{
-            return(
-              <Route path={"/" + r.split(' ').join('') + "/audition"} render={
-                () => (<Audition id={(10 * (i + 1))} name={r}/>)}/>
-            )
-          })}
-          {this.state.currShows.map((r,i) =>{
-            return(
-              <Route path={"/" + r.split(' ').join('') + "/casting"} render={
-                () => (<Casting id={11 * (i + 1)} name={r}/>)}/>
-            )
-          })}
-          {this.state.currShows.map((r,i) =>{
-            return(
-              <Route path={"/" + r.split(' ').join('') + "/piece"} render={
-                () => (<Piece id={12 * (i + 1)} name={r}/>)}/>
-            )
-          })}
-          {this.state.currShows.map((r,i) =>{
-            return(
-              <Route path={"/" + r.split(' ').join('') + "/people"} render={
-                () => (<People id={13 * (i + 1)} name={r}/>)}/>
-            )
-          })}
         </Switch>
+          {this.state.currShows.map((show, i) => {
+            let showName = show.name
+            let path = "/" + showName.split(' ').join('')
+            console.log(show.audition)
+            return( 
+              <Switch key = {i}>
+                <Route exact path={path} render={
+                  props => <Show {...props} name={show.name}/>
+                }/>
+                <Route exact path={path + "/audition"} render={
+                  props => <Audition {...props} name={show.name} audition={show.audition}/>
+                }/>
+                <Route exact path={path + "/casting"} render={
+                  props => <Casting {...props} name={show.name} audition={show.audition}/>
+                }/>
+                <Route exact path={path + "/piece"} render={
+                  props => <Piece {...props} name={show.name} audition={show.audition}/>
+                }/>
+                <Route exact path={path + "/people"} render={
+                  props => <People {...props} name={show.name} audition={show.audition}/>
+                }/>
+              </Switch>
+            )}
+          )}
+
     </section>
         <ul id="slide-out" className="side-nav fixed">
           <li><div id="logo">STAGE</div></li>
@@ -174,7 +171,6 @@ class Main extends Component {
           <li><Link to={{pathname:"/profile"}}>Profile</Link></li>
           <li><Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button></li>
         </ul>
-      {/*<Link to="#" data-activates="slide-out" className="button-collapse"><i className="material-icons">menu</i></Link>*/}
       </section>
   );
 };

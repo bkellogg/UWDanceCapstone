@@ -162,7 +162,7 @@ class Profile extends Component {
           <div className="header">
             <div id="photoContainer">
               {!this.state.edit &&
-                <img id="photo" src={this.state.photoSrc}></img>
+                <img id="photo" alt="placeholder profile picture" src={this.state.photoSrc}></img>
               }
               {this.state.edit &&
                 <section>
