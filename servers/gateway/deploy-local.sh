@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 set -e
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
 deployAPI () {
     cd $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway
 
 	if [[ "$1" == "hard" ]]; then
+	    echo -e >&2 "${GREEN}Pulling updated containers...${NC}"
 		docker pull redis
+		docker pull mysql
 
+        echo -e >&2 "${GREEN}Removing any conflicting running containers...${NC}"
 		if [ "$(docker ps -aq --filter name=mysql)" ]; then
 			docker rm -f mysql
 		fi
@@ -19,19 +26,18 @@ deployAPI () {
 			docker network create dance-net
 		fi
 
-		echo >&2 "starting redis..."
+		echo -e >&2 "${GREEN}Starting redis...${NC}"
 		docker run -d \
-		-p 6379:6379 \
 		--name redis \
 		--network dance-net \
 		redis
 
 		cd $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/sql
 
-		echo >&2 "building mysql docker container..."
+		echo -e >&2 "${GREEN}Building mysql docker container...${NC}"
 		docker build -t brendankellogg/dance-mysql .
 
-		echo >&2 "starting mysql..."
+		echo -e >&2 "${GREEN}Starting mysql...${NC}"
 		docker run -d \
 		 -p 3306:3306 \
         -e MYSQL_ROOT_PASSWORD=$MYSQLPASS \
@@ -45,25 +51,27 @@ deployAPI () {
 	if [[ "$1" != "nobuild" ]]; then
         cd $GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway
 
-        echo >&2 "building gateway executable..."
+        echo -e >&2 "${GREEN}Building gateway executable...${NC}"
         GOOS=linux go build
 
-        echo >&2 "building gateway docker container..."
+        echo -e >&2 "${GREEN}Building gateway docker container...${NC}"
         docker build -t brendankellogg/dancegateway .
 
         go clean
     fi
+
+    echo -e >&2 "${GREEN}Removing existing gateway container...${NC}"
 
 	if [ "$(docker ps -aq --filter name=gateway)" ]; then
 		docker rm -f gateway
 	fi
 
 	if [[ "$1" == "hard" ]]; then
-	    echo >&2 "waiting for mysql to be ready for connections..."
+	    echo -e >&2 "${GREEN}Waiting for mysql to be ready for connections...${NC}"
 	    sleep 15s
 	fi
 
-	echo >&2 "starting dance gateway server..."
+	echo -e >&2 "${GREEN}Starting dance gateway server...${NC}"
 	docker run -d \
 	--name gateway \
 	--network dance-net \
@@ -97,6 +105,7 @@ deployAPI () {
     -e STAGE_ADMIN_PASSWORD=$STAGE_ADMIN_PASSWORD \
 	brendankellogg/dancegateway
 
+    echo -e >&2 "${GREEN}Complete!${NC}"
 }
 
 if [[ "$1" == "" ]]; then
