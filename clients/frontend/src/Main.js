@@ -1,10 +1,5 @@
 import React, { Component } from 'react';
-import * as Util from './util';
-
-//routing
 import { Switch, Route, Link } from 'react-router-dom';
-
-//components
 import People from './People';
 import Piece from './Piece';
 import Audition from './Audition';
@@ -14,13 +9,12 @@ import Profile from './Profile';
 import Casting from './Casting';
 import MobileNavigationElement from './MobileNavigation';
 import NavigationElement from './NavigationElement';
-
-//styling
 import {Button, SideNav, SideNavItem} from 'react-materialize';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
+import * as Util from './util';
 import 'materialize-css';
 import './styling/Main.css';
 
@@ -29,6 +23,14 @@ import './styling/Main.css';
 class Main extends Component {
   constructor(props) {
     super(props);
+    this.getNavigation = this.getNavigation.bind(this);
+    this.signOut = this.signOut.bind(this);
+    this.updatePage = this.updatePage.bind(this);
+    this.getCurrShows = this.getCurrShows.bind(this);
+    this.getShowTypes = this.getShowTypes.bind(this);
+    //"page" lets me know what page we are looking at, numerically encoded so I don't have to deal with strings
+    //starts on dashboard (100)
+    //onClick links will update
     this.state = {
       user: JSON.parse(localStorage.user),
       shows: null,
@@ -38,6 +40,9 @@ class Main extends Component {
       currShows: [],
       open: false
     }
+
+
+    
   };
 
   componentWillMount(){
@@ -48,10 +53,11 @@ class Main extends Component {
 
   componentDidMount(){
     this.getShowTypes();
-    this.getCurrShows();  
+    this.getCurrShows();
+    
   }
 
-  getCurrShows= () => {
+  getCurrShows(){
     //TODO deal with the fact that there's going to be pages
     Util.makeRequest("shows?history=all&includeDeleted=false", {}, "GET", true)
     .then(res => {
@@ -84,7 +90,7 @@ class Main extends Component {
     .catch(err => console.log(err))
   }
 
-  getShowTypes = (shows) => {
+  getShowTypes(shows){
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
     .then((res) => {
       if(res.ok){
@@ -105,7 +111,7 @@ class Main extends Component {
    }) 
   }
 
-  getNavigation = () => {
+  getNavigation(){
     let showNav = this.state.currShows.map((s, i) => {
                     return <NavigationElement key ={i} user={this.state.user} showTitle={s.name} />
                   })
@@ -121,12 +127,12 @@ class Main extends Component {
     return <ul className="collapsible collapsible-accordion">{mobileShowNav}</ul>
   }
 
-  signOut = () => {
+  signOut(){
     Util.signOut();
     this.props.auth();
   }
 
-  updatePage = (pageNum) => {
+  updatePage(pageNum){
     if(this.state.page !== pageNum) {
       this.setState({
         page: pageNum
@@ -156,11 +162,10 @@ class Main extends Component {
               <div id="mobileLogo"> STAGE </div>
               
                 <Link to="/"><MenuItem onClick={this.handleClose}>Dashboard</MenuItem></Link>
-              
-              
-              {this.getMobileNavigation}
-              
+                {this.getMobileNavigation()}
+             
               <Link to={{pathname:"/profile"}}><MenuItem onClick={this.handleClose}>Profile</MenuItem></Link>
+              
               <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
             </Drawer>
           </div>
@@ -202,7 +207,7 @@ class Main extends Component {
           <li><div id="logo">STAGE</div></li>
           <li><Link to="/">Dashboard</Link></li>
           <li>
-              {this.getNavigation}
+              {this.getNavigation()}
           </li>
           <li><Link to={{pathname:"/profile"}}>Profile</Link></li>
           <li><Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button></li>
@@ -214,4 +219,3 @@ class Main extends Component {
 
 }
 export default Main;
-
