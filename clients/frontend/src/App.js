@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
-//import { Switch, Route } from 'react-router-dom'
+import * as Util from './util.js';
+
+//components
 import SignUp from './SignUp.js';
 import SignIn from './SignIn.js';
 import Main from './Main.js'
+
+//styling
 import './styling/App.css';
-import * as Util from './util.js';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.registerUser = this.registerUser.bind(this);
-    this.handleSignUp = this.handleSignUp.bind(this);
-    this.goBack = this.goBack.bind(this);
-    this.signOut = this.signOut.bind(this);
     this.state = {
       user: null,
       signUp: false,
@@ -23,25 +22,25 @@ class App extends Component {
     Util.refreshLocalUser();
   }
 
-  registerUser(userVal) {
+  registerUser = (userVal) => {
     this.setState({
       user: userVal
     })
   };
 
-  handleSignUp() {
+  handleSignUp = () => {
     this.setState({
       signUp: true
     })
   }
 
-  goBack() {
+  goBack = () => {
     this.setState({
       signUp: false
     })
   }
 
-  signOut(){
+  signOut = () => {
     this.setState({
       authorized: false,
       user: null

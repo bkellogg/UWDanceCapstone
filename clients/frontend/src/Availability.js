@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+
+//styling
 import TableDragSelect from "react-table-drag-select";
 import "react-table-drag-select/style.css";
 import './styling/Availability.css'

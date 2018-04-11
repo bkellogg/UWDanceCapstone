@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
+import * as Util from './util.js';
+
+//components
+import Availability from './Availability';
+
+//styling
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import { Card, CardText, CardTitle} from 'material-ui/Card';
-import Availability from './Availability';
 import Checkbox from 'material-ui/Checkbox';
-
-import * as Util from './util.js';
-
 import './styling/Audition.css';
 
 const styles = {
