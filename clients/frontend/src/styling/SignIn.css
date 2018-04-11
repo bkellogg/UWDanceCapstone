@@ -70,3 +70,7 @@ Button {
 .signlink:hover{
   text-decoration: underline;
 }
+
+.character-counter {
+  visibility: hidden
+}

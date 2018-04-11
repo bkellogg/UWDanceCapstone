@@ -8,12 +8,15 @@ import Dashboard from './Dashboard';
 import Profile from './Profile';
 import Casting from './Casting';
 import NavigationElement from './NavigationElement';
-import {Button} from 'react-materialize';
+import {Button, SideNav, SideNavItem} from 'react-materialize';
+import Drawer from 'material-ui/Drawer';
+import MenuItem from 'material-ui/MenuItem';
+import RaisedButton from 'material-ui/RaisedButton';
+import Divider from 'material-ui/Divider';
 import * as Util from './util';
 import 'materialize-css';
 import './styling/Main.css';
-import { findDOMNode } from 'react-dom';
-import $ from 'jquery';
+
 
 
 class Main extends Component {
@@ -24,7 +27,6 @@ class Main extends Component {
     this.updatePage = this.updatePage.bind(this);
     this.getCurrShows = this.getCurrShows.bind(this);
     this.getShowTypes = this.getShowTypes.bind(this);
-
     //"page" lets me know what page we are looking at, numerically encoded so I don't have to deal with strings
     //starts on dashboard (100)
     //onClick links will update
@@ -34,21 +36,24 @@ class Main extends Component {
       routing: null,
       firstRender: true,
       showTypes: null,
-      currShows: []
+      currShows: [],
+      open: false
     }
+
 
     
   };
 
   componentWillMount(){
-    M.AutoInit();
-    var elem = document.querySelector('.sidenav');
-    var instance = M.Sidenav.init(elem, options);
+    //M.AutoInit();
+    //var elem = document.querySelector('.sidenav');
+    //var instance = M.Sidenav.init(elem, options);
   }
 
   componentDidMount(){
     this.getShowTypes();
     this.getCurrShows();
+    
   }
 
   getCurrShows(){
@@ -119,7 +124,6 @@ class Main extends Component {
   }
 
   updatePage(pageNum){
-    console.log(this.state.page);
     if(this.state.page !== pageNum) {
       this.setState({
         page: pageNum
@@ -127,10 +131,38 @@ class Main extends Component {
     }
   }
 
+  handleToggle = () => this.setState({open: !this.state.open});
+
+  handleClose = () => this.setState({open: false});
+
   render() {
     return (
       <section>
-        <Link to="#" data-activates="slide-out" className="button-collapse"><i className="material-icons">menu</i></Link>
+        <section className="mobile">
+          <div>
+            <RaisedButton
+              label="MENU"
+              onClick={this.handleToggle}
+            />
+            <Drawer
+              docked={false}
+              width={250}
+              open={this.state.open}
+              onRequestChange={(open) => this.setState({open})}
+            >
+              <div id="mobileLogo"> STAGE </div>
+              
+                <Link to="/"><MenuItem onClick={this.handleClose}>Dashboard</MenuItem></Link>
+              
+              <Divider />
+              <Link to={{pathname:"/profile"}}><MenuItem onClick={this.handleClose}>Profile</MenuItem></Link>
+              <Divider />
+                {this.getNavigation()}
+              <Divider />
+              <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
+            </Drawer>
+          </div>
+        </section>
         <section className="routing">
         <Switch>
           <Route exact path='/' component={Dashboard}/>
@@ -161,8 +193,10 @@ class Main extends Component {
             )}
           )}
 
-    </section>
-        <ul id="slide-out" className="side-nav fixed">
+      </section>
+      
+      <section className="desktop">
+      <ul id="slide-out" className="side-nav fixed">
           <li><div id="logo">STAGE</div></li>
           <li><Link to="/">Dashboard</Link></li>
           <li>
@@ -172,6 +206,7 @@ class Main extends Component {
           <li><Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button></li>
         </ul>
       </section>
+    </section>
   );
 };
 
