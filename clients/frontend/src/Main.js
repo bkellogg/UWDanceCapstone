@@ -7,6 +7,7 @@ import Show from './Show';
 import Dashboard from './Dashboard';
 import Profile from './Profile';
 import Casting from './Casting';
+import MobileNavigationElement from './MobileNavigation';
 import NavigationElement from './NavigationElement';
 import {Button, SideNav, SideNavItem} from 'react-materialize';
 import Drawer from 'material-ui/Drawer';
@@ -118,6 +119,14 @@ class Main extends Component {
     return <ul className="collapsible collapsible-accordion">{showNav}</ul>
   }
 
+  getMobileNavigation = () => {
+    let mobileShowNav = this.state.currShows.map((s, i) => {
+      return <MobileNavigationElement key ={i} user={this.state.user} showTitle={s.name} handleClose={this.handleClose}/>
+    })
+
+    return <ul className="collapsible collapsible-accordion">{mobileShowNav}</ul>
+  }
+
   signOut(){
     Util.signOut();
     this.props.auth();
@@ -157,7 +166,9 @@ class Main extends Component {
               <Divider />
               <Link to={{pathname:"/profile"}}><MenuItem onClick={this.handleClose}>Profile</MenuItem></Link>
               <Divider />
-                {this.getNavigation()}
+                
+                  {this.getMobileNavigation()}
+                
               <Divider />
               <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
             </Drawer>

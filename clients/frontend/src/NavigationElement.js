@@ -15,6 +15,7 @@ class NavigationElement extends Component {
     let address = "/" + this.props.showTitle.split(' ').join('');
     return (
         <li>
+
             <Link className="collapsible-header" style={{paddingLeft: 32}} to={{pathname: "/"}}>{this.props.showTitle}</Link>
             <div className="collapsible-body">
                 <ul>
@@ -38,6 +39,7 @@ class NavigationElement extends Component {
                     <li><Link to={{pathname:address + "/piece"}}>My Piece</Link></li>
                 </ul>
             </div>
+
         </li>
     );
   };
