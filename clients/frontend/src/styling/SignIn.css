@@ -1,7 +1,12 @@
+body {
+  font-weight: 400;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+}
+
+
 .LogInLanding {
   background-image: url('../imgs/dance-bw.jpg');
-
-  /* background-color: #799FB0; */
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: 100%;
@@ -50,7 +55,6 @@
 .title {
   text-align: center;
   padding-bottom: 10%;
-  text-transform: uppercase;
   font-weight: 400;
   color: #333333;
 }
