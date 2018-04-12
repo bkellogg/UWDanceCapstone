@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+
+//styling
 import TableDragSelect from "react-table-drag-select";
 import "react-table-drag-select/style.css";
 import './styling/Availability.css'
@@ -88,7 +90,7 @@ class Availability extends Component {
           let dayVal = days[j - 1]
           let timeVal = times[i - 1]
           let endTime = (parseInt(timeVal) + 30).toString()
-          if (endTime[2] == "6"){
+          if (endTime[2] === "6"){
             let end = (parseInt(endTime.substring(0,2)) + 1).toString()
             endTime = end + "00"
           }
@@ -96,14 +98,14 @@ class Availability extends Component {
             let dayExists = false;
             let dayLocation = 0;
             a.forEach((d, i) => {
-              if (d.day == dayVal){
+              if (d.day === dayVal){
                 dayExists = true
                 dayLocation = i
               }
             })
             if (dayExists){
               let currEndTime = a[dayLocation].times[a[dayLocation].times.length - 1].end
-              if (currEndTime == timeVal){
+              if (currEndTime === timeVal){
                 a[dayLocation].times[a[dayLocation].times.length - 1].end = endTime
               } else {
                 a[dayLocation].time.push({

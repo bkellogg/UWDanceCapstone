@@ -222,13 +222,13 @@ class Profile extends Component {
                 <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
                   <i className="large material-icons"> mode_edit </i>
                 </Button>
+
               }
               {this.state.edit &&
                 <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
                   <i className="large material-icons"> check </i>
                 </Button>
               }
-
             </div>
           </div>
           </div>

@@ -1,53 +1,46 @@
 import React, { Component } from 'react';
-//import { Switch, Route } from 'react-router-dom'
+import * as Util from './util.js';
+
+//components
 import SignUp from './SignUp.js';
 import SignIn from './SignIn.js';
 import Main from './Main.js'
+
+//styling
 import './styling/App.css';
-import * as Util from './util.js';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.registerUser = this.registerUser.bind(this);
-    this.handleSignUp = this.handleSignUp.bind(this);
-    this.goBack = this.goBack.bind(this);
-    this.signOut = this.signOut.bind(this);
     this.state = {
       user: null,
       signUp: false,
       authorized: false
     };
   };
-
-//TODO test to see if this will fix the problem of an unauthorized user being able to see stuff in the app
-  componentWillMount(){
-    Util.refreshLocalUser();
-  }
-
   componentDidMount(){
     Util.refreshLocalUser();
   }
 
-  registerUser(userVal) {
+  registerUser = (userVal) => {
     this.setState({
       user: userVal
     })
   };
 
-  handleSignUp() {
+  handleSignUp = () => {
     this.setState({
       signUp: true
     })
   }
 
-  goBack() {
+  goBack = () => {
     this.setState({
       signUp: false
     })
   }
 
-  signOut(){
+  signOut = () => {
     this.setState({
       authorized: false,
       user: null
@@ -55,6 +48,7 @@ class App extends Component {
   }
 
   componentWillMount(){
+    Util.refreshLocalUser();
     if(localStorage.getItem("user")){
       this.setState({
         authorized: true

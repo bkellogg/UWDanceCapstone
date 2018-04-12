@@ -17,10 +17,23 @@
 
 .main {
     padding-left: 300px;
-  }
+}
+
+.mobile {
+    visibility: hidden
+}
 
 @media only screen and (max-width : 992px) {
     .main {
       padding-left: 0;
     }
+
+    .mobile {
+        visibility: visible
+    }
+
+    .desktop {
+        visibility: hidden
+    }
+    
 }

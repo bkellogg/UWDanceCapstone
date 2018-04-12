@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util';
+
+//styling
 import { Card, CardText, CardTitle} from 'material-ui/Card';
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';
@@ -7,8 +9,6 @@ import './styling/Dashboard.css';
 class Dashboard extends Component {
   constructor(props) {
     super(props);
-    this.getAnnouncements = this.getAnnouncements.bind(this);
-    this.getMockAnnouncements = this.getMockAnnouncements.bind(this);
     this.state = {
       user: JSON.parse(localStorage.user),
       auth: localStorage.auth,
@@ -20,7 +20,7 @@ class Dashboard extends Component {
     this.getAnnouncements()
   }
 
-  getAnnouncements(){
+  getAnnouncements = () => {
     fetch(Util.API_URL_BASE + "/announcements?auth=" + this.state.auth)
         .then((res) => {
           if (res.ok) {
@@ -37,7 +37,7 @@ class Dashboard extends Component {
         .catch((err) => {});
   }
 
-  getMockAnnouncements(){
+  getMockAnnouncements = () => {
     let announcement = [{
       type: "Announcement",
       message: "Dance Major's Concert Opening Night TONIGHT!"
