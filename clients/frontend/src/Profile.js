@@ -38,7 +38,6 @@ class Profile extends Component {
     this.getPhoto();
     //this.getHistory();
     this.getResume();
-    console.log(this.state.resume);
 
     //TODO deal with the fact that there are going to be pages
     Util.makeRequest("users/1/shows?history=all", {}, "GET", true)
@@ -146,7 +145,7 @@ class Profile extends Component {
         Util.uploadLName(this.state.lastName)
         this.setState({ lname: this.state.lastName })
       }
-      if (this.state.photoUpload !== "") { //honestly not sure what kind of data we get if we upload a photo and then remove it
+      if (this.state.photoUpload !== "") { 
         Util.uploadPhoto(this.state.photoUpload)
         this.setState({ photoSrc: this.state.photoUpload })
       }
@@ -155,7 +154,7 @@ class Profile extends Component {
         this.setState({ bio: this.state.bioUpload })
       }
       if (this.state.resumeUpload !== "") {
-        Util.uploadResume(this.state.resumeUpload) //doesn't work
+        Util.uploadResume(this.state.resumeUpload) 
         this.setState({ resume: this.state.resumeUpload })
       }
       this.setState({
@@ -251,7 +250,6 @@ class Profile extends Component {
             }
           </div>
           <div id="resume">
-            <div className="subheader"><b>Resume: </b></div>
             {!this.state.edit &&
               <section>
                 {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
@@ -261,7 +259,7 @@ class Profile extends Component {
             {this.state.edit &&
               <section>
                 <div> Upload your dance resume as a PDF. </div>
-                <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.inputChange} />
+                <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
               </section>
             }
           </div>
