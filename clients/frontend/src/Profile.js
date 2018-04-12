@@ -10,12 +10,14 @@ class Profile extends Component {
     this.getPhoto = this.getPhoto.bind(this);
     this.onClick = this.onClick.bind(this);
     this.inputChange = this.inputChange.bind(this);
+    this.resumeChange = this.resumeChange.bind(this);
+    this.photoChange = this.photoChange.bind(this);
     this.formatHistory = this.formatHistory.bind(this);
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
       photoError: null,
-      photoSrc: img,
+      photoSrc: null,
       bio: JSON.parse(localStorage.getItem("user")).bio,
       history: null,
       resume: null,
@@ -33,9 +35,9 @@ class Profile extends Component {
   };
 
   componentDidMount() {
-    //this.getPhoto();
+    this.getPhoto();
     //this.getHistory();
-    //Util.getResume();
+    this.getResume();
 
     //TODO deal with the fact that there are going to be pages
     Util.makeRequest("users/1/shows?history=all", {}, "GET", true)
@@ -113,6 +115,27 @@ class Profile extends Component {
       });
   }
 
+
+  getResume() {
+    fetch(Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth)
+      .then((res) => {
+        if (res.ok) {
+          return res.blob();
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then((data) => {
+        this.setState({
+          resume: URL.createObjectURL(data)
+        })
+      })
+      .catch((err) => {
+        this.setState({
+          resumeErr: err
+        })
+      });
+  }
+  
   onClick() {
     if (this.state.edit) {
       if (this.state.firstName !== "") {
@@ -123,15 +146,16 @@ class Profile extends Component {
         Util.uploadLName(this.state.lastName)
         this.setState({ lname: this.state.lastName })
       }
-      if (this.state.photoUpload !== "") { //honestly not sure what kind of data we get if we upload a photo and then remove it
-        console.log("you're going to have to ask brendan about that one")
+      if (this.state.photoUpload !== "") { 
+        Util.uploadPhoto(this.state.photoUpload)
+        this.setState({ photoSrc: this.state.photoUpload })
       }
       if (this.state.bioUpload !== "") {
         Util.uploadBio(this.state.bioUpload) //refreshing the local user is built in aka don't need to call the bio back from the server
         this.setState({ bio: this.state.bioUpload })
       }
       if (this.state.resumeUpload !== "") {
-        Util.uploadResume(this.state.resumeUpload) //doesn't work
+        Util.uploadResume(this.state.resumeUpload) 
         this.setState({ resume: this.state.resumeUpload })
       }
       this.setState({
@@ -149,11 +173,25 @@ class Profile extends Component {
   }
 
   inputChange(val) {
-    let name = val.target.name
+    const name = val.target.name
     this.setState({
       [name]: val.target.value
     })
   }
+
+  resumeChange(val) {
+    this.setState({
+      resumeUpload: val.target
+    })
+  }
+
+  photoChange(val) {
+    this.setState({
+      photoUpload: val.target
+    })
+  }
+
+
 
   render() {
     return (
@@ -253,26 +291,26 @@ class Profile extends Component {
               }
             </div>
 
-            {/* RESUME */}
             <div id="resume">
-              <div className="subheader"><b>Resume: </b></div>
-              {!this.state.edit &&
-                <section>
-                  {this.state.resume !== null && <p>This is where the resume will go!</p>}
-                  {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                </section>
-              }
-              {this.state.edit &&
-                <section>
-                  <div> Upload your dance resume as a PDF. </div>
-                  <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.inputChange} />
-                </section>
-              }
-            </div>
-
+            {!this.state.edit &&
+              <section>
+                {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                <a href={this.state.resume} target="_blank">Resume</a>
+              </section>
+            }
+            {this.state.edit &&
+              <section>
+                <div> Upload your dance resume as a PDF. </div>
+                <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+              </section>
+            }
           </div>
-
-
+          {!this.state.edit &&
+            <Button id="edit" onClick={() => this.onClick()}>Edit profile</Button>
+          }
+          {this.state.edit &&
+            <Button id="edit" onClick={() => this.onClick()}>Save changes</Button>
+          }
         </div>
       </section>
     );
