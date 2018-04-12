@@ -72,7 +72,6 @@ export function uploadPhoto(val){
     let file = val;
     let data = new FormData();
     data.append("image", file.files[0]);
-
     let xhr = new XMLHttpRequest();
 
     xhr.addEventListener("readystatechange", function () {
