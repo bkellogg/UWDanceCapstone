@@ -311,6 +311,7 @@ class Profile extends Component {
           {this.state.edit &&
             <Button id="edit" onClick={() => this.onClick()}>Save changes</Button>
           }
+          </div>
         </div>
       </section>
     );
