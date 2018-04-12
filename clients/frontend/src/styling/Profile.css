@@ -1,12 +1,30 @@
 body {
-  font-family: sans-serif;}
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  color: #9194B5;
+}
+
+h5 {
+	font-size: 22px;
+	font-style: normal;
+	font-variant: normal;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #EA6336;
+}
+
+.pagetitle{
+  margin: 2%;
+  margin-left: 5%;
+  text-transform: uppercase;
+}
 
 .headerBorder{
   display: flex;
   position: relative;
   height: 100%;
-  border-bottom: 1px solid grey;
   width: 100%;
+  
 }
 
 .header, .mainContentBorder{
@@ -46,15 +64,26 @@ body {
 .name, #editName {
   z-index: 1;
   text-transform: capitalize;
+  padding-bottom: 1%;
 }
 
 .bio, #editBio{
   z-index: 2;
 }
 
-.sub {
-  padding:5%;
-  margin-bottom: 20%;
+.sub, .sub2, #photo{
+  border-radius: 5px;
+  -webkit-box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
+-moz-box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
+box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);  
+}
+
+.sub, .sub2 {
+  width: 85%;
+  padding: 2%;
+  margin:3%;
+  margin-left: 5%;
+  background-color: white;
 }
 
 #historyTitle {
@@ -66,14 +95,17 @@ body {
 }
 
 #history, #resume {
-  margin-top: 20px;
   margin-bottom:40px
 }
 
 .subheader {
   font-size: 15px;
-  text-transform: uppercase;
-  color: #799FB0;
+
+}
+
+section{
+  font-size: 14px;
+  margin-top: 1%;
 }
 
 /* #editName{

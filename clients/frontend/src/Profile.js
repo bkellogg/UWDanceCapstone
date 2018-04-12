@@ -158,8 +158,9 @@ class Profile extends Component {
   render() {
     return (
       <section className="main">
+      <h5 className="pagetitle">Your Profile </h5>
         <div className="sub">
-
+          {/* FIRST CARD */}
           <div className="headerBorder">
             <div className="header">
               <div className="photoContainerWrap">
@@ -178,7 +179,7 @@ class Profile extends Component {
 
               <div className="nameAndBioWrap">
                 <div id="name" className="name">
-                  {!this.state.edit && <h4 id="profileName">{this.state.fname} {this.state.lname}</h4>}
+                  {!this.state.edit && <h5 id="profileName">{this.state.fname} {this.state.lname}</h5>}
                   {this.state.edit &&
                     <div id="editName">
                       <Row>
@@ -190,7 +191,7 @@ class Profile extends Component {
                 </div>
 
                 <div id="bio" className="bio">
-                  <div className="subheader"><b>Bio:</b></div>
+                  <div className="subheader"><b>Dancer Bio:</b></div>
                   {!this.state.edit &&
                     <section>
                       {this.state.bio !== "" && this.state.bio}
@@ -230,7 +231,11 @@ class Profile extends Component {
 
             </div>
           </div>
+          </div>
 
+          <div className="sub2">
+
+              {/* SECOND CARD */}
           <div className="mainContentBorder">
             <div id="history">
               <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
