@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+
+//styling
 import TableDragSelect from "react-table-drag-select";
 import "react-table-drag-select/style.css";
 import './styling/Availability.css'
@@ -88,7 +90,7 @@ class Availability extends Component {
           let dayVal = days[j - 1]
           let timeVal = times[i - 1]
           let endTime = (parseInt(timeVal) + 30).toString()
-          if (endTime[2] == "6"){
+          if (endTime[2] === "6"){
             let end = (parseInt(endTime.substring(0,2)) + 1).toString()
             endTime = end + "00"
           }
@@ -96,14 +98,14 @@ class Availability extends Component {
             let dayExists = false;
             let dayLocation = 0;
             a.forEach((d, i) => {
-              if (d.day == dayVal){
+              if (d.day === dayVal){
                 dayExists = true
                 dayLocation = i
               }
             })
             if (dayExists){
               let currEndTime = a[dayLocation].times[a[dayLocation].times.length - 1].end
-              if (currEndTime == timeVal){
+              if (currEndTime === timeVal){
                 a[dayLocation].times[a[dayLocation].times.length - 1].end = endTime
               } else {
                 a[dayLocation].time.push({
@@ -141,7 +143,7 @@ class Availability extends Component {
           <td disabled>Sunday</td>
         </tr>
         <tr>
-          <td disabled>10:00</td>
+          <td disabled>10:00 AM</td>
           <td />
           <td />
           <td />
@@ -161,7 +163,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>11:00</td>
+          <td disabled>11:00 AM</td>
           <td />
           <td />
           <td />
@@ -181,7 +183,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>12:00</td>
+          <td disabled>12:00 PM</td>
           <td />
           <td />
           <td />
@@ -201,7 +203,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>13:00</td>
+          <td disabled>1:00 PM</td>
           <td />
           <td />
           <td />
@@ -221,7 +223,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>14:00</td>
+          <td disabled>2:00 PM</td>
           <td />
           <td />
           <td />
@@ -241,7 +243,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>15:00</td>
+          <td disabled>3:00 PM </td>
           <td />
           <td />
           <td />
@@ -261,7 +263,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>16:00</td>
+          <td disabled>4:00 PM</td>
           <td />
           <td />
           <td />
@@ -281,7 +283,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>17:00</td>
+          <td disabled>5:00 PM</td>
           <td />
           <td />
           <td />
@@ -301,7 +303,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>18:00</td>
+          <td disabled>6:00 PM</td>
           <td />
           <td />
           <td />
@@ -321,7 +323,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>19:00</td>
+          <td disabled>7:00 PM</td>
           <td />
           <td />
           <td />
@@ -341,7 +343,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>20:00</td>
+          <td disabled>8:00 PM </td>
           <td />
           <td />
           <td />
@@ -361,7 +363,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr>
-          <td disabled>21:00</td>
+          <td disabled>9:00 PM</td>
           <td />
           <td />
           <td />

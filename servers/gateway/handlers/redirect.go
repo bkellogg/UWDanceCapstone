@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
 // HTTPSRedirectHandler redirects the given HTTP request to HTTPS.
@@ -13,11 +13,11 @@ import (
 func HTTPSRedirectHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Tell the browser to use HTTPS in the future.
-	w.Header().Add(constants.HeaderStrictTransportSecurity, constants.StrictTransportSecurity)
+	w.Header().Add(appvars.HeaderStrictTransportSecurity, appvars.StrictTransportSecurity)
 
 	// Do not redirect requests to any API route as to help stop
 	// man in the middle attacks.
-	if strings.HasPrefix(r.RequestURI, constants.BaseAPIPath) {
+	if strings.HasPrefix(r.RequestURI, appvars.BaseAPIPath) {
 		http.Error(w, "insecure request rejected: you must use HTTPS for this resource", http.StatusNotFound)
 		return
 	}

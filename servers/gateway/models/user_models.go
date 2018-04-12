@@ -8,7 +8,7 @@ import (
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/Pallinder/go-randomdata"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -45,11 +45,37 @@ type UserUpdates struct {
 	Bio       string `json:"bio"`
 }
 
+// UserAuditionLink defines the body of a request to
+// add a user to an audition.
+// UserID and AuditionID will come from request URI
+type UserAuditionLink struct {
+	Comment      string         `json:"comment"`
+	Availability *WeekTimeBlock `json:"availability,omitempty"`
+}
+
+// UserAudition represents how a link between a user and an audition
+// is stored.
+type UserAudition struct {
+	ID             int       `json:"id"`
+	AuditionID     int       `json:"auditionID"`
+	UserID         int       `json:"userID"`
+	AvailabilityID int       `json:"availabilityID"`
+	CreatedAt      time.Time `json:"createdAt"`
+	CreatedBy      int       `json:"createdBy"`
+	IsDeleted      bool      `json:"isDeleted"`
+}
+
+// Validate validates the current UserAuditionLink and returns
+// an error if one occurred.
+func (ual *UserAuditionLink) Validate() error {
+	return ual.Availability.Validate()
+}
+
 // ToUser takes this *NewUserRequest and returns
 // a *User from it
 func (u *NewUserRequest) ToUser() (*User, error) {
-	if err := u.isReadyForUser(); err != nil {
-		return nil, err
+	if err := u.validate(); err != nil {
+		return nil, errors.New("new user validation failed: " + err.Error())
 	}
 	if err := u.checkBioLength(); err != nil {
 		return nil, err
@@ -59,7 +85,7 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 		LastName:  u.LastName,
 		Email:     u.Email,
 		Bio:       u.Bio,
-		Role:      constants.UserDefaultRole,
+		Role:      appvars.UserDefaultRole,
 		Active:    true,
 		CreatedAt: time.Now(),
 	}
@@ -78,10 +104,10 @@ func (u *UserUpdates) CheckBioLength() error {
 	return checkBioLength(u.Bio)
 }
 
-// isReadyForUser returns nil if this NewUserRequest is able to
+// validate returns nil if this NewUserRequest is able to
 // be turned into a user, otherwise returns an error stating
 // why it cannot be.
-func (u *NewUserRequest) isReadyForUser() error {
+func (u *NewUserRequest) validate() error {
 	if len(u.FirstName) == 0 {
 		return errors.New("new user first name must exist")
 	}
@@ -95,14 +121,14 @@ func (u *NewUserRequest) isReadyForUser() error {
 		return errors.New("new users must have a password")
 	}
 	if len(u.Password) != len(u.PasswordConf) {
-		return errors.New("passwords did not match")
+		return errors.New("passwords do not match")
 	}
 	return nil
 }
 
 // SetPassword hashes the given password and sets it as this users passHash
 func (u *User) SetPassword(password string) error {
-	passHash, err := bcrypt.GenerateFromPassword([]byte(password), constants.BCryptDefaultCost)
+	passHash, err := bcrypt.GenerateFromPassword([]byte(password), appvars.BCryptDefaultCost)
 	if err != nil {
 		return err
 	}
@@ -158,7 +184,7 @@ func generateRandomUser() *User {
 		FirstName: randomdata.FirstName(randomdata.RandomGender),
 		LastName:  randomdata.LastName(),
 		Email:     randomdata.Email(),
-		Role:      constants.UserDefaultRole,
+		Role:      appvars.UserDefaultRole,
 	}
 	user.SetPassword(randomdata.FirstName(randomdata.RandomGender) + randomdata.Street())
 	return user
@@ -167,11 +193,11 @@ func generateRandomUser() *User {
 // checkBioLength returns an error if the bio is too long
 // either by word count or character count.
 func checkBioLength(bio string) error {
-	if len(bio) > constants.ProfileBioMaxCharacters {
-		return errors.New(constants.ErrBioTooManyCharacters)
+	if len(bio) > appvars.ProfileBioMaxCharacters {
+		return errors.New(appvars.ErrBioTooManyCharacters)
 	}
-	if len(strings.Fields(bio)) > constants.ProfileBioMaxWords {
-		return errors.New(constants.ErrBioTooManyWords)
+	if len(strings.Fields(bio)) > appvars.ProfileBioMaxWords {
+		return errors.New(appvars.ErrBioTooManyWords)
 	}
 	return nil
 }

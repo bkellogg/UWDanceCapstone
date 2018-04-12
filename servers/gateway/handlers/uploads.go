@@ -15,7 +15,7 @@ import (
 
 	"github.com/nfnt/resize"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/constants"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 )
 
@@ -35,13 +35,16 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 	}
 
 	// if the file size is greater than 5MB, reject it
-	if fileheader.Size > constants.ProfileUploadMaxFileSize {
+	if fileheader.Size > appvars.ProfileUploadMaxFileSize {
 		return HTTPError("filesize too large", http.StatusBadRequest)
 	}
 
 	// write the image bytes into a buffer
 	imgBytesBuffer := bytes.NewBuffer(nil)
 	io.Copy(imgBytesBuffer, img)
+
+	// Make file upload names case insensitive
+	fileheader.Filename = strings.ToLower(fileheader.Filename)
 
 	var uploadedImage image.Image
 
@@ -66,7 +69,7 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 
 	// get the user ID and create a new file for the image to be saved to.
 	userIDString := strconv.Itoa(userID)
-	f, err := os.OpenFile(constants.ProfilePicturePath+userIDString+".jpg", os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile(appvars.ProfilePicturePath+userIDString+".jpg", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return HTTPError(err.Error(), http.StatusInternalServerError)
 	}
@@ -93,7 +96,11 @@ func saveResumeFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 
 	// get the user ID and create a new file for the resume to be saved to.
 	userIDString := strconv.Itoa(userID)
-	f, err := os.OpenFile(constants.ProfileResumePath+userIDString+".pdf", os.O_WRONLY|os.O_CREATE, 0666)
+	err := os.Remove(appvars.ProfileResumePath + userIDString + ".pdf")
+	if err != nil && !os.IsNotExist(err) {
+		return HTTPError("error removing old resume: "+err.Error(), http.StatusInternalServerError)
+	}
+	f, err := os.OpenFile(appvars.ProfileResumePath+userIDString+".pdf", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		return HTTPError(err.Error(), http.StatusInternalServerError)
 	}
@@ -103,10 +110,10 @@ func saveResumeFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 }
 
 // getUserResume returns the bytes of the user's resume, or an HTTPError if an
-// error occured.
+// error occurred.
 func getUserResume(userID int) ([]byte, *middleware.HTTPError) {
 	userIDString := strconv.Itoa(userID)
-	resumeBytes, err := ioutil.ReadFile(constants.ProfileResumePath + userIDString + ".pdf")
+	resumeBytes, err := ioutil.ReadFile(appvars.ProfileResumePath + userIDString + ".pdf")
 	if err != nil {
 		return nil, HTTPError("user resume not found", http.StatusNotFound)
 	}
@@ -117,7 +124,7 @@ func getUserResume(userID int) ([]byte, *middleware.HTTPError) {
 // userID as a []byte. Returns an error if one occurred.
 func getUserProfilePicture(userID int) ([]byte, *middleware.HTTPError) {
 	userIDString := strconv.Itoa(userID)
-	imageBytes, err := ioutil.ReadFile(constants.ProfilePicturePath + userIDString + ".jpg")
+	imageBytes, err := ioutil.ReadFile(appvars.ProfilePicturePath + userIDString + ".jpg")
 	if err != nil {
 		return nil, HTTPError("profile picture not found", http.StatusNotFound)
 	}
@@ -126,7 +133,7 @@ func getUserProfilePicture(userID int) ([]byte, *middleware.HTTPError) {
 
 // getUploadFromRequest gets the upload in the field of the given request that is specified
 // by the given inputHeader. Returns a file and a fileheader, or an HTTPError if an error
-// occured.
+// occurred.
 func getUploadFromRequest(r *http.Request, inputHeader string) (multipart.File, *multipart.FileHeader, *middleware.HTTPError) {
 	inputFieldName := r.Header.Get(inputHeader)
 	if len(inputFieldName) == 0 {

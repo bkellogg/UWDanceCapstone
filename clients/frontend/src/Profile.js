@@ -115,6 +115,7 @@ class Profile extends Component {
       });
   }
 
+
   getResume() {
     fetch(Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth)
       .then((res) => {
@@ -134,7 +135,7 @@ class Profile extends Component {
         })
       });
   }
-
+  
   onClick() {
     if (this.state.edit) {
       if (this.state.firstName !== "") {
@@ -195,61 +196,102 @@ class Profile extends Component {
   render() {
     return (
       <section className="main">
+      <h5 className="pagetitle">Your Profile </h5>
         <div className="sub">
-          <div className="header">
-            <div id="photoContainer">
-              {!this.state.edit &&
-                <img id="photo" src={this.state.photoSrc}></img>
-              }
-              {this.state.edit &&
-                <section>
-                  <div> Upload a head shot as a jpg file. </div>
-                  <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
-                </section>
-              }
-            </div>
-            <div id="name">
-              {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
-              {this.state.edit &&
-                <div id="editName">
-                  <Row>
-                    <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
-                    <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
-                  </Row>
+          {/* FIRST CARD */}
+          <div className="headerBorder">
+            <div className="header">
+              <div className="photoContainerWrap">
+                <div id="photoContainer" className="photoContainer">
+                  {!this.state.edit &&
+                    <img id="photo" src={this.state.photoSrc}></img>
+                  }
+                  {this.state.edit &&
+                    <section>
+                      <div> Upload a head shot as a jpg file. </div>
+                      <Input id="photoUpload" name="photoUpload" type="file" onChange={this.inputChange} />
+                    </section>
+                  }
                 </div>
-              }
-            </div>
-          </div>
-          <div id="bio">
-            <div className="subheader"><b>Bio:</b></div>
-            {!this.state.edit &&
-              <section>
-                {this.state.bio !== "" && this.state.bio}
-                {this.state.bio === "" && " Dancer has no bio"}
-              </section>
-            }
-            {this.state.edit &&
-              <div id="editBio">
-                <Input id="bioUpload" name="bioUpload" s={6} placeholder="Bios should be 60 words or less" onChange={this.inputChange} />
               </div>
-            }
-          </div>
-          <div id="history">
-            <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-            {this.state.history !== null && this.state.history.map((p, i) => {
-              return (
-                //TODO STYLE THESE
-                <div className="showHistory" key={i}>
-                  <p>{p.name}</p>
-                  <p>{p.year}</p>
+
+              <div className="nameAndBioWrap">
+                <div id="name" className="name">
+                  {!this.state.edit && <h5 id="profileName">{this.state.fname} {this.state.lname}</h5>}
+                  {this.state.edit &&
+                    <div id="editName">
+                      <Row>
+                        <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
+                        <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
+                      </Row>
+                    </div>
+                  }
                 </div>
-              )
-            })}
-            {this.state.history === null &&
-              <p> Dancer has no piece history </p>
-            }
+
+                <div id="bio" className="bio">
+                  <div className="subheader"><b>Dancer Bio:</b></div>
+                  {!this.state.edit &&
+                    <section>
+                      {this.state.bio !== "" && this.state.bio}
+                      {this.state.bio === "" && " Dancer has no bio"}
+                    </section>
+                  }
+                  {this.state.edit &&
+                    <div id="editBio">
+
+                      <div class="row">
+                        <form class="col s12">
+                          <div class="row">
+                            <div class="input-field col s12">
+                              <textarea id="textarea1" name="bioUpload" s={6} class="materialize-textarea" onChange={this.inputChange}></textarea>
+                              <label for="textarea1">Bios should be 60 words or less</label>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+
+                      {/* <Input id="bioUpload" name="bioUpload" s={6} placeholder="Bios should be 60 words or less" onChange={this.inputChange}/> */}
+                    </div>
+
+                  }
+                </div>
+              </div>
+              {!this.state.edit &&
+                <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                  <i className="large material-icons"> mode_edit </i>
+                </Button>
+
+              }
+              {this.state.edit &&
+                <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                  <i className="large material-icons"> check </i>
+                </Button>
+              }
+            </div>
           </div>
-          <div id="resume">
+          </div>
+
+          <div className="sub2">
+
+              {/* SECOND CARD */}
+          <div className="mainContentBorder">
+            <div id="history">
+              <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+              {this.state.history !== null && this.state.history.map((p, i) => {
+                return (
+                  //TODO STYLE THESE
+                  <div className="showHistory" key={i}>
+                    <p>{p.name}</p>
+                    <p>{p.year}</p>
+                  </div>
+                )
+              })}
+              {this.state.history === null &&
+                <p> Dancer has no piece history </p>
+              }
+            </div>
+
+            <div id="resume">
             {!this.state.edit &&
               <section>
                 {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}

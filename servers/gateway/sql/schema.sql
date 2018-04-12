@@ -12,12 +12,18 @@ CREATE TABLE Users (
 
 CREATE TABLE Auditions (
     AuditionID INT AUTO_INCREMENT PRIMARY KEY,
-    AuditionName varchar (50) NOT NULL UNIQUE KEY,
-    AuditionDate varchar(20) NOT NULL,
-    AuditionTime varchar(20) NOT NULL,
-    AuditionLocation varchar(100) NOT NULL,
-    Quarter VARCHAR(10) NOT NULL,
-    Year VARCHAR(4) NOT NULL,
+    Name varchar (50) NOT NULL UNIQUE KEY,
+    Location VARCHAR(100) NOT NULL,
+    Time DATETIME NOT NULL,
+    CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL
+);
+
+CREATE TABLE ShowType (
+    ShowTypeID INT AUTO_INCREMENT PRIMARY KEY,
+    ShowTypeName varchar(50) NOT NULL UNIQUE KEY,
+    ShowTypeDesc varchar(150) NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL
@@ -25,13 +31,14 @@ CREATE TABLE Auditions (
 
 CREATE TABLE Shows (
     ShowID INT AUTO_INCREMENT PRIMARY KEY,
-    ShowName varchar(50) NOT NULL UNIQUE KEY,
+    ShowTypeID INT NOT NULL,
     AuditionID INT,
     EndDate DATETIME NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
-    FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID)
+    FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID),
+    FOREIGN KEY (ShowTypeID) REFERENCES ShowType(ShowTypeID)
 );
 
 CREATE TABLE Pieces (
@@ -40,7 +47,7 @@ CREATE TABLE Pieces (
     ShowID INT,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
-    IsDeleted BOOLEAN NOT NULL,
+    IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (ShowID) REFERENCES Shows(ShowID)
 );
 
@@ -54,14 +61,39 @@ CREATE TABLE UserPiece (
     FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID)
 );
 
+CREATE TABLE UserAuditionAvailability (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Sunday VARCHAR(250) NOT NULL,
+    Monday VARCHAR(250) NOT NULL,
+    Tuesday VARCHAR(250) NOT NULL,
+    Wednesday VARCHAR(250) NOT NULL,
+    Thursday VARCHAR(250) NOT NULL,
+    Friday VARCHAR(250) NOT NULL,
+    Saturday VARCHAR(250) NOT NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT NOW(),
+    IsDeleted BOOLEAN NOT NULL DEFAULT FALSE
+);
+
 CREATE TABLE UserAudition (
     UserAuditionID INT AUTO_INCREMENT PRIMARY KEY,
     AuditionID INT NOT NULL,
     UserID INT NOT NULL,
+    AvailabilityID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID)
+    FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID),
+    FOREIGN KEY (AvailabilityID) REFERENCES UserAuditionAvailability(ID)
+);
+
+CREATE TABLE UserAuditionComment (
+    CommentID INT AUTO_INCREMENT PRIMARY KEY,
+    UserAuditionID INT NOT NULL,
+    Comment VARCHAR(150) NOT NULL,
+    CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (UserAuditionID) REFERENCES UserAudition(UserAuditionID)
 );
 
 CREATE TABLE Errors (
@@ -74,11 +106,22 @@ CREATE TABLE Errors (
     ErrMessage VARCHAR(150) NOT NULL
 );
 
+CREATE TABLE AnnouncementType (
+    AnnouncementTypeID INT AUTO_INCREMENT PRIMARY KEY,
+    AnnouncementTypeName varchar(25) NOT NULL,
+    AnnouncementTypeDesc varchar(150) NULL,
+    CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL
+);
+
 CREATE TABLE Announcements (
     AnnouncementID INT AUTO_INCREMENT PRIMARY KEY,
+    AnnouncementTypeID INT NOT NULL,
     Message varchar(500) NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted Boolean NOT NULL,
-    FOREIGN KEY (CreatedBy) REFERENCES Users(UserID)
+    FOREIGN KEY (CreatedBy) REFERENCES Users(UserID),
+    FOREIGN KEY (AnnouncementTypeID) REFERENCES AnnouncementType(AnnouncementTypeID)
 );

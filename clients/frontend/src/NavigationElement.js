@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-//import 'materialize-css';
+import MenuItem from 'material-ui/MenuItem';
+
 
 class NavigationElement extends Component {
   constructor(props) {
@@ -14,7 +15,8 @@ class NavigationElement extends Component {
     let address = "/" + this.props.showTitle.split(' ').join('');
     return (
         <li>
-            <Link className="collapsible-header" style={{paddingLeft: 32}} to={{pathname: address}}>{this.props.showTitle}</Link>
+
+            <Link className="collapsible-header" style={{paddingLeft: 32}} to={{pathname: "/"}}>{this.props.showTitle}</Link>
             <div className="collapsible-body">
                 <ul>
                     {/*Dancer (new user)*/}
@@ -37,6 +39,7 @@ class NavigationElement extends Component {
                     <li><Link to={{pathname:address + "/piece"}}>My Piece</Link></li>
                 </ul>
             </div>
+
         </li>
     );
   };

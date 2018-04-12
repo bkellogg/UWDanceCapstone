@@ -1,7 +1,55 @@
-.header{
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  color: #9194B5;
+}
+
+h5 {
+	font-size: 22px;
+	font-style: normal;
+	font-variant: normal;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #EA6336;
+}
+
+.pagetitle{
+  margin: 2%;
+  margin-left: 5%;
+  text-transform: uppercase;
+}
+
+.headerBorder{
   display: flex;
   position: relative;
-  height: 150px
+  height: 100%;
+  width: 100%;
+  
+}
+
+.header, .mainContentBorder{
+  width: 100%;
+  margin-bottom: 3%;
+  padding: 2%;
+  position: relative;
+}
+
+.photoContainerWrap {
+  position: relative;
+  display: inline-block;
+  margin-right: 3%;
+}
+
+.nameAndBioWrap{
+  width: 70%;
+  position: relative;
+  display: inline-block;
+}
+
+#edit {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 #photo {
@@ -9,25 +57,33 @@
   max-width: 100%
 }
 
-.name {
-  height: 150px;
-  width: 150px
+.name, .bio{
+  width: auto;
 }
 
-#profileName{
-  position: absolute;
-  bottom: 0px;
-  margin-bottom:0px;
-  padding-left:25px
+.name, #editName {
+  z-index: 1;
+  text-transform: capitalize;
+  padding-bottom: 1%;
 }
 
-.sub {
-  padding-left: 50px;
-  padding-top: 80px;
+.bio, #editBio{
+  z-index: 2;
 }
 
-#bio{
-  padding-top:30px;
+.sub, .sub2, #photo{
+  border-radius: 5px;
+  -webkit-box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
+-moz-box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
+box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);  
+}
+
+.sub, .sub2 {
+  width: 85%;
+  padding: 2%;
+  margin:3%;
+  margin-left: 5%;
+  background-color: white;
 }
 
 #historyTitle {
@@ -38,31 +94,34 @@
   margin-bottom: 15px
 }
 
-#bio, #history, #resume {
-  margin-top: 20px;
+#history, #resume {
   margin-bottom:40px
 }
 
 .subheader {
-  font-size: 20px;
+  font-size: 15px;
+
 }
 
-#editName{
+section{
+  font-size: 14px;
+  margin-top: 1%;
+}
+
+/* #editName{
   padding-left: 25px;
   display: flex;
   position: absolute;
   bottom: 0px;
   margin-bottom:0px;
-}
+} */
 
 #firstName, #lastName{
   margin-right: 10px
 }
 
-#editBio{
+/* #editBio{
   width: 80%;
-}
-
 @media only screen and (max-width : 992px) {
 
 }

@@ -81,7 +81,7 @@ deployAPI () {
 	-e SESSIONKEY=$SESSIONKEY \
     -e MAILUSER=$MAILUSER \
     -e MAILPASS=$MAILPASS \
-    -e RESETPASSWORDCLIENTPATH=/clients/passwordresetclient \
+    -e RESETPASSWORDCLIENTPATH=/clients/passwordreset \
     -e ASSETSPATH=/assets/ \
     -e ADMINCONSOLEPATH=/clients/console \
     -e FRONTENDPATH=/clients/frontend/build/ \
@@ -91,7 +91,7 @@ deployAPI () {
 
 if [[ "$1" == "" ]]; then
     deployAPI
-elif [[ "$1" == "--hard" ]]; then
+elif [[ "$1" == "--full" ]]; then
 	deployAPI hard
 elif [[ "$1" == "--nobuild" ]]; then
     deployAPI nobuild
