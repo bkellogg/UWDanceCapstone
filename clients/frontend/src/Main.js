@@ -9,11 +9,10 @@ import Profile from './Profile';
 import Casting from './Casting';
 import MobileNavigationElement from './MobileNavigation';
 import NavigationElement from './NavigationElement';
-import {Button, SideNav, SideNavItem} from 'react-materialize';
+import {Button} from 'react-materialize';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
-import Divider from 'material-ui/Divider';
 import * as Util from './util';
 import 'materialize-css';
 import './styling/Main.css';
@@ -78,7 +77,7 @@ class Main extends Component {
     .then((data) => {
       let showTypes = {};
       data.map(function(show){
-         showTypes[show.id.toString()] = show.desc
+         return showTypes[show.id.toString()] = show.desc
       })
       return showTypes
    })
@@ -90,7 +89,7 @@ class Main extends Component {
    .then( () => {
     let currShows = []
     shows.map(s => {
-      currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID})
+      return currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID})
     })
     return currShows
    })
@@ -162,7 +161,6 @@ class Main extends Component {
           {this.state.currShows.map((show, i) => {
             let showName = show.name
             let path = "/" + showName.split(' ').join('')
-            console.log("Audition: " + show.audition)
             return( 
               <Switch key = {i}>
                 <Route exact path={path} render={

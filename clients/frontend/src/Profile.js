@@ -70,7 +70,7 @@ class Profile extends Component {
       })
       .then((data) => {
         data.map(function (show) {
-          showTypes[show.id.toString()] = show.desc
+          return showTypes[show.id.toString()] = show.desc
         })
         return showTypes
 
@@ -204,7 +204,7 @@ class Profile extends Component {
               <div className="photoContainerWrap">
                 <div id="photoContainer" className="photoContainer">
                   {!this.state.edit &&
-                    <img id="photo" src={this.state.photoSrc}></img>
+                    <img id="photo" alt="placeholder" src={this.state.photoSrc}></img>
                   }
                   {this.state.edit &&
                     <section>

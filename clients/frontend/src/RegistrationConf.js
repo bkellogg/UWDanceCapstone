@@ -1,16 +1,8 @@
 import React, { Component } from 'react';
-import * as Util from './util.js';
 
 //styling
 import { Card, CardText, CardTitle} from 'material-ui/Card';
 import Moment from 'react-moment';
-import './styling/Audition.css';
-
-const styles = {
-  customWidth: {
-    width: 150,
-  },
-};
 
 class RegistrationConf extends Component {
   constructor(props) {
@@ -18,12 +10,9 @@ class RegistrationConf extends Component {
     this.state ={
       registered: false,
     }
-    console.log(this.props.audition)
-
   };
-  
-  render() {
 
+  render() {
       return(
               <div className="registered">
                 <Card className="successCard">

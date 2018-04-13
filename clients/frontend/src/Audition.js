@@ -8,12 +8,6 @@ import RegistrationConf from './RegistrationConf';
 //styling
 import './styling/Audition.css';
 
-const styles = {
-  customWidth: {
-    width: 150,
-  },
-};
-
 class Audition extends Component {
   constructor(props) {
     super(props);
@@ -21,7 +15,6 @@ class Audition extends Component {
       registered: false,
       audition: null
     }
-    console.log(this.props.audition)
   };
 
   componentWillMount(){
@@ -37,7 +30,6 @@ class Audition extends Component {
       return res.text().then((t) => Promise.reject(t));
     })
     .then(audition => {
-      console.log(audition)
       this.setState({
         registered: true,
         audition: audition.audition
@@ -51,7 +43,6 @@ class Audition extends Component {
   }
 
   render() {
-    const registered = this.state.registered
       return(
         <section className="main">
           <div className="audition">

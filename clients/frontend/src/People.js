@@ -2,9 +2,16 @@ import React, { Component } from 'react';
 import * as Util from './util';
 
 class People extends Component {
-  /*constructor(props) {
+  constructor(props) {
     super(props);
-  };*/
+    this.state = {
+      users: []
+    }
+  }
+
+  componentDidMount(){
+    this.getPeople()
+  }
 
   getPeople = () => {
     //API route to get people in an audition will go here
@@ -18,46 +25,23 @@ class People extends Component {
       return res.text().then((t) => Promise.reject(t));
     })
     .then(data => {
-      return data.users
-    })
-    .then(p => {
-      let pers = p.map(person => {
-        return(
-          <tr>
-            <td>
-              ah
-            </td>
-          </tr>
-        )
-      })
-      return (
-        <div>{pers}</div>
-      )
+      this.setState({users: data.users})
     })
     .catch(err => console.log(err))
   }
 
   render() {
+    let rows = this.state.users.map((person, i) => {
+      return(
+        <PersonRow key={i} p={person}/>
+      )
+    })
     return (
       <section className="main">
         <h1>People</h1>
         <table>
           <tbody>
-          <tr>
-          <th>
-            Photo
-          </th>
-          <th>
-            Name
-          </th>
-          <th>
-            Role
-          </th>
-          <th>
-            Email
-          </th>
-          </tr>
-{this.getPeople()}
+            {rows}
           </tbody>
         </table>
       </section>
@@ -65,5 +49,25 @@ class People extends Component {
 };
 
 }
+
+const PersonRow = (props) => {
+  return (
+    <tr>
+      <td>
+        photo
+      </td>
+      <td>
+        name
+      </td>
+      <td>
+        role
+      </td>
+      <td>
+        asdf
+      </td>
+    </tr>
+  );
+}
+
 export default People;
 
