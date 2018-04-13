@@ -192,7 +192,8 @@ class Profile extends Component {
     return (
       <section className="main">
       <div className="mainView">
-      <h5 className="pagetitle">Your Profile </h5>
+      <h1 className="pagetitle">Your Profile </h1>
+
 
         <div className="sub">
           {/* FIRST CARD */}
@@ -201,6 +202,7 @@ class Profile extends Component {
               <div className="photoContainerWrap">
                 <div id="photoContainer" className="photoContainer">
                   {!this.state.edit &&
+
                     <img id="photo" alt="placeholder" src={this.state.photoSrc}></img>
                   }
                   {this.state.edit &&
@@ -214,7 +216,10 @@ class Profile extends Component {
 
               <div className="nameAndBioWrap">
                 <div id="name" className="name">
-                  {!this.state.edit && <h5 id="profileName">{this.state.fname} {this.state.lname}</h5>}
+
+                  {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+
+
                   {this.state.edit &&
                     <div id="editName">
                       <Row>
@@ -235,6 +240,7 @@ class Profile extends Component {
                   }
                   {this.state.edit &&
                     <div id="editBio">
+
 
                       <div className="row">
                         <form className="col s12">
@@ -292,7 +298,8 @@ class Profile extends Component {
               {!this.state.edit &&
                 <section>
                   {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                  <a href={this.state.resume} target="_blank">Resume</a>
+                  <a href={this.state.resume} target="_blank">View PDF Resume</a>
+
                 </section>
               }
               {this.state.edit &&

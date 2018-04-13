@@ -124,7 +124,10 @@ class SignIn extends Component {
     ];
 
     return (
-      <div className="LogInLanding" style={{ height: 100 + '%' }}>
+      <div className="LogInLanding" 
+      // style={{ height: 100 + '%' }}
+      >
+\
         
         {/* <div className="LogInPhoto">
         <img src={img}></img>

@@ -24,10 +24,6 @@ body {
     font-size: 13px;
 }
 
-.sidenav li>a:hover, .collapsible-header li>a:hover{
-    background-color: #799FB0;
-}
-
 Button{
     margin: 0;
 }
@@ -38,5 +34,5 @@ Button{
 
 .collapsible-body{
     padding: 0px;
-    padding-left: 30px;
+    text-indent: 30px;
 }

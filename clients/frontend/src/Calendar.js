@@ -10,7 +10,7 @@ class Calendar extends Component {
   render() {
     return (
       <div>
-        <h1>Calendar!</h1>
+        <h5>Calendar!</h5>
       </div>
     );
   };
