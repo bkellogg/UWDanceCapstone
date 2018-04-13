@@ -23,12 +23,8 @@ class Main extends Component {
     super(props);
     this.getNavigation = this.getNavigation.bind(this);
     this.signOut = this.signOut.bind(this);
-    this.updatePage = this.updatePage.bind(this);
     this.getCurrShows = this.getCurrShows.bind(this);
     this.getShowTypes = this.getShowTypes.bind(this);
-    //"page" lets me know what page we are looking at, numerically encoded so I don't have to deal with strings
-    //starts on dashboard (100)
-    //onClick links will update
     this.state = {
       user: JSON.parse(localStorage.user),
       shows: null,
@@ -38,17 +34,9 @@ class Main extends Component {
       currShows: [],
       open: false
     }
-
-
-    
   };
 
-  componentWillMount(){
-    
-  }
-
   componentDidMount(){
-    
     this.getShowTypes();
     this.getCurrShows();
     if(!localStorage['firstLoad']){
@@ -77,7 +65,6 @@ class Main extends Component {
     .then( showTypes => {
       let currShows = []
       this.state.shows.map(s => {
-        console.log(s)
         currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID})
       })
       return currShows
@@ -132,14 +119,6 @@ class Main extends Component {
     this.props.auth();
   }
 
-  updatePage(pageNum){
-    if(this.state.page !== pageNum) {
-      this.setState({
-        page: pageNum
-      })
-    }
-  }
-
   handleToggle = () => this.setState({open: !this.state.open});
 
   handleClose = () => this.setState({open: false});
@@ -178,7 +157,7 @@ class Main extends Component {
           {this.state.currShows.map((show, i) => {
             let showName = show.name
             let path = "/" + showName.split(' ').join('')
-            console.log(show.audition)
+            console.log(show)
             return( 
               <Switch key = {i}>
                 <Route exact path={path} render={

@@ -47,7 +47,9 @@ class Audition extends Component {
       }
     }
 
-    Util.makeRequest("users/me/auditions/" + this.props.auditionID, body, "LINK", true)
+    //audition id set to 1 temporarily
+    //"users/me/auditions/" + this.props.auditionID
+    Util.makeRequest("users/me/auditions/" + "1", body, "LINK", true)
     .then(res => {
       if (res.ok) {
         return res.json();
