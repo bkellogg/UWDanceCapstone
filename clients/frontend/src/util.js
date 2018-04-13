@@ -59,7 +59,6 @@ export function refreshLocalUser() {
         setLocalUser(JSON.stringify(data));
     })
     .catch((err) => {
-        console.error(err);
         signOut();
     })
 }

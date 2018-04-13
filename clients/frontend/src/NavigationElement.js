@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import MenuItem from 'material-ui/MenuItem';
 import './styling/Navigation.css';
+
 
 
 class NavigationElement extends Component {

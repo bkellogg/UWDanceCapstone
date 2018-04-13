@@ -69,7 +69,7 @@ class Profile extends Component {
       })
       .then((data) => {
         data.map(function (show) {
-          showTypes[show.id.toString()] = show.desc
+          return showTypes[show.id.toString()] = show.desc
         })
         return showTypes
       })
@@ -201,7 +201,7 @@ class Profile extends Component {
               <div className="photoContainerWrap">
                 <div id="photoContainer" className="photoContainer">
                   {!this.state.edit &&
-                    <img id="photo" src={this.state.photoSrc}></img>
+                    <img id="photo" alt="placeholder" src={this.state.photoSrc}></img>
                   }
                   {this.state.edit &&
                     <section>
@@ -236,12 +236,12 @@ class Profile extends Component {
                   {this.state.edit &&
                     <div id="editBio">
 
-                      <div class="row">
-                        <form class="col s12">
-                          <div class="row">
-                            <div class="input-field col s12">
-                              <textarea id="textarea1" name="bioUpload" s={6} class="materialize-textarea" onChange={this.inputChange}></textarea>
-                              <label for="textarea1">Bios should be 60 words or less</label>
+                      <div className="row">
+                        <form className="col s12">
+                          <div className="row">
+                            <div className="input-field col s12">
+                              <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
+                              <label htmlFor="textarea1">Bios should be 60 words or less</label>
                             </div>
                           </div>
                         </form>
