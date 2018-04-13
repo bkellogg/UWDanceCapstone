@@ -43,15 +43,19 @@ class Audition extends Component {
     .catch(err => {console.log(err)})
   }
 
+  registerUser = () => {
+    this.checkRegistration()
+  }
+
   render() {
-    
+    const registered = this.state.registered
       return(
         <section className="main">
           <div className="audition">
             <h1 id="auditionTitle">{this.props.name}</h1>
             {
               this.state.registered === false &&
-                <Registration audition={this.props.audition} registered={() => this.setState({registered: true})} />
+                <Registration audition={this.props.audition} registered={() => {this.setState({registered: true})}} />
             }
             {
               this.state.registered === true &&

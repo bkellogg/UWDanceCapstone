@@ -59,6 +59,7 @@ class Registration extends Component {
 
   render() {
     const disabled = !this.state.clicked
+
       return(
                 <div className="auditionForm">
                   <div className="row">
