@@ -302,12 +302,7 @@ class Profile extends Component {
                 </section>
               }
             </div>
-            {!this.state.edit &&
-              <Button id="edit" onClick={() => this.onClick()}>Edit profile</Button>
-            }
-            {this.state.edit &&
-              <Button id="edit" onClick={() => this.onClick()}>Save changes</Button>
-            }
+
           </div>
 
 
