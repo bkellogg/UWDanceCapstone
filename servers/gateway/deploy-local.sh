@@ -28,6 +28,7 @@ deployAPI () {
 
 		echo -e >&2 "${GREEN}Starting redis...${NC}"
 		docker run -d \
+		-p 6379:6379 \
 		--name redis \
 		--network dance-net \
 		redis

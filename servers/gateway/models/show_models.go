@@ -25,12 +25,13 @@ func (ns *NewShow) Validate() error {
 
 // Show defines the information needed to store a show.
 type Show struct {
-	ID        int       `json:"id"`
-	TypeID    int       `json:"typeID"`
-	EndDate   time.Time `json:"endDate"`
-	CreatedAt time.Time `json:"createdAt"`
-	CreatedBy int       `json:"createdBy"`
-	IsDeleted bool      `json:"isDeleted"`
+	ID         int       `json:"id"`
+	TypeID     int       `json:"typeID"`
+	AuditionID int       `json:"auditionID,omitempty"`
+	EndDate    time.Time `json:"endDate"`
+	CreatedAt  time.Time `json:"createdAt"`
+	CreatedBy  int       `json:"createdBy"`
+	IsDeleted  bool      `json:"isDeleted"`
 }
 
 // ShowType defines how a ShowType will be stored in the database.

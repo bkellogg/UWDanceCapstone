@@ -152,7 +152,8 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool, t
 
 	offset := getSQLPageOffset(page)
 	// TODO: This is awful, but a quick fix for WHERE needing to be there
-	query := `SELECT * FROM Shows S WHERE 1 = 1`
+	query := `SELECT S.ShowID, S.ShowTypeID, A.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
+ 		JOIN Auditions A WHERE 1 = 1`
 	if !includeDeleted {
 		query += ` AND S.IsDeleted = false`
 	}
@@ -174,14 +175,15 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool, t
 
 // GetShowByID returns the show with the given ID.
 func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
-	query := `SELECT * FROM Shows S WHERE S.ShowID = ?`
+	query := `SELECT S.ShowID, S.ShowTypeID, A.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
+		JOIN Auditions A WHERE S.ShowID = ?`
 	if !includeDeleted {
 		query += ` AND S.IsDeleted = false`
 	}
 	show := &Show{}
 	err := store.db.QueryRow(query,
 		id).Scan(
-		&show.ID, &show.TypeID,
+		&show.ID, &show.TypeID, &show.AuditionID,
 		&show.EndDate, &show.CreatedAt,
 		&show.CreatedBy, &show.IsDeleted)
 	if err != nil {
@@ -203,7 +205,8 @@ func (store *Database) DeleteShowByID(id int) error {
 // if one occurred.
 func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, history string) ([]*Show, *DBError) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT S.ShowID, S.ShowTypeID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
+	query := `SELECT S.ShowID, S.ShowTypeID, A.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
+		JOIN Auditions A
 		JOIN Pieces P ON S.ShowID = P.ShowID
 		JOIN UserPiece UP ON P.PieceID = UP.PieceID
 		WHERE UP.UserID = ?`
@@ -235,7 +238,7 @@ func handleShowsFromDatabase(result *sql.Rows, err error) ([]*Show, *DBError) {
 	shows := make([]*Show, 0)
 	for result.Next() {
 		show := &Show{}
-		if err = result.Scan(&show.ID, &show.TypeID, &show.EndDate,
+		if err = result.Scan(&show.ID, &show.TypeID, &show.AuditionID, &show.EndDate,
 			&show.CreatedAt, &show.CreatedBy, &show.IsDeleted); err != nil {
 			return nil, NewDBError(fmt.Sprintf("error scanning result into show: %v", err), http.StatusInternalServerError)
 		}
