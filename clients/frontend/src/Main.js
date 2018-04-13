@@ -157,7 +157,7 @@ class Main extends Component {
           {this.state.currShows.map((show, i) => {
             let showName = show.name
             let path = "/" + showName.split(' ').join('')
-            console.log(show)
+            console.log("Audition: " + show.audition)
             return( 
               <Switch key = {i}>
                 <Route exact path={path} render={
