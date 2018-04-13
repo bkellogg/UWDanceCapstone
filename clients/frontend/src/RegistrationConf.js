@@ -3,6 +3,7 @@ import * as Util from './util.js';
 
 //styling
 import { Card, CardText, CardTitle} from 'material-ui/Card';
+import Moment from 'react-moment';
 import './styling/Audition.css';
 
 const styles = {
@@ -18,10 +19,11 @@ class RegistrationConf extends Component {
       registered: false,
     }
     console.log(this.props.audition)
-  };
 
-  //TODO make this actual info about an audition
+  };
+  
   render() {
+
       return(
               <div className="registered">
                 <Card className="successCard">
@@ -29,9 +31,9 @@ class RegistrationConf extends Component {
                     <CardTitle>You have successfully registered</CardTitle>
                   </div>
                     <CardText>
-                      <p>Meany Hall Studio 265</p>
-                      <p>Audition starts at 6:30</p>
-                      <p>Doors open for warmup 30 minutes prior</p>
+                      <p>{this.props.audition.location}</p>
+                      {/*TODO format date time how you like*/}
+                      <p>Audition starts at <Moment format="YYYY/MM/DD HH:mm">{this.props.audition.time}</Moment></p>
                     </CardText>
                 </Card>
                 <Card className="successCard" id="regCard">

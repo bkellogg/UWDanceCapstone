@@ -32,12 +32,12 @@ class Audition extends Component {
     Util.makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
     .then(res => {
       if(res.ok) {
-        return res.json
+        return res.json()
       }
       return res.text().then((t) => Promise.reject(t));
     })
     .then(audition => {
-      console.log(audition.audition)
+      console.log(audition)
       this.setState({
         registered: true,
         audition: audition.audition
