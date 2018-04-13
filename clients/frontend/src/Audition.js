@@ -26,7 +26,8 @@ class Audition extends Component {
     this.handleRegister = this.handleRegister.bind(this);
     this.state ={
       value: 1,
-      registered: false
+      registered: false,
+      clicked: false
     }
     console.log(this.props.audition)
   };
@@ -52,7 +53,7 @@ class Audition extends Component {
     Util.makeRequest("users/me/auditions/" + "1", body, "LINK", true)
     .then(res => {
       if (res.ok) {
-        return res.json();
+        return res.text();
       }
       return res.text().then((t) => Promise.reject(t));
     })
@@ -60,11 +61,14 @@ class Audition extends Component {
       this.setState({
         registered: true
       })
+      console.log(this.state.registered)
     })
     .catch(err => console.log(err))
   }
 
   render() {
+    const disabled = !this.state.clicked
+    console.log(disabled)
       return(
         <section className="main">
           <div className="audition">
@@ -90,7 +94,7 @@ class Audition extends Component {
                    <br />
                     <Checkbox
                       label="I confirm I am enrolled in a class for the quarter during which the show is occuring."
-                      
+                      onClick={() => {this.setState({clicked: !this.state.clicked})}}
                     />
                   </div>
                   <br/>
@@ -108,7 +112,7 @@ class Audition extends Component {
                       rows={2}
                     />
                   </div>
-                  <RaisedButton className='register' onClick={this.handleRegister} style={{backgroundColor: "#BFB2E5"}}> Register </RaisedButton>
+                  <RaisedButton className='register' onClick={this.handleRegister} disabled={disabled} style={{backgroundColor: "#BFB2E5"}}> Register </RaisedButton>
                 </div>
             }
             {
