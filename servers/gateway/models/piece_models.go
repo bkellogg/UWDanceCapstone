@@ -24,7 +24,7 @@ func (np *NewPiece) Validate() error {
 // Piece defines a piece within a show.
 type Piece struct {
 	ID              int       `json:"id"`
-	ChoreographerID int       `json:"choreographerID"`
+	ChoreographerID int       `json:"choreographerID,omitempty"`
 	Name            string    `json:"name"`
 	ShowID          int       `json:"showID,omitempty"`
 	CreatedAt       time.Time `json:"createdAt"`

@@ -34,7 +34,7 @@ func (store *Database) UserIsInAudition(userID, audID int) (bool, *DBError) {
 }
 
 // AddUserToPiece adds the given user to the given piece.
-func (store *Database) AddUserToPiece(userID, pieceID int, role string) *DBError {
+func (store *Database) AddUserToPiece(userID, pieceID int) *DBError {
 	_, dberr := store.GetPieceByID(pieceID, false)
 	if dberr != nil {
 		return dberr
@@ -47,9 +47,12 @@ func (store *Database) AddUserToPiece(userID, pieceID int, role string) *DBError
 	if exists {
 		return NewDBError("user is already in this piece", http.StatusBadRequest)
 	}
-	_, err := store.db.Exec(`INSERT INTO UserPiece (UserID, PieceID, RoleID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
-		userID, pieceID, role, addTime, false)
-	return NewDBError(fmt.Sprintf("error isnerting user piece link: %v", err), http.StatusInternalServerError)
+	_, err := store.db.Exec(`INSERT INTO UserPiece (UserID, PieceID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?)`,
+		userID, pieceID, addTime, false)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error isnerting user piece link: %v", err), http.StatusInternalServerError)
+	}
+	return nil
 }
 
 // ChangeUserRole sets the role of the given user ID to role.
@@ -376,17 +379,27 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
 // Returns an error if one occurred.
 func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
-	JOIN UserPiece UP On UP.UserID = U.UserID
-	JOIN Pieces P ON P.PieceID = UP.PieceID
-	WHERE P.ShowID = ?`
-	if !includeDeleted {
-		query += ` AND UP.IsDeleted = FALSE
-		AND P.IsDeleted = FALSE`
+	tx, err := store.db.Begin()
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handleUsersFromDatabase(store.db.Query(query, id, offset))
+	defer tx.Rollback()
+
+	offset := getSQLPageOffset(page)
+	result, err := tx.Query(`
+		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.RoleID, U.RoleID, U.Active, U.CreatedAt FROM Users U
+		JOIN UserPiece UP ON U.UserID = UP.UserID
+		JOIN Pieces P ON UP.PieceID = P.PieceID
+		WHERE P.ShowID = ? AND UP.IsDeleted = false
+		LIMIT 25 OFFSET ?`, id, offset)
+	users, dberr := handleUsersFromDatabase(result, err)
+	if dberr != nil {
+		return nil, dberr
+	}
+	if err = tx.Commit(); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return users, nil
 }
 
 // GetUsersByPieceID returns a slice of users that are in the given piece, if any.

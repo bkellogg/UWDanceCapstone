@@ -123,7 +123,7 @@ func main() {
 	showRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.ShowTypeHandler))
 	showRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.ShowsHandler))
 	showRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificShowHandler))
-	showRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.GetResourceForSpecificShowHandler))
+	showRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ShowObjectDispatcher))
 	showRouter.Handle(appvars.ResourceIDObjectID, authorizer.Authorize(authContext.ShowAuditionRelationshipHandler)).Methods("LINK", "UNLINK")
 
 	pieceRouter := baseRouter.PathPrefix(appvars.PiecesPath).Subrouter()

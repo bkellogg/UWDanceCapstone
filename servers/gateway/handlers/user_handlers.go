@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -226,22 +225,11 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 			if !ctx.permChecker.UserCan(u, permissions.AddUserToPiece) {
 				return permissionDenied()
 			}
-			role := getRoleParam(r)
-			switch role {
-			case appvars.RoleChoreographer:
-				if !ctx.permChecker.UserCan(u, permissions.AddStaffToPiece) {
-					return permissionDenied()
-				}
-			case "":
-				role = appvars.RoleDancer
-			default:
-				return HTTPError(role+" is not a valid role", http.StatusBadRequest)
-			}
-			err := ctx.store.AddUserToPiece(userID, objID, role)
+			err := ctx.store.AddUserToPiece(userID, objID)
 			if err != nil {
 				return HTTPError(err.Message, err.HTTPStatus)
 			}
-			return respondWithString(w, "user added to piece as a(n) "+role, http.StatusOK)
+			return respondWithString(w, "user added to piece", http.StatusOK)
 		} else {
 			return objectTypeNotSupported()
 		}
