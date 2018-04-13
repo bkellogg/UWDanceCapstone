@@ -17,6 +17,7 @@ class People extends Component {
     //API route to get people in an audition will go here
     //that route is down, so for now we are just getting the first 100 active people in the data
     //TODO deal with pages
+    //TODO get this to be just the people in a show
     Util.makeRequest("users/all", "", "GET", true)
     .then( res => {
       if (res.ok) {
@@ -32,15 +33,21 @@ class People extends Component {
 
   render() {
     let rows = this.state.users.map((person, i) => {
-      return(
-        <PersonRow key={i} p={person}/>
-      )
+        return(
+          <PersonRow key={i} p={person}/>
+        )
     })
     return (
       <section className="main">
         <h1>People</h1>
         <table>
           <tbody>
+            <tr>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Email</th>
+              </tr>
             {rows}
           </tbody>
         </table>
@@ -51,19 +58,20 @@ class People extends Component {
 }
 
 const PersonRow = (props) => {
+  let p = props.p
   return (
     <tr>
       <td>
         photo
       </td>
       <td>
-        name
+        {p.firstName + " " + p.lastName}
       </td>
       <td>
-        role
+        {p.role.displayName}
       </td>
       <td>
-        asdf
+        {p.email}
       </td>
     </tr>
   );
