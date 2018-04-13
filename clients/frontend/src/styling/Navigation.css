@@ -1,0 +1,42 @@
+/* color: #799FB0; green
+    color: #EA6336; orange
+    color: #9194B5; grey
+*/
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.navigationBg{
+    background-color: #9194B5;
+}
+
+#slide-out {
+    background-color: #9194B5;
+    width: 17%;
+}
+
+.side-nav a {
+    color: white;
+    font-weight: 200;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: .5px;
+    text-transform: capitalize;
+    font-size: 13px;
+}
+
+.sidenav li>a:hover, .collapsible-header li>a:hover{
+    background-color: #799FB0;
+}
+
+Button{
+    margin: 0;
+}
+
+.side-nav .collapsible-body, .side-nav.fixed .collapsible-body{
+    background-color: transparent;
+}
+
+.collapsible-body{
+    padding: 0px;
+    padding-left: 30px;
+}

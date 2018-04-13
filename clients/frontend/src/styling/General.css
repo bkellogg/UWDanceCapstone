@@ -1,0 +1,18 @@
+.mainView{
+    padding-left: 5%;
+}
+
+h5 {
+	font-size: 22px;
+	font-style: normal;
+	font-variant: normal;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #EA6336;
+  text-transform: capitalize;
+  margin-bottom: 2%;
+}
+
+.dashboard{
+    width: 90%;
+}
