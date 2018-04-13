@@ -18,8 +18,6 @@ import * as Util from './util';
 import 'materialize-css';
 import './styling/Main.css';
 
-
-
 class Main extends Component {
   constructor(props) {
     super(props);
@@ -46,15 +44,17 @@ class Main extends Component {
   };
 
   componentWillMount(){
-    //M.AutoInit();
-    //var elem = document.querySelector('.sidenav');
-    //var instance = M.Sidenav.init(elem, options);
+    
   }
 
   componentDidMount(){
+    
     this.getShowTypes();
     this.getCurrShows();
-    
+    if(!localStorage['firstLoad']){
+      localStorage['firstLoad'] = true
+      window.location.reload()
+    };
   }
 
   getCurrShows(){
