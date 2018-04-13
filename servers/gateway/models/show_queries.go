@@ -35,8 +35,8 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, *DBError) {
 	res.Close()
 
 	createTime := time.Now()
-	result, err := tx.Exec(`INSERT INTO Shows (ShowTypeID, EndDate, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
-		st.ID, newShow.EndDate, createTime, newShow.CreatedBy, false)
+	result, err := tx.Exec(`INSERT INTO Shows (ShowTypeID, AuditionID, EndDate, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
+		st.ID, newShow.AuditionID, newShow.EndDate, createTime, newShow.CreatedBy, false)
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error inserting show: %v", err), http.StatusInternalServerError)
 	}
@@ -148,12 +148,13 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool, t
 		if err = res.Scan(&st.ID); err != nil {
 			return nil, NewDBError(fmt.Sprintf("error scanning result into show type: %v", err), http.StatusInternalServerError)
 		}
+		res.Close()
 	}
 
 	offset := getSQLPageOffset(page)
 	// TODO: This is awful, but a quick fix for WHERE needing to be there
-	query := `SELECT S.ShowID, S.ShowTypeID, A.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
- 		JOIN Auditions A WHERE 1 = 1`
+	query := `SELECT DISTINCT * FROM Shows S
+ 		WHERE 1 = 1`
 	if !includeDeleted {
 		query += ` AND S.IsDeleted = false`
 	}
@@ -170,13 +171,13 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool, t
 		query += ` AND S.ShowTypeID = ` + strconv.Itoa(st.ID)
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handleShowsFromDatabase(store.db.Query(query, offset))
+	return handleShowsFromDatabase(tx.Query(query, offset))
 }
 
 // GetShowByID returns the show with the given ID.
 func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
-	query := `SELECT S.ShowID, S.ShowTypeID, A.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
-		JOIN Auditions A WHERE S.ShowID = ?`
+	query := `SELECT DISTINCT * FROM Shows S
+		WHERE S.ShowID = ?`
 	if !includeDeleted {
 		query += ` AND S.IsDeleted = false`
 	}
@@ -205,8 +206,7 @@ func (store *Database) DeleteShowByID(id int) error {
 // if one occurred.
 func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, history string) ([]*Show, *DBError) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT S.ShowID, S.ShowTypeID, A.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
-		JOIN Auditions A
+	query := `SELECT DISTINCT S.ShowID, S.ShowTypeID, S.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
 		JOIN Pieces P ON S.ShowID = P.ShowID
 		JOIN UserPiece UP ON P.PieceID = UP.PieceID
 		WHERE UP.UserID = ?`

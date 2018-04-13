@@ -7,9 +7,10 @@ import (
 
 // NewShow defines the information needed to create a new show.
 type NewShow struct {
-	TypeName  string    `json:"typeName"`
-	EndDate   time.Time `json:"endDate"`
-	CreatedBy int       `json:"-"`
+	AuditionID int       `json:"auditionID"`
+	TypeName   string    `json:"typeName"`
+	EndDate    time.Time `json:"endDate"`
+	CreatedBy  int       `json:"-"`
 }
 
 // Validate validates the current new show and returns an error if one occurred.

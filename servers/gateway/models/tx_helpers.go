@@ -45,7 +45,7 @@ func txGetAudition(tx *sql.Tx, audID int) (*Audition, *DBError) {
 	}
 	aud := &Audition{}
 	if err = rows.Scan(
-		&aud.ID, &aud.ShowID,
+		&aud.ID,
 		&aud.Time, &aud.Location,
 		&aud.CreatedAt, &aud.CreatedBy,
 		&aud.IsDeleted); err != nil {

@@ -16,8 +16,8 @@ func (store *Database) InsertNewAudition(newAud *NewAudition) (*Audition, *DBErr
 	}
 	defer tx.Rollback()
 
-	result, err := tx.Exec(`INSERT INTO Auditions (ShowID, Time, Location, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
-		newAud.ShowID, newAud.Time, newAud.Location, newAud.CreatedAt, newAud.CreatedBy, false)
+	result, err := tx.Exec(`INSERT INTO Auditions (Time, Location, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+		newAud.Time, newAud.Location, newAud.CreatedAt, newAud.CreatedBy, false)
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error inserting audition: %v", err), http.StatusInternalServerError)
 	}
@@ -27,7 +27,6 @@ func (store *Database) InsertNewAudition(newAud *NewAudition) (*Audition, *DBErr
 	}
 	audition := &Audition{
 		ID:        int(audID),
-		ShowID:    newAud.ShowID,
 		Time:      newAud.Time,
 		Location:  newAud.Location,
 		CreatedAt: newAud.CreatedAt,
@@ -49,7 +48,7 @@ func (store *Database) GetAuditionByID(id int, includeDeleted bool) (*Audition, 
 	audition := &Audition{}
 	err := store.db.QueryRow(query,
 		id).Scan(
-		&audition.ID, &audition.ShowID, &audition.Time,
+		&audition.ID, &audition.Time,
 		&audition.Location, &audition.CreatedAt,
 		&audition.CreatedBy, &audition.IsDeleted)
 	if err != nil {
