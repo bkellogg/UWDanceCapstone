@@ -8,7 +8,9 @@ class People extends Component {
   render() {
     return (
       <section className="main">
-        <h1>People</h1>
+      <div className="mainView">
+        <h5>People</h5>
+      </div>
       </section>
   );
 };

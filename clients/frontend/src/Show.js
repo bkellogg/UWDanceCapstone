@@ -7,9 +7,11 @@ class Show extends Component {
   render() {
     return (
       <section className="main">
+      <div className="mainView">
         <div className="show">
-          <h1 id='showTitle'>{this.props.name}</h1>
+          <h5 id='showTitle'>{this.props.name}</h5>
         </div>
+      </div>
       </section>
     );
   };

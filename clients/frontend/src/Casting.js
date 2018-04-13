@@ -8,7 +8,9 @@ class Casting extends Component {
   render() {
     return (
       <section className="main">
-        <h1>Casting</h1>
+      <div className="mainView">
+        <h5>Casting</h5>
+      </div>
       </section>
   );
 };

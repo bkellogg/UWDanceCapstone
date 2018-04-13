@@ -36,9 +36,11 @@ body {
   right: 0;
 }
 
-#photo {
-  max-height: 100%;
-  max-width: 100%
+img#photo {
+  width: 120px;
+  height: 120px;
+  
+  
 }
 
 .name, .bio{
@@ -56,15 +58,14 @@ body {
 }
 
 .sub, .sub2, #photo{
-  border-radius: 5px;
-  -webkit-box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
--moz-box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
-box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);  
+  border-radius: 3px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px; 
 }
 
 .sub, .sub2 {
   width: 90%;
   margin-bottom: 3%;
+  margin-top: 3%;
   padding: 1.5%;
   background-color: white;
 }
@@ -80,6 +81,7 @@ box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
 #history, #resume {
   margin-bottom:40px
 }
+
 
 .subheader {
   font-size: 15px;

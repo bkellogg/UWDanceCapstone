@@ -12,6 +12,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { Card, CardText, CardTitle} from 'material-ui/Card';
 import Checkbox from 'material-ui/Checkbox';
 import './styling/Audition.css';
+import './styling/General.css';
 
 const styles = {
   customWidth: {
@@ -65,8 +66,9 @@ class Audition extends Component {
   render() {
       return(
         <section className="main">
+        <div className="mainView">
           <div className="audition">
-            <h1 id="auditionTitle">{this.props.name}</h1>
+            <h5 id="auditionTitle">{this.props.name}</h5>
             {
               this.state.registered === false &&
                 <div className="auditionForm">
@@ -132,6 +134,7 @@ class Audition extends Component {
                 </Card>
               </div>
             }
+          </div>
           </div>
         </section>
       )

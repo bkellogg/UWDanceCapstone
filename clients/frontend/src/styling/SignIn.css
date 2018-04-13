@@ -1,4 +1,5 @@
-body {
+body,html {
+  height: 100%;
   font-weight: 400;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
@@ -7,10 +8,16 @@ body {
 
 .LogInLanding {
   background-image: url('../imgs/dance-bw.jpg');
-  background-repeat: no-repeat;
+  /* background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: 100%;
-  background-position: 50% 65%; 
+  background-position: 50% 65%;  */
+  min-height: 380px;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
   
 }
 
