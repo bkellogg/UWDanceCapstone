@@ -29,6 +29,9 @@ func txGetUser(tx *sql.Tx, userID int) (*User, *DBError) {
 	if dberr != nil {
 		return nil, dberr
 	}
+	if len(users) == 0 {
+		return nil, NewDBError("no user found", http.StatusNotFound)
+	}
 	return users[0], nil
 }
 

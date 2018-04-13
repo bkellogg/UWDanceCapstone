@@ -6,9 +6,9 @@ import "time"
 // a user and an audition is reported to the client
 type UserAuditionLinkResponse struct {
 	User         *User                  `json:"user"`
-	Audition     *Audition              `json:"audition"`
-	AddedBy      int                    `json:"addedBy"`
+	Audition     *Audition              `json:"audition,omitempty"`
 	AddedAt      time.Time              `json:"addedAt"`
+	AddedBy      int                    `json:"addedBy"`
 	RegNumber    int                    `json:"regNum"`
 	NumShows     int                    `json:"numShows"`
 	Comments     []*UserAuditionComment `json:"comments"`

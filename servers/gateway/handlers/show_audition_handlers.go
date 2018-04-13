@@ -51,3 +51,30 @@ func (ctx *AuthContext) ShowAuditionRelationshipHandler(w http.ResponseWriter, r
 	}
 	return respondWithString(w, message, http.StatusOK)
 }
+
+// handleUsersForAudition handles requests getting the users in an audition
+func (ctx *AuthContext) handleUsersForAudition(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	vars := mux.Vars(r)
+	showID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return unparsableIDGiven()
+	}
+	if !ctx.permChecker.UserCanSeeUsersInAudition(u, showID) {
+		return permissionDenied()
+	}
+	page, httperr := getPageParam(r)
+	if httperr != nil {
+		return httperr
+	}
+	includeDeleted := getIncludeDeletedParam(r)
+
+	users, dberr := ctx.store.GetUsersByAuditionID(showID, page, includeDeleted)
+	if dberr != nil {
+		return HTTPError(dberr.Message, dberr.HTTPStatus)
+	}
+	userRespnses, err := ctx.permChecker.ConvertUserSliceToUserResponseSlice(users)
+	if err != nil {
+		return HTTPError(fmt.Sprintf("error converting users to user responses: %v", err), http.StatusInternalServerError)
+	}
+	return respond(w, models.PaginateUserResponses(userRespnses, page), http.StatusOK)
+}
