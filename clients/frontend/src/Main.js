@@ -37,7 +37,7 @@ class Main extends Component {
   };
 
   componentDidMount(){
-    this.getShowTypes();
+    //this.getShowTypes();
     this.getCurrShows();
     if(!localStorage['firstLoad']){
       localStorage['firstLoad'] = true
@@ -58,31 +58,22 @@ class Main extends Component {
       this.setState({
         shows: data.shows
       })
+      return data.shows
     })
-    .then(
-      this.getShowTypes()
-    )
-    .then( showTypes => {
-      let currShows = []
-      this.state.shows.map(s => {
-        currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID})
-      })
-      return currShows
-    })
-    .then(currShows => {
-      this.setState({
-        currShows: currShows
-      })
+    .then( shows => {
+      this.getShowTypes(shows)
     })
     .catch(err => console.log(err))
   }
 
   getShowTypes(shows){
+
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
     .then((res) => {
       if(res.ok){
         return res.json()
       }
+      return res.text().then((t) => Promise.reject(t));
     })
     .then((data) => {
       let showTypes = {};
@@ -95,7 +86,21 @@ class Main extends Component {
       this.setState({
           showTypes: showTypes
       })
-   }) 
+   })
+   .then( () => {
+    let currShows = []
+    shows.map(s => {
+      currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID})
+    })
+    return currShows
+   })
+   .then(currShows => {
+      this.setState({
+        currShows: currShows
+      })
+    })
+    .catch(err => console.log(err))
+  
   }
 
   getNavigation(){

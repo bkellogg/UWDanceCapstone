@@ -19,6 +19,7 @@ class Audition extends Component {
     super(props);
     this.state ={
       registered: false,
+      audition: null
     }
     console.log(this.props.audition)
   };
@@ -35,9 +36,11 @@ class Audition extends Component {
       }
       return res.text().then((t) => Promise.reject(t));
     })
-    .then(user => {
+    .then(audition => {
+      console.log(audition.audition)
       this.setState({
-        registered: true
+        registered: true,
+        audition: audition.audition
       })
     })
     .catch(err => {console.log(err)})
@@ -55,11 +58,11 @@ class Audition extends Component {
             <h1 id="auditionTitle">{this.props.name}</h1>
             {
               this.state.registered === false &&
-                <Registration audition={this.props.audition} registered={() => {this.setState({registered: true})}} />
+                <Registration audition={this.props.audition} registered={() => this.checkRegistration()} />
             }
             {
               this.state.registered === true &&
-              <RegistrationConf />
+              <RegistrationConf audition={this.state.audition}/>
             }
           </div>
         </section>

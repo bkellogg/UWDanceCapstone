@@ -17,6 +17,7 @@ class RegistrationConf extends Component {
     this.state ={
       registered: false,
     }
+    console.log(this.props.audition)
   };
 
   //TODO make this actual info about an audition
