@@ -18,9 +18,6 @@ class App extends Component {
       authorized: false
     };
   };
-  componentDidMount(){
-    Util.refreshLocalUser();
-  }
 
   registerUser = (userVal) => {
     this.setState({
@@ -54,6 +51,7 @@ class App extends Component {
         authorized: true
       })
     } 
+    localStorage["firstLoad"] = true
   }
 
   componentDidUpdate(){
