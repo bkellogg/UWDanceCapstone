@@ -66,6 +66,7 @@ export function refreshLocalUser() {
 
 export function signOut() {
     clearAuthAndUser();
+    localStorage.removeItem("firstLoad")
 }
 
 export function uploadPhoto(val){
