@@ -17,6 +17,8 @@ import Divider from 'material-ui/Divider';
 import * as Util from './util';
 import 'materialize-css';
 import './styling/Main.css';
+import './styling/Navigation.css';
+
 
 
 
@@ -203,15 +205,19 @@ class Main extends Component {
       </section>
       
       <section className="desktop">
-      <ul id="slide-out" className="side-nav fixed">
-          <li><div id="logo">STAGE</div></li>
-          <li><Link to="/">Dashboard</Link></li>
-          <li>
-              {this.getNavigation()}
-          </li>
-          <li><Link to={{pathname:"/profile"}}>Profile</Link></li>
-          <li><Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button></li>
-        </ul>
+        <div className="navigationWrap">
+          <ul id="slide-out" className="side-nav fixed">
+            <div className="navigationBg">
+              <li><div id="logo">STAGE</div></li>
+              <li><Link to="/">Dashboard</Link></li>
+              <li>
+                  {this.getNavigation()}
+              </li>
+              <li><Link to={{pathname:"/profile"}}>Profile</Link></li>
+              <li><Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button></li>
+            </div>
+          </ul>
+        </div>
       </section>
     </section>
   );

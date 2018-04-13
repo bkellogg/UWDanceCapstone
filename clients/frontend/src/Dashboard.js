@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util';
+import './styling/General.css';
 
 //styling
 import { Card, CardText, CardTitle} from 'material-ui/Card';
@@ -57,8 +58,11 @@ class Dashboard extends Component {
   render() {
       return(
         <section className='main'>
+        <div className="mainView">
           <div className='dashboard'>
-            <div id='welcome'> Welcome {this.state.user.firstName}</div>
+            <div id='welcome'> 
+            <h5> Welcome, {this.state.user.firstName}!</h5>
+            </div>
             <div id='announcements'>
               {this.state.user.bio === "" &&
                /*this.state.user.resume &&
@@ -104,6 +108,7 @@ class Dashboard extends Component {
                )
               })}
             </div>
+          </div>
           </div>
         </section>
       )

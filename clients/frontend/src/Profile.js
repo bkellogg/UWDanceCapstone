@@ -3,6 +3,7 @@ import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg'
 import './styling/Profile.css';
+import './styling/General.css';
 
 class Profile extends Component {
   constructor(props) {
@@ -158,6 +159,7 @@ class Profile extends Component {
   render() {
     return (
       <section className="main">
+      <div className="mainView">
       <h5 className="pagetitle">Your Profile </h5>
         <div className="sub">
           {/* FIRST CARD */}
@@ -272,7 +274,7 @@ class Profile extends Component {
 
           </div>
 
-
+        </div>
         </div>
       </section>
     );
