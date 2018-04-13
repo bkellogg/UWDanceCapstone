@@ -31,7 +31,7 @@ type UserAuditionComment struct {
 	Comment        string    `json:"comment"`
 	CreatedAt      time.Time `json:"createdAt"`
 	CreatedBy      int       `json:"createdBy"`
-	IsDeleted      bool      `json:"bool"`
+	IsDeleted      bool      `json:"isDeleted"`
 }
 
 // parseUACommentsFromDatabase compiles the given result and err into a slice of UAComments or an error.

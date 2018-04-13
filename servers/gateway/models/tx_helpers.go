@@ -58,7 +58,7 @@ func txGetAudition(tx *sql.Tx, audID int) (*Audition, *DBError) {
 // the given audition ID using the given transaction if it exists.
 // Returns an error if one occurred.
 func txGetUserAudition(tx *sql.Tx, userID, audID int) (*UserAudition, *DBError) {
-	res := tx.QueryRow(`SELECT * FROM UserAudition UA WHERE UA.UserID = ? AND UA.AuditionID = ?`, userID, audID)
+	res := tx.QueryRow(`SELECT * FROM UserAudition UA WHERE UA.UserID = ? AND UA.AuditionID = ? AND UA.IsDeleted = false`, userID, audID)
 	ua := &UserAudition{}
 	err := res.Scan(
 		&ua.ID, &ua.AuditionID,
