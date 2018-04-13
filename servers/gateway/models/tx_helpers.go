@@ -121,3 +121,47 @@ func txGetUserAuditionAvailability(tx *sql.Tx, availID int) (*WeekTimeBlock, *DB
 	}
 	return wtb, nil
 }
+
+// txGetShow gets the show with the given id using the given
+// transaction. Returns an error if one occurred.
+func txGetShow(tx *sql.Tx, showID int) (*Show, *DBError) {
+	rows, err := tx.Query(`SELECT * FROM Shows S WHERE S.ShowID = ?`, showID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error retrieving show: %v", err), http.StatusInternalServerError)
+	}
+	if !rows.Next() {
+		return nil, NewDBError("no show found", http.StatusNotFound)
+	}
+	show := &Show{}
+	if err = rows.Scan(
+		&show.ID, &show.TypeID,
+		&show.AuditionID, &show.EndDate,
+		&show.CreatedAt, &show.CreatedBy,
+		&show.IsDeleted); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error scanning result into show: %v", err), http.StatusInternalServerError)
+	}
+	rows.Close()
+	return show, nil
+}
+
+// txGetShow gets the show with the given id using the given
+// transaction. Returns an error if one occurred.
+func txGetShowByAuditionID(tx *sql.Tx, audID int) (*Show, *DBError) {
+	rows, err := tx.Query(`SELECT * FROM Shows S WHERE S.AuditionID = ?`, audID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error retrieving show: %v", err), http.StatusInternalServerError)
+	}
+	if !rows.Next() {
+		return nil, NewDBError("no show found", http.StatusNotFound)
+	}
+	show := &Show{}
+	if err = rows.Scan(
+		&show.ID, &show.TypeID,
+		&show.AuditionID, &show.EndDate,
+		&show.CreatedAt, &show.CreatedBy,
+		&show.IsDeleted); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error scanning result into show: %v", err), http.StatusInternalServerError)
+	}
+	rows.Close()
+	return show, nil
+}

@@ -73,7 +73,7 @@ func (pc *PermissionChecker) buildRoleCache() error {
 // UserResponses. Returns an error if one occurred.
 // TODO: THIS FUNCTION SHOULD NOT BE IN THE PERMISSION CHECKER
 func (pc *PermissionChecker) ConvertUserSliceToUserResponseSlice(users []*User) ([]*UserResponse, error) {
-	urs := make([]*UserResponse, len(users))
+	urs := make([]*UserResponse, 0, len(users))
 	for _, u := range users {
 		ur, err := pc.ConvertUserToUserResponse(u)
 		if err != nil {

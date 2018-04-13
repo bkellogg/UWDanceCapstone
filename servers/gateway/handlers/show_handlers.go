@@ -86,8 +86,8 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-// ResourceForSpecificShowHandler handles requests for a specifc resource on a specific audition.
-func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+// GetResourceForSpecificShowHandler handles requests for a specifc resource on a specific audition.
+func (ctx *AuthContext) GetResourceForSpecificShowHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	if r.Method != "GET" {
 		return methodNotAllowed()
 	}
