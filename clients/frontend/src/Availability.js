@@ -89,9 +89,9 @@ class Availability extends Component {
         for(let j = 1; j <= days.length; j++){
           let dayVal = days[j - 1]
           let timeVal = times[i - 1]
-          let endTime = (parseInt(timeVal) + 30).toString()
+          let endTime = (parseInt(timeVal, 10) + 30).toString()
           if (endTime[2] === "6"){
-            let end = (parseInt(endTime.substring(0,2)) + 1).toString()
+            let end = (parseInt(endTime.substring(0,2), 10) + 1).toString()
             endTime = end + "00"
           }
           if(this.state.cells[i][j]){

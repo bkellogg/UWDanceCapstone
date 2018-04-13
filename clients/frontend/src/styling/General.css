@@ -2,18 +2,33 @@
     padding-left: 5%;
 }
 
+<<<<<<< HEAD
 h1 {
+=======
+h5 {
+>>>>>>> d1434f83689d6a09c871ad1c43e019e2f60ea3d7
 	font-size: 22px;
 	font-style: normal;
 	font-variant: normal;
   font-weight: 400;
+<<<<<<< HEAD
   letter-spacing: .5px;
   color: #EA6336;
   text-transform: capitalize;
   margin-bottom: 2%;
   margin-top: 0;
+=======
+  letter-spacing: 1px;
+  color: #EA6336;
+  text-transform: capitalize;
+  margin-bottom: 2%;
+>>>>>>> d1434f83689d6a09c871ad1c43e019e2f60ea3d7
 }
 
 .dashboard{
     width: 90%;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> d1434f83689d6a09c871ad1c43e019e2f60ea3d7

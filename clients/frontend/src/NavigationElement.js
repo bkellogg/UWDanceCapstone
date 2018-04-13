@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+<<<<<<< HEAD
 import MenuItem from 'material-ui/MenuItem';
 import './styling/Navigation.css';
+=======
+import './styling/Navigation.css';
+
+>>>>>>> d1434f83689d6a09c871ad1c43e019e2f60ea3d7
 
 
 class NavigationElement extends Component {

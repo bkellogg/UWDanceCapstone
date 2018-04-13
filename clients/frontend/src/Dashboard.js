@@ -61,7 +61,11 @@ class Dashboard extends Component {
         <div className="mainView">
           <div className='dashboard'>
             <div id='welcome'> 
+<<<<<<< HEAD
             <h1> Welcome, {this.state.user.firstName}!</h1>
+=======
+            <h5> Welcome, {this.state.user.firstName}!</h5>
+>>>>>>> d1434f83689d6a09c871ad1c43e019e2f60ea3d7
             </div>
             <div id='announcements'>
               {this.state.user.bio === "" &&
