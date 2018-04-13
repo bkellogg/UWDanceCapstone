@@ -1,7 +1,7 @@
 
 
 .row{
-    display: block
+    display: block;
 }
 
 .audition{
@@ -35,6 +35,8 @@
     padding: 0px;
 }
 
-.regNum{
-    background-color: #BFB2E5
+
+
+SelectField{
+
 }

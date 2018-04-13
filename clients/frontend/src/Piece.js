@@ -9,7 +9,7 @@ class Piece extends Component {
     return (
       <section className="main">
       <div className="mainView">
-        <h5>My Piece</h5>
+        <h1>My Piece</h1>
         </div>
       </section>
   );

@@ -68,12 +68,17 @@ class Audition extends Component {
         <section className="main">
         <div className="mainView">
           <div className="audition">
-            <h5 id="auditionTitle">{this.props.name}</h5>
+            <h1 id="auditionTitle">{this.props.name} Audition Form</h1>
             {
               this.state.registered === false &&
+
+                // audition form
                 <div className="auditionForm">
+                  {/* question 1 */}
                   <div className="row">
-                    <div><p>Number of pieces I am available for: </p></div>
+                    <div className="question">
+                      <p>1. Number of pieces I am available for: </p>
+                    
                     <SelectField
                       value={this.state.value}
                       onChange={this.handleChange}
@@ -82,25 +87,40 @@ class Audition extends Component {
                       <MenuItem value={1} primaryText="1" />
                       <MenuItem value={2} primaryText="2" />
                     </SelectField>
+                    </div>
                   </div>
+
+
                   <br />
+
+                  {/* question 2 */}
                   <div className="row">
-                    <div>You must be enrolled in a class during the quarter the production is occurring.<br/>
-                   </div>
+                    <div className="question">
+                      <p>2. You must be enrolled in a class during the quarter the production is occurring.</p> <br/>
+                   
                    <br />
                     <Checkbox
                       label="I confirm I am enrolled in a class for the quarter during which the show is occuring."
                       
                     />
+                    </div>
                   </div>
                   <br/>
+
+                  {/* question 3 */}
                   <div className="row">
-                    <div><p>Availability [click & drag to indicate when you are <b>available</b> to rehearse]</p></div>
+                    <div className="question">
+                      <p>3. Availability [click & drag to indicate when you are <b>available</b> to rehearse]</p>
                     <Availability availability = {this.setAvailability}/>
                   </div>
+                  </div>
                   <br/>
+
+
+                  {/* question 4 */}
                   <div className="row">
-                    <div><p>Please indicate any additional notes below</p></div>
+                    <div className="question">
+                      <p>4. Please indicate any additional notes below</p>
                     <TextField
                       name="comments"
                       onChange = {this.addComment}
@@ -109,7 +129,10 @@ class Audition extends Component {
                     />
                   </div>
                   <RaisedButton className='register' onClick={this.handleRegister} style={{backgroundColor: "#BFB2E5"}}> Register </RaisedButton>
+                  </div>
                 </div>
+
+                // end audition form
             }
             {
               this.state.registered === true &&

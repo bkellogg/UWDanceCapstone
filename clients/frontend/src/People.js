@@ -9,7 +9,7 @@ class People extends Component {
     return (
       <section className="main">
       <div className="mainView">
-        <h5>People</h5>
+        <h1>People</h1>
       </div>
       </section>
   );

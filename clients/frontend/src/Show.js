@@ -9,7 +9,7 @@ class Show extends Component {
       <section className="main">
       <div className="mainView">
         <div className="show">
-          <h5 id='showTitle'>{this.props.name}</h5>
+          <h1 id='showTitle'>{this.props.name}</h1>
         </div>
       </div>
       </section>

@@ -192,7 +192,7 @@ class Profile extends Component {
     return (
       <section className="main">
       <div className="mainView">
-      <h5 className="pagetitle">Your Profile </h5>
+      <h1 className="pagetitle">Your Profile </h1>
 
         <div className="sub">
           {/* FIRST CARD */}
@@ -214,7 +214,7 @@ class Profile extends Component {
 
               <div className="nameAndBioWrap">
                 <div id="name" className="name">
-                  {!this.state.edit && <h5 id="profileName">{this.state.fname} {this.state.lname}</h5>}
+                  {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
                   {this.state.edit &&
                     <div id="editName">
                       <Row>

@@ -9,7 +9,7 @@ class Casting extends Component {
     return (
       <section className="main">
       <div className="mainView">
-        <h5>Casting</h5>
+        <h1>Casting</h1>
       </div>
       </section>
   );

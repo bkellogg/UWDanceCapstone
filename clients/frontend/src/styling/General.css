@@ -2,7 +2,7 @@
     padding-left: 5%;
 }
 
-h5 {
+h1 {
 	font-size: 22px;
 	font-style: normal;
 	font-variant: normal;
@@ -11,6 +11,7 @@ h5 {
   color: #EA6336;
   text-transform: capitalize;
   margin-bottom: 2%;
+  margin-top: 0;
 }
 
 .dashboard{
