@@ -436,7 +436,7 @@ func (store *Database) getUserRoleLevel(userID int64) (int, error) {
 func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, *DBError) {
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, NewDBError("so users found", http.StatusNotFound)
+			return nil, NewDBError("no users found", http.StatusNotFound)
 		}
 		return nil, NewDBError(fmt.Sprintf("error retrieving users from database: %v", err), http.StatusInternalServerError)
 	}
