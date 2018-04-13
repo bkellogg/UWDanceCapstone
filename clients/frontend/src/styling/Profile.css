@@ -1,22 +1,6 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-
   color: #9194B5;
-}
-
-h5 {
-	font-size: 22px;
-	font-style: normal;
-	font-variant: normal;
-  font-weight: 400;
-  letter-spacing: 1px;
-  color: #EA6336;
-}
-
-.pagetitle{
-  margin: 2%;
-  margin-left: 5%;
-  text-transform: uppercase;
 }
 
 .headerBorder{
@@ -79,10 +63,9 @@ box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
 }
 
 .sub, .sub2 {
-  width: 85%;
-  padding: 2%;
-  margin:3%;
-  margin-left: 5%;
+  width: 90%;
+  margin-bottom: 3%;
+  padding: 1.5%;
   background-color: white;
 }
 
@@ -105,7 +88,7 @@ box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
 
 section{
   font-size: 14px;
-  margin-top: 1%;
+  /* margin-top: 1%; */
 }
 
 /* #editName{
@@ -118,4 +101,11 @@ section{
 
 #firstName, #lastName{
   margin-right: 10px
+}
+
+/* #editBio{
+  width: 80%;
+} */
+@media only screen and (max-width : 992px) {
+
 }

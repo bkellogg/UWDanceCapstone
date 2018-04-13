@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import './styling/Navigation.css';
+
 
 
 class NavigationElement extends Component {
