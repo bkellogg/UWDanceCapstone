@@ -14,10 +14,11 @@ class NavigationElement extends Component {
 
   render() {
     let address = "/" + this.props.showTitle.split(' ').join('');
+    console.log(window.location.pathname)
     return (
         <li>
 
-            <Link className="collapsible-header" style={{paddingLeft: 32}} to={{pathname: "/"}}>{this.props.showTitle}</Link>
+            <div className="collapsible-header" style={{paddingLeft: 32}} to={{pathname: "/"}}>{this.props.showTitle}</div>
             <div className="collapsible-body">
                 <ul>
                     {/*Dancer (new user)*/}
