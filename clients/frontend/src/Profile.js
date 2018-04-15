@@ -149,6 +149,34 @@ getPhoto() {
     xhr.send(data);
 }
 
+uploadResume = (val) => {
+  let file = val;
+  let data = new FormData();
+  data.append("resume", file.files[0]);
+
+  let xhr = new XMLHttpRequest();
+
+  xhr.addEventListener("readystatechange", () => {
+      if (this.readyState === 4) {
+          this.getResume()
+      }
+  });
+
+  xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+          if (xhr.status < 400) {
+              return xhr.responseText
+          }
+      }
+  };
+
+  xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
+  xhr.setRequestHeader("Authorization", Util.getAuth());
+  xhr.setRequestHeader("ResumeFieldName", "resume");
+
+  xhr.send(data);
+}
+
 
   onClick() {
     if (this.state.edit) {
