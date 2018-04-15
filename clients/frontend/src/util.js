@@ -26,6 +26,7 @@ export function getAuth() {
 export function clearAuthAndUser() {
     localStorage.removeItem("auth");
     localStorage.removeItem("user");
+    localStorage.removeItem("allUsers")
 };
 
 export function makeRequest(resource, payload = "", method = "GET", useAuth = false) {

@@ -19,6 +19,7 @@ class Casting extends Component {
    this.state ={
      stepIndex: 0
    }
+   console.log(this.props)
   };
 
   //handles a next click
@@ -41,7 +42,7 @@ class Casting extends Component {
   getStepContent(stepIndex) {
     switch (stepIndex) {
       case 0:
-        return <SelectCast />
+        return <SelectCast auditionID={this.props.audition}/>
       case 1:
         return <CheckAvailability />;
       case 2:

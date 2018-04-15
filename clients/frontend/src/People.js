@@ -19,8 +19,8 @@ class People extends Component {
     //API route to get people in an audition will go here
     //that route is down, so for now we are just getting the first 100 active people in the data
     //TODO deal with pages
-    //TODO get this to be just the people in a show
-    Util.makeRequest("users/all", "", "GET", true)
+    //STYLING NOTE: if you want to show dummy data change this.props.show to 11
+    Util.makeRequest("shows/"+this.props.show+"/users", "", "GET", true)
     .then( res => {
       if (res.ok) {
         return res.json()

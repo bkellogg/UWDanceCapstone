@@ -91,7 +91,8 @@ class Main extends Component {
    .then( () => {
     let currShows = []
     shows.map(s => {
-      return currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID})
+      console.log(s)
+      return currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID, "show": s.id})
     })
     return currShows
    })
@@ -162,6 +163,7 @@ class Main extends Component {
         </Switch>
           {this.state.currShows.map((show, i) => {
             let showName = show.name
+            console.log(show)
             let path = "/" + showName.split(' ').join('')
             return( 
               <Switch key = {i}>
@@ -178,7 +180,7 @@ class Main extends Component {
                   props => <Piece {...props} name={show.name} audition={show.audition}/>
                 }/>
                 <Route exact path={path + "/people"} render={
-                  props => <People {...props} name={show.name} audition={show.audition}/>
+                  props => <People {...props} name={show.name} audition={show.audition} show={show.show}/>
                 }/>
               </Switch>
             )}
