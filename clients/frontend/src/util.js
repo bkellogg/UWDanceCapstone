@@ -75,17 +75,13 @@ export function uploadPhoto(val){
     let xhr = new XMLHttpRequest();
 
     xhr.addEventListener("readystatechange", function () {
-        if (this.readyState === 4) {
-            console.log(this.responseText);
-        }
+        
     });
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
                 return xhr.responseText
-            } else {
-                return "get fucked"
-            }
+            } 
         }
     };
 

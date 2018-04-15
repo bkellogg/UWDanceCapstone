@@ -17,12 +17,10 @@ class Profile extends Component {
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
-      photoError: null,
       photoSrc: null,
       bio: JSON.parse(localStorage.getItem("user")).bio,
       history: [],
       resume: null,
-      resumeErr: null,
       fname: JSON.parse(localStorage.getItem("user")).firstName,
       lname: JSON.parse(localStorage.getItem("user")).lastName,
       edit: false,
@@ -54,7 +52,7 @@ class Profile extends Component {
         this.formatHistory(res.shows)
       })
       .catch((err) => {
-        console.log("whoops!")
+        console.log(err)
       })
   }
 
@@ -105,9 +103,7 @@ getPhoto() {
         })
       })
       .catch((err) => {
-        this.setState({
-          photoError: err
-        })
+        console.log(err)
       });
   }
 
@@ -125,11 +121,33 @@ getPhoto() {
         })
       })
       .catch((err) => {
-        this.setState({
-          resumeErr: err
-        })
+        console.log(err)
       });
   }
+
+  uploadPhoto = (val) => {
+    let file = val;
+    let data = new FormData();
+    data.append("image", file.files[0]);
+    let xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", () => {
+        this.getPhoto()
+    });
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status < 400) {
+                return xhr.responseText
+            } 
+        }
+    };
+
+    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
+    xhr.setRequestHeader("Authorization", Util.getAuth());
+    xhr.setRequestHeader("ImageFieldName", "image");
+
+    xhr.send(data);
+}
 
 
   onClick() {
@@ -143,8 +161,7 @@ getPhoto() {
         this.setState({ lname: this.state.lastName })
       }
       if (this.state.photoUpload !== "") {
-        Util.uploadPhoto(this.state.photoUpload)
-        this.setState({ photoSrc: this.state.photoUpload })
+        this.uploadPhoto(this.state.photoUpload)
       }
       if (this.state.bioUpload !== "") {
         Util.uploadBio(this.state.bioUpload)
@@ -188,7 +205,7 @@ getPhoto() {
   }
 
   render() {
-    console.log(this.state.history)
+    
     return (
       <section className="main">
       <div className="mainView">
@@ -203,7 +220,7 @@ getPhoto() {
                 <div id="photoContainer" className="photoContainer">
                   {!this.state.edit &&
 
-                    <img id="photo" alt="placeholder" src={this.state.photoSrc}></img>
+                    <img id="photo" alt="profile" src={this.state.photoSrc}></img>
                   }
                   {this.state.edit &&
                     <section>
