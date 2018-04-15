@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 
+import Avatar from 'material-ui/Avatar';
+
 class People extends Component {
   constructor(props) {
     super(props);
@@ -64,7 +66,7 @@ const PersonRow = (props) => {
   return (
     <tr>
       <td>
-        photo
+        <Avatar>:D</Avatar>
       </td>
       <td>
         {p.firstName + " " + p.lastName}

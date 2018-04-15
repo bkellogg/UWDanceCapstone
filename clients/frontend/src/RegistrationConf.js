@@ -30,7 +30,7 @@ class RegistrationConf extends Component {
                     <CardTitle><h3>You are number</h3> </CardTitle>
                     </div>
                     <CardText id="numArea">
-                      <p id="number">1</p>
+                      <p id="number">{this.props.regNum}</p>
                     </CardText>
                 </Card>
               </div>

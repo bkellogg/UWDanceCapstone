@@ -14,7 +14,6 @@ class NavigationElement extends Component {
 
   render() {
     let address = "/" + this.props.showTitle.split(' ').join('');
-    console.log(window.location.pathname)
     return (
         <li>
 
