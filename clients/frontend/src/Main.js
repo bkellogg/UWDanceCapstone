@@ -157,7 +157,9 @@ class Main extends Component {
         </section>
         <section className="routing">
         <Switch>
-          <Route exact path='/' component={Dashboard}/>
+          <Route exact path='/' render={
+            props => <Dashboard {...props} shows={this.state.currShows}/>
+            }/>
           <Route exact path='/profile' component={Profile}/>
         </Switch>
           {this.state.currShows.map((show, i) => {

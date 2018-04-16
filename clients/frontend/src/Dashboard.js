@@ -56,6 +56,7 @@ class Dashboard extends Component {
   }
 
   render() {
+    console.log(this.props.shows)
       return(
         <section className='main'>
         <div className="mainView">
