@@ -28,7 +28,7 @@ func (store *Database) InsertAnnouncement(na *NewAnnouncement) (*Announcement, *
 	}
 	if !res.Next() {
 		res.Close()
-		return nil, NewDBError(fmt.Sprintf("announcement type '%d' does not exist", na.AnnouncementType),
+		return nil, NewDBError(fmt.Sprintf("announcement type '%s' does not exist", na.AnnouncementType),
 			http.StatusNotFound)
 	}
 	at := AnnouncementType{}
@@ -133,7 +133,7 @@ func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID
 	// only attempt the look up the announcement type if we were passed a
 	// valid typename.
 	if len(typeName) > 0 {
-		res, err := tx.Query("SELECT At.AnnouncementTypeID FROM AnnouncementType AT WHERE AT.AnnouncementTypeName = ?", typeName)
+		res, err := tx.Query("SELECT AT.AnnouncementTypeID FROM AnnouncementType AT WHERE AT.AnnouncementTypeName = ?", typeName)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				return nil, NewDBError(fmt.Sprintf("announcement type '%s' does not exist", typeName),
@@ -144,7 +144,7 @@ func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID
 		}
 		if !res.Next() {
 			res.Close()
-			return nil, NewDBError(fmt.Sprintf("announcement type '%d' does not exist", typeName),
+			return nil, NewDBError(fmt.Sprintf("announcement type '%s' does not exist", typeName),
 				http.StatusNotFound)
 		}
 

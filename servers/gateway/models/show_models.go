@@ -7,8 +7,8 @@ import (
 
 // NewShow defines the information needed to create a new show.
 type NewShow struct {
+	AuditionID int       `json:"auditionID"`
 	TypeName   string    `json:"typeName"`
-	AuditionID int       `json:"auditionID,omitempty"`
 	EndDate    time.Time `json:"endDate"`
 	CreatedBy  int       `json:"-"`
 }
@@ -18,6 +18,9 @@ func (ns *NewShow) Validate() error {
 	if len(ns.TypeName) == 0 {
 		return errors.New("new show must have a type")
 	}
+	if ns.EndDate.IsZero() {
+		return errors.New("new show must have an end date")
+	}
 	return nil
 }
 
@@ -25,7 +28,7 @@ func (ns *NewShow) Validate() error {
 type Show struct {
 	ID         int       `json:"id"`
 	TypeID     int       `json:"typeID"`
-	AuditionID int       `json:"auditionID"`
+	AuditionID int       `json:"auditionID,omitempty"`
 	EndDate    time.Time `json:"endDate"`
 	CreatedAt  time.Time `json:"createdAt"`
 	CreatedBy  int       `json:"createdBy"`

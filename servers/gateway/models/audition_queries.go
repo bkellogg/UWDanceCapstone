@@ -16,8 +16,8 @@ func (store *Database) InsertNewAudition(newAud *NewAudition) (*Audition, *DBErr
 	}
 	defer tx.Rollback()
 
-	result, err := tx.Exec(`INSERT INTO Auditions (Name, Time, Location, Quarter, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		newAud.Name, newAud.Time, newAud.Location, newAud.Quarter, newAud.CreatedAt, newAud.CreatedBy, false)
+	result, err := tx.Exec(`INSERT INTO Auditions (Time, Location, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+		newAud.Time, newAud.Location, newAud.CreatedAt, newAud.CreatedBy, false)
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error inserting audition: %v", err), http.StatusInternalServerError)
 	}
@@ -27,37 +27,14 @@ func (store *Database) InsertNewAudition(newAud *NewAudition) (*Audition, *DBErr
 	}
 	audition := &Audition{
 		ID:        int(audID),
-		Name:      newAud.Name,
 		Time:      newAud.Time,
 		Location:  newAud.Location,
-		Quarter:   newAud.Quarter,
 		CreatedAt: newAud.CreatedAt,
 		CreatedBy: newAud.CreatedBy,
 		IsDeleted: false,
 	}
 	if err = tx.Commit(); err != nil {
 		return nil, NewDBError(fmt.Sprintf("error commiting transaction: %v", err), http.StatusInternalServerError)
-	}
-	return audition, nil
-}
-
-// GetAuditionByName returns the audition with the given name.
-func (store *Database) GetAuditionByName(name string, includeDeleted bool) (*Audition, *DBError) {
-	query := `SELECT * FROM Auditions A WHERE A.Name = ?`
-	if !includeDeleted {
-		query += ` AND A.IsDeleted = false`
-	}
-	audition := &Audition{}
-	err := store.db.QueryRow(query,
-		name).Scan(
-		&audition.ID, &audition.Name, &audition.Time,
-		&audition.Location, &audition.Quarter, &audition.CreatedAt,
-		&audition.CreatedBy, &audition.IsDeleted)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, NewDBError("no audition found", http.StatusNotFound)
-		}
-		return nil, NewDBError(fmt.Sprintf("error retrieving audition: %v", err), http.StatusInternalServerError)
 	}
 	return audition, nil
 }
@@ -71,8 +48,8 @@ func (store *Database) GetAuditionByID(id int, includeDeleted bool) (*Audition, 
 	audition := &Audition{}
 	err := store.db.QueryRow(query,
 		id).Scan(
-		&audition.ID, &audition.Name, &audition.Time,
-		&audition.Location, &audition.Quarter, &audition.CreatedAt,
+		&audition.ID, &audition.Time,
+		&audition.Location, &audition.CreatedAt,
 		&audition.CreatedBy, &audition.IsDeleted)
 	if err != nil {
 		if err == sql.ErrNoRows {

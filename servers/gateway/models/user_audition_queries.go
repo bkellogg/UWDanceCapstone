@@ -3,9 +3,62 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"net/http"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
+
+// GetUserAuditionLink gets the UserAuditionLinkResponse that is affiliated with the
+// given link between the given user and audition, if it exists. Returns an error
+// if one occurred.
+func (store *Database) GetUserAuditionLink(userID, audID int) (*UserAuditionLinkResponse, *DBError) {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+
+	var dberr *DBError
+	defer txCleanup(tx, dberr)
+
+	ualr := &UserAuditionLinkResponse{}
+	ualr.RegNumber = -1 // temp until this is implemented
+	ualr.NumShows = 2   // temp until this is implemented
+
+	user, dberr := txGetUser(tx, userID)
+	if dberr != nil {
+		return nil, dberr
+	}
+	ualr.User = user
+
+	aud, dberr := txGetAudition(tx, audID)
+	if dberr != nil {
+		return nil, dberr
+	}
+	ualr.Audition = aud
+
+	ua, dberr := txGetUserAudition(tx, userID, audID)
+	if dberr != nil {
+		return nil, dberr
+	}
+	ualr.AddedAt = ua.CreatedAt
+	ualr.AddedBy = ua.CreatedBy
+
+	comments, dberr := txGetUserAuditionComments(tx, ua.ID)
+	if dberr != nil {
+		return nil, dberr
+	}
+	ualr.Comments = comments
+
+	wtb, dberr := txGetUserAuditionAvailability(tx, ua.AvailabilityID)
+	if dberr != nil {
+		return nil, dberr
+	}
+	ualr.Availability = wtb
+
+	dberr = nil // ensure the tx is committed by the cleanup func
+	return ualr, nil
+}
 
 // GetUserAuditionAvailability gets the availability associated with the given userID and audID
 // and whether or not it should include deleted availabilities. Returns an error if one

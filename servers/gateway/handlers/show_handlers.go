@@ -86,55 +86,6 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
-// ResourceForSpecificShowHandler handles requests for a specifc resource on a specific audition.
-func (ctx *AuthContext) ResourceForSpecificShowHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	if r.Method != "GET" {
-		return methodNotAllowed()
-	}
-
-	muxVars := mux.Vars(r)
-	showIDString := muxVars["id"]
-	showID, err := strconv.Atoi(showIDString)
-	if err != nil {
-		return HTTPError("unparsable ID given: "+err.Error(), http.StatusBadRequest)
-	}
-
-	includeDeleted := getIncludeDeletedParam(r)
-	page, httperr := getPageParam(r)
-	if httperr != nil {
-		return httperr
-	}
-
-	audition, err := ctx.store.GetShowByID(showID, includeDeleted)
-	if err != nil {
-		return HTTPError("error getting show by ID: "+err.Error(), http.StatusInternalServerError)
-	}
-	if audition == nil {
-		return objectNotFound("show")
-	}
-
-	object := muxVars["object"]
-	switch object {
-	case "users":
-		// TODO: Change this to "permissions to see users in show"
-		if !ctx.permChecker.UserCan(u, permissions.SeeAllUsers) {
-			return permissionDenied()
-		}
-		return respondWithString(w, "TODO: Implement the users resource for shows", http.StatusNotImplemented)
-	case "pieces":
-		if ctx.permChecker.UserCan(u, permissions.SeePieces) {
-			return permissionDenied()
-		}
-		pieces, err := ctx.store.GetPiecesByShowID(showID, page, includeDeleted)
-		if err != nil {
-			return HTTPError(err.Message, err.HTTPStatus)
-		}
-		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
-	default:
-		return objectTypeNotSupported()
-	}
-}
-
 // ShowTypeHandler handles general requests to the show type resource.
 func (ctx *AuthContext) ShowTypeHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	switch r.Method {

@@ -20,10 +20,11 @@ const (
 	PiecesPath    = BaseAPIPath + "/pieces"
 	RolesPath     = BaseAPIPath + "/roles"
 
-	ResourceRoot     = ""
-	ResourceID       = "/{id}"
-	ResourceIDObject = ResourceID + "/{object}"
-	ObjectTypesPath  = "/types"
+	ResourceRoot       = ""
+	ResourceID         = "/{id}"
+	ResourceIDObject   = ResourceID + "/{object}"
+	ResourceIDObjectID = ResourceIDObject + "/{objectID}"
+	ObjectTypesPath    = "/types"
 
 	AnnouncementsPath = BaseAPIPath + "/announcements"
 

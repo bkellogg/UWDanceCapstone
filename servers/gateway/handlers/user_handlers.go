@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -193,84 +191,6 @@ func (ctx *AuthContext) UserMembershipActionDispatcher(w http.ResponseWriter, r 
 	}
 }
 
-// handleUserAuditionAvailability handles requests related to availability on a User Audition
-func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *models.User, w http.ResponseWriter, r *http.Request) *middleware.HTTPError {
-	switch r.Method {
-	case "GET":
-		if !ctx.permChecker.UserCanSeeAvailability(u, int64(userID)) {
-			return permissionDenied()
-		}
-		avail, err := ctx.store.GetUserAuditionAvailability(userID, audID)
-		if err != nil {
-			code := http.StatusInternalServerError
-			if err.Error() == appvars.ErrUserAuditionDoesNotExist {
-				code = http.StatusBadRequest
-			}
-			return HTTPError(err.Error(), code)
-		}
-		return respond(w, avail, http.StatusOK)
-	case "PATCH":
-		if !!ctx.permChecker.UserCan(u, permissions.ChangeUserAvailability) {
-			return permissionDenied()
-		}
-		wtb := &models.WeekTimeBlock{}
-		if err := receive(r, wtb); err != nil {
-			return err
-		}
-		if err := ctx.store.UpdateUserAuditionAvailability(userID, audID, wtb); err != nil {
-			code := http.StatusInternalServerError
-			if err.Error() == appvars.ErrUserAuditionDoesNotExist ||
-				strings.Contains(err.Error(), "validation failed") {
-				code = http.StatusBadRequest
-			}
-			return HTTPError(err.Error(), code)
-		}
-		return respondWithString(w, "availability updated", http.StatusOK)
-	default:
-		return methodNotAllowed()
-	}
-	return nil
-}
-
-// handleUserAuditionComment handles requests related to comments on a User Audition
-func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.User, w http.ResponseWriter, r *http.Request) *middleware.HTTPError {
-	switch r.Method {
-	case "POST":
-		if !ctx.permChecker.UserCan(u, permissions.CommentOnUserAudition) {
-			return permissionDenied()
-		}
-		newComment := &models.AuditionComment{}
-		if err := receive(r, newComment); err != nil {
-			return err
-		}
-		comment, err := ctx.store.InsertUserAuditionComment(userID, audID, int(u.ID), newComment.Comment)
-		if err != nil {
-			return HTTPError(err.Message, err.HTTPStatus)
-		}
-		return respond(w, comment, http.StatusCreated)
-	case "GET":
-		if !ctx.permChecker.UserCan(u, permissions.SeeCommentsOnUserAudition) {
-			return permissionDenied()
-		}
-		includeDeleted := getIncludeDeletedParam(r)
-		page, httperr := getPageParam(r)
-		if httperr != nil {
-			return httperr
-		}
-		creator, httperr := getCreatorParam(r)
-		if httperr != nil {
-			return httperr
-		}
-		comments, err := ctx.store.GetUserAuditionComments(userID, audID, creator, page, includeDeleted)
-		if err != nil {
-			return HTTPError(err.Message, err.HTTPStatus)
-		}
-		return respond(w, models.PaginateUserAuditionComments(comments, page), http.StatusOK)
-	default:
-		return methodNotAllowed()
-	}
-}
-
 // UserMemberShipHandler handles all requests to add or remove a user to
 // an entity.
 func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
@@ -305,22 +225,11 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 			if !ctx.permChecker.UserCan(u, permissions.AddUserToPiece) {
 				return permissionDenied()
 			}
-			role := getRoleParam(r)
-			switch role {
-			case appvars.RoleChoreographer:
-				if !ctx.permChecker.UserCan(u, permissions.AddStaffToPiece) {
-					return permissionDenied()
-				}
-			case "":
-				role = appvars.RoleDancer
-			default:
-				return HTTPError(role+" is not a valid role", http.StatusBadRequest)
-			}
-			err := ctx.store.AddUserToPiece(userID, objID, role)
+			err := ctx.store.AddUserToPiece(userID, objID)
 			if err != nil {
 				return HTTPError(err.Message, err.HTTPStatus)
 			}
-			return respondWithString(w, "user added to piece as a(n) "+role, http.StatusOK)
+			return respondWithString(w, "user added to piece", http.StatusOK)
 		} else {
 			return objectTypeNotSupported()
 		}
@@ -348,15 +257,6 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
 	return respondWithString(w, message, http.StatusOK)
-}
-
-// addUserToAudition adds the given user to the given audition with the given UserAuditionLink
-// return an HTTPError if one occurred.
-func (ctx *AuthContext) addUserToAudition(userID, audID, creatorID int, ual *models.UserAuditionLink) *middleware.HTTPError {
-	if dberr := ctx.store.AddUserToAudition(userID, audID, creatorID, ual.Availability, ual.Comment); dberr != nil {
-		return HTTPError(dberr.Message, dberr.HTTPStatus)
-	}
-	return nil
 }
 
 // handleUserRole handles all requests to change a user's role.

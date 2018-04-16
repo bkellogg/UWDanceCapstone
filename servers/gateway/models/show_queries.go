@@ -18,16 +18,7 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, *DBError) {
 	}
 	defer tx.Rollback()
 
-	res, err := tx.Query(`SELECT AuditionID FROM Auditions A WHERE A.AuditionID = ?`, newShow.AuditionID)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, NewDBError("no audition found", http.StatusNotFound)
-		}
-		return nil, NewDBError(fmt.Sprintf("error retrieving audition from database: %v", err), http.StatusInternalServerError)
-	}
-	res.Close()
-
-	res, err = tx.Query(`SELECT ShowTypeID FROM ShowType ST WHERE ST.ShowTypeName = ?`, newShow.TypeName)
+	res, err := tx.Query(`SELECT ShowTypeID FROM ShowType ST WHERE ST.ShowTypeName = ?`, newShow.TypeName)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, NewDBError("invalid show type", http.StatusNotFound)
@@ -57,13 +48,12 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, *DBError) {
 		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
 	}
 	show := &Show{
-		ID:         int(showID),
-		TypeID:     st.ID,
-		AuditionID: newShow.AuditionID,
-		EndDate:    newShow.EndDate,
-		CreatedAt:  createTime,
-		CreatedBy:  newShow.CreatedBy,
-		IsDeleted:  false,
+		ID:        int(showID),
+		TypeID:    st.ID,
+		EndDate:   newShow.EndDate,
+		CreatedAt: createTime,
+		CreatedBy: newShow.CreatedBy,
+		IsDeleted: false,
 	}
 	return show, nil
 }
@@ -158,11 +148,13 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool, t
 		if err = res.Scan(&st.ID); err != nil {
 			return nil, NewDBError(fmt.Sprintf("error scanning result into show type: %v", err), http.StatusInternalServerError)
 		}
+		res.Close()
 	}
 
 	offset := getSQLPageOffset(page)
 	// TODO: This is awful, but a quick fix for WHERE needing to be there
-	query := `SELECT * FROM Shows S WHERE 1 = 1`
+	query := `SELECT DISTINCT * FROM Shows S
+ 		WHERE 1 = 1`
 	if !includeDeleted {
 		query += ` AND S.IsDeleted = false`
 	}
@@ -179,20 +171,21 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool, t
 		query += ` AND S.ShowTypeID = ` + strconv.Itoa(st.ID)
 	}
 	query += ` LIMIT 25 OFFSET ?`
-	return handleShowsFromDatabase(store.db.Query(query, offset))
+	return handleShowsFromDatabase(tx.Query(query, offset))
 }
 
 // GetShowByID returns the show with the given ID.
 func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
-	query := `SELECT * FROM Shows S WHERE S.ShowID = ?`
+	query := `SELECT DISTINCT * FROM Shows S
+		WHERE S.ShowID = ?`
 	if !includeDeleted {
 		query += ` AND S.IsDeleted = false`
 	}
 	show := &Show{}
 	err := store.db.QueryRow(query,
 		id).Scan(
-		&show.ID, &show.TypeID,
-		&show.AuditionID, &show.EndDate, &show.CreatedAt,
+		&show.ID, &show.TypeID, &show.AuditionID,
+		&show.EndDate, &show.CreatedAt,
 		&show.CreatedBy, &show.IsDeleted)
 	if err != nil {
 		show = nil
@@ -213,7 +206,7 @@ func (store *Database) DeleteShowByID(id int) error {
 // if one occurred.
 func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, history string) ([]*Show, *DBError) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT S.ShowID, S.ShowTypeID, S.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
+	query := `SELECT DISTINCT S.ShowID, S.ShowTypeID, S.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
 		JOIN Pieces P ON S.ShowID = P.ShowID
 		JOIN UserPiece UP ON P.PieceID = UP.PieceID
 		WHERE UP.UserID = ?`
@@ -228,17 +221,6 @@ func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, histo
 	case "all", "":
 	default:
 		return nil, NewDBError(appvars.ErrInvalidHistoryOption, http.StatusBadRequest)
-	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handleShowsFromDatabase(store.db.Query(query, id, offset))
-}
-
-// GetShowsByAuditionID returns a slice of shows that are in the given audition
-func (store *Database) GetShowsByAuditionID(id, page int, includeDeleted bool) ([]*Show, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT * FROM Shows S Where S.AuditionID = ?`
-	if !includeDeleted {
-		query += ` AND S.IsDeleted = false`
 	}
 	query += ` LIMIT 25 OFFSET ?`
 	return handleShowsFromDatabase(store.db.Query(query, id, offset))

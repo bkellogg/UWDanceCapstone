@@ -73,7 +73,7 @@ func (pc *PermissionChecker) buildRoleCache() error {
 // UserResponses. Returns an error if one occurred.
 // TODO: THIS FUNCTION SHOULD NOT BE IN THE PERMISSION CHECKER
 func (pc *PermissionChecker) ConvertUserSliceToUserResponseSlice(users []*User) ([]*UserResponse, error) {
-	urs := make([]*UserResponse, len(users))
+	urs := make([]*UserResponse, 0, len(users))
 	for _, u := range users {
 		ur, err := pc.ConvertUserToUserResponse(u)
 		if err != nil {
@@ -128,6 +128,29 @@ func (pc *PermissionChecker) UserCan(u *User, action int) bool {
 		return false
 	}
 	return role.Level >= int64(action)
+}
+
+// UserIs returns true if the given user is the given role
+// or higher. False if otherwise, or if there was an error
+// determining this.
+func (pc *PermissionChecker) UserIs(u *User, role int) bool {
+	actualRole, err := pc.getUserRoleLevel(u.ID)
+	if err != nil {
+		return false
+	}
+	return actualRole >= role
+}
+
+// UserCanSeeUsersInShow returns true if the given user can see users
+// inside of the given show.
+func (pc *PermissionChecker) UserCanSeeUsersInShow(u *User, show int) bool {
+	return pc.UserCan(u, permissions.SeeAllUsers)
+}
+
+// UserCanSeeUsersInShow returns true if the given user can see users
+// inside of the given show.
+func (pc *PermissionChecker) UserCanSeeUsersInAudition(u *User, audition int) bool {
+	return pc.UserCan(u, permissions.SeeAllUsers)
 }
 
 // UserCanSeeUser returns true if the given user can see the given target user,
