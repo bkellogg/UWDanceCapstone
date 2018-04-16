@@ -89,12 +89,11 @@ class Dashboard extends Component {
 
 
   getAuditionInfo = () => {
-    var val;
     var activeShows = this.props.shows;
-    for (val in activeShows) {
-      var audNum = (activeShows[val].audition);
-      this.getAudition(audNum, activeShows);
-    }
+    activeShows.forEach(element => {
+      this.getAudition(element.audition, activeShows)
+    }); 
+    
   }
 
   getAudition = (num, activeShows) => {
