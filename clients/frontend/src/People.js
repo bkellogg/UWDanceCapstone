@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util';
+import './styling/General.css';
+import './styling/People.css';
 
 class People extends Component {
   constructor(props) {
@@ -40,10 +42,12 @@ class People extends Component {
     return (
       <section className="main">
       <div className="mainView">
+
         <h1>People</h1>
+        <div className="card1">
         <table>
           <tbody>
-            <tr>
+            <tr className="categories">
               <th>Photo</th>
               <th>Name</th>
               <th>Role</th>
@@ -52,6 +56,7 @@ class People extends Component {
             {rows}
           </tbody>
         </table>
+        </div>
       </div>
       </section>
   );

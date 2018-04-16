@@ -34,22 +34,24 @@ class RegistrationConf extends Component {
 
               <div className="editRegistration">
                 <div className="unregister">
-                  <Button onClick={this.signIn} className="unregisterButton">Unregister</Button>
+                  <Button className="unregisterButton">Unregister</Button>
                 </div>
                 <div className="changeAvailability">
-                  <Button onClick={this.signIn} className="changeAvailabilityButton">Change Availability</Button>
+                  <Button className="changeAvailabilityButton">Change Availability</Button>
                 </div>
               </div>
             </div>
           </CardText>
         </Card>
         <Card className="successCard" id="regCard">
-          <div className="regNum">
-            <CardTitle><h3 id="numberMessage">You are number</h3> </CardTitle>
+          <div className="numberCardWrap">
+            <div className="regNum">
+              <CardTitle><h3 id="numberMessage">You are number</h3> </CardTitle>
+            </div>
+            <CardText id="numArea">
+              <p id="number">1</p>
+            </CardText>
           </div>
-          <CardText id="numArea">
-            <p id="number">1</p>
-          </CardText>
         </Card>
       </div>
 

@@ -55,3 +55,28 @@
 .unregisterButton, .changeAvailabilityButton{
     background-color: #ef6c00;
 }
+
+.unregisterButton:hover, .changeAvailabilityButton:hover{
+    background-color: #e65100;
+}
+
+#regCard{
+    text-align: center;
+    width: 35%;
+}
+
+.regNum{
+    background-color: #4db6ac;
+    color: white;
+    height: 10%;
+}
+
+#number{
+    color: #4db6ac;
+    font-size: 65px;
+    margin: 0
+}
+
+.successCard{
+    margin-top: 10px
+}
