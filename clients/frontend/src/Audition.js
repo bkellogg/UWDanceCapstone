@@ -2,64 +2,83 @@ import React, { Component } from 'react';
 import * as Util from './util.js';
 
 //components
-import Registration from './Registration';
-import RegistrationConf from './RegistrationConf';
+import Availability from './Availability';
 
 //styling
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import TextField from 'material-ui/TextField';
+import RaisedButton from 'material-ui/RaisedButton';
+import { Card, CardText, CardTitle } from 'material-ui/Card';
+import Checkbox from 'material-ui/Checkbox';
 import './styling/Audition.css';
 import './styling/General.css';
+
+const styles = {
+  customWidth: {
+    width: 150,
+  },
+};
 
 class Audition extends Component {
   constructor(props) {
     super(props);
-    this.state ={
-      registered: false,
-      audition: null
+    this.handleChange = this.handleChange.bind(this);
+    this.handleRegister = this.handleRegister.bind(this);
+    this.state = {
+      value: 1,
+      registered: false
     }
+    console.log(this.props.audition)
   };
 
-  componentWillMount(){
-    this.checkRegistration()
-  }
+  handleChange = (event, index, value) => this.setState({ value });
 
-  checkRegistration = () => {
-    Util.makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
-    .then(res => {
-      if(res.ok) {
-        return res.json()
+  setAvailability = (availability) => this.setState({ availability: availability });
+
+  addComment = (e) => this.setState({ comments: e.target.value })
+
+  handleRegister() {
+    //MAKE POST
+    //.then set state isRegistered to true, which will cause the page to rerender
+    let body = {
+      "comment": this.state.comments,
+      "availability": {
+        "days": this.state.availability
       }
-      return res.text().then((t) => Promise.reject(t));
-    })
-    .then(audition => {
-      this.setState({
-        registered: true,
-        audition: audition.audition
-      })
-    })
-    .catch(err => {console.log(err)})
-  }
+    }
 
-  registerUser = () => {
-    this.checkRegistration()
+    Util.makeRequest("users/me/auditions/" + this.props.auditionID, body, "LINK", true)
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then(res => {
+        this.setState({
+          registered: true
+        })
+      })
+      .catch(err => console.log(err))
   }
 
   render() {
-      return(
-        <section className="main">
+    return (
+      <section className="main">
         <div className="mainView">
           <div className="audition">
             <h1 id="auditionTitle">{this.props.name} Audition Form</h1>
             {
               this.state.registered === false &&
-<<<<<<< HEAD
 
-                // audition form
-                <div className="auditionForm">
-                  {/* question 1 */}
-                  <div className="row">
-                    <div className="question">
-                      <p>1. Number of pieces I am available for: </p>
-                    
+              // audition form
+              <div className="auditionForm">
+                {/* question 1 */}
+                <div className="row">
+                  <div className="question">
+                    <p>1. Number of pieces I am available for: </p>
+
                     <SelectField
                       value={this.state.value}
                       onChange={this.handleChange}
@@ -68,64 +87,79 @@ class Audition extends Component {
                       <MenuItem value={1} primaryText="1" />
                       <MenuItem value={2} primaryText="2" />
                     </SelectField>
-                    </div>
                   </div>
+                </div>
 
 
-                  <br />
+                <br />
 
-                  {/* question 2 */}
-                  <div className="row">
-                    <div className="question">
-                      <p>2. You must be enrolled in a class during the quarter the production is occurring.</p> <br/>
-                   
-                   <br />
+                {/* question 2 */}
+                <div className="row">
+                  <div className="question">
+                    <p>2. You must be enrolled in a class during the quarter the production is occurring.</p> <br />
+
+                    <br />
                     <Checkbox
                       label="I confirm I am enrolled in a class for the quarter during which the show is occuring."
-                      
                     />
-                    </div>
                   </div>
-                  <br/>
+                </div>
+                <br />
 
-                  {/* question 3 */}
-                  <div className="row">
-                    <div className="question">
-                      <p>3. Availability [click & drag to indicate when you are <b>available</b> to rehearse]</p>
-                    <Availability availability = {this.setAvailability}/>
+                {/* question 3 */}
+                <div className="row">
+                  <div className="question">
+                    <p>3. Availability [click and drag to indicate when you are <b>available</b> to rehearse]</p>
+                    <Availability availability={this.setAvailability} />
                   </div>
-                  </div>
-                  <br/>
+                </div>
+                <br />
 
 
-                  {/* question 4 */}
-                  <div className="row">
-                    <div className="question">
-                      <p>4. Please indicate any additional notes below</p>
+                {/* question 4 */}
+                <div className="row">
+                  <div className="question">
+                    <p>4. Please indicate any additional notes below</p>
                     <TextField
                       name="comments"
-                      onChange = {this.addComment}
+                      onChange={this.addComment}
                       multiLine={true}
                       rows={2}
                     />
                   </div>
-                  <RaisedButton className='register' onClick={this.handleRegister} style={{backgroundColor: "#BFB2E5"}}> Register </RaisedButton>
-                  </div>
+                  <RaisedButton className='register' onClick={this.handleRegister} style={{ backgroundColor: "#BFB2E5" }}> Register </RaisedButton>
                 </div>
+              </div>
 
-                // end audition form
-=======
-                <Registration audition={this.props.audition} registered={() => this.checkRegistration()} />
->>>>>>> d1434f83689d6a09c871ad1c43e019e2f60ea3d7
+              // end audition form
             }
             {
               this.state.registered === true &&
-              <RegistrationConf audition={this.state.audition}/>
+              <div className="registered">
+                <Card className="successCard">
+                  <div className="success">
+                    <CardTitle>You have successfully registered</CardTitle>
+                  </div>
+                  <CardText>
+                    <p>Meany Hall Studio 265</p>
+                    <p>Audition starts at 6:30</p>
+                    <p>Doors open for warmup 30 minutes prior</p>
+                  </CardText>
+                </Card>
+                <Card className="successCard" id="regCard">
+                  <div className="regNum">
+                    <CardTitle><h3>You are number</h3> </CardTitle>
+                  </div>
+                  <CardText id="numArea">
+                    <p id="number">1</p>
+                  </CardText>
+                </Card>
+              </div>
             }
           </div>
-          </div>
-        </section>
-      )
+        </div>
+      </section>
+    )
   }
 
 }

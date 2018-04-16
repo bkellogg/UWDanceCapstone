@@ -41,9 +41,6 @@ class People extends Component {
       <section className="main">
       <div className="mainView">
         <h1>People</h1>
-<<<<<<< HEAD
-      </div>
-=======
         <table>
           <tbody>
             <tr>
@@ -55,7 +52,7 @@ class People extends Component {
             {rows}
           </tbody>
         </table>
->>>>>>> d1434f83689d6a09c871ad1c43e019e2f60ea3d7
+        </div>
       </section>
   );
 };

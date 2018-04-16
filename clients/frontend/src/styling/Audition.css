@@ -8,10 +8,15 @@
     margin-bottom: 200px
 }
 
-.register{
-    margin-top: 15px;
-    background-color: lavender 
+
+.question {
+    margin-top: 10px;
 }
+
+
+
+
+
 
 .success{
     background-color: lavender
@@ -33,10 +38,4 @@
 
 #numArea{
     padding: 0px;
-}
-
-
-
-SelectField{
-
 }
