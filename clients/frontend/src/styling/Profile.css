@@ -57,18 +57,11 @@ img#photo {
   z-index: 2;
 }
 
-.sub, .sub2, #photo{
+.card1, .card2, #photo{
   border-radius: 3px;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px; 
 }
 
-.sub, .sub2 {
-  width: 90%;
-  margin-bottom: 3%;
-  margin-top: 3%;
-  padding: 1.5%;
-  background-color: white;
-}
 
 #historyTitle {
   margin-bottom:15px

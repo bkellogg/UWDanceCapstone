@@ -11,13 +11,22 @@ h1 {
 	font-style: normal;
 	font-variant: normal;
   font-weight: 400;
-  letter-spacing: .5px;
-  color: #EA6336;
-  text-transform: capitalize;
+  letter-spacing: 1px;
+  color: #e65100;
+  text-transform: rcapitalize;
   margin-bottom: 2%;
-  margin-top: 0;
 }
 
 .dashboard{
     width: 90%;
+}
+
+
+.card1, .card2{
+        width: 90%;
+        margin-bottom: 3%;
+        margin-top: 3%;
+        padding: 1.5%;
+        background-color: white;
+        box-shadow: none;
 }

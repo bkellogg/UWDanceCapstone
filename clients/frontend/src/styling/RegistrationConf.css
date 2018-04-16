@@ -1,0 +1,57 @@
+.card101{
+    background-color: transparent;
+    padding: 0;
+    width: 90%;
+    margin-bottom: 3%;
+    margin-top: 3%;
+}
+
+#successTitle{
+    font-size: 16px;
+    color: white;
+    letter-spacing: .5px;
+}
+
+#successMessage{
+    font-weight: 600;
+}
+
+#numberMessage{
+    font-size: 26px;
+}
+
+.success{
+    background-color: #4db6ac;
+}
+
+.successWrap{
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.successfulRegistrationMessage, .editRegistration{
+    width: auto;
+}
+
+.successfulRegistrationMessage{
+    position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+
+.editRegistration{
+    z-index: 2;
+    position: relative;
+    display: block;
+}
+
+.unregister, .changeAvailability{
+    position: relative;
+    float: right;
+    margin-left: 10px;
+}
+
+.unregisterButton, .changeAvailabilityButton{
+    background-color: #ef6c00;
+}

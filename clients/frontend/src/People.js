@@ -48,11 +48,11 @@ class People extends Component {
               <th>Name</th>
               <th>Role</th>
               <th>Email</th>
-              </tr>
+            </tr>
             {rows}
           </tbody>
         </table>
-        </div>
+      </div>
       </section>
   );
 };

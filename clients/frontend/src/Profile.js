@@ -20,7 +20,7 @@ class Profile extends Component {
       photoError: null,
       photoSrc: null,
       bio: JSON.parse(localStorage.getItem("user")).bio,
-      history: null,
+      history: [],
       resume: null,
       resumeErr: null,
       fname: JSON.parse(localStorage.getItem("user")).firstName,
@@ -91,8 +91,7 @@ class Profile extends Component {
       })
   }
 
-  //want to move this to util eventually
-  getPhoto() {
+getPhoto() {
     fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
       .then((res) => {
         if (res.ok) {
@@ -148,7 +147,7 @@ class Profile extends Component {
         this.setState({ photoSrc: this.state.photoUpload })
       }
       if (this.state.bioUpload !== "") {
-        Util.uploadBio(this.state.bioUpload) //refreshing the local user is built in aka don't need to call the bio back from the server
+        Util.uploadBio(this.state.bioUpload)
         this.setState({ bio: this.state.bioUpload })
       }
       if (this.state.resumeUpload !== "") {
@@ -189,13 +188,14 @@ class Profile extends Component {
   }
 
   render() {
+    console.log(this.state.history)
     return (
       <section className="main">
       <div className="mainView">
       <h1 className="pagetitle">Your Profile </h1>
 
 
-        <div className="sub">
+        <div className="card1">
           {/* FIRST CARD */}
           <div className="headerBorder">
             <div className="header">
@@ -252,8 +252,6 @@ class Profile extends Component {
                           </div>
                         </form>
                       </div>
-
-                      {/* <Input id="bioUpload" name="bioUpload" s={6} placeholder="Bios should be 60 words or less" onChange={this.inputChange}/> */}
                     </div>
 
                   }
@@ -274,13 +272,13 @@ class Profile extends Component {
           </div>
         </div>
 
-        <div className="sub2">
+        <div className="card2">
 
           {/* SECOND CARD */}
           <div className="mainContentBorder">
             <div id="history">
               <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-              {this.state.history !== null && this.state.history.map((p, i) => {
+              {this.state.history.length > 0 && this.state.history.map((p, i) => {
                 return (
                   //TODO STYLE THESE
                   <div className="showHistory" key={i}>
@@ -289,7 +287,7 @@ class Profile extends Component {
                   </div>
                 )
               })}
-              {this.state.history === null &&
+              {this.state.history.length === 0 &&
                 <p> Dancer has no piece history </p>
               }
             </div>
