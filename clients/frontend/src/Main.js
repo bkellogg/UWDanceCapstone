@@ -39,6 +39,7 @@ class Main extends Component {
 
   componentDidMount(){
     //this.getShowTypes();
+    Util.refreshLocalUser();
     this.getCurrShows();
     if(!localStorage['firstLoad']){
       localStorage['firstLoad'] = true
@@ -64,7 +65,10 @@ class Main extends Component {
     .then( shows => {
       this.getShowTypes(shows)
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
   }
 
   getShowTypes(shows){
@@ -100,7 +104,10 @@ class Main extends Component {
         currShows: currShows
       })
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
   
   }
 
@@ -122,7 +129,6 @@ class Main extends Component {
 
   signOut(){
     Util.signOut();
-    this.props.auth();
   }
 
   handleToggle = () => this.setState({open: !this.state.open});
@@ -159,7 +165,7 @@ class Main extends Component {
         <Switch>
           <Route exact path='/' render={
             props => <Dashboard {...props} shows={this.state.currShows}/>
-            }/>
+          }/>
           <Route exact path='/profile' component={Profile}/>
         </Switch>
           {this.state.currShows.map((show, i) => {

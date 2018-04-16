@@ -67,9 +67,8 @@ class SignIn extends Component {
         this.props.onSignIn(this.state.auth)
       })
       .catch((err) => {
-        this.setState({
-          error: true
-        })
+        console.log(err)
+        Util.handleError(err)
       })
   };
 
@@ -90,6 +89,7 @@ class SignIn extends Component {
         )
         .catch(err => {
           console.log(err)
+          Util.handleError(err)
         })
     }
   }

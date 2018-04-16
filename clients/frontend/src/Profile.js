@@ -52,7 +52,8 @@ class Profile extends Component {
         this.formatHistory(res.shows)
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
+        Util.handleError(err)
       })
   }
 
@@ -87,6 +88,10 @@ class Profile extends Component {
           history: showHistory
         })
       })
+      .catch(err => {
+        console.log(err)
+        Util.handleError(err)
+      })
   }
 
 getPhoto() {
@@ -104,6 +109,7 @@ getPhoto() {
       })
       .catch((err) => {
         console.log(err)
+        Util.handleError(err)
       });
   }
 
@@ -122,6 +128,7 @@ getPhoto() {
       })
       .catch((err) => {
         console.log(err)
+        Util.handleError(err)
       });
   }
 

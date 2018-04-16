@@ -38,7 +38,10 @@ class Audition extends Component {
         regNum: audition.regNum
       })
     })
-    .catch(err => {console.log(err)})
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
   }
 
   registerUser = () => {

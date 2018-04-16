@@ -30,7 +30,10 @@ class People extends Component {
     .then(data => {
       this.setState({users: data.users})
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
   }
 
   render() {

@@ -67,6 +67,7 @@ export function refreshLocalUser() {
 export function signOut() {
     clearAuthAndUser();
     localStorage.removeItem("firstLoad")
+    window.location.reload()
 }
 
 export function uploadPhoto(val){
@@ -203,4 +204,11 @@ export function getDancerHistory(){
   }).catch((err) => {
     console.log(err)
   })
+}
+
+export function handleError(err){
+    if (err ==="you must be signed in to use this resource"){
+        signOut()
+        window.location.reload()
+    }
 }

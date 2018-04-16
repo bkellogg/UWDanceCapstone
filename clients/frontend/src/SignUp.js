@@ -79,6 +79,7 @@ class SignUp extends Component {
             error: "An error occurred"
           })
         }
+        Util.handleError(err)
       })
   }
 

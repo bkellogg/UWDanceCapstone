@@ -40,7 +40,10 @@ class SelectCast extends Component {
       /*var retrievedObject = localStorage.getItem('testObject');
         console.log('retrievedObject: ', JSON.parse(retrievedObject));*/
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
   }
 
   
