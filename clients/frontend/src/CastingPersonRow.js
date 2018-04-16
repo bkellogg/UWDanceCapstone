@@ -16,7 +16,14 @@ class CastingPersonRow extends Component {
             three: false
         }
     }
+    this.props.person.rank = "";
+    console.log(this.props.person)
   };
+
+  componentDidMount(){
+      let users = JSON.parse(localStorage.getItem("allUsers"))
+      //loop through local storage to get the rank
+  }
 
   updateCheck = (event) => {
       let val = event.target.value
