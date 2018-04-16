@@ -19,7 +19,6 @@ class Casting extends Component {
    this.state ={
      stepIndex: 0
    }
-   console.log(this.props)
   };
 
   //handles a next click

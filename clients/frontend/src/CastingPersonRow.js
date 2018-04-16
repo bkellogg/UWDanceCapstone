@@ -45,6 +45,8 @@ class CastingPersonRow extends Component {
             }
         })
       }
+
+      
   }
 
   render() {

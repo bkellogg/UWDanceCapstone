@@ -9,6 +9,8 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import './styling/SignIn.css';
 
+import img from './imgs/dance-bw.jpg'
+
 class SignIn extends Component {
   constructor(props) {
     super(props);
@@ -127,7 +129,6 @@ class SignIn extends Component {
       <div className="LogInLanding" 
       // style={{ height: 100 + '%' }}
       >
-\
         
         {/* <div className="LogInPhoto">
         <img src={img}></img>

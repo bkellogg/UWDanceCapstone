@@ -91,7 +91,6 @@ class Main extends Component {
    .then( () => {
     let currShows = []
     shows.map(s => {
-      console.log(s)
       return currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID, "show": s.id})
     })
     return currShows
@@ -163,7 +162,6 @@ class Main extends Component {
         </Switch>
           {this.state.currShows.map((show, i) => {
             let showName = show.name
-            console.log(show)
             let path = "/" + showName.split(' ').join('')
             return( 
               <Switch key = {i}>
