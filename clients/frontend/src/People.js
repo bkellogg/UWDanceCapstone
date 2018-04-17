@@ -5,6 +5,8 @@ import './styling/People.css';
 
 import Avatar from 'material-ui/Avatar';
 
+import Avatar from 'material-ui/Avatar';
+
 class People extends Component {
   constructor(props) {
     super(props);

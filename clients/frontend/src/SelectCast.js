@@ -23,27 +23,33 @@ class SelectCast extends Component {
     //API route to get people in an audition will go here
     //TODO deal with pages
     //TODO get this to be just the people in a show
-    Util.makeRequest("auditions/" + this.props.auditionID + "/users", "", "GET", true)
-    .then( res => {
-      if (res.ok) {
-        return res.json()
-      }
-      return res.text().then((t) => Promise.reject(t));
-    })
-    .then(data => {
-      this.setState({
-          users: data.users
+    if (localStorage.getItem("allUsers") === null){
+      Util.makeRequest("auditions/" + this.props.auditionID + "/users", "", "GET", true)
+      .then( res => {
+        if (res.ok) {
+          return res.json()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
-      localStorage.setItem('allUsers', JSON.stringify(data.users));
-      localStorage.setItem('cast', []);
+      .then(data => {
+        this.setState({
+            users: data.users
+        })
+        localStorage.setItem('allUsers', JSON.stringify(data.users));
+        localStorage.setItem('cast', JSON.stringify([]));
 
-      /*var retrievedObject = localStorage.getItem('testObject');
-        console.log('retrievedObject: ', JSON.parse(retrievedObject));*/
-    })
-    .catch(err => {
-      console.log(err)
-      Util.handleError(err)
-    })
+        /*var retrievedObject = localStorage.getItem('testObject');
+          console.log('retrievedObject: ', JSON.parse(retrievedObject));*/
+      })
+      .catch(err => {
+        console.log(err)
+        Util.handleError(err)
+      })
+    } else {
+      this.setState({
+        users: JSON.parse(localStorage.getItem("allUsers"))
+      })
+    }
   }
 
   

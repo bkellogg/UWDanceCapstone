@@ -26,7 +26,8 @@ export function getAuth() {
 export function clearAuthAndUser() {
     localStorage.removeItem("auth");
     localStorage.removeItem("user");
-    localStorage.removeItem("allUsers")
+    localStorage.removeItem("allUsers");
+    localStorage.removeItem("firstLoad")
 };
 
 export function makeRequest(resource, payload = "", method = "GET", useAuth = false) {
@@ -66,7 +67,6 @@ export function refreshLocalUser() {
 
 export function signOut() {
     clearAuthAndUser();
-    localStorage.removeItem("firstLoad")
     window.location.reload()
 }
 
@@ -209,6 +209,5 @@ export function getDancerHistory(){
 export function handleError(err){
     if (err ==="you must be signed in to use this resource"){
         signOut()
-        window.location.reload()
     }
 }
