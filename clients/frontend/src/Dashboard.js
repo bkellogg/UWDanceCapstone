@@ -20,15 +20,18 @@ class Dashboard extends Component {
       currAnnouncements: [],
       auditionInfo: [],
       audAnnouncements: [],
-      currAuditionAnnouncements: []
+      currAuditionAnnouncements: [],
+
+      showAndAudition: this.props.shows
     }
   };
 
-  componentDidMount() {
+  componentWillMount() {
     this.getAnnouncements();
-    this.getAuditionInfo();
+    //this.getAuditionInfo();
   }
 
+  //getting messages
   getAnnouncements = () => {
     fetch(Util.API_URL_BASE + "/announcements?includeDeleted=false&auth=" + this.state.auth)
       .then((res) => {
@@ -49,6 +52,7 @@ class Dashboard extends Component {
       .catch((err) => { });
   }
 
+  //getting normal messages
   getAnnouncementTypes = (announcements) => {
     fetch(Util.API_URL_BASE + "/announcements/types?auth=" + this.state.auth)
       .then((res) => {
@@ -87,17 +91,21 @@ class Dashboard extends Component {
       .catch((err) => { });
   }
 
-
+  //map through and get information about auditions for current shows
   getAuditionInfo = () => {
-    var activeShows = this.props.shows;
-    activeShows.forEach(element => {
-      this.getAudition(element.audition, activeShows)
+
+    this.state.showAndAudition.forEach((show, i) => {
+      this.getAudition(show, i)
     }); 
     
   }
 
-  getAudition = (num, activeShows) => {
-    fetch(Util.API_URL_BASE + "/auditions/" + num + "?auth=" + this.state.auth)
+//getting the audition info for the audition ID supplied
+//should return all info about one audition
+  getAudition = (show, index) => {
+    let auditionID = show.auditionID
+    console.log(this.state.showAndAudition[index])
+    fetch(Util.API_URL_BASE + "/auditions/" + auditionID + "?auth=" + this.state.auth)
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -105,39 +113,45 @@ class Dashboard extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
-        let auds = this.state.auditionInfo.slice();
-        auds.push(data);
-        this.setState({
-          auditionInfo: auds
-        })
+        //let showAndAuditionCopy = this.state.showAndAudition
+        //showAndAuditionCopy.audition = data
+        this.state.showAndAudition[index].audition = data
       })
-      .then( () => {
-        let currAuditionAnnouncements = [];
-        console.log("Shows")
-        console.log(activeShows)
-        
-        let auditionInfo = this.state.auditionInfo;
-        console.log("Audition Info")
-        console.log(auditionInfo)
 
-        auditionInfo.map(s => {
-          return currAuditionAnnouncements.push({
-            id: s.id,
-            type: "Audition",
-            show: (activeShows.find(e => e.audition === s.id).name),
-            time: s.time,
-            location: s.location,
-            address: (activeShows.find(e => e.audition === s.id).name).split(' ').join('')
-          });
-        });
-        return currAuditionAnnouncements
-      })
-      .then(currAuditionAnnouncements => {
-        this.setState({
-          currAuditionAnnouncements: currAuditionAnnouncements
-        })
-      })
-      .catch((err) => { });
+
+      //   let auds = this.state.auditionInfo.slice();
+      //   auds.push(data);
+      //   this.setState({
+      //     auditionInfo: auds
+      //   })
+      // })
+      // .then( () => {
+      //   let currAuditionAnnouncements = [];
+
+        
+      //   let auditionInfo = this.state.auditionInfo;
+
+
+      //   auditionInfo.map(s => {
+      //     return currAuditionAnnouncements.push({
+      //       id: s.id,
+      //       type: "Audition",
+      //       show: (activeShows.find(e => e.audition === s.id).name),
+      //       time: s.time,
+      //       location: s.location,
+      //       address: (activeShows.find(e => e.audition === s.id).name).split(' ').join('')
+      //     });
+      //   });
+      //   return currAuditionAnnouncements
+      // })
+      // .then(currAuditionAnnouncements => {
+      //   this.setState({
+      //     currAuditionAnnouncements: currAuditionAnnouncements
+      //   })
+      // })
+      .catch((err) => { 
+        //Util.handleError(err)
+      });
   }
 
   render() {
@@ -179,19 +193,19 @@ class Dashboard extends Component {
                 )
               })}
 
-              {this.state.currAuditionAnnouncements.map((v, i) => {
+              {this.props.shows.map((v, i) => {
+                console.log(v)
                 return (
                   <div key={i} className="announcement">
                     {
-                      v.type === 'Audition' &&
                       <Card>
                         <div className="title">
-                          <CardTitle title={v.type} />
+                          <CardTitle title="Audition"/>
                         </div>
                         <CardText>
-                          <p> {v.show} </p>
-                          <p> {v.time} </p>
-                          <p> {v.location} </p>
+                          <p> {v.name} </p>
+                          <p> {v.audition.time} </p>
+                          <p> {v.audition.location} </p>
                           <Link to={{ pathname: v.address + "/audition" }}>Sign up here!</Link>
                         </CardText>
                       </Card>
