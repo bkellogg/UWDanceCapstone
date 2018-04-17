@@ -39,6 +39,7 @@ class Main extends Component {
 
   componentDidMount(){
     //this.getShowTypes();
+    Util.refreshLocalUser();
     this.getCurrShows();
     if(!localStorage['firstLoad']){
       localStorage['firstLoad'] = true
@@ -64,7 +65,10 @@ class Main extends Component {
     .then( shows => {
       this.getShowTypes(shows)
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
   }
 
   getShowTypes(shows){
@@ -92,8 +96,10 @@ class Main extends Component {
       let auditionInfo = this.getAudition(show)
     })
    })
-    .catch(err => console.log(err))
-  
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
   }
   
 
@@ -138,7 +144,6 @@ class Main extends Component {
 
   signOut(){
     Util.signOut();
-    this.props.auth();
   }
 
   handleToggle = () => this.setState({open: !this.state.open});

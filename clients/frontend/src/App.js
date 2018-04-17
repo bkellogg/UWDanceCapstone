@@ -45,7 +45,6 @@ class App extends Component {
   }
 
   componentWillMount(){
-    Util.refreshLocalUser();
     if(localStorage.getItem("user")){
       this.setState({
         authorized: true
@@ -55,6 +54,7 @@ class App extends Component {
   }
 
   componentDidUpdate(){
+    Util.refreshLocalUser()
     if(this.state.authorized === false){
       if(this.state.user !== null){
         this.setState({

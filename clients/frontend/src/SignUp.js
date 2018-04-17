@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Button } from 'react-materialize';
 import * as Util from './util.js';
 import SignUpExtra from './SignUpExtra.js'
-import './styling/SignUp.css';
 
 class SignUp extends Component {
   constructor(props) {
@@ -79,6 +78,7 @@ class SignUp extends Component {
             error: "An error occurred"
           })
         }
+        Util.handleError(err)
       })
   }
 

@@ -26,6 +26,7 @@ export function getAuth() {
 export function clearAuthAndUser() {
     localStorage.removeItem("auth");
     localStorage.removeItem("user");
+    localStorage.removeItem("allUsers")
 };
 
 export function makeRequest(resource, payload = "", method = "GET", useAuth = false) {
@@ -66,6 +67,7 @@ export function refreshLocalUser() {
 export function signOut() {
     clearAuthAndUser();
     localStorage.removeItem("firstLoad")
+    window.location.reload()
 }
 
 export function uploadPhoto(val){
@@ -75,17 +77,13 @@ export function uploadPhoto(val){
     let xhr = new XMLHttpRequest();
 
     xhr.addEventListener("readystatechange", function () {
-        if (this.readyState === 4) {
-            console.log(this.responseText);
-        }
+        
     });
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
                 return xhr.responseText
-            } else {
-                return "get fucked"
-            }
+            } 
         }
     };
 
@@ -206,4 +204,11 @@ export function getDancerHistory(){
   }).catch((err) => {
     console.log(err)
   })
+}
+
+export function handleError(err){
+    if (err ==="you must be signed in to use this resource"){
+        signOut()
+        window.location.reload()
+    }
 }

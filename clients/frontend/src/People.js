@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import * as Util from './util';
+import './styling/General.css';
+import './styling/People.css';
+
+import Avatar from 'material-ui/Avatar';
 
 class People extends Component {
   constructor(props) {
@@ -17,8 +21,8 @@ class People extends Component {
     //API route to get people in an audition will go here
     //that route is down, so for now we are just getting the first 100 active people in the data
     //TODO deal with pages
-    //TODO get this to be just the people in a show
-    Util.makeRequest("users/all", "", "GET", true)
+    //STYLING NOTE: if you want to show dummy data change this.props.show to 1
+    Util.makeRequest("shows/"+this.props.show+"/users", "", "GET", true)
     .then( res => {
       if (res.ok) {
         return res.json()
@@ -28,7 +32,10 @@ class People extends Component {
     .then(data => {
       this.setState({users: data.users})
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
   }
 
   render() {
@@ -40,10 +47,12 @@ class People extends Component {
     return (
       <section className="main">
       <div className="mainView">
+
         <h1>People</h1>
+        <div className="card1">
         <table>
           <tbody>
-            <tr>
+            <tr className="categories">
               <th>Photo</th>
               <th>Name</th>
               <th>Role</th>
@@ -52,6 +61,7 @@ class People extends Component {
             {rows}
           </tbody>
         </table>
+        </div>
       </div>
       </section>
   );
@@ -64,7 +74,7 @@ const PersonRow = (props) => {
   return (
     <tr>
       <td>
-        photo
+        <Avatar>:D</Avatar>
       </td>
       <td>
         {p.firstName + " " + p.lastName}

@@ -54,7 +54,10 @@ class Registration extends Component {
     .then(res => {
       this.props.registered()
     })
-    .catch(err => console.log(err))
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
   }
 
   render() {
