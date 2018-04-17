@@ -91,7 +91,8 @@ class Main extends Component {
    })
    .then( () => {
     shows.map(show => {
-      let auditionInfo = this.getAudition(show)
+      this.getAudition(show)
+      return this.state.currShows
     })
    })
     .catch(err => {
@@ -120,7 +121,7 @@ class Main extends Component {
         })
       })
       .catch((err) => { 
-        //Util.handleError(err)
+        Util.handleError(err)
       });
   }
 

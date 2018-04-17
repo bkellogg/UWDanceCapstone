@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 import './styling/General.css';
-import Moment from 'react-moment';
 
 //styling
 import { Card, CardText, CardTitle } from 'material-ui/Card';
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';
-import Availability from './Availability';
 
 class Dashboard extends Component {
   constructor(props) {

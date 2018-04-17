@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 //styling
-import { Card, CardText, CardTitle } from 'material-ui/Card';
 import Moment from 'react-moment';
 import './styling/General.css';
 import './styling/RegistrationConf.css';
