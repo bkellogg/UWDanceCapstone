@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import * as Util from './util.js';
 
 //components
 import SignUp from './SignUp.js';

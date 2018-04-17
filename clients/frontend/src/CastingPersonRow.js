@@ -17,7 +17,6 @@ class CastingPersonRow extends Component {
         },
         person: this.props.person
     }
-    //this.props.person.rank = "";
   };
 
   componentDidMount(){
@@ -31,7 +30,7 @@ class CastingPersonRow extends Component {
   }
 
   updateCheck = (event) => {
-    let cast = JSON.parse(localStorage.getItem("cast"))
+    //let cast = JSON.parse(localStorage.getItem("cast"))
     let val = event.target.value
 
     //handling only allowing one to be checked at a time
@@ -78,19 +77,13 @@ class CastingPersonRow extends Component {
     this.setState({
         person : person
     })
-
-
         // //need to make it so it deletes it first if it exists
         // cast.push(person)
         // localStorage.setItem('cast', JSON.stringify(cast));
-
-
   }
 
   render() {
     let p = this.state.person
-    //console.log(JSON.parse(localStorage.getItem("cast")))
-    //console.log(this.state.rank)
     return (
       <tr>
         <td>

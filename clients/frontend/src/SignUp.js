@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'react-materialize';
 import * as Util from './util.js';
 import SignUpExtra from './SignUpExtra.js'
+import './styling/SignIn.css';
 
 class SignUp extends Component {
   constructor(props) {
@@ -104,11 +105,8 @@ class SignUp extends Component {
 
   render() {
     return (
-      <div className="LogInLanding" style={{ height: 100 + '%' }}>
+      <div className="LogInLanding">
         <section className="signUp">
-          {/* <div className="LogInPhoto">
-            <img src={img}></img>
-            </div> */}
           <div className="Functionality">
             <div className="Logo"></div>
             <div className='content'>
