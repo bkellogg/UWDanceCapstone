@@ -20,17 +20,44 @@ class CastingPersonRow extends Component {
   };
 
   componentDidMount(){
-      //let users = JSON.parse(localStorage.getItem("allUsers"))
-      //loop through local storage to get the rank
-      let person = this.state.person
-      person.rank = ""
-      this.setState({
-          person : person
-      })
+    let rank = this.props.rank
+    if (rank === "1") {
+        this.setState({
+            checked:{
+                one: true,
+                two: false,
+                three: false
+            }
+        })
+    } else if (rank === "2") {
+        this.setState({
+            checked:{
+                one: false,
+                two: true,
+                three: false
+            }
+        })
+    } else if (rank === "3") {
+        this.setState({
+            checked:{
+                one: false,
+                two: false,
+                three: true
+            }
+        })
+    } else if (rank === "") {
+        this.setState({
+            checked:{
+                one: false,
+                two: false,
+                three: false
+            }
+        })
+    }
+    
   }
 
   updateCheck = (event) => {
-    //let cast = JSON.parse(localStorage.getItem("cast"))
     let val = event.target.value
 
     //handling only allowing one to be checked at a time
@@ -45,41 +72,54 @@ class CastingPersonRow extends Component {
     } else if (val === "2") {
         this.setState({
             checked:{
-            one: false,
-            two: !this.state.checked.two,
-            three: false
+                one: false,
+                two: !this.state.checked.two,
+                three: false
             }
         })
     } else if (val === "3") {
         this.setState({
             checked:{
-            one: false,
-            two: false,
-            three: !this.state.checked.three
+                one: false,
+                two: false,
+                three: !this.state.checked.three
             }
         })
     }
 
-    //handling the removal of a user from the cast
-    //??doesn't work
-    if (val === this.state.rank) {
-        this.setState({
-            rank: ""
-        })
-    } else {
-        this.setState({
-            rank: val
-        })
-    }
-    
+    //handling the removal of a user from the cast by setting their rank to "" if they are removed
     let person = this.state.person
-    person.rank = this.state.rank
+    if (val === person.rank) {
+        person.rank = ""
+    } else {
+        person.rank = val
+    }
+
+    //update the rank of the user in the allUsers
+    let allUsers = JSON.parse(localStorage.getItem("allUsers"))
+    allUsers.forEach(user => {
+        if (user.id === person.id) {
+            user.rank = person.rank;
+            //break;
+        }
+    })
+    localStorage.setItem("allUsers", JSON.stringify(allUsers))
+
+    //update the selected cast
+    let cast = JSON.parse((localStorage).getItem("cast"))
+
+    //remove from cast ALWAYS, add them back with their new rank if they have one
+    cast = cast.filter(castMember => castMember.id !== person.id)
+
+    if(person.rank !== ""){
+        cast.push(person)
+    }
+
+    localStorage.setItem("cast", JSON.stringify(cast))
+
     this.setState({
         person : person
     })
-        // //need to make it so it deletes it first if it exists
-        // cast.push(person)
-        // localStorage.setItem('cast', JSON.stringify(cast));
   }
 
   render() {
