@@ -38,8 +38,6 @@ class Main extends Component {
   };
 
   componentDidMount(){
-    //this.getShowTypes();
-    Util.refreshLocalUser();
     this.getCurrShows();
     if(!localStorage['firstLoad']){
       localStorage['firstLoad'] = true

@@ -50,11 +50,9 @@ class App extends Component {
         authorized: true
       })
     } 
-    localStorage["firstLoad"] = true
   }
 
   componentDidUpdate(){
-    //Util.refreshLocalUser()
     if(this.state.authorized === false){
       if(this.state.user !== null){
         this.setState({

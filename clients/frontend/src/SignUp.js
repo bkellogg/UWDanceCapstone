@@ -78,7 +78,7 @@ class SignUp extends Component {
             error: "An error occurred"
           })
         }
-       // Util.handleError(err)
+        Util.handleError(err)
       })
   }
 
@@ -147,13 +147,8 @@ class SignUp extends Component {
                         </div>
                       </div>
                     </form>
-
-
-                    {/* <Button onClick={this.goBack}> Back </Button> */}
                     <Button onClick={this.onClick}> Sign Up </Button>
-
                     <div className="Link">
-                      {/* forgot password?? */}
                       <a className="signlink" onClick={this.goBack}> Sign In </a>
                     </div>
 
