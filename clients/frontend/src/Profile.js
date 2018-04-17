@@ -240,7 +240,6 @@ uploadResume = (val) => {
   }
 
   render() {
-    
     return (
       <section className="main">
       <div className="mainView">
