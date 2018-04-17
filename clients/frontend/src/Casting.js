@@ -11,6 +11,7 @@ import SelectCast from './SelectCast';
 import CheckAvailability from './CheckAvailability';
 import ResolveConflict from './ResolveConflict';
 import SetRehearsals from './SetRehearsals';
+import './styling/General.css';
 
 
 class Casting extends Component {
@@ -23,17 +24,17 @@ class Casting extends Component {
 
   //handles a next click
   handleNext = () => {
-    const {stepIndex} = this.state;
+    const { stepIndex } = this.state;
     if (stepIndex < 3) {
-      this.setState({stepIndex: stepIndex + 1});
+      this.setState({ stepIndex: stepIndex + 1 });
     }
   };
 
   //handles a prev click
   handlePrev = () => {
-    const {stepIndex} = this.state;
+    const { stepIndex } = this.state;
     if (stepIndex > 0) {
-      this.setState({stepIndex: stepIndex - 1});
+      this.setState({ stepIndex: stepIndex - 1 });
     }
   };
 
@@ -41,7 +42,7 @@ class Casting extends Component {
   getStepContent(stepIndex) {
     switch (stepIndex) {
       case 0:
-        return <SelectCast auditionID={this.props.audition}/>
+        return <SelectCast auditionID={this.props.audition} />
       case 1:
         return <CheckAvailability />;
       case 2:
@@ -54,64 +55,64 @@ class Casting extends Component {
   }
 
   render() {
-    const {stepIndex} = this.state;
-    const contentStyle = {margin: '0 16px'};
+    const { stepIndex } = this.state;
+    const contentStyle = { margin: '0 16px' };
 
     return (
       <section className="main">
-      <div className="mainView">
-        <h1>Casting</h1>
-      </div>
-      {/*This is the stepper styling - you can click the steps to go between them*/}
-      <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
-        <Stepper linear={false} activeStep={stepIndex}>
-          <Step>
-            <StepButton onClick={() => this.setState({stepIndex: 0})}>
-              Select
+        <div className="mainView">
+          <h1>Casting</h1>
+        
+        {/*This is the stepper styling - you can click the steps to go between them*/}
+        <div style={{ width: '100%', maxWidth: 700, margin: 'auto' }}>
+          <Stepper linear={false} activeStep={stepIndex}>
+            <Step>
+              <StepButton onClick={() => this.setState({ stepIndex: 0 })}>
+                Select
             </StepButton>
-          </Step>
-          <Step>
-            <StepButton onClick={() => this.setState({stepIndex: 1})}>
-              Schedule
+            </Step>
+            <Step>
+              <StepButton onClick={() => this.setState({ stepIndex: 1 })}>
+                Schedule
             </StepButton>
-          </Step>
-          <Step>
-            <StepButton onClick={() => this.setState({stepIndex: 2})}>
-              Conflicts
+            </Step>
+            <Step>
+              <StepButton onClick={() => this.setState({ stepIndex: 2 })}>
+                Conflicts
             </StepButton>
-          </Step>
-          <Step>
-            <StepButton onClick={() => this.setState({stepIndex: 3})}>
-              Cast
+            </Step>
+            <Step>
+              <StepButton onClick={() => this.setState({ stepIndex: 3 })}>
+                Cast
             </StepButton>
-          </Step>
-        </Stepper>
+            </Step>
+          </Stepper>
 
-        {/*BUTTONS*/}
-        <div style={contentStyle}>
-          <div style={{marginTop: 12}}>
-            <FlatButton
-              label="Back"
-              disabled={stepIndex === 0}
-              onClick={this.handlePrev}
-              style={{marginRight: 12}}
-            />
-            <RaisedButton
-              label="Next"
-              disabled={stepIndex === 3}
-              primary={true}
-              onClick={this.handleNext}
-            />
+          {/*BUTTONS*/}
+          <div style={contentStyle}>
+            <div style={{ marginTop: 12 }}>
+              <FlatButton
+                label="Back"
+                disabled={stepIndex === 0}
+                onClick={this.handlePrev}
+                style={{ marginRight: 12 }}
+              />
+              <RaisedButton
+                label="Next"
+                disabled={stepIndex === 3}
+                primary={true}
+                onClick={this.handleNext}
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      {/*CONTENT*/}
-      {this.getStepContent(stepIndex)}
-
+        {/*CONTENT*/}
+        {this.getStepContent(stepIndex)}
+        </div>
       </section>
-  );
-};
+    );
+  };
 
 }
 export default Casting;

@@ -52,6 +52,7 @@ class App extends Component {
   }
 
   componentDidUpdate(){
+    Util.refreshLocalUser()
     if(this.state.authorized === false){
       if(this.state.user !== null){
         this.setState({

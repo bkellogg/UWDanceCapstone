@@ -53,7 +53,7 @@ class Audition extends Component {
         <section className="main">
         <div className="mainView">
           <div className="audition">
-            <h1 id="auditionTitle">{this.props.name} Audition Form</h1>
+            <h1 id="auditionTitle">{this.props.name} Confirmation</h1>
             {
               this.state.registered === false &&
                 <Registration audition={this.props.audition} registered={() => this.checkRegistration()} />

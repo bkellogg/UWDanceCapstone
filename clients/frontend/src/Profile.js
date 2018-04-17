@@ -246,7 +246,7 @@ uploadResume = (val) => {
       <h1 className="pagetitle">Your Profile </h1>
 
 
-        <div className="sub">
+        <div className="card1">
           {/* FIRST CARD */}
           <div className="headerBorder">
             <div className="header">
@@ -323,7 +323,7 @@ uploadResume = (val) => {
           </div>
         </div>
 
-        <div className="sub2">
+        <div className="card2">
 
           {/* SECOND CARD */}
           <div className="mainContentBorder">
