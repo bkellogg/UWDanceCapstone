@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	EventTypeAnnouncement   = "announcement"
-	EventTypeConflictUpdate = "conflictUpdate"
+	EventTypeAnnouncement = "announcement"
+	EventTypeCasting      = "casting"
 )
 
 // WebSocketEvent defines the structure of how an event will
