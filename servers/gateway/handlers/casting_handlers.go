@@ -30,11 +30,11 @@ func (ctx *CastingContext) BeginCastingHandler(w http.ResponseWriter, r *http.Re
 		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
 
-	client, found := ctx.Notifier.GetClient(u.ID)
-	if !found {
-		return HTTPError("user must have at least one websocket connection to begin casting", http.StatusBadRequest)
-	}
-	client.AddCasting()
+	//client, found := ctx.Notifier.GetClient(u.ID)
+	//if !found {
+	//	return HTTPError("user must have at least one websocket connection to begin casting", http.StatusBadRequest)
+	//}
+	//client.AddCasting()
 
 	if !ctx.Session.HasBegun {
 		if err := ctx.Session.LoadFromAudition(audID); err != nil {

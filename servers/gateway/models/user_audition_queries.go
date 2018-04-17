@@ -13,7 +13,9 @@ import (
 // the given audition and returns them. Returns an error if one occurred.
 func (store *Database) GetUserAuditionLinksByAuditionID(audID int) ([]*UserAuditionLinkResponse, *DBError) {
 	// TODO: TEMP IMPLEMENTATION!!! make this way better
-	res, err := store.db.Query(`SELECT DISTINCT UA.UserID FROM UserAudition UA WHERE UA.AuditionID = ?`, audID)
+	res, err := store.db.Query(
+		`SELECT DISTINCT UA.UserID FROM UserAudition UA
+		WHERE UA.AuditionID = ? AND UA.IsDeleted = false`, audID)
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error getting user ids from UserAudition: %v", err), http.StatusInternalServerError)
 	}
@@ -27,8 +29,8 @@ func (store *Database) GetUserAuditionLinksByAuditionID(audID int) ([]*UserAudit
 	}
 
 	ualrs := make([]*UserAuditionLinkResponse, 0, len(userIDs))
-	for uid := range userIDs {
-		ualr, dberr := store.GetUserAuditionLink(uid, audID)
+	for _, uid := range userIDs {
+		ualr, dberr := store.GetUserAuditionLink(int(uid), audID)
 		if dberr != nil {
 			return nil, dberr
 		}

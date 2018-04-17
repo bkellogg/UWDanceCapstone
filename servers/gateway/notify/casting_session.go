@@ -53,6 +53,7 @@ func (c *CastingSession) LoadFromAudition(id int) *middleware.HTTPError {
 	}
 
 	c.HasBegun = true
+
 	return nil
 }
 
