@@ -49,7 +49,6 @@ class SignUp extends Component {
       })
       .catch((err) => {
         let error = err
-        console.log(error)
         if (error.indexOf("new user first name must exist") >= 0) {
           this.setState({
             error: "A first name must be supplied"
