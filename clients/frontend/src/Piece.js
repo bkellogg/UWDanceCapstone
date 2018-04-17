@@ -8,7 +8,9 @@ class Piece extends Component {
   render() {
     return (
       <section className="main">
+      <div className="mainView">
         <h1>My Piece</h1>
+        </div>
       </section>
   );
 };

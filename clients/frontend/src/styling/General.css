@@ -1,0 +1,23 @@
+body{
+    background-color: #F6F8FC;
+}
+
+.mainView{
+    padding-left: 5%;
+}
+
+h1 {
+    font-size: 22px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #27384A;
+    text-transform: capitalize;
+    margin-bottom: 2%;
+}
+
+.dashboard{
+    width: 90%;
+}
+

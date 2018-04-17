@@ -1,104 +1,68 @@
 import React, { Component } from 'react';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import { Card, CardText, CardTitle} from 'material-ui/Card';
-import Availability from './Availability';
-import './styling/Audition.css';
+import * as Util from './util.js';
 
-const styles = {
-  customWidth: {
-    width: 150,
-  },
-};
+//components
+import Registration from './Registration';
+import RegistrationConf from './RegistrationConf';
+
+//styling
+import './styling/Audition.css';
+import './styling/General.css';
 
 class Audition extends Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleRegister = this.handleRegister.bind(this);
     this.state ={
-      value: 1,
-      registered: false
+      registered: false,
+      audition: null,
+      regNum: 0
     }
   };
 
-  handleChange = (event, index, value) => this.setState({value});
+  componentWillMount(){
+    this.checkRegistration()
+  }
 
-  handleRegister (){
-    //MAKE POST
-    //.then set state isRegistered to true, which will cause the page to rerender
-    this.setState({
-      registered: true
+  checkRegistration = () => {
+    Util.makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
+    .then(res => {
+      if(res.ok) {
+        return res.json()
+      }
+      return res.text().then((t) => Promise.reject(t));
     })
+    .then(audition => {
+      this.setState({
+        registered: true,
+        audition: audition.audition,
+        regNum: audition.regNum
+      })
+    })
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
+  }
+
+  registerUser = () => {
+    this.checkRegistration()
   }
 
   render() {
       return(
         <section className="main">
+        <div className="mainView">
           <div className="audition">
-            <h1 id="auditionTitle">{this.props.name}</h1>
+            <h1 id="auditionTitle">{this.props.name} Confirmation</h1>
             {
               this.state.registered === false &&
-                <div className="auditionForm">
-                  <div className="row">
-                    <div><p>Number of pieces I am available for: </p></div>
-                    <SelectField
-                      value={this.state.value}
-                      onChange={this.handleChange}
-                      style={styles.customWidth}
-                    >
-                      <MenuItem value={1} primaryText="1" />
-                      <MenuItem value={2} primaryText="2" />
-                    </SelectField>
-                  </div>
-                  <br />
-                  <div className="row">
-                    <div>You must be enrolled in a class during the quarter the production is occurring.<br/>
-                    Confirm what class you are enrolled in:</div>
-                    <TextField name="class"/><br />
-                  </div>
-                  <br/>
-                  <div className="row">
-                    <div><p>Availability [click & drag to indicate when you are <b>available</b> to rehearse]</p></div>
-                    <Availability />
-                  </div>
-                  <br/>
-                  <div className="row">
-                    <div><p>Please indicate any additional notes below</p></div>
-                    <TextField
-                      name="comments"
-                      multiLine={true}
-                      rows={2}
-                    />
-                  </div>
-                  <RaisedButton className='register' onClick={this.handleRegister} style={{backgroundColor: "#BFB2E5"}}> Register </RaisedButton>
-                </div>
+                <Registration audition={this.props.audition} registered={() => this.checkRegistration()} />
             }
             {
               this.state.registered === true &&
-              <div className="registered">
-                <Card className="successCard">
-                  <div className="success">
-                    <CardTitle>You have successfully registered</CardTitle>
-                  </div>
-                    <CardText>
-                      <p>Meany Hall Studio 265</p>
-                      <p>Audition starts at 6:30</p>
-                      <p>Doors open for warmup 30 minutes prior</p>
-                    </CardText>
-                </Card>
-                <Card className="successCard" id="regCard">
-                  <div className="regNum">
-                    <CardTitle><h3>You are number</h3> </CardTitle>
-                    </div>
-                    <CardText id="numArea">
-                      <p id="number">1</p>
-                    </CardText>
-                </Card>
-              </div>
+              <RegistrationConf audition={this.state.audition} regNum={this.state.regNum}/>
             }
+          </div>
           </div>
         </section>
       )

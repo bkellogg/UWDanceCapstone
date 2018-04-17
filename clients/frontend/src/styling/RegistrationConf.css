@@ -1,0 +1,93 @@
+.card1{
+    display: block;
+    position: relative;
+}
+
+.card101wrap{
+    display: flex;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.card101{
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    display: block
+}
+.card102{
+    z-index: 2;
+    display: block
+}
+
+.numberDiv, .informationalDiv{
+    float: left;
+}
+
+.numberDiv{
+    width: 30%;
+}
+
+.informationalDiv{
+    width: 60%;
+    padding-left: 3%;
+    padding-right: 0;
+}
+
+#successMessage{
+    font-weight: 600;
+}
+
+.editRegistration{
+    z-index: 2;
+}
+
+.unregisterButton{
+    float: left;
+    margin-right: 2%;
+    /* background-color: #f15b59; */
+}
+
+.changeAvailabilityButton{
+    text-transform: capitalize;
+}
+
+.unregisterButton:hover{
+    background-color: #ef5350;
+}
+
+.changeAvailabilityButton:hover{
+    background-color: rgb(18, 160, 221);
+}
+
+#numberMessage{
+    font-size: 20px;
+    margin: 0;
+}
+
+#number{
+    color: #22A7E0;
+    font-size: 120px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+@media only screen and (max-width : 992px) {
+    .numberDiv, .informationalDiv{
+        width: 100%;
+        padding-right: 5%;
+        height: auto;
+        min-height: auto;
+    }
+    
+    .numberDiv{
+        z-index: 1;
+    }
+    
+    .informationalDiv{
+        z-index: 2;
+    }
+    
+}

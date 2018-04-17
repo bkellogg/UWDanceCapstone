@@ -1,108 +1,158 @@
 import React, { Component } from 'react';
 import * as Util from './util';
-import { Card, CardText, CardTitle} from 'material-ui/Card';
+import './styling/General.css';
+
+//styling
+import { Card, CardText, CardTitle } from 'material-ui/Card';
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';
 
 class Dashboard extends Component {
   constructor(props) {
     super(props);
-    this.getAnnouncements = this.getAnnouncements.bind(this);
-    this.getMockAnnouncements = this.getMockAnnouncements.bind(this);
     this.state = {
       user: JSON.parse(localStorage.user),
       auth: localStorage.auth,
-      announcements: []
+      announcements: [],
+      announcementTypes: null,
+      currAnnouncements: [],
     }
   };
 
-  componentDidMount(){
-    this.getAnnouncements()
+  componentWillMount() {
+    this.getAnnouncements();
   }
 
-  getAnnouncements(){
-    fetch(Util.API_URL_BASE + "/announcements?auth=" + this.state.auth)
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          }
-          return res.text().then((t) => Promise.reject(t));
+  //Getting all messages from announcements that have not been deleted
+  getAnnouncements = () => {
+    fetch(Util.API_URL_BASE + "/announcements?includeDeleted=false&auth=" + this.state.auth)
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then((data) => {
+        this.setState({
+          announcements: data.announcements
         })
-        .then((data) => {
-          this.setState({
-            announcements: data.announcements
+        return data.announcements
+      })
+      .then(announcements => {
+        this.getAnnouncementTypes(announcements)
+      })
+      .catch((err) => { 
+        Util.handleError(err)
+      });
+  }
+
+  //Getting announcement types and adding type to each message
+  getAnnouncementTypes = (announcements) => {
+    fetch(Util.API_URL_BASE + "/announcements/types?auth=" + this.state.auth)
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then((data) => {
+        let announcementTypes = {};
+        data.map(function (announcement) {
+          return announcementTypes[announcement.id.toString()] = announcement.name
+        })
+        return announcementTypes
+      })
+      .then((announcementTypes) => {
+        this.setState({
+          announcementTypes: announcementTypes
+        })
+      })
+      .then(() => {
+        let currAnnouncements = []
+        announcements.map(announcement => {
+          return currAnnouncements.push({
+            "type": this.state.announcementTypes[announcement.typeID],
+            "message": announcement.message
           })
-          this.getMockAnnouncements()
         })
-        .catch((err) => {});
-  }
-
-  getMockAnnouncements(){
-    let announcement = [{
-      type: "Announcement",
-      message: "Dance Major's Concert Opening Night TONIGHT!"
-    },{
-      type: "Audition",
-      show: "Faculty Dance Concert",
-      time: "6:00 PM",
-      location: "Studio 265",
-      address: "/FacultyDanceConcert"
-    }]
-    //let address = "/" + this.props.showTitle.split(' ').join('');
-    this.setState({
-      announcements: announcement
-    })
+        return currAnnouncements
+      })
+      .then(currAnnouncements => {
+        this.setState({
+          currAnnouncements: currAnnouncements
+        })
+      })
+      .catch((err) => { });
   }
 
   render() {
-      return(
-        <section className='main'>
+    return (
+      <section className='main' >
+        <div className="mainView">
           <div className='dashboard'>
-            <div id='welcome'> Welcome {this.state.user.firstName}</div>
+            <div id='welcome'> 
+            <h1> Welcome, {this.state.user.firstName}!</h1>
+            </div>
             <div id='announcements'>
-              {this.state.user.bio === "" &&
+              {this.state.user.bio === "" &&    
+               /*this.state.user.resume &&
+                  this.state.user.photo DON'T exist
+                  idea: have a boolean indicating if they've uploaded one that get's set
+                  during the upload process in SignUpExtra*/
                     <Card>
                     <div className="warning">
                       <CardText> 
                         Please complete your profile.
                       </CardText>
-                      </div>
-                    </Card>
+                  </div>
+                </Card>
               }
-              {this.state.announcements.map((v, i) =>{
-               return( 
-               <div key={i} className="announcement">
-                  { 
-                    v.type === 'Audition' &&
-                    <Card>
-                      <div className="title">
-                        <CardTitle title={v.type}/> 
-                      </div>
-                      <CardText>
-                        <p> {v.show} </p>
-                        <p> {v.time} </p>
-                        <p> {v.location} </p>
-                      <Link to={{pathname: v.address + "/audition"}}>Sign up here!</Link>
-                      </CardText>
-                    </Card>
-                  }
-                  {
-                    v.type === 'Announcement' &&
-                    <Card>
-                      <div className="cardBody">
-                        <CardText>
-                        <p> {v.message} </p>
-                        </CardText>
-                      </div>
-                    </Card>
-                  }
-                </div>
-               )
+              {this.state.currAnnouncements.map((anncouncement, index) => {
+                return (
+                  <div key={index} className="announcement">
+                    {
+                      <Card>
+                        <div className="cardBody">
+                          <CardText>
+                            <p> {anncouncement.message} </p>
+                          </CardText>
+                        </div>
+                      </Card>
+                    }
+                  </div>
+                )
               })}
+
+              {this.props.shows.map((anncouncement, index) => {
+                var moment = require('moment');
+                var auditionDay = moment(anncouncement.audition.time).format('MMM. d, YYYY');
+                var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
+                var auditionLink = anncouncement.name.split(' ').join('');
+                return (
+                  <div key={index} className="announcement">
+                    {
+                      <Card>
+                        <div className="title">
+                          <CardTitle title="Audition"/>
+                        </div>
+                        <CardText>
+                          <p> {anncouncement.name} </p>
+                          <p> {auditionDay} </p>
+                          <p> {auditionTime} </p>
+                          <p> {anncouncement.audition.location} </p>
+                          <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
+                        </CardText>
+                      </Card>
+                    }
+                  </div>
+                )
+              })}
+
             </div>
           </div>
-        </section>
-      )
+        </div>
+      </section>
+    )
   }
 
 }
