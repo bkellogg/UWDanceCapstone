@@ -26,10 +26,10 @@ class SignUpExtra extends Component {
         Util.uploadBio(this.state.bio)
       }
       if(this.state.resumeUpload !== null){
-        let resume = Util.uploadResume(this.state.resumeUpload)
+        Util.uploadResume(this.state.resumeUpload)
       }
       if(this.state.photoUpload !== null){
-        let photo = Util.uploadPhoto(this.state.photoUpload)
+        Util.uploadPhoto(this.state.photoUpload)
       }
       this.props.skip()
     }

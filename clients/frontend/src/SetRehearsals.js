@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 
 class SetRehearsals extends Component {
-  /*constructor(props) {
+  constructor(props) {
     super(props);
-  };*/
+    this.state = {
+      willEdit : true
+    }
+  };
 
   render() {
     return (
