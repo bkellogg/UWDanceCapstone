@@ -199,11 +199,11 @@ class Main extends Component {
           <ul id="slide-out" className="side-nav fixed">
             <div className="navigationBg">
               <li><div id="logo">STAGE</div></li>
-              <li><Link to="/">Dashboard</Link></li>
+              <li className="dropDown"><Link to="/">Dashboard</Link></li>
               <li>
                   {this.getNavigation()}
               </li>
-              <li><Link to={{pathname:"/profile"}}>Profile</Link></li>
+              <li className="dropDown"><Link to={{pathname:"/profile"}}>Profile</Link></li>
               <li><Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button></li>
             </div>
           </ul>

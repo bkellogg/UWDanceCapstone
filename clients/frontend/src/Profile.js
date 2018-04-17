@@ -309,7 +309,7 @@ uploadResume = (val) => {
                   }
                 </div>
               </div>
-              {!this.state.edit &&
+              {/* {!this.state.edit &&
                 <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
                   <i className="large material-icons"> mode_edit </i>
                 </Button>
@@ -319,7 +319,7 @@ uploadResume = (val) => {
                 <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
                   <i className="large material-icons"> check </i>
                 </Button>
-              }
+              } */}
             </div>
           </div>
         </div>
@@ -365,6 +365,17 @@ uploadResume = (val) => {
 
         </div>
 
+              {!this.state.edit &&
+                <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Edit Profile
+                  {/* <i className="large material-icons"> mode_edit </i> */}
+                </Button>
+
+              }
+              {this.state.edit &&
+                <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Save Changes
+                  {/* <i className="large material-icons"> check </i> */}
+                </Button>
+              }
         </div>
       </section>
     );

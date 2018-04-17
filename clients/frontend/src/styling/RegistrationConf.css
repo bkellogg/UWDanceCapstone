@@ -53,12 +53,12 @@
     text-transform: capitalize;
 }
 
-.unregisterButton:hover{
-    background-color: #ef5350;
+.unregisterButton, .changeAvailabilityButton{
+    background-color: slategray;
 }
 
-.changeAvailabilityButton:hover{
-    background-color: rgb(18, 160, 221);
+.unregisterButton:hover{
+    background-color: #ef5350;
 }
 
 #numberMessage{
