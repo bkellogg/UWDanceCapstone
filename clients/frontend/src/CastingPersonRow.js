@@ -46,7 +46,7 @@ class CastingPersonRow extends Component {
         })
       }
 
-      
+      let person = this.props.person
   }
 
   render() {
