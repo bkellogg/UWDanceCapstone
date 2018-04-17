@@ -23,16 +23,13 @@ class SignUpExtra extends Component {
     signUp(event){
       event.preventDefault()
       if(this.state.bio !== null && this.state.bio !== ""){
-        console.log(this.state.bio);
         Util.uploadBio(this.state.bio)
       }
       if(this.state.resumeUpload !== null){
         let resume = Util.uploadResume(this.state.resumeUpload)
-        console.log(resume)
       }
       if(this.state.photoUpload !== null){
         let photo = Util.uploadPhoto(this.state.photoUpload)
-        console.log(photo)
       }
       this.props.skip()
     }
@@ -45,19 +42,18 @@ class SignUpExtra extends Component {
     }
 
     resumeChange(val){
-      console.log(val.target.files)
       this.setState({
         resumeUpload: val.target
       })
     }
 
     photoChange(val){
-      console.log(val.target.files)
       this.setState({
         photoUpload: val.target
       })
     }
 
+    //let user skip adding additional info
     skip(){
       this.props.skip();
     }

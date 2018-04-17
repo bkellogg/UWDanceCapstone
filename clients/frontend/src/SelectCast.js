@@ -37,12 +37,9 @@ class SelectCast extends Component {
         })
         localStorage.setItem('allUsers', JSON.stringify(data.users));
         localStorage.setItem('cast', JSON.stringify([]));
-
-        /*var retrievedObject = localStorage.getItem('testObject');
-          console.log('retrievedObject: ', JSON.parse(retrievedObject));*/
       })
       .catch(err => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       })
     } else {
