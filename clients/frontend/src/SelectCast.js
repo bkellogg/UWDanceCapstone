@@ -63,7 +63,7 @@ class SelectCast extends Component {
   render() {
     let rows = this.state.users.map((person, i) => {
         return(
-          <CastingPersonRow person={person}  key={person.id} rank={person.rank}/>
+          <CastingPersonRow person={person}  key={person.id} rank={person.rank  }/>
         )
     })
     return (
