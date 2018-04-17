@@ -78,7 +78,7 @@ class SignUp extends Component {
             error: "An error occurred"
           })
         }
-        Util.handleError(err)
+       // Util.handleError(err)
       })
   }
 
@@ -159,11 +159,6 @@ class SignUp extends Component {
 
                   </div>
                 </div>
-              }
-
-              {
-                this.state.signUpExtra === true && this.state.auth != null &&
-                <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
               }
 
               {

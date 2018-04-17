@@ -80,21 +80,17 @@ class CastingPersonRow extends Component {
     })
 
 
-        //need to make it so it deletes it first if it exists
-        cast.push(person)
-        localStorage.setItem('cast', JSON.stringify(cast));
+        // //need to make it so it deletes it first if it exists
+        // cast.push(person)
+        // localStorage.setItem('cast', JSON.stringify(cast));
 
 
-<<<<<<< HEAD
-      let person = this.props.person
-=======
->>>>>>> dffba2478378339899555cd422898d2810709397
   }
 
   render() {
     let p = this.state.person
-    console.log(JSON.parse(localStorage.getItem("cast")))
-    console.log(this.state.rank)
+    //console.log(JSON.parse(localStorage.getItem("cast")))
+    //console.log(this.state.rank)
     return (
       <tr>
         <td>

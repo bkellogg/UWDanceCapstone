@@ -208,7 +208,7 @@ export function getDancerHistory(){
 
 export function handleError(err){
     if (err ==="you must be signed in to use this resource"){
-        signOut()
-        window.location.reload()
+        //signOut()
+        //window.location.reload()
     }
 }

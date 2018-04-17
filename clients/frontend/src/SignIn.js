@@ -68,7 +68,7 @@ class SignIn extends Component {
       })
       .catch((err) => {
         console.log(err)
-        Util.handleError(err)
+        //Util.handleError(err)
       })
   };
 
@@ -89,7 +89,7 @@ class SignIn extends Component {
         )
         .catch(err => {
           console.log(err)
-          Util.handleError(err)
+          //Util.handleError(err)
         })
     }
   }
