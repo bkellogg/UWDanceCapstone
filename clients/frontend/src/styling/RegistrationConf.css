@@ -1,82 +1,93 @@
-.card101{
-    background-color: transparent;
-    padding: 0;
-    width: 90%;
-    margin-bottom: 3%;
-    margin-top: 3%;
+.card1{
+    display: block;
+    position: relative;
 }
 
-#successTitle{
-    font-size: 16px;
-    color: white;
-    letter-spacing: .5px;
+.card101wrap{
+    display: flex;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.card101{
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    display: block
+}
+.card102{
+    z-index: 2;
+    display: block
+}
+
+.numberDiv, .informationalDiv{
+    float: left;
+}
+
+.numberDiv{
+    width: 30%;
+}
+
+.informationalDiv{
+    width: 60%;
+    padding-left: 3%;
+    padding-right: 0;
 }
 
 #successMessage{
     font-weight: 600;
 }
 
-#numberMessage{
-    font-size: 26px;
-}
-
-.success{
-    background-color: #4db6ac;
-}
-
-.successWrap{
-    position: relative;
-    display: inline-block;
-    width: 100%;
-}
-
-.successfulRegistrationMessage, .editRegistration{
-    width: auto;
-}
-
-.successfulRegistrationMessage{
-    position: relative;
-  display: inline-block;
-  z-index: 1;
-}
-
 .editRegistration{
     z-index: 2;
-    position: relative;
-    display: block;
 }
 
-.unregister, .changeAvailability{
-    position: relative;
-    float: right;
-    margin-left: 10px;
+.unregisterButton{
+    float: left;
+    margin-right: 2%;
+    /* background-color: #f15b59; */
 }
 
-.unregisterButton, .changeAvailabilityButton{
-    background-color: #ef6c00;
+.changeAvailabilityButton{
+    text-transform: capitalize;
 }
 
-.unregisterButton:hover, .changeAvailabilityButton:hover{
-    background-color: #e65100;
+.unregisterButton:hover{
+    background-color: #ef5350;
 }
 
-#regCard{
-    text-align: center;
-    width: 35%;
+.changeAvailabilityButton:hover{
+    background-color: rgb(18, 160, 221);
 }
 
-.regNum{
-    background-color: #4db6ac;
-    color: white;
-    height: 10%;
+#numberMessage{
+    font-size: 20px;
+    margin: 0;
 }
 
 #number{
-    color: #4db6ac;
-    font-size: 65px;
-    margin: 0
+    color: #22A7E0;
+    font-size: 120px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }
 
-.successCard{
-    margin-top: 10px
+@media only screen and (max-width : 992px) {
+    .numberDiv, .informationalDiv{
+        width: 100%;
+        padding-right: 5%;
+        height: auto;
+        min-height: auto;
+    }
+    
+    .numberDiv{
+        z-index: 1;
+    }
+    
+    .informationalDiv{
+        z-index: 2;
+    }
+    
 }

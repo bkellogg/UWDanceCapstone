@@ -17,44 +17,40 @@ class RegistrationConf extends Component {
 
   render() {
     return (
-      <div className="card101">
-        <Card className="successCard">
-          <div className="success">
-            <CardTitle id="successTitle"> <i class="material-icons">check</i> Success</CardTitle>
+      <div className="cardsWrap">
+      <div className="card1">
+      <div className="card101wrap">
+        <div className="card101">
+          <div className="numberDiv">
+            <p id="number">1</p>
           </div>
-          <CardText>
+          <div className="informationalDiv">
+
             <div className="successWrap">
               <div className="successfulRegistrationMessage">
-                <p id="successMessage">You have successfully registered for the show!</p>
-                <p>{this.props.audition.location}</p>
+                <p id="successMessage">You have successfully registered for the show! Your assigned number is on the left.</p>
+                <p>Location: {this.props.audition.location}</p>
                 {/*TODO format date time how you like*/}
 
                 <p>Audition starts at <Moment format="YYYY/MM/DD HH:mm">{this.props.audition.time}</Moment></p>
               </div>
+            </div>
 
-              <div className="editRegistration">
-                <div className="unregister">
-                  <Button className="unregisterButton">Unregister</Button>
-                </div>
-                <div className="changeAvailability">
-                  <Button className="changeAvailabilityButton">Change Availability</Button>
-                </div>
-              </div>
-            </div>
-          </CardText>
-        </Card>
-        <Card className="successCard" id="regCard">
-          <div className="numberCardWrap">
-            <div className="regNum">
-              <CardTitle><h3 id="numberMessage">You are number</h3> </CardTitle>
-            </div>
-            <CardText id="numArea">
-              <p id="number">1</p>
-            </CardText>
           </div>
-        </Card>
+</div>
+          </div>
       </div>
-
+      <div className="card102">
+        <div className="editRegistration">
+          <div className="unregister">
+            <Button className="unregisterButton">Unregister</Button>
+          </div>
+          <div className="changeAvailability">
+            <Button className="changeAvailabilityButton">Change Availability</Button>
+          </div>
+        </div>
+        </div>
+      </div>
     )
   }
 

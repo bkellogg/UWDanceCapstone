@@ -35,7 +35,9 @@ class Dashboard extends Component {
           })
           this.getMockAnnouncements()
         })
-        .catch((err) => {});
+        .catch((err) => {
+          Util.handleError(err)
+        });
   }
 
   getMockAnnouncements = () => {

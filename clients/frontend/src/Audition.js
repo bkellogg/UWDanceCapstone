@@ -14,7 +14,8 @@ class Audition extends Component {
     super(props);
     this.state ={
       registered: false,
-      audition: null
+      audition: null,
+      regNum: 0
     }
   };
 
@@ -33,10 +34,14 @@ class Audition extends Component {
     .then(audition => {
       this.setState({
         registered: true,
-        audition: audition.audition
+        audition: audition.audition,
+        regNum: audition.regNum
       })
     })
-    .catch(err => {console.log(err)})
+    .catch(err => {
+      console.log(err)
+      Util.handleError(err)
+    })
   }
 
   registerUser = () => {
@@ -55,7 +60,7 @@ class Audition extends Component {
             }
             {
               this.state.registered === true &&
-              <RegistrationConf audition={this.state.audition}/>
+              <RegistrationConf audition={this.state.audition} regNum={this.state.regNum}/>
             }
           </div>
           </div>

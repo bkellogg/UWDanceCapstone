@@ -37,8 +37,8 @@ body {
 }
 
 img#photo {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   
   
 }
@@ -83,24 +83,14 @@ img#photo {
 
 section{
   font-size: 14px;
-  /* margin-top: 1%; */
 }
 
-/* #editName{
-  padding-left: 25px;
-  display: flex;
-  position: absolute;
-  bottom: 0px;
-  margin-bottom:0px;
-} */
 
 #firstName, #lastName{
   margin-right: 10px
 }
 
-/* #editBio{
-  width: 80%;
-} */
+
 @media only screen and (max-width : 992px) {
 
 }

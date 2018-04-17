@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
 import {Button, Input} from 'react-materialize';
 import * as Util from './util.js';
-import './styling/SignUp.css';
+
 
 class SignUpExtra extends Component {
     constructor(props) {

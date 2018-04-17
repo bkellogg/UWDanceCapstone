@@ -1,21 +1,17 @@
-/* color: #799FB0; green
-    color: #EA6336; orange
-    color: #9194B5; grey
-*/
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .navigationBg{
-    background-color: #9194B5;
+    background-color: #27384A;
 }
 
 #slide-out {
-    background-color: #9194B5;
+    background-color: #27384A;
     width: 17%;
 }
 
-.side-nav a {
+.side-nav a{
     color: white;
     font-weight: 200;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -23,6 +19,16 @@ body {
     text-transform: capitalize;
     font-size: 13px;
 }
+
+.collapsible-header {
+    color: white;
+    font-weight: 200;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: .5px;
+    text-transform: capitalize;
+    font-size: 13px;
+}
+
 
 Button{
     margin: 0;
@@ -35,4 +41,12 @@ Button{
 .collapsible-body{
     padding: 0px;
     text-indent: 30px;
+}
+
+/* li:hover{
+    background-color: #22A7E0;
+} */
+
+.dropDown:hover{
+    background-color: #22A7E0;
 }

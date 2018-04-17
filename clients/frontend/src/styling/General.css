@@ -7,26 +7,25 @@ body{
 }
 
 h1 {
-	font-size: 22px;
-	font-style: normal;
-	font-variant: normal;
-  font-weight: 400;
-  letter-spacing: 1px;
-  color: #e65100;
-  text-transform: rcapitalize;
-  margin-bottom: 2%;
+    font-size: 22px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #27384A;
+    text-transform: capitalize;
+    margin-bottom: 2%;
 }
 
 .dashboard{
     width: 90%;
 }
 
-
 .card1, .card2{
-        width: 90%;
-        margin-bottom: 3%;
-        margin-top: 3%;
-        padding: 1.5%;
-        background-color: white;
-        box-shadow: none;
+    width: 95%;
+    margin-bottom: 3%;
+    margin-top: 3%;
+    padding: 1.5%;
+    background-color: white;
+    box-shadow: none;
 }

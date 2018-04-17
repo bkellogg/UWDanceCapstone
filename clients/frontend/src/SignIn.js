@@ -9,6 +9,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import './styling/SignIn.css';
 
+
 class SignIn extends Component {
   constructor(props) {
     super(props);
@@ -66,9 +67,8 @@ class SignIn extends Component {
         this.props.onSignIn(this.state.auth)
       })
       .catch((err) => {
-        this.setState({
-          error: true
-        })
+        console.log(err)
+        Util.handleError(err)
       })
   };
 
@@ -89,6 +89,7 @@ class SignIn extends Component {
         )
         .catch(err => {
           console.log(err)
+          Util.handleError(err)
         })
     }
   }
@@ -127,7 +128,6 @@ class SignIn extends Component {
       <div className="LogInLanding" 
       // style={{ height: 100 + '%' }}
       >
-\
         
         {/* <div className="LogInPhoto">
         <img src={img}></img>
