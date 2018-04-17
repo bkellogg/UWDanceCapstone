@@ -69,10 +69,10 @@ class Dashboard extends Component {
       })
       .then(() => {
         let currAnnouncements = []
-        announcements.map(s => {
+        announcements.map(announcement => {
           return currAnnouncements.push({
-            "type": this.state.announcementTypes[s.typeID],
-            "message": s.message
+            "type": this.state.announcementTypes[announcement.typeID],
+            "message": announcement.message
           })
         })
         return currAnnouncements
@@ -107,15 +107,14 @@ class Dashboard extends Component {
                   </div>
                 </Card>
               }
-              {this.state.currAnnouncements.map((v, i) => {
+              {this.state.currAnnouncements.map((anncouncement, index) => {
                 return (
-                  <div key={i} className="announcement">
+                  <div key={index} className="announcement">
                     {
-                      v.type === 'admin' &&
                       <Card>
                         <div className="cardBody">
                           <CardText>
-                            <p> {v.message} </p>
+                            <p> {anncouncement.message} </p>
                           </CardText>
                         </div>
                       </Card>
@@ -124,24 +123,23 @@ class Dashboard extends Component {
                 )
               })}
 
-              {this.props.shows.map((v, i) => {
-                console.log(v.audition.time)
+              {this.props.shows.map((anncouncement, index) => {
                 var moment = require('moment');
-                var day = moment(v.audition.time).format('MMM. d, YYYY');
-                var time = moment(v.audition.time).utcOffset('-0700').format("hh:mm a");
-                var auditionLink = v.name.split(' ').join('');
+                var auditionDay = moment(anncouncement.audition.time).format('MMM. d, YYYY');
+                var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
+                var auditionLink = anncouncement.name.split(' ').join('');
                 return (
-                  <div key={i} className="announcement">
+                  <div key={index} className="announcement">
                     {
                       <Card>
                         <div className="title">
                           <CardTitle title="Audition"/>
                         </div>
                         <CardText>
-                          <p> {v.name} </p>
-                          <p> {day} </p>
-                          <p> {time} </p>
-                          <p> {v.audition.location} </p>
+                          <p> {anncouncement.name} </p>
+                          <p> {auditionDay} </p>
+                          <p> {auditionTime} </p>
+                          <p> {anncouncement.audition.location} </p>
                           <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
                         </CardText>
                       </Card>

@@ -88,14 +88,16 @@ class Main extends Component {
       })
    })
    .then( () => {
-    shows.map(s => {
-      let auditionInfo = this.getAudition(s)
+    shows.map(show => {
+      let auditionInfo = this.getAudition(show)
     })
    })
     .catch(err => console.log(err))
   
   }
+  
 
+  // Gets audition information for passed in show
   getAudition = (show) => {
     let auditionID = show.auditionID
     let currShows = this.state.currShows
@@ -118,19 +120,17 @@ class Main extends Component {
       });
   }
 
-
-
   getNavigation(){
-    let showNav = this.state.currShows.map((s, i) => {
-                    return <NavigationElement key ={i} user={this.state.user} showTitle={s.name} />
+    let showNav = this.state.currShows.map((show, index) => {
+                    return <NavigationElement key ={index} user={this.state.user} showTitle={show.name} />
                   })
 
     return <ul className="collapsible collapsible-accordion">{showNav}</ul>
   }
 
   getMobileNavigation = () => {
-    let mobileShowNav = this.state.currShows.map((s, i) => {
-      return <MobileNavigationElement key ={i} user={this.state.user} showTitle={s.name} handleClose={this.handleClose}/>
+    let mobileShowNav = this.state.currShows.map((show, index) => {
+      return <MobileNavigationElement key ={index} user={this.state.user} showTitle={show.name} handleClose={this.handleClose}/>
     })
 
     return <ul className="collapsible collapsible-accordion">{mobileShowNav}</ul>
