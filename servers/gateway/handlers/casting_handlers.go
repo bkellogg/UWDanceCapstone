@@ -8,8 +8,22 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/notify"
 	"github.com/gorilla/mux"
 )
+
+// DebugCastingStateHandler is a debug handle that will return the current state of the casting session.
+// This is a debug handle and should be used in production.
+func (ctx *CastingContext) DebugCastingStateHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	if r.URL.Query().Get("onlyCastingUpdate") == "true" {
+		response, err := ctx.Session.ToCastingUpdate(u.ID)
+		if err != nil {
+			return HTTPError(fmt.Sprintf("error generating casting update: %v", err), http.StatusInternalServerError)
+		}
+		return respond(w, response, http.StatusOK)
+	}
+	return respond(w, ctx.Session, http.StatusOK)
+}
 
 // BeginCastingHandler handles requests to begin casting.
 func (ctx *CastingContext) BeginCastingHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
@@ -63,6 +77,45 @@ func (ctx *CastingContext) BeginCastingHandler(w http.ResponseWriter, r *http.Re
 	return respondWithString(w,
 		fmt.Sprintf("success; user id '%d' will now receive casting updates", u.ID),
 		http.StatusOK)
+}
+
+// CastingUpdateHandler handles update requests to the current casting session.
+func (ctx *CastingContext) CastingUpdateHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	// make sure the user is requesting the casting resource
+	vars := mux.Vars(r)
+	if vars["object"] != "casting" {
+		return objectTypeNotSupported()
+	}
+	// make sure the user that is trying to be casting is at least a choreographer
+	if !ctx.permChecker.UserIsAtLeast(u, appvars.PermChoreographer) {
+		return permissionDenied()
+	}
+
+	if !ctx.Session.HasBegun {
+		return HTTPError("casting session has not begun", http.StatusBadRequest)
+	}
+
+	// get the audition id
+	audID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		return unparsableIDGiven()
+	}
+
+	// make sure the audition exists before continuing
+	_, dberr := ctx.Session.Store.GetAuditionByID(audID, false)
+	if dberr != nil {
+		return HTTPError(dberr.Message, dberr.HTTPStatus)
+	}
+
+	cu := &notify.ChoreographerUpdate{}
+	if dberr := receive(r, cu); dberr != nil {
+		return dberr
+	}
+
+	if err = ctx.Session.Handle(u.ID, cu); err != nil {
+		return HTTPError(fmt.Sprintf("error processing updates: %v", err), http.StatusBadRequest)
+	}
+	return respondWithString(w, "updates received", http.StatusOK)
 }
 
 // FlushCastingHandler handles requests to flush the casting session

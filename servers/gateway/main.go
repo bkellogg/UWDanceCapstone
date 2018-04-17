@@ -100,6 +100,7 @@ func main() {
 	baseRouter.PathPrefix("/assets/tpl/").Handler(http.NotFoundHandler()) // don't serve the assets/tpl directory
 	baseRouter.PathPrefix("/assets/").Handler(handlers.PreventDirListing(http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsPath)))))
 	baseRouter.PathPrefix(appvars.BaseAPIPath + "/flushcasting").Handler(authorizer.Authorize(castingContext.FlushCastingHandler)).Methods("DELETE")
+	baseRouter.PathPrefix(appvars.BaseAPIPath + "/castingstate").Handler(authorizer.Authorize(castingContext.DebugCastingStateHandler)).Methods("GET")
 
 	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()
 	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
@@ -122,6 +123,7 @@ func main() {
 	auditionRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
 	auditionRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificAuditionHandler))
 	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(castingContext.BeginCastingHandler)).Methods("PUT")
+	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(castingContext.CastingUpdateHandler)).Methods("PATCH")
 	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.AuditionObjectDispatcher))
 
 	showRouter := baseRouter.PathPrefix(appvars.ShowsPath).Subrouter()
