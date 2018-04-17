@@ -62,6 +62,7 @@ class CastingPersonRow extends Component {
     }
 
     //handling the removal of a user from the cast
+    //??doesn't work
     if (val === this.state.rank) {
         this.setState({
             rank: ""
@@ -71,24 +72,25 @@ class CastingPersonRow extends Component {
             rank: val
         })
     }
-
+    
     let person = this.state.person
     person.rank = this.state.rank
     this.setState({
         person : person
     })
 
-    if (person.rank !== "") {
+
         //need to make it so it deletes it first if it exists
         cast.push(person)
         localStorage.setItem('cast', JSON.stringify(cast));
-    }
+
 
   }
 
   render() {
     let p = this.state.person
     console.log(JSON.parse(localStorage.getItem("cast")))
+    console.log(this.state.rank)
     return (
       <tr>
         <td>
