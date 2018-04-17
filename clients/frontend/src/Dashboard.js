@@ -18,20 +18,14 @@ class Dashboard extends Component {
       announcements: [],
       announcementTypes: null,
       currAnnouncements: [],
-      auditionInfo: [],
-      audAnnouncements: [],
-      currAuditionAnnouncements: [],
-
-      showAndAudition: this.props.shows
     }
   };
 
   componentWillMount() {
     this.getAnnouncements();
-    //this.getAuditionInfo();
   }
 
-  //getting messages
+  //Getting all messages from announcements that have not been deleted
   getAnnouncements = () => {
     fetch(Util.API_URL_BASE + "/announcements?includeDeleted=false&auth=" + this.state.auth)
       .then((res) => {
@@ -52,7 +46,7 @@ class Dashboard extends Component {
       .catch((err) => { });
   }
 
-  //getting normal messages
+  //Getting announcement types and adding type to each message
   getAnnouncementTypes = (announcements) => {
     fetch(Util.API_URL_BASE + "/announcements/types?auth=" + this.state.auth)
       .then((res) => {
@@ -89,69 +83,6 @@ class Dashboard extends Component {
         })
       })
       .catch((err) => { });
-  }
-
-  //map through and get information about auditions for current shows
-  getAuditionInfo = () => {
-
-    this.state.showAndAudition.forEach((show, i) => {
-      this.getAudition(show, i)
-    }); 
-    
-  }
-
-//getting the audition info for the audition ID supplied
-//should return all info about one audition
-  getAudition = (show, index) => {
-    let auditionID = show.auditionID
-    console.log(this.state.showAndAudition[index])
-    fetch(Util.API_URL_BASE + "/auditions/" + auditionID + "?auth=" + this.state.auth)
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        return res.text().then((t) => Promise.reject(t));
-      })
-      .then((data) => {
-        //let showAndAuditionCopy = this.state.showAndAudition
-        //showAndAuditionCopy.audition = data
-        this.state.showAndAudition[index].audition = data
-      })
-
-
-      //   let auds = this.state.auditionInfo.slice();
-      //   auds.push(data);
-      //   this.setState({
-      //     auditionInfo: auds
-      //   })
-      // })
-      // .then( () => {
-      //   let currAuditionAnnouncements = [];
-
-        
-      //   let auditionInfo = this.state.auditionInfo;
-
-
-      //   auditionInfo.map(s => {
-      //     return currAuditionAnnouncements.push({
-      //       id: s.id,
-      //       type: "Audition",
-      //       show: (activeShows.find(e => e.audition === s.id).name),
-      //       time: s.time,
-      //       location: s.location,
-      //       address: (activeShows.find(e => e.audition === s.id).name).split(' ').join('')
-      //     });
-      //   });
-      //   return currAuditionAnnouncements
-      // })
-      // .then(currAuditionAnnouncements => {
-      //   this.setState({
-      //     currAuditionAnnouncements: currAuditionAnnouncements
-      //   })
-      // })
-      .catch((err) => { 
-        //Util.handleError(err)
-      });
   }
 
   render() {
@@ -194,7 +125,11 @@ class Dashboard extends Component {
               })}
 
               {this.props.shows.map((v, i) => {
-                console.log(v)
+                console.log(v.audition.time)
+                var moment = require('moment');
+                var day = moment(v.audition.time).format('MMM. d, YYYY');
+                var time = moment(v.audition.time).utcOffset('-0700').format("hh:mm a");
+                var auditionLink = v.name.split(' ').join('');
                 return (
                   <div key={i} className="announcement">
                     {
@@ -204,9 +139,10 @@ class Dashboard extends Component {
                         </div>
                         <CardText>
                           <p> {v.name} </p>
-                          <p> {v.audition.time} </p>
+                          <p> {day} </p>
+                          <p> {time} </p>
                           <p> {v.audition.location} </p>
-                          <Link to={{ pathname: v.address + "/audition" }}>Sign up here!</Link>
+                          <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
                         </CardText>
                       </Card>
                     }

@@ -68,7 +68,6 @@ class Main extends Component {
   }
 
   getShowTypes(shows){
-
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
     .then((res) => {
       if(res.ok){
