@@ -130,10 +130,10 @@ func (pc *PermissionChecker) UserCan(u *User, action int) bool {
 	return role.Level >= int64(action)
 }
 
-// UserIs returns true if the given user is the given role
+// UserIsAtLeast returns true if the given user is the given role
 // or higher. False if otherwise, or if there was an error
 // determining this.
-func (pc *PermissionChecker) UserIs(u *User, role int) bool {
+func (pc *PermissionChecker) UserIsAtLeast(u *User, role int) bool {
 	actualRole, err := pc.getUserRoleLevel(u.ID)
 	if err != nil {
 		return false

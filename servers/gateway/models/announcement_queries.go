@@ -17,7 +17,7 @@ func (store *Database) InsertAnnouncement(na *NewAnnouncement) (*Announcement, *
 	}
 	defer tx.Rollback()
 
-	res, err := tx.Query("SELECT At.AnnouncementTypeID FROM AnnouncementType AT WHERE AT.AnnouncementTypeName = ?", na.AnnouncementType)
+	res, err := tx.Query("SELECT AT.AnnouncementTypeID FROM AnnouncementType AT WHERE AT.AnnouncementTypeName = ?", na.AnnouncementType)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, NewDBError(fmt.Sprintf("announcement type '%s' does not exist", na.AnnouncementType),

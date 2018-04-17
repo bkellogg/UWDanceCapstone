@@ -389,16 +389,6 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 	return users, nil
 }
 
-// GetUsersAuditionLinksByAuditionID returns a slice of UserAuditionLinkResponses
-func (store *Database) GetUsersAuditionLinksByAuditionID(id, page int, includeDeleted bool) ([]*UserAuditionLinkResponse, *DBError) {
-	tx, err := store.db.Begin()
-	if err != nil {
-		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
-	}
-	defer tx.Rollback()
-	return nil, nil
-}
-
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
 // Returns an error if one occurred.
 func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, *DBError) {

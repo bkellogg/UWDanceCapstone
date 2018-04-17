@@ -77,11 +77,14 @@ func main() {
 	redis := sessions.NewRedisStore(nil, appvars.DefaultSessionDuration, redisAddr)
 
 	notifier := notify.NewNotifier()
+	castingSession := notify.NewCastingSession(db)
 
 	permChecker, err := models.NewPermissionChecker(db)
 	if err != nil {
 		log.Fatalf("error creating permission checker: %v", err)
 	}
+
+	castingContext := handlers.NewCastingContext(permChecker, notifier, castingSession)
 
 	mailContext := handlers.NewMailContext(mailUser, mailPass, permChecker)
 	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials(), permChecker)
@@ -117,6 +120,7 @@ func main() {
 	auditionRouter := baseRouter.PathPrefix(appvars.AuditionsPath).Subrouter()
 	auditionRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
 	auditionRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificAuditionHandler))
+	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(castingContext.BeginCastingHandler)).Methods("PUT")
 	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.AuditionObjectDispatcher))
 
 	showRouter := baseRouter.PathPrefix(appvars.ShowsPath).Subrouter()
