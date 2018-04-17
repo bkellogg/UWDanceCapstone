@@ -68,7 +68,6 @@ class Main extends Component {
   }
 
   getShowTypes(shows){
-
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
     .then((res) => {
       if(res.ok){
@@ -89,32 +88,49 @@ class Main extends Component {
       })
    })
    .then( () => {
-    let currShows = []
-    shows.map(s => {
-      return currShows.push({"name" : this.state.showTypes[s.typeID], "audition": s.auditionID})
+    shows.map(show => {
+      let auditionInfo = this.getAudition(show)
     })
-    return currShows
    })
-   .then(currShows => {
-      this.setState({
-        currShows: currShows
-      })
-    })
     .catch(err => console.log(err))
   
   }
+  
+
+  // Gets audition information for passed in show
+  getAudition = (show) => {
+    let auditionID = show.auditionID
+    let currShows = this.state.currShows
+    
+    Util.makeRequest("/auditions/" + auditionID, {}, "GET", true)
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then((data) => {
+        currShows.push({"name" : this.state.showTypes[show.typeID], "auditionID": show.auditionID, "show": show.id, "audition":data})
+        this.setState({
+          currShows: currShows
+        })
+      })
+      .catch((err) => { 
+        //Util.handleError(err)
+      });
+  }
 
   getNavigation(){
-    let showNav = this.state.currShows.map((s, i) => {
-                    return <NavigationElement key ={i} user={this.state.user} showTitle={s.name} />
+    let showNav = this.state.currShows.map((show, index) => {
+                    return <NavigationElement key ={index} user={this.state.user} showTitle={show.name} />
                   })
 
     return <ul className="collapsible collapsible-accordion">{showNav}</ul>
   }
 
   getMobileNavigation = () => {
-    let mobileShowNav = this.state.currShows.map((s, i) => {
-      return <MobileNavigationElement key ={i} user={this.state.user} showTitle={s.name} handleClose={this.handleClose}/>
+    let mobileShowNav = this.state.currShows.map((show, index) => {
+      return <MobileNavigationElement key ={index} user={this.state.user} showTitle={show.name} handleClose={this.handleClose}/>
     })
 
     return <ul className="collapsible collapsible-accordion">{mobileShowNav}</ul>
@@ -157,7 +173,9 @@ class Main extends Component {
         </section>
         <section className="routing">
         <Switch>
-          <Route exact path='/' component={Dashboard}/>
+          <Route exact path='/' render={
+            props => <Dashboard {...props} shows={this.state.currShows}/>
+            }/>
           <Route exact path='/profile' component={Profile}/>
         </Switch>
           {this.state.currShows.map((show, i) => {
@@ -169,16 +187,16 @@ class Main extends Component {
                   props => <Show {...props} name={show.name}/>
                 }/>
                 <Route exact path={path + "/audition"} render={
-                  props => <Audition {...props} name={show.name} audition={show.audition}/>
+                  props => <Audition {...props} name={show.name} audition={show.auditionID}/>
                 }/>
                 <Route exact path={path + "/casting"} render={
-                  props => <Casting {...props} name={show.name} audition={show.audition}/>
+                  props => <Casting {...props} name={show.name} audition={show.auditionID}/>
                 }/>
                 <Route exact path={path + "/piece"} render={
-                  props => <Piece {...props} name={show.name} audition={show.audition}/>
+                  props => <Piece {...props} name={show.name} audition={show.auditionID}/>
                 }/>
                 <Route exact path={path + "/people"} render={
-                  props => <People {...props} name={show.name} audition={show.audition}/>
+                  props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
                 }/>
               </Switch>
             )}

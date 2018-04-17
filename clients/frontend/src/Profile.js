@@ -188,7 +188,7 @@ getPhoto() {
   }
 
   render() {
-    console.log(this.state.history)
+    //console.log(this.state.history)
     return (
       <section className="main">
       <div className="mainView">
