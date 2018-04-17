@@ -172,7 +172,7 @@ class SignIn extends Component {
                       open={this.state.open}
                       onRequestClose={this.handleClose}
                     >
-                      Enter the email address associated with your account. You will recieve an email with instructions on how to reset your password.
+                      Enter the email address associated with your account. You will receive an email with instructions on how to reset your password.
                 </Dialog>
                   </div>
                   <a className="signlink" onClick={this.signUp}> Sign Up </a>
