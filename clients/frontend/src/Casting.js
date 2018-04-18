@@ -17,7 +17,8 @@ class Casting extends Component {
   constructor(props) {
    super(props);
    this.state ={
-     stepIndex: 0,
+    finished: false, 
+    stepIndex: 0,
      user: JSON.parse(localStorage.getItem("user"))
    }
   };
@@ -29,6 +30,7 @@ class Casting extends Component {
       this.setState({ stepIndex: stepIndex + 1 });
     }
   };
+  
 
   //handles a prev click
   handlePrev = () => {
@@ -97,7 +99,10 @@ class Casting extends Component {
                       label="Back"
                       disabled={stepIndex === 0}
                       onClick={this.handlePrev}
-                      style={{ marginRight: 12 }}
+                      style={{ 
+                        marginRight: 12,
+                        backgroundColor: '#708090'
+                      }}
                     />
                     <RaisedButton
                       label="Next"
@@ -110,8 +115,6 @@ class Casting extends Component {
               </div>
             </div>
           </div>
-
-
           {/*CONTENT*/}
           {this.getStepContent(stepIndex)}
         </div>
