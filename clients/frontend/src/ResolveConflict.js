@@ -13,7 +13,8 @@ class ResolveConflict extends Component {
   };
 
   render() {
-    let yourCast = this.state.cast.map(dancer => {
+    const cast = JSON.parse(localStorage.getItem("cast"))
+    let yourCast = cast.map(dancer => {
       return(
         <CastDancersRow key={dancer.id} person={dancer} filter={false} updateCast={() => {this.setState({cast : JSON.parse(localStorage.getItem("cast"))})}}/>
       )
