@@ -67,7 +67,7 @@ class Casting extends Component {
 
               {/*This is the stepper styling - you can click the steps to go between them*/}
               <div className="castingFlow" style={{ width: '100%', maxWidth: '90%', margin: 'auto' }}>
-                <Stepper linear={false} activeStep={stepIndex}>
+                <Stepper linear={true} activeStep={stepIndex}>
                   <Step>
                     <StepButton onClick={() => this.setState({ stepIndex: 0 })}>
                       Select Your Cast

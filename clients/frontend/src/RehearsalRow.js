@@ -57,6 +57,7 @@ class RehearsalRow extends Component {
           <MenuItem value={"sun"} primaryText="Sunday" />
 
         </SelectField>
+        <br/>
         <SelectField
           floatingLabelText="Start Time"
           value={this.state.day}
@@ -66,6 +67,7 @@ class RehearsalRow extends Component {
           {timePicker}
 
         </SelectField>
+        <br/>
         <SelectField
           floatingLabelText="End Time"
           value={this.state.day}
