@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import * as Util from './util.js';
 import './styling/selectCast.css';
-
+import './styling/General.css';
+import img from './imgs/defaultProfile.jpg';
 import Button from 'material-ui/RaisedButton';
 import Avatar from 'material-ui/Avatar';
 import Checkbox from 'material-ui/Checkbox';
@@ -16,7 +18,8 @@ class AllDancersRow extends Component {
             two: false,
             three: false
         },
-        person: this.props.person
+        person: this.props.person,
+        photoUrl : img
     }
   };
 
@@ -55,7 +58,7 @@ class AllDancersRow extends Component {
             }
         })
     }
-    
+    this.getPhoto()
   }
 
   updateCheck = (event) => {
@@ -148,12 +151,32 @@ class AllDancersRow extends Component {
     this.props.updateCast()
   }
 
+  getPhoto = () => {
+    fetch(Util.API_URL_BASE + "users/" + this.state.person.id +"/photo?auth=" + localStorage.auth)
+    .then((res) => {
+      if (res.ok) {
+        return res.blob();
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then((data) => {
+        return(URL.createObjectURL(data))
+    })
+    .then(url => {
+        this.setState({
+            photoUrl : url
+        })
+    }).catch((err) => {
+      Util.handleError(err)
+    });
+  }
+
   render() {
     let p = this.state.person
     return (
       <tr>
         <td>
-        <Avatar>:)</Avatar>
+        <img src={this.state.photoUrl} className="avatar"/>
         </td>
         <td>
             regNum

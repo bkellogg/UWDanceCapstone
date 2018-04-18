@@ -209,9 +209,7 @@ export function getDancerHistory(){
 }
 
 export function handleError(err){
-    console.log(err)
     if (err === "you must be signed in to use this resource"){
-        console.log("entered error")
         signOut()
     }
 }
