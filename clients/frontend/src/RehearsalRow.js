@@ -47,6 +47,7 @@ class RehearsalRow extends Component {
           value={this.state.day}
           onChange={this.updateDay}
           autoWidth={true}
+          disabled={this.props.finished}
         >
           <MenuItem value={"mon"} primaryText="Monday" />
           <MenuItem value={"tues"} primaryText="Tuesday" />
@@ -63,6 +64,7 @@ class RehearsalRow extends Component {
           value={this.state.day}
           onChange={this.updateStartTime}
           autoWidth={true}
+          disabled={this.props.finished}
         >
           {timePicker}
 
@@ -73,6 +75,7 @@ class RehearsalRow extends Component {
           value={this.state.day}
           onChange={this.updateEndTime}
           autoWidth={true}
+          disabled={this.props.finished}
         >
           {timePicker}
 
