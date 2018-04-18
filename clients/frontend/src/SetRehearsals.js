@@ -19,7 +19,8 @@ class SetRehearsals extends Component {
     let newRehearsalNum = this.state.numRehearsals
     newRehearsalNum++
     this.setState({
-      numRehearsals: newRehearsalNum
+      numRehearsals: newRehearsalNum,
+      rehearsalSchedule: []
     })
   }
 
