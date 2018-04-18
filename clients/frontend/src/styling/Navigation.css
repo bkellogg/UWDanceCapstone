@@ -47,6 +47,6 @@ Button{
     background-color: #22A7E0;
 } */
 
-.dropDown:hover{
+.dropDown:hover, .li:active{
     background-color: #22A7E0;
 }

@@ -18,7 +18,8 @@
 }
 .card102{
     z-index: 2;
-    display: block
+    display: block;
+    margin-top: 2%;
 }
 
 .numberDiv, .informationalDiv{
@@ -53,12 +54,12 @@
     text-transform: capitalize;
 }
 
-.unregisterButton:hover{
-    background-color: #ef5350;
+.unregisterButton, .changeAvailabilityButton{
+    background-color: slategray;
 }
 
-.changeAvailabilityButton:hover{
-    background-color: rgb(18, 160, 221);
+.unregisterButton:hover{
+    background-color: #ef5350;
 }
 
 #numberMessage{
