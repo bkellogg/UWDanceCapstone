@@ -55,7 +55,7 @@
 }
 
 .unregisterButton, .changeAvailabilityButton{
-    background-color: slategray;
+    background-color: #708090;
 }
 
 .unregisterButton:hover{

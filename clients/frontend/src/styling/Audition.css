@@ -1,3 +1,29 @@
 .row{
     display: block;
 }
+
+.formWrap{
+    padding-left: 2%;
+}
+
+Checkbox{
+    color: red;
+}
+
+.table-drag-select td.cell-selected{
+    background-color: #22A7E0;
+}
+
+.table-drag-select td.cell-being-selected{
+    background-color: #708090;
+}
+
+
+.register{
+    background-color: black;
+  }
+  
+RaisedButton:hover{
+    background-color: #22A7E0;
+    color: white;
+  }

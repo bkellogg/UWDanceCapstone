@@ -6,7 +6,6 @@ import {
 } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
-
 import SelectCast from './SelectCast';
 import CheckAvailability from './CheckAvailability';
 import ResolveConflict from './ResolveConflict';
@@ -63,53 +62,58 @@ class Casting extends Component {
       <section className="main">
         <div className="mainView">
           <h1>Casting</h1>
-        
-        {/*This is the stepper styling - you can click the steps to go between them*/}
-        <div style={{ width: '100%', maxWidth: 700, margin: 'auto' }}>
-          <Stepper linear={false} activeStep={stepIndex}>
-            <Step>
-              <StepButton onClick={() => this.setState({ stepIndex: 0 })}>
-                Select
-            </StepButton>
-            </Step>
-            <Step>
-              <StepButton onClick={() => this.setState({ stepIndex: 1 })}>
-                Schedule
-            </StepButton>
-            </Step>
-            <Step>
-              <StepButton onClick={() => this.setState({ stepIndex: 2 })}>
-                Conflicts
-            </StepButton>
-            </Step>
-            <Step>
-              <StepButton onClick={() => this.setState({ stepIndex: 3 })}>
-                Cast
-            </StepButton>
-            </Step>
-          </Stepper>
+        <div className="card1">
+          <div className="castingFlowWrap">
 
-          {/*BUTTONS*/}
-          <div style={contentStyle}>
-            <div style={{ marginTop: 12 }}>
-              <FlatButton
-                label="Back"
-                disabled={stepIndex === 0}
-                onClick={this.handlePrev}
-                style={{ marginRight: 12 }}
-              />
-              <RaisedButton
-                label="Next"
-                disabled={stepIndex === 3}
-                primary={true}
-                onClick={this.handleNext}
-              />
+              {/*This is the stepper styling - you can click the steps to go between them*/}
+              <div className="castingFlow" style={{ width: '100%', maxWidth: '90%', margin: 'auto' }}>
+                <Stepper linear={false} activeStep={stepIndex}>
+                  <Step>
+                    <StepButton onClick={() => this.setState({ stepIndex: 0 })}>
+                      Select Your Cast
+                    </StepButton>
+                  </Step>
+                  <Step>
+                    <StepButton onClick={() => this.setState({ stepIndex: 1 })}>
+                      Check Availability
+                    </StepButton>
+                  </Step>
+                  <Step>
+                    <StepButton onClick={() => this.setState({ stepIndex: 2 })}>
+                      Resolve Conflicts
+                    </StepButton>
+                  </Step>
+                  <Step>
+                    <StepButton onClick={() => this.setState({ stepIndex: 3 })}>
+                      Post Casting
+                    </StepButton>
+                  </Step>
+                </Stepper>
+
+                {/*BUTTONS*/}
+                <div style={contentStyle}>
+                  <div style={{ marginTop: 12 }}>
+                    <FlatButton
+                      label="Back"
+                      disabled={stepIndex === 0}
+                      onClick={this.handlePrev}
+                      style={{ marginRight: 12 }}
+                    />
+                    <RaisedButton
+                      label="Next"
+                      disabled={stepIndex === 3}
+                      primary={true}
+                      onClick={this.handleNext}
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/*CONTENT*/}
-        {this.getStepContent(stepIndex)}
+
+          {/*CONTENT*/}
+          {this.getStepContent(stepIndex)}
         </div>
       </section>
     );
