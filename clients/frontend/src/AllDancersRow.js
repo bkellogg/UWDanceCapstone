@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './styling/selectCast.css';
 
-import Button from 'material-ui/RaisedButton'
+import Button from 'material-ui/RaisedButton';
 import Avatar from 'material-ui/Avatar';
 import Checkbox from 'material-ui/Checkbox';
 
