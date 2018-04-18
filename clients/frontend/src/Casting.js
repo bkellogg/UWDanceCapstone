@@ -15,10 +15,11 @@ import './styling/General.css';
 
 class Casting extends Component {
   constructor(props) {
-    super(props);
-    this.state = {
-      stepIndex: 0
-    }
+   super(props);
+   this.state ={
+     stepIndex: 0,
+     user: JSON.parse(localStorage.getItem("user"))
+   }
   };
 
   //handles a next click

@@ -19,8 +19,7 @@ class CheckAvailability extends Component {
       })
 
     return (
-      <section className="main">
-        <div className="mainView">
+      <section>
           <h1>Check Availabliity</h1>
           <div className="castList">
             <p> Filter by dancer </p>
@@ -38,7 +37,6 @@ class CheckAvailability extends Component {
             </table>
           </div>
           <div className="overlapAvailability">
-          </div>
         </div>
       </section>
   );
