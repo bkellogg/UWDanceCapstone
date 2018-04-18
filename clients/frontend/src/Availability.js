@@ -84,6 +84,7 @@ class Availability extends Component {
     calculateTimes(){ 
       //we can skip 0 because the first row is always going to be false
       //lets do this
+      //buggy :( if you select too much at once
       let a = []
       for(let i = 1; i <= times.length; i++){
         for(let j = 1; j <= days.length; j++){
@@ -108,6 +109,7 @@ class Availability extends Component {
               if (currEndTime === timeVal){
                 a[dayLocation].times[a[dayLocation].times.length - 1].end = endTime
               } else {
+                //this is where the bug is - cannot read property push of undefined
                 a[dayLocation].time.push({
                   "start" : timeVal,
                   "end" : endTime

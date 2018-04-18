@@ -3,7 +3,7 @@ import * as Util from './util.js';
 
 import './styling/selectCast.css';
 
-import CastingPersonRow from './CastingPersonRow';
+import AllDancersRow from './AllDancersRow';
 
 class SelectCast extends Component {
   constructor(props) {
@@ -63,7 +63,7 @@ class SelectCast extends Component {
   render() {
     let rows = this.state.users.map((person) => {
         return(
-          <CastingPersonRow person={person}  key={person.id} rank={person.rank}/>
+          <AllDancersRow person={person}  key={person.id} rank={person.rank} selectCast={true}/>
         )
     })
     return (

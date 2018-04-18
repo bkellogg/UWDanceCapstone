@@ -52,6 +52,9 @@ class Main extends Component {
       if (res.ok) {
         return res.json()
       }
+      if(res.status === 401){
+        Util.signOut()
+      }
       return res.text().then((t) => Promise.reject(t));
     })
     .then(data => {
@@ -64,7 +67,7 @@ class Main extends Component {
       this.getShowTypes(shows)
     })
     .catch(err => {
-      console.log(err)
+      console.error(err)
       Util.handleError(err)
     })
   }

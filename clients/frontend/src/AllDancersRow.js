@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import './styling/selectCast.css';
 
+import Button from 'material-ui/RaisedButton'
 import Avatar from 'material-ui/Avatar';
 import Checkbox from 'material-ui/Checkbox';
 
-class CastingPersonRow extends Component {
+class AllDancersRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -100,7 +101,7 @@ class CastingPersonRow extends Component {
     allUsers.forEach(user => {
         if (user.id === person.id) {
             user.rank = person.rank;
-            //break;
+            return
         }
     })
     localStorage.setItem("allUsers", JSON.stringify(allUsers))
@@ -122,6 +123,31 @@ class CastingPersonRow extends Component {
     })
   }
 
+  addToCast = () => {
+
+    //this handles adding them to the cast, but we also need to update their rank in the allUsers (I'm gonna go with a 1?)
+    let cast = JSON.parse((localStorage).getItem("cast"))
+    let person = this.state.person
+
+    cast = cast.filter(castMember => castMember.id !== person.id)
+    cast.push(person)
+    localStorage.setItem("cast", JSON.stringify(cast))
+    
+    //update all users
+    let allUsers = JSON.parse(localStorage.getItem("allUsers"))
+    allUsers.forEach(user => {
+        if (user.id === person.id) {
+            user.rank = "1"
+            return
+        }
+    })
+    localStorage.setItem("allUsers", JSON.stringify(allUsers))
+
+    //done to rerender the component
+    //doesn't work
+    this.props.updateCast()
+  }
+
   render() {
     let p = this.state.person
     return (
@@ -135,35 +161,44 @@ class CastingPersonRow extends Component {
         <td>
           {p.firstName + " " + p.lastName}
         </td>
+        {this.props.selectCast &&
+            <td>
+            numPieces
+            </td>
+        }
         <td>
-          numPieces
-        </td>
-        <td>
-        <div className="check">
-            <Checkbox
-                value="1"
-                checked={this.state.checked.one}
-                onCheck={this.updateCheck}
-            />
-        </div>
-        <div className="check">
-            <Checkbox 
-                value="2"
-                checked={this.state.checked.two}
-                onCheck={this.updateCheck}
-            />
-        </div>
-        <div className="check">
-            <Checkbox
-                value="3"
-                checked={this.state.checked.three}
-                onCheck={this.updateCheck}
-            />
-        </div>
+            {this.props.selectCast && 
+                <section>
+                    <div className="check">
+                        <Checkbox
+                            value="1"
+                            checked={this.state.checked.one}
+                            onCheck={this.updateCheck}
+                        />
+                    </div>
+                    <div className="check">
+                        <Checkbox 
+                            value="2"
+                            checked={this.state.checked.two}
+                            onCheck={this.updateCheck}
+                        />
+                    </div>
+                    <div className="check">
+                        <Checkbox
+                            value="3"
+                            checked={this.state.checked.three}
+                            onCheck={this.updateCheck}
+                        />
+                    </div>
+                </section>
+            }
+            {!this.props.selectCast &&
+                <Button onClick={this.addToCast}> Add </Button>
+            }
         </td>
       </tr>
   );
 };
 
 }
-export default CastingPersonRow;
+export default AllDancersRow;

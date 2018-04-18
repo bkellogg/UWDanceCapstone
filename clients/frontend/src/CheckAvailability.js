@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import AvailabilityPersonRow from './AvailabilityPersonRow'
-
-import Avatar from 'material-ui/Avatar';
+import CastDancersRow from './CastDancersRow'
 
 class CheckAvailability extends Component {
   constructor(props) {
@@ -14,10 +12,9 @@ class CheckAvailability extends Component {
 
 
   render() {
-    console.log(this.state.cast)
     let rows = this.state.cast.map(dancer => {
         return(
-          <AvailabilityPersonRow key={dancer.id} person={dancer} />
+          <CastDancersRow key={dancer.id} person={dancer} filter={true}/>
         )
       })
 
@@ -30,13 +27,13 @@ class CheckAvailability extends Component {
             <table>
               <tbody>
               <tr className="categories">
-              <th>Filter</th>
-              <th>Photo</th>
-              <th>RegNum</th>
-              <th>Name</th>
-              <th></th>
-            </tr>
-            {rows}
+                <th></th>
+                <th></th>
+                <th>#</th>
+                <th>Dancer</th>
+                <th></th>
+              </tr>
+              {rows}
               </tbody>
             </table>
           </div>
