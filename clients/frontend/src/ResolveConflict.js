@@ -38,11 +38,12 @@ class ResolveConflict extends Component {
       <section className="main">
       <div className="mainView">
         <h1>Resolve Conflicts</h1>
+        {/*STYLING these h1s should definitely be h2s so we can have an accurate HTML tree, putting as h1 temporarily*/}
           <div className = "conflicts">
-            <h2> Conflicts between your cast and other choreographers </h2>
+            <h1> Conflicts between your cast and other choreographers </h1>
           </div>
           <div className = "cast">
-            <h2> Your cast </h2>
+            <h1> Your cast </h1>
             <table>
               <tbody>
                 <tr className="categories">
@@ -56,7 +57,7 @@ class ResolveConflict extends Component {
             </table>
           </div>
           <div className = "allUsers">
-            <h2> All dancers </h2>
+            <h1> All dancers </h1>
             <table>
               <tbody>
                 <tr className="categories">
