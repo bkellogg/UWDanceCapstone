@@ -3,7 +3,7 @@ import * as Util from './util.js';
 
 import './styling/selectCast.css';
 
-import CastingPersonRow from './CastingPersonRow';
+import AllDancersRow from './AllDancersRow';
 
 class SelectCast extends Component {
   constructor(props) {
@@ -32,17 +32,24 @@ class SelectCast extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .then(data => {
+        let users = data.users
+        users.forEach(user => {
+          user.rank = ""
+        });
+        return users
+      })
+      .then(users => {
         this.setState({
-            users: data.users
+            users: users
         })
-        localStorage.setItem('allUsers', JSON.stringify(data.users));
+        return users
+      })
+      .then( users => {
+        localStorage.setItem('allUsers', JSON.stringify(users));
         localStorage.setItem('cast', JSON.stringify([]));
-
-        /*var retrievedObject = localStorage.getItem('testObject');
-          console.log('retrievedObject: ', JSON.parse(retrievedObject));*/
       })
       .catch(err => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       })
     } else {
@@ -54,9 +61,9 @@ class SelectCast extends Component {
 
   
   render() {
-    let rows = this.state.users.map((person, i) => {
+    let rows = this.state.users.map((person) => {
         return(
-          <CastingPersonRow person={person}  key={person.id}/>
+          <AllDancersRow person={person}  key={person.id} rank={person.rank} selectCast={true}/>
         )
     })
     return (

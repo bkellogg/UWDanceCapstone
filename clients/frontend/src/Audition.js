@@ -39,13 +39,19 @@ class Audition extends Component {
       })
     })
     .catch(err => {
-      console.log(err)
+      console.error(err)
       Util.handleError(err)
     })
   }
 
   registerUser = () => {
     this.checkRegistration()
+  }
+
+  unregister = () => {
+    this.setState({
+      registered: false
+    })
   }
 
   render() {
@@ -60,7 +66,7 @@ class Audition extends Component {
             }
             {
               this.state.registered === true &&
-              <RegistrationConf audition={this.state.audition} regNum={this.state.regNum}/>
+              <RegistrationConf audition={this.state.audition} regNum={this.state.regNum} unregister={this.unregister}/>
             }
           </div>
           </div>

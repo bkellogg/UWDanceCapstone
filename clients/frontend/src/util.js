@@ -103,7 +103,7 @@ export function uploadResume(val){
 
     xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
-            console.log(this.responseText);
+            
         }
     });
 
@@ -111,9 +111,7 @@ export function uploadResume(val){
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
                 return xhr.responseText
-            } else {
-                return "get fucked"
-            }
+            } 
         }
     };
 
@@ -139,7 +137,9 @@ export function uploadBio(val){
         .then(() => {
             refreshLocalUser()
         })
-        .catch((err) => {})
+        .catch((err) => {
+            console.error(err)
+        })
 }
 
 export function uploadFName(val){
@@ -157,7 +157,9 @@ export function uploadFName(val){
         .then(() => {
             refreshLocalUser()
         })
-        .catch((err) => {})
+        .catch((err) => {
+            console.error(err)
+        })
 }
 
 export function uploadLName(val){
@@ -175,7 +177,9 @@ export function uploadLName(val){
         .then(() => {
             refreshLocalUser()
         })
-        .catch((err) => {})
+        .catch((err) => {
+            console.error(err)
+        })
 }
 
 //TODO - needs to use the resume header? not sure how we're going to display this
@@ -186,7 +190,6 @@ export function getResume(){
             console.log(res)
             return res.json();
         }
-        //return res.text().then((t) => Promise.reject(t));
     })
     .catch((err) => {
         console.error(err);
@@ -200,14 +203,15 @@ export function getDancerHistory(){
       if(res.ok){
           return res.json()
       }
-      return "Whoops!"
   }).catch((err) => {
-    console.log(err)
+    console.error(err)
   })
 }
 
 export function handleError(err){
-    if (err ==="you must be signed in to use this resource"){
+    console.log(err)
+    if (err === "you must be signed in to use this resource"){
+        console.log("entered error")
         signOut()
     }
 }
