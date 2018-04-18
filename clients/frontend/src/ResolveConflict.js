@@ -35,8 +35,7 @@ class ResolveConflict extends Component {
       }
     })
     return (
-      <section className="main">
-      <div className="mainView">
+      <section>
         <h1>Resolve Conflicts</h1>
         {/*STYLING these h1s should definitely be h2s so we can have an accurate HTML tree, putting as h1 temporarily*/}
           <div className = "conflicts">
@@ -70,7 +69,6 @@ class ResolveConflict extends Component {
               </tbody>
             </table>
           </div>
-        </div>
       </section>
   );
 };

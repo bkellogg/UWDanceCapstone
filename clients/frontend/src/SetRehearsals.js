@@ -51,8 +51,7 @@ class SetRehearsals extends Component {
       rehearsals.push(<RehearsalRow key={i}/>)
      }
     return (
-      <section className="main">
-        <div className="mainView">
+      <section >
           <h1>Set Rehearsals</h1>
           <div className="setTimes">
             <p>Set Weekly Rehearsal Times</p> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
@@ -90,7 +89,6 @@ class SetRehearsals extends Component {
             <br />
             <strong>An email will be sent to your cast with these times, and they will accept or decline their casting.</strong>
           </Dialog>
-        </div>
       </section>
   );
 };
