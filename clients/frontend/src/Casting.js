@@ -18,7 +18,8 @@ class Casting extends Component {
   constructor(props) {
    super(props);
    this.state ={
-     stepIndex: 0
+     stepIndex: 0,
+     user: JSON.parse(localStorage.getItem("user"))
    }
   };
 

@@ -188,22 +188,43 @@ class Main extends Component {
           {this.state.currShows.map((show, i) => {
             let showName = show.name
             let path = "/" + showName.split(' ').join('')
+            let routes = []
+            if (this.state.user.role.level === 10) {
+              let route = <Route exact path={path + "/audition"} render={
+                props => <Audition {...props} name={show.name} audition={show.auditionID}/>
+              }/>
+              routes.push(route)
+            } else if (this.state.user.role.level === 70) {
+              let route1 = <Route exact path={path + "/casting"} render={
+                props => <Casting {...props} name={show.name} audition={show.auditionID}/>
+              }/>
+              let route2 =  <Route exact path={path + "/people"} render={
+                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
+              }/>
+              routes.push(route1)
+              routes.push(route2)
+            } else {
+              let route1 = <Route exact path={path + "/casting"} render={
+                props => <Casting {...props} name={show.name} audition={show.auditionID}/>
+              }/>
+              let route2 =  <Route exact path={path + "/people"} render={
+                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
+              }/>
+              let route3 = <Route exact path={path + "/audition"} render={
+                props => <Audition {...props} name={show.name} audition={show.auditionID}/>
+              }/>
+              routes.push(route1)
+              routes.push(route2)
+              routes.push(route3)
+            }
             return( 
               <Switch key = {i}>
                 <Route exact path={path} render={
                   props => <Show {...props} name={show.name}/>
                 }/>
-                <Route exact path={path + "/audition"} render={
-                  props => <Audition {...props} name={show.name} audition={show.auditionID}/>
-                }/>
-                <Route exact path={path + "/casting"} render={
-                  props => <Casting {...props} name={show.name} audition={show.auditionID}/>
-                }/>
+                {routes}
                 <Route exact path={path + "/piece"} render={
                   props => <Piece {...props} name={show.name} audition={show.auditionID}/>
-                }/>
-                <Route exact path={path + "/people"} render={
-                  props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
                 }/>
               </Switch>
             )}
