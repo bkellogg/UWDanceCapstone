@@ -19,6 +19,18 @@ class RehearsalRow extends Component {
 
   handleChange = (event, index, value) => this.setState({day: value});
 
+  updateDay = (event) => {
+    console.log(event)
+  }
+
+  updateStartTime = () => {
+    
+  }
+
+  updateEndTime = () => {
+      
+  }
+
   render() {
       let timePicker = []
       times.forEach((time, index) => {
@@ -33,7 +45,7 @@ class RehearsalRow extends Component {
         <SelectField
           floatingLabelText="Day"
           value={this.state.day}
-          onChange={this.handleChange}
+          onChange={this.updateDay}
           autoWidth={true}
         >
           <MenuItem value={"mon"} primaryText="Monday" />
@@ -48,7 +60,7 @@ class RehearsalRow extends Component {
         <SelectField
           floatingLabelText="Start Time"
           value={this.state.day}
-          onChange={this.handleChange}
+          onChange={this.updateStartTime}
           autoWidth={true}
         >
           {timePicker}
@@ -57,7 +69,7 @@ class RehearsalRow extends Component {
         <SelectField
           floatingLabelText="End Time"
           value={this.state.day}
-          onChange={this.handleChange}
+          onChange={this.updateEndTime}
           autoWidth={true}
         >
           {timePicker}
