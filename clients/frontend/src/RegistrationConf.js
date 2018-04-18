@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import Moment from 'react-moment';
 import './styling/General.css';
 import './styling/RegistrationConf.css';
+import * as Util from './util.js';
 import Button from 'react-materialize/lib/Button';
 
 class RegistrationConf extends Component {
@@ -11,8 +12,20 @@ class RegistrationConf extends Component {
     super(props);
     this.state = {
       registered: false,
+      auditionID: this.props.audition.id
+
     }
   };
+
+  unLink = () => {
+    Util.makeRequest("users/me/auditions/" + this.state.auditionID, "", "UNLINK", true)
+    .then( () => {
+      this.props.unregister()
+    })
+    .catch(err => {
+      Util.handleError(err)
+    })
+  }
 
   render() {
     return (
@@ -42,7 +55,7 @@ class RegistrationConf extends Component {
       <div className="card102">
         <div className="editRegistration">
           <div className="unregister">
-            <Button className="unregisterButton">Unregister</Button>
+            <Button className="unregisterButton" onClick={this.unLink}>Unregister</Button>
           </div>
           <div className="changeAvailability">
             <Button className="changeAvailabilityButton">Change Availability</Button>
