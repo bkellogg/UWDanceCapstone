@@ -21,11 +21,3 @@ h1 {
     width: 90%;
 }
 
-.card1, .card2{
-    width: 95%;
-    margin-bottom: 3%;
-    margin-top: 3%;
-    padding: 1.5%;
-    background-color: white;
-    box-shadow: none;
-}

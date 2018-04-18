@@ -14,13 +14,12 @@ import SetRehearsals from './SetRehearsals';
 import './styling/General.css';
 
 
-
 class Casting extends Component {
   constructor(props) {
-    super(props);
-    this.state = {
-      stepIndex: 0
-    }
+   super(props);
+   this.state ={
+     stepIndex: 0
+   }
   };
 
   //handles a next click

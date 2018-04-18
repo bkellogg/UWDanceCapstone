@@ -17,7 +17,7 @@ class Profile extends Component {
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
-      photoSrc: null,
+      photoSrc: img,
       bio: JSON.parse(localStorage.getItem("user")).bio,
       history: [],
       resume: null,

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import * as Util from './util.js';
 
 //components
 import SignUp from './SignUp.js';
@@ -50,11 +49,9 @@ class App extends Component {
         authorized: true
       })
     } 
-    localStorage["firstLoad"] = true
   }
 
   componentDidUpdate(){
-    Util.refreshLocalUser()
     if(this.state.authorized === false){
       if(this.state.user !== null){
         this.setState({

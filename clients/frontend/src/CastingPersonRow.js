@@ -14,43 +14,76 @@ class CastingPersonRow extends Component {
             one: false,
             two: false,
             three: false
-        }
+        },
+        person: this.props.person
     }
   };
 
+  componentDidMount(){
+      //let users = JSON.parse(localStorage.getItem("allUsers"))
+      //loop through local storage to get the rank
+      let person = this.state.person
+      person.rank = ""
+      this.setState({
+          person : person
+      })
+  }
+
   updateCheck = (event) => {
-      let val = event.target.value
-      if(val === "1"){
-          this.setState({
-              checked:{
+    //let cast = JSON.parse(localStorage.getItem("cast"))
+    let val = event.target.value
+
+    //handling only allowing one to be checked at a time
+    if (val === "1") {
+        this.setState({
+            checked:{
                 one: !this.state.checked.one,
                 two: false,
                 three: false
-              }
-          })
-      } else if(val === "2"){
-        this.setState({
-            checked:{
-              one: false,
-              two: !this.state.checked.two,
-              three: false
             }
         })
-      } else if (val === "3"){
+    } else if (val === "2") {
         this.setState({
             checked:{
-              one: false,
-              two: false,
-              three: !this.state.checked.three
+            one: false,
+            two: !this.state.checked.two,
+            three: false
             }
         })
-      }
+    } else if (val === "3") {
+        this.setState({
+            checked:{
+            one: false,
+            two: false,
+            three: !this.state.checked.three
+            }
+        })
+    }
 
-      
+    //handling the removal of a user from the cast
+    //??doesn't work
+    if (val === this.state.rank) {
+        this.setState({
+            rank: ""
+        })
+    } else {
+        this.setState({
+            rank: val
+        })
+    }
+    
+    let person = this.state.person
+    person.rank = this.state.rank
+    this.setState({
+        person : person
+    })
+        // //need to make it so it deletes it first if it exists
+        // cast.push(person)
+        // localStorage.setItem('cast', JSON.stringify(cast));
   }
 
   render() {
-      let p = this.props.person
+    let p = this.state.person
     return (
       <tr>
         <td>

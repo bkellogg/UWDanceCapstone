@@ -112,11 +112,6 @@ class SignIn extends Component {
         hintText="Account Email"
         onChange={this.getEmail}
       />,
-      /*<FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.handleClose}
-      />,*/
       <FlatButton
         label="Submit"
         primary={true}
@@ -125,14 +120,7 @@ class SignIn extends Component {
     ];
 
     return (
-      <div className="LogInLanding" 
-      // style={{ height: 100 + '%' }}
-      >
-        
-        {/* <div className="LogInPhoto">
-        <img src={img}></img>
-        </div> */}
-
+      <div className="LogInLanding">
         <div className="Functionality">
           <div className="Logo">
           </div>
@@ -160,7 +148,6 @@ class SignIn extends Component {
                 <div className="Buttons">
 
                   <Button onClick={this.signIn}>Sign In</Button>
-                  {/* <Button onClick ={this.signUp}>Sign Up</Button> */}
                 </div>
                 <div className="Link">
                   <a className="signlink" onClick={this.handleOpen}> Forgot password? </a>
@@ -172,7 +159,7 @@ class SignIn extends Component {
                       open={this.state.open}
                       onRequestClose={this.handleClose}
                     >
-                      Enter the email address associated with your account. You will recieve an email with instructions on how to reset your password.
+                      Enter the email address associated with your account. You will receive an email with instructions on how to reset your password.
                 </Dialog>
                   </div>
                   <a className="signlink" onClick={this.signUp}> Sign Up </a>
