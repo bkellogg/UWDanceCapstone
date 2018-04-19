@@ -5,6 +5,12 @@ import MenuItem from 'material-ui/MenuItem';
 import './styling/General.css';
 import './styling/CastingFlow.css';
 
+const styles = {
+  customWidth: {
+    width: 120,
+  },
+};
+
 const times = ["1000", "1030","1100","1130","1200","1230","1300", "1330", "1400","1430", 
 "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100"]
 
@@ -43,10 +49,11 @@ class RehearsalRow extends Component {
         )
       })
     return (
-      <section>
-        <SelectField
+      <section className="chooseRehearsalTimes">
+        <SelectField 
           floatingLabelText="Day"
           value={this.state.day}
+          style={styles.customWidth}
           onChange={this.updateDay}
           autoWidth={true}
           className="pickDateTime"
@@ -62,6 +69,8 @@ class RehearsalRow extends Component {
         </SelectField>
         <br/>
         <SelectField
+          maxHeight={300}
+          style={styles.customWidth}
           floatingLabelText="Start Time"
           value={this.state.day}
           onChange={this.updateStartTime}
@@ -72,6 +81,8 @@ class RehearsalRow extends Component {
         </SelectField>
         <br/>
         <SelectField
+          maxHeight={300}
+          style={styles.customWidth}
           floatingLabelText="End Time"
           value={this.state.day}
           onChange={this.updateEndTime}
