@@ -77,15 +77,26 @@ tr{
 /* LAYOUT */
 /* small card with cast filter */
 .castList{
-    width: 40%;
+    width: 100%;
     position: relative;
 }
 
 /* HALF CARDS */
 /*inside of small card with cast filter*/
-.dancersList-filter{
-    width: 100%;
-}
+.dancersList-filter {
+    width: 30%;
+    position: relative;
+    display: inline-block;
+    margin-right: 3%;
+    padding: 20px;
+    background-color: white;
+  }
+  
+  .overlapAvailability{
+    width: 60%;
+    position: relative;
+    display: inline-block;
+  }
 
 .castList-v2{
     width: 45%;
@@ -93,13 +104,6 @@ tr{
 
 .v2-float{
     float: right;
-}
-
-.dancersList-filter{
-    position: relative;
-    display: inline-block;
-    background-color: white;
-    padding: 20px;
 }
 
 /* RESOLVE CONFLICTS */

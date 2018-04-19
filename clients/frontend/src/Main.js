@@ -167,7 +167,7 @@ class Main extends Component {
               open={this.state.open}
               onRequestChange={(open) => this.setState({open})}
             >
-              <div id="mobileLogo"> STAGE </div>
+              <div id="mobileLogo"> <img src="../imgs/logoex.png"/> </div>
               
                 <Link to="/"><MenuItem onClick={this.handleClose}>Dashboard</MenuItem></Link>
                 {this.getMobileNavigation()}
@@ -236,7 +236,9 @@ class Main extends Component {
         <div className="navigationWrap">
           <ul id="slide-out" className="side-nav fixed">
             <div className="navigationBg">
-              <li><div id="logo">STAGE</div></li>
+              <li><div id="logo">
+                STAGE
+              </div></li>
               <li className="dropDown"><Link to="/">Dashboard</Link></li>
               <li>
                   {this.getNavigation()}
