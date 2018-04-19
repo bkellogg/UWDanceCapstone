@@ -248,7 +248,7 @@ uploadResume = (val) => {
 
         <div className="card1">
           {/* FIRST CARD */}
-          <div className="headerBorder">
+          <div className="wrap">
             <div className="header">
               <div className="photoContainerWrap">
                 <div id="photoContainer" className="photoContainer">

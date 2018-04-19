@@ -21,8 +21,9 @@
 
 /* HEADERS */
 th{
-    color: #22A7E0;
-    padding: 0;
+    color: #22A7E0;    
+    padding:0;
+    padding-bottom: 20px;
     border: none;
 }
 
@@ -49,6 +50,15 @@ th{
     width: 37%;
 }
 
+/* AVAILABILITY CALENDAR */
+.overlapAvailability{
+    width: 60%;
+    background-color: red;
+    height: 400px;
+    position: relative;
+    display: inline-block;
+}
+
 td{
     padding: 0;
     padding-top: 10px;
@@ -63,4 +73,18 @@ table{
 
 tr{
     border: none;
+}
+
+/* LAYOUT */
+.castList{
+    width: 100%;
+    padding: 2%;
+    position: relative;
+}
+
+.dancersList-filter{
+    width: 37%;
+    position: relative;
+    display: inline-block;
+    margin-right: 2%;
 }

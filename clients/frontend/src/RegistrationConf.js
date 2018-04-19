@@ -31,7 +31,7 @@ class RegistrationConf extends Component {
     return (
       <div className="cardsWrap">
       <div className="card1">
-      <div className="card101wrap">
+      <div className="wrap">
         <div className="card101">
           <div className="numberDiv">
             <p id="number">1</p>

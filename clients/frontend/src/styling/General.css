@@ -7,6 +7,13 @@ body{
     margin-bottom: 7%;
 }
 
+.wrap{
+    display: flex;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
 .card1, .card2{
     width: 95%;
     margin-bottom: 3%;

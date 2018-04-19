@@ -24,13 +24,13 @@ class CheckAvailability extends Component {
       <section>
         <div className="mainView">
           <div className="card1">
-
+        <div className="wrap">
           <div className="castList">
             <p> Filter by dancer </p>
             <div className="dancersList-filter">
             <table>
               <tbody>
-              <tr className="categories">
+              <tr>
                 <th></th>
                 <th></th>
                 <th>#</th>
@@ -41,10 +41,10 @@ class CheckAvailability extends Component {
               </tbody>
             </table>
           </div>
-          <div className="overlapAvailability"> </div>
+          <div className="overlapAvailability">calendar goes here </div>
           </div>
         </div>
-
+</div>
 
         </div>
       </section>
