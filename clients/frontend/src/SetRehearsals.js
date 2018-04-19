@@ -51,14 +51,13 @@ class SetRehearsals extends Component {
   }
 
   setRehearsal = (rehearsal) => {
+    //TODO add handlers to deal with two rehearsals on the same day
     if(rehearsal.day !== "" && rehearsal.startTime !== "" && rehearsal.endTime !== ""){
       let rehearsals = this.state.rehearsalSchedule
       rehearsals.push(rehearsal)
       this.setState({
         rehearsalSchedule: rehearsals
       })
-
-      console.log(this.state.rehearsalSchedule)
     }
   }
 
@@ -70,6 +69,13 @@ class SetRehearsals extends Component {
     for (let i = 0; i < numRehearsals; i++) {
       rehearsals.push(<RehearsalRow key={i} setRehearsal={(rehearsal) => this.setRehearsal(rehearsal)}/>)
     }
+    
+    let rehearsalList = []
+    this.state.rehearsalSchedule.forEach( rehearsal => {
+      rehearsalList.push(
+        <div> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime}. </div>
+      )
+    })
     return (
       <section >
         <div className="mainView">
@@ -106,8 +112,11 @@ class SetRehearsals extends Component {
                 open={this.state.open}
                 onRequestClose={this.handleClose}
               >
-                By clicking Post Casting you confirm that your selected cast is <strong>accurate</strong>, there are <strong>no conflicts</strong> with other choreographers, and that your rehearsal times are :
-            <br /> insert rehearsal times here <br />
+                By clicking Post Casting you confirm that your selected cast is <strong>accurate</strong>, there are <strong>no conflicts</strong> with other choreographers, and that your rehearsal times are :<br /> 
+                <div>
+                  {rehearsalList}
+                </div>
+                <br />
                 <br />
                 <strong>An email will be sent to your cast with these times, and they will accept or decline their casting.</strong>
               </Dialog>
