@@ -102,7 +102,8 @@ class CastingPersonRow extends Component {
         <td>
           numPieces
         </td>
-        <td className="rankDancer">
+        <td>
+            
         <div className="check">
             <Checkbox
                 value="1"

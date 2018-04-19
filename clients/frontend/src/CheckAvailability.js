@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import CastDancersRow from './CastDancersRow'
+import './styling/General.css';
+import './styling/CastingFlow.css';
 
 class CheckAvailability extends Component {
   constructor(props) {
@@ -20,9 +22,12 @@ class CheckAvailability extends Component {
 
     return (
       <section>
-          <h1>Check Availabliity</h1>
+        <div className="mainView">
+          <div className="card1">
+
           <div className="castList">
             <p> Filter by dancer </p>
+            <div className="dancersList-filter">
             <table>
               <tbody>
               <tr className="categories">
@@ -36,7 +41,11 @@ class CheckAvailability extends Component {
               </tbody>
             </table>
           </div>
-          <div className="overlapAvailability">
+          <div className="overlapAvailability"> </div>
+          </div>
+        </div>
+
+
         </div>
       </section>
   );

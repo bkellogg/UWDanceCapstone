@@ -1,3 +1,4 @@
+/* STEPPER  */
 .card-casting{
     width: 95%;
     margin-bottom: 3%;
@@ -18,14 +19,11 @@
 }
 
 
-/* svg {
-    color: transparent !important;
-    fill: red !important;
-} */
-
+/* HEADERS */
 th{
     color: #22A7E0;
     padding: 0;
+    border: none;
 }
 
 .centerText{
@@ -46,7 +44,23 @@ th{
     text-align: center;
 }
 
-.userPicture{
-    height: 20px;
-    widows: 20px;
+/* FILTER CARD */
+.castList{
+    width: 37%;
+}
+
+td{
+    padding: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none;
+}
+
+/* REMOVE HORIZONTAL LINES IN TABLE */
+table{
+    border-collapse:collapse;
+}
+
+tr{
+    border: none;
 }
