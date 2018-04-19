@@ -7,7 +7,7 @@ class CheckAvailability extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cast : JSON.parse(localStorage.getItem("cast"))
+      cast: JSON.parse(localStorage.getItem("cast"))
     }
   };
 
@@ -15,41 +15,42 @@ class CheckAvailability extends Component {
 
   render() {
     let rows = this.state.cast.map(dancer => {
-        return(
-          <CastDancersRow key={dancer.id} person={dancer} filter={true}/>
-        )
-      })
+      return (
+        <CastDancersRow key={dancer.id} person={dancer} filter={true} />
+      )
+    })
 
     return (
       <section>
         <div className="mainView">
-          <div className="card1">
-        <div className="wrap">
-          <div className="castList">
-            <p> Filter by dancer </p>
-            <div className="dancersList-filter">
-            <table>
-              <tbody>
-              <tr>
-                <th></th>
-                <th></th>
-                <th>#</th>
-                <th>Dancer</th>
-                <th></th>
-              </tr>
-              {rows}
-              </tbody>
-            </table>
+          <div className="transparentCard">
+            <div className="wrap">
+              <div className="castList">
+
+                <div className="dancersList-filter ">
+                  <h2 className="smallHeading"> Filter by dancer </h2>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th></th>
+                        <th></th>
+                        <th>#</th>
+                        <th>Dancer</th>
+                        <th></th>
+                      </tr>
+                      {rows}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="overlapAvailability">calendar goes here </div>
+              </div>
+            </div>
           </div>
-          <div className="overlapAvailability">calendar goes here </div>
-          </div>
-        </div>
-</div>
 
         </div>
       </section>
-  );
-};
+    );
+  };
 
 }
 export default CheckAvailability;

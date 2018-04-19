@@ -45,10 +45,6 @@ th{
     text-align: center;
 }
 
-/* FILTER CARD */
-.castList{
-    width: 37%;
-}
 
 /* AVAILABILITY CALENDAR */
 .overlapAvailability{
@@ -67,24 +63,58 @@ td{
 }
 
 /* REMOVE HORIZONTAL LINES IN TABLE */
-table{
-    border-collapse:collapse;
-}
-
 tr{
     border: none;
 }
 
 /* LAYOUT */
+/* small card with cast filter */
 .castList{
-    width: 100%;
-    padding: 2%;
+    width: 40%;
     position: relative;
 }
 
+/* HALF CARDS */
+/*inside of small card with cast filter*/
 .dancersList-filter{
-    width: 37%;
+    width: 100%;
+}
+
+.castList-v2{
+    width: 45%;
+}
+
+.v2-float{
+    float: right;
+}
+
+.dancersList-filter{
     position: relative;
     display: inline-block;
-    margin-right: 2%;
+    background-color: white;
+    padding: 20px;
+}
+
+/* RESOLVE CONFLICTS */
+.conflictsCard{
+    width: 100%;
+    z-index: 1;
+}
+
+.conflictMessage{
+    font-size: 14px;
+    font-weight: 600;
+    color: red;
+    margin: 0;
+    padding: 10px;
+}
+
+.smallHeading{
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.choreographersSelecteCast, .restOfCast{
+    background-color: white;
+    padding: 25px;
 }
