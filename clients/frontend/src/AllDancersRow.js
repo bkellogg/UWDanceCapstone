@@ -7,6 +7,7 @@ import Button from 'material-ui/RaisedButton';
 import Avatar from 'material-ui/Avatar';
 import Checkbox from 'material-ui/Checkbox';
 
+
 class AllDancersRow extends Component {
   constructor(props) {
     super(props);
@@ -22,6 +23,7 @@ class AllDancersRow extends Component {
         photoUrl : img
     }
   };
+  
 
   componentDidMount(){
     let rank = this.props.rank
@@ -216,7 +218,11 @@ class AllDancersRow extends Component {
                 </section>
             }
             {!this.props.selectCast &&
-                <Button classname="addButton" onClick={this.addToCast}> Add </Button>
+                <Button 
+                backgroundColor="#708090"
+                style={{color: '#ffffff'}}
+                onClick={this.addToCast}
+                > ADD </Button>
             }
         </td>
       </tr>

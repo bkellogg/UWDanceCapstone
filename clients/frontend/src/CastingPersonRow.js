@@ -102,8 +102,10 @@ class CastingPersonRow extends Component {
         <td>
           numPieces
         </td>
+        <div className="checkboxesGrouped">
         <td>
-            
+        
+        
         <div className="check">
             <Checkbox
                 value="1"
@@ -131,6 +133,7 @@ class CastingPersonRow extends Component {
         </div>
 
         </td>
+        </div>
       </tr>
       </div>
   );
