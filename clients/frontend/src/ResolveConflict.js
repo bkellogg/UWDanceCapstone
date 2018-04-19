@@ -23,8 +23,9 @@ class ResolveConflict extends Component {
     })
     let allDancers = this.state.dancers.map((person) => {
       let dancerInCast = false
-      this.state.cast.forEach(dancer => {
+      cast.forEach(dancer => {
         //if the dancer in all is also in cast dancer
+        console.log(person.firstName + " id: " + person.id + " dancerID: " + dancer.id)
         if (dancer.id === person.id) {
           dancerInCast = true
         }

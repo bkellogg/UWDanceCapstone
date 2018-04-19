@@ -11,15 +11,19 @@ class SetRehearsals extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      numRehearsals: 2,
-      open: false,
-      rehearsalSchedule: []
+      numRehearsals : 2,
+      open : false,
+      finished: false,
+      rehearsalSchedule : []
     }
   };
 
   postCasting = () => {
     console.log("post")
-    this.setState({ open: false });
+    this.setState({
+      open: false,
+      finished: true
+    });
   }
 
   handleOpen = () => {
@@ -46,13 +50,32 @@ class SetRehearsals extends Component {
     })
   }
 
+  setRehearsal = (rehearsal) => {
+    //TODO add handlers to deal with two rehearsals on the same day
+    if(rehearsal.day !== "" && rehearsal.startTime !== "" && rehearsal.endTime !== ""){
+      let rehearsals = this.state.rehearsalSchedule
+      rehearsals.push(rehearsal)
+      this.setState({
+        rehearsalSchedule: rehearsals
+      })
+    }
+  }
+
 
   render() {
+    const finished = this.state.finished
     let numRehearsals = this.state.numRehearsals
     let rehearsals = []
     for (let i = 0; i < numRehearsals; i++) {
-      rehearsals.push(<RehearsalRow key={i} />)
+      rehearsals.push(<RehearsalRow key={i} setRehearsal={(rehearsal) => this.setRehearsal(rehearsal)} finished ={finished}/>)
     }
+    
+    let rehearsalList = []
+    this.state.rehearsalSchedule.forEach( (rehearsal, i) => {
+      rehearsalList.push(
+        <div key={i}> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime}. </div>
+      )
+    })
     return (
       <section >
         <div className="mainView">
@@ -69,13 +92,14 @@ class SetRehearsals extends Component {
                   <Button 
                   backgroundColor="#708090"
                   style={{color: '#ffffff', float: 'right'}}
-                  onClick={this.addRehearsal}>
+                  onClick={this.addRehearsal}
+                  disabled={finished}>
                   ADD</Button>
                   
                   <Button 
                   backgroundColor="#708090"
                   style={{color: '#ffffff', marginRight: '20px', float: 'right'}}
-                  onClick={this.removeRehearsal}>
+                  onClick={this.removeRehearsal} disabled={finished}>
                   REMOVE</Button>
                   </div>
                   </div>
@@ -84,7 +108,8 @@ class SetRehearsals extends Component {
                     <Button 
                     backgroundColor="#22A7E0"
                     style={{color: '#ffffff', width:'100%'}}
-                    onClick={this.handleOpen}>
+                    onClick={this.handleOpen}
+                    disabled={finished}>
                     POST CASTING</Button>
                   </div>
                 </div>
@@ -116,6 +141,7 @@ class SetRehearsals extends Component {
                 modal={false}
                 open={this.state.open}
                 onRequestClose={this.handleClose}
+                disabled={finished}
               >
                 <p className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong>, there are <strong className="importantText">no conflicts</strong> with other choreographers, and that your rehearsal times are :
             <br /> insert rehearsal times here <br />
