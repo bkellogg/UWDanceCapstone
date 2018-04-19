@@ -18,13 +18,13 @@ const (
 // CastingSession is a controller for a specific
 // session of casting.
 type CastingSession struct {
-	HasBegun       bool                                         `json:"hasBegun"`       // whether or not the session has begun or not
-	Store          *models.Database                             `json:"-"`              // Database that stores all information in the app
-	Dancers        map[DancerID]*Dancer                         `json:"dancers"`        // all Dancers in the audition
-	Choreographers map[Choreographer]map[DancerID]*RankedDancer `json:"choreographers"` // all Choreographers in the casting session to all Dancers they have
-	Uncasted       map[DancerID]*Dancer                         `json:"uncasted"`       // all Dancers that have no been cast
-	Contested      map[DancerID][]ContestedDancer               `json:"contested"`      // who is Contested; map of Contested dancer to all Choreographers contesting; pending delete
-	mx             sync.RWMutex                                 `json:"-"`              // mutex to hold locks while modifying the session
+	HasBegun       bool                                `json:"hasBegun"`       // whether or not the session has begun or not
+	Store          *models.Database                    `json:"-"`              // Database that stores all information in the app
+	Dancers        map[DancerID]*Dancer                `json:"dancers"`        // all Dancers in the audition
+	Choreographers map[Choreographer]map[DancerID]Rank `json:"choreographers"` // all Choreographers in the casting session to all Dancers they have
+	Uncasted       map[DancerID]bool                   `json:"uncasted"`       // all Dancers that have no been cast
+	Casted         map[DancerID]map[Choreographer]bool `json:"casted"`         // all dancers that have been casted and who they're casted by
+	mx             sync.RWMutex                        `json:"-"`              // mutex to hold locks while modifying the session
 }
 
 // NewCastingSession returns a casting session hooked up
@@ -34,9 +34,9 @@ func NewCastingSession(db *models.Database) *CastingSession {
 		HasBegun:       false,
 		Store:          db,
 		Dancers:        make(map[DancerID]*Dancer),
-		Choreographers: make(map[Choreographer]map[DancerID]*RankedDancer),
-		Uncasted:       make(map[DancerID]*Dancer),
-		Contested:      make(map[DancerID][]ContestedDancer),
+		Choreographers: make(map[Choreographer]map[DancerID]Rank),
+		Uncasted:       make(map[DancerID]bool),
+		Casted:         make(map[DancerID]map[Choreographer]bool),
 	}
 }
 
@@ -59,7 +59,7 @@ func (c *CastingSession) LoadFromAudition(id int) *middleware.HTTPError {
 	for _, ualr := range ualrs {
 		dancer := Dancer(*ualr)
 		c.Dancers[DancerID(ualr.User.ID)] = &dancer
-		c.Uncasted[DancerID(ualr.User.ID)] = &dancer
+		c.Uncasted[DancerID(ualr.User.ID)] = true
 	}
 
 	c.HasBegun = true
@@ -73,10 +73,10 @@ func (c *CastingSession) LoadFromAudition(id int) *middleware.HTTPError {
 func (c *CastingSession) Flush() {
 	c.mx.Lock()
 	c.HasBegun = false
-	c.Choreographers = make(map[Choreographer]map[DancerID]*RankedDancer)
+	c.Choreographers = make(map[Choreographer]map[DancerID]Rank)
 	c.Dancers = make(map[DancerID]*Dancer)
-	c.Uncasted = make(map[DancerID]*Dancer)
-	c.Contested = make(map[DancerID][]ContestedDancer)
+	c.Uncasted = make(map[DancerID]bool)
+	c.Casted = make(map[DancerID]map[Choreographer]bool)
 	c.mx.Unlock()
 }
 
@@ -91,7 +91,7 @@ func (c *CastingSession) AddChoreographer(id int64) error {
 	if _, found := c.Choreographers[Choreographer(id)]; found {
 		return errors.New("choreographer is already in this casting session")
 	}
-	dancerSlice := make(map[DancerID]*RankedDancer)
+	dancerSlice := make(map[DancerID]Rank)
 	c.Choreographers[Choreographer(id)] = dancerSlice
 	return nil
 }
@@ -111,17 +111,10 @@ func (c *CastingSession) Handle(chorID int64, cu *ChoreographerUpdate) error {
 	defer c.mx.Unlock()
 
 	if !c.choreographerExists(chorID) {
-		return errors.New("choreographer does not exist")
+		return errors.New("choreographer does not exist. did you forget to begin casting? ")
 	}
 
 	return c.handle(chorID, cu)
-}
-
-// dancer returns the Dancer in the current casting session
-// that has the given id. Unsafe for concurrent access.
-func (c *CastingSession) dancer(id int64) (*Dancer, bool) {
-	dancer, found := c.Dancers[DancerID(id)]
-	return dancer, found
 }
 
 // handle handles the given choreographer update.
@@ -137,20 +130,29 @@ func (c *CastingSession) handle(chorID int64, cu *ChoreographerUpdate) error {
 	}
 }
 
+// dancer returns the Dancer in the current casting session
+// that has the given id. Unsafe for concurrent access.
+func (c *CastingSession) dancer(id int64) (*Dancer, bool) {
+	dancer, found := c.Dancers[DancerID(id)]
+	return dancer, found
+}
+
 // dropAll removes every entry in the choreographer update from the given
 // choreographer.
 func (c *CastingSession) dropAll(chorID int64, cu *ChoreographerUpdate) error {
-	for _, rank := range [][]int64{cu.Rank1, cu.Rank2, cu.Rank3} {
-		for _, id := range rank {
-			delete(c.Choreographers[Choreographer(chorID)], DancerID(id))
-			_, isCasted := c.dancerIsCasted(id)
-			if !isCasted {
-				dancer, isDancer := c.dancer(id)
-				if !isDancer {
-					return fmt.Errorf("%d is not a dancer in this audition", id)
-				}
-				c.Uncasted[DancerID(id)] = dancer
-			}
+	for _, id := range cu.Drops {
+		// drop the dancer from the choreographer's list
+		delete(c.Choreographers[Choreographer(chorID)], DancerID(id))
+
+		// drop the choreographer from the dancer's list
+		delete(c.Casted[DancerID(id)], Choreographer(chorID))
+		if len(c.Casted[DancerID(id)]) == 0 {
+			delete(c.Casted, DancerID(id))
+		}
+
+		_, isCasted := c.dancerIsCasted(id)
+		if !isCasted {
+			c.Uncasted[DancerID(id)] = true
 		}
 	}
 	return nil
@@ -159,58 +161,99 @@ func (c *CastingSession) dropAll(chorID int64, cu *ChoreographerUpdate) error {
 // dancerIsCasted returns the choreographer who casted them and a bool
 // representing if they are casted or not.
 func (c *CastingSession) dancerIsCasted(id int64) (Choreographer, bool) {
+	for chorID, chorDancers := range c.Choreographers {
+		for dancerID, _ := range chorDancers {
+			if dancerID == DancerID(id) {
+				return Choreographer(chorID), true
+			}
+		}
+	}
 	return -1, false
+}
+
+// dancerIsContested returns a slice of choreographers that are contesting
+// the given dancer and bool representing if the dancer is contested
+func (c *CastingSession) dancerIsContested(dancerID DancerID) ([]Choreographer, bool) {
+	chors := c.Casted[dancerID]
+	if len(chors) <= 1 {
+		return nil, false
+	}
+	chorSlice := make([]Choreographer, 0, len(chors))
+	for chor, _ := range chors {
+		chorSlice = append(chorSlice, chor)
+	}
+	return chorSlice, true
 }
 
 // rankAll ranks all the given dancer ids with the given rank
 // and adds them to the given Choreographers Dancers
 func (c *CastingSession) rankAll(chorID int64, cu *ChoreographerUpdate) error {
-	dancerMap := make(map[DancerID]*RankedDancer)
 	for i, rank := range [][]int64{cu.Rank1, cu.Rank2, cu.Rank3} {
 		for _, id := range rank {
 			delete(c.Uncasted, DancerID(id)) // remove the dancer from the Uncasted list
-			dancer, found := c.dancer(id)
+			_, found := c.dancer(id)
 			if !found {
 				return fmt.Errorf("invalid update: dancer id '%d' is not in this audition", id)
 			}
-			dancerMap[DancerID(id)] = dancer.Rank(i + 1)
+
+			if c.Casted[DancerID(id)] == nil {
+				c.Casted[DancerID(id)] = make(map[Choreographer]bool)
+			}
+			// update the casted list
+			c.Casted[DancerID(id)][Choreographer(chorID)] = true
+
+			// update the choreographer list
+			c.Choreographers[Choreographer(chorID)][DancerID(id)] = Rank(i + 1)
 		}
 	}
-	c.Choreographers[Choreographer(chorID)] = dancerMap
 	return nil
+}
+
+// makeContestedDancer returns a ContestedDancer from the given
+// dancer and choreographers
+func (c *CastingSession) makeContestedDancer(id DancerID, chors []Choreographer) *ContestedDancer {
+	cd := &ContestedDancer{}
+	dancer, _ := c.dancer(id.int())
+	cd.Dancer = dancer
+	cd.Choreographers = chors
+	return cd
 }
 
 // ToCastingUpdate returns the casting session as a CastingUpdate
 // for the specified choreographer
-func (c *CastingSession) ToCastingUpdate(id int64) (*CastingUpdate, error) {
+func (c *CastingSession) ToCastingUpdate(chorID int64) (*CastingUpdate, error) {
 	if !c.HasBegun {
 		return nil, errors.New("casting session has not begun")
 	}
-	if !c.choreographerExists(id) {
+	if !c.choreographerExists(chorID) {
 		return nil, fmt.Errorf(
 			"'%d' is not a choreographer in this casting session",
-			id)
+			chorID)
 	}
 	castingUpdate := &CastingUpdate{}
 
 	// build list of uncasted dancers
 	uncasted := make([]*Dancer, 0, len(c.Uncasted))
-	for _, dancer := range c.Uncasted {
+	for dID, _ := range c.Uncasted {
+		dancer, _ := c.dancer(int64(dID))
 		uncasted = append(uncasted, dancer)
 	}
 	castingUpdate.Uncasted = uncasted
 
-	// build list of contested dancers
-	// TODO: Implement this
+	// build list of un/contested dancers
 	castingUpdate.Contested = make([]*ContestedDancer, 0)
-
-	// build list of dancers the choreographer has confirmed
-	cast := make(map[int64][]*Dancer)
-	for _, rd := range c.Choreographers[Choreographer(id)] {
-		cast[rd.Rank] = append(cast[rd.Rank], rd.Dancer)
+	castingUpdate.Cast = make([]*Dancer, 0)
+	chorDancers := c.Choreographers[Choreographer(chorID)]
+	for dancerID, _ := range chorDancers {
+		chorsContesting, isContested := c.dancerIsContested(dancerID)
+		if isContested {
+			castingUpdate.Contested = append(castingUpdate.Contested, c.makeContestedDancer(dancerID, chorsContesting))
+		} else {
+			dancer, _ := c.dancer(dancerID.int())
+			castingUpdate.Cast = append(castingUpdate.Cast, dancer)
+		}
 	}
 
-	castingUpdate.Cast = cast
 	return castingUpdate, nil
 }
 
@@ -218,9 +261,10 @@ func (c *CastingSession) ToCastingUpdate(id int64) (*CastingUpdate, error) {
 // update will be sent to the server.
 type ChoreographerUpdate struct {
 	Action string  `json:"action"`
-	Rank1  []int64 `json:"rank1"`
-	Rank2  []int64 `json:"rank2"`
-	Rank3  []int64 `json:"rank3"`
+	Drops  []int64 `json:"drops,omitempty"`
+	Rank1  []int64 `json:"rank1,omitempty"`
+	Rank2  []int64 `json:"rank2,omitempty"`
+	Rank3  []int64 `json:"rank3,omitempty"`
 }
 
 // Validate validates the given choreographer updates.
@@ -247,22 +291,30 @@ func (cu *ChoreographerUpdate) Validate() error {
 // ContestedDancer represents a dancer that is Contested
 // and which Choreographers are wanted that dancer
 type ContestedDancer struct {
-	dancer         Dancer
-	choreographers []Choreographer
+	Dancer         *Dancer         `json:"dancer"`
+	Choreographers []Choreographer `json:"choreographers"`
 }
 
 // CastingUpdate defines how an update to the casting session
 // will be sent to all casting websocket clients.
 type CastingUpdate struct {
-	Cast      map[int64][]*Dancer `json:"cast"`
-	Contested []*ContestedDancer  `json:"Contested"`
-	Uncasted  []*Dancer           `json:"Uncasted"`
+	Cast      []*Dancer          `json:"cast"`
+	Contested []*ContestedDancer `json:"contested"`
+	Uncasted  []*Dancer          `json:"uncasted"`
 }
 
 // RankedDancer defines a dancer that has a rank.
 type RankedDancer struct {
 	Dancer *Dancer `json:"dancer"`
 	Rank   int64   `json:"rank"`
+}
+
+// Rank represents a rank of a dancer
+type Rank int
+
+// int returns the rank as an int64
+func (r Rank) int() int64 {
+	return int64(r)
 }
 
 // Choreographer is a choreographer who is currently
@@ -272,6 +324,11 @@ type Choreographer int64
 // DancerID is an ID of a dancer who is in the casting
 // process, whether selected or not.
 type DancerID int64
+
+// int returns the dancerID as an int64
+func (d DancerID) int() int64 {
+	return int64(d)
+}
 
 // Dancer stores all of the information about a specific
 // dancer in relation to a specific audition.
