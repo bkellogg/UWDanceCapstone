@@ -74,7 +74,7 @@ class SelectCast extends Component {
           <div className="card1">
             <table className="table">
             <tbody>
-                <tr>
+                <tr className="categories">
                 <th></th>
                 <th>#</th>
                 <th>Name</th>

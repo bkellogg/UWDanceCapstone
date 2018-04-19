@@ -31,7 +31,7 @@ class CheckAvailability extends Component {
                   <h2 className="smallHeading"> Filter by dancer </h2>
                   <table>
                     <tbody>
-                      <tr>
+                      <tr className="categories">
                         <th></th>
                         <th></th>
                         <th>#</th>
