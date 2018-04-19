@@ -10,6 +10,11 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 )
 
+const (
+	actionRemove = "remove"
+	actionAdd    = "add"
+)
+
 // CastingSession is a controller for a specific
 // session of casting.
 type CastingSession struct {
@@ -81,7 +86,7 @@ func (c *CastingSession) AddChoreographer(id int64) error {
 	c.mx.Lock()
 	defer c.mx.Unlock()
 	if !c.HasBegun {
-		return errors.New("cannot add a choreographer to a casting session that hasn't started")
+		return errors.New("casting session has not begun")
 	}
 	if _, found := c.Choreographers[Choreographer(id)]; found {
 		return errors.New("choreographer is already in this casting session")
@@ -109,7 +114,7 @@ func (c *CastingSession) Handle(chorID int64, cu *ChoreographerUpdate) error {
 		return errors.New("choreographer does not exist")
 	}
 
-	return c.rankAll(chorID, cu)
+	return c.handle(chorID, cu)
 }
 
 // dancer returns the Dancer in the current casting session
@@ -117,6 +122,44 @@ func (c *CastingSession) Handle(chorID int64, cu *ChoreographerUpdate) error {
 func (c *CastingSession) dancer(id int64) (*Dancer, bool) {
 	dancer, found := c.Dancers[DancerID(id)]
 	return dancer, found
+}
+
+// handle handles the given choreographer update.
+// Returns an error if one occurred.
+func (c *CastingSession) handle(chorID int64, cu *ChoreographerUpdate) error {
+	switch cu.Action {
+	case actionRemove:
+		return c.dropAll(chorID, cu)
+	case actionAdd:
+		return c.rankAll(chorID, cu)
+	default:
+		return errors.New("invalid update action")
+	}
+}
+
+// dropAll removes every entry in the choreographer update from the given
+// choreographer.
+func (c *CastingSession) dropAll(chorID int64, cu *ChoreographerUpdate) error {
+	for _, rank := range [][]int64{cu.Rank1, cu.Rank2, cu.Rank3} {
+		for _, id := range rank {
+			delete(c.Choreographers[Choreographer(chorID)], DancerID(id))
+			_, isCasted := c.dancerIsCasted(id)
+			if !isCasted {
+				dancer, isDancer := c.dancer(id)
+				if !isDancer {
+					return fmt.Errorf("%d is not a dancer in this audition", id)
+				}
+				c.Uncasted[DancerID(id)] = dancer
+			}
+		}
+	}
+	return nil
+}
+
+// dancerIsCasted returns the choreographer who casted them and a bool
+// representing if they are casted or not.
+func (c *CastingSession) dancerIsCasted(id int64) (Choreographer, bool) {
+	return -1, false
 }
 
 // rankAll ranks all the given dancer ids with the given rank
@@ -141,7 +184,7 @@ func (c *CastingSession) rankAll(chorID int64, cu *ChoreographerUpdate) error {
 // for the specified choreographer
 func (c *CastingSession) ToCastingUpdate(id int64) (*CastingUpdate, error) {
 	if !c.HasBegun {
-		return nil, errors.New("casting session has not been started")
+		return nil, errors.New("casting session has not begun")
 	}
 	if !c.choreographerExists(id) {
 		return nil, fmt.Errorf(
@@ -174,14 +217,20 @@ func (c *CastingSession) ToCastingUpdate(id int64) (*CastingUpdate, error) {
 // ChoreographerUpdate defines how a single choreographer's
 // update will be sent to the server.
 type ChoreographerUpdate struct {
-	Rank1 []int64 `json:"rank1"`
-	Rank2 []int64 `json:"rank2"`
-	Rank3 []int64 `json:"rank3"`
+	Action string  `json:"action"`
+	Rank1  []int64 `json:"rank1"`
+	Rank2  []int64 `json:"rank2"`
+	Rank3  []int64 `json:"rank3"`
 }
 
 // Validate validates the given choreographer updates.
 // Returns an error if one occurred.
 func (cu *ChoreographerUpdate) Validate() error {
+	switch cu.Action {
+	case actionAdd, actionRemove:
+	default:
+		return errors.New("invalid update action; action must be 'add' or 'remove'")
+	}
 	tempMap := make(map[int64]bool)
 	for _, rank := range [][]int64{cu.Rank1, cu.Rank2, cu.Rank3} {
 		for _, id := range rank {
