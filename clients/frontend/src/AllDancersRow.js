@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
-import './styling/selectCast.css';
+import './styling/CastingFlow.css';
 import './styling/General.css';
 import img from './imgs/defaultProfile.jpg';
 import Button from 'material-ui/RaisedButton';
@@ -216,7 +216,7 @@ class AllDancersRow extends Component {
                 </section>
             }
             {!this.props.selectCast &&
-                <Button onClick={this.addToCast}> Add </Button>
+                <Button classname="addButton" onClick={this.addToCast}> Add </Button>
             }
         </td>
       </tr>

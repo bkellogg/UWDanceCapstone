@@ -99,12 +99,12 @@ tr{
     padding: 20px;
   }
 
-.castList-v2{
-    width: 45%;
+.castList-v2, .castList-v2-1{
+    width: 47%;
 }
 
-.v2-float{
-    float: right;
+.castList-v2{
+    margin-right: 7%;
 }
 
 /* RESOLVE CONFLICTS */
@@ -132,7 +132,14 @@ tr{
     padding: 25px;
 }
 
+
+/* ADD DANCERS */
+.addButton{
+    color: red !important;
+}
+
 /* STEP 4 */
 .setTimes{
     padding: 25px;
 }
+
