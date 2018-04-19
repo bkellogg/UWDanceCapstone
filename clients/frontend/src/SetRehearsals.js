@@ -71,9 +71,9 @@ class SetRehearsals extends Component {
     }
     
     let rehearsalList = []
-    this.state.rehearsalSchedule.forEach( rehearsal => {
+    this.state.rehearsalSchedule.forEach( (rehearsal, i) => {
       rehearsalList.push(
-        <div> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime}. </div>
+        <div key={i}> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime}. </div>
       )
     })
     return (
