@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 import TimePicker from 'material-ui/TimePicker';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import './styling/General.css';
+import './styling/CastingFlow.css';
+
+const styles = {
+  customWidth: {
+    width: 120,
+  },
+};
 
 const times = ["1000", "1030","1100","1130","1200","1230","1300", "1330", "1400","1430", 
 "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100"]
@@ -61,15 +69,17 @@ class RehearsalRow extends Component {
             ) 
         )
       })
-
+      let finished = this.props.finished
     return (
-      <section>
-        <SelectField
+      <section className="chooseRehearsalTimes">
+        <SelectField 
           floatingLabelText="Day"
           value={this.state.rehearsal.day}
+          style={styles.customWidth}
           onChange={this.updateDay}
           autoWidth={true}
-          disabled={this.props.finished}
+          disabled={finished}
+          className="pickDateTime"
         >
           <MenuItem value={"mon"} primaryText="Monday" />
           <MenuItem value={"tues"} primaryText="Tuesday" />
@@ -82,22 +92,26 @@ class RehearsalRow extends Component {
         </SelectField>
         <br/>
         <SelectField
+          maxHeight={300}
+          style={styles.customWidth}
           floatingLabelText="Start Time"
           value={this.state.rehearsal.startTime}
           onChange={this.updateStartTime}
           autoWidth={true}
-          disabled={this.props.finished}
+          disabled={finished}
         >
           {timePicker}
 
         </SelectField>
         <br/>
         <SelectField
+          maxHeight={300}
+          style={styles.customWidth}
           floatingLabelText="End Time"
           value={this.state.rehearsal.endTime}
           onChange={this.updateEndTime}
           autoWidth={true}
-          disabled={this.props.finished}
+          disabled={finished}
         >
           {timePicker}
 

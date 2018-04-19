@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
-import './styling/selectCast.css';
+import './styling/CastingFlow.css';
 import './styling/General.css';
 import img from './imgs/defaultProfile.jpg';
 import Button from 'material-ui/RaisedButton';
 import Avatar from 'material-ui/Avatar';
 import Checkbox from 'material-ui/Checkbox';
+
 
 class AllDancersRow extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class AllDancersRow extends Component {
         photoUrl : img
     }
   };
+  
 
   componentDidMount(){
     let rank = this.props.rank
@@ -216,7 +218,11 @@ class AllDancersRow extends Component {
                 </section>
             }
             {!this.props.selectCast &&
-                <Button onClick={this.addToCast}> Add </Button>
+                <Button 
+                backgroundColor="#708090"
+                style={{color: '#ffffff', float: 'right'}}
+                onClick={this.addToCast}
+                > ADD </Button>
             }
         </td>
       </tr>

@@ -68,7 +68,7 @@ class ResolveConflict extends Component {
                 </table>
               </div>
               </div>
-              <div className="castList-v2 v2-float">
+              <div className="castList-v2-1">
               <div className="restOfCast">
                 <h2 className="smallHeading"> All dancers </h2>
                 <table>

@@ -67,7 +67,7 @@ class SetRehearsals extends Component {
     let numRehearsals = this.state.numRehearsals
     let rehearsals = []
     for (let i = 0; i < numRehearsals; i++) {
-      rehearsals.push(<RehearsalRow key={i} setRehearsal={(rehearsal) => this.setRehearsal(rehearsal)}/>)
+      rehearsals.push(<RehearsalRow key={i} setRehearsal={(rehearsal) => this.setRehearsal(rehearsal)} finished ={finished}/>)
     }
     
     let rehearsalList = []
@@ -79,31 +79,61 @@ class SetRehearsals extends Component {
     return (
       <section >
         <div className="mainView">
-          <div className="card1">
+          <div className="transparentCard">
             <div className="wrap">
-              <div className="setTimes">
-                <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
-                {rehearsals}
-                <Button onClick={this.addRehearsal}>Add Rehearsal</Button>
-                <Button onClick={this.removeRehearsal}>Remove Rehearsal</Button>
-              </div>
-              <div className="postCasting">
-                <Button onClick={this.handleOpen}>POST CASTING</Button>
-              </div>
-              <div className="overlap">
+              <div className="castList setTimesWrap">
+              <div class="extraClass">
+                <div className="setTimes">
+                
+                  <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
+                  {rehearsals}
+                  
+                  <div className="buttonsWrap">
+                  <Button 
+                  backgroundColor="#708090"
+                  style={{color: '#ffffff', float: 'right'}}
+                  onClick={this.addRehearsal}
+                  disabled={finished}>
+                  ADD</Button>
+                  
+                  <Button 
+                  backgroundColor="#708090"
+                  style={{color: '#ffffff', marginRight: '20px', float: 'right'}}
+                  onClick={this.removeRehearsal} disabled={finished}>
+                  REMOVE</Button>
+                  </div>
+                  </div>
+                  <div className="postCastingWrap">
+                  <div className="postCasting">
+                    <Button 
+                    backgroundColor="#22A7E0"
+                    style={{color: '#ffffff', width:'100%'}}
+                    onClick={this.handleOpen}
+                    disabled={finished}>
+                    POST CASTING</Button>
+                  </div>
+                </div>
+                
+                </div>
+
+              <div className="overlapAvailability"> stuff go here
                 {/*This is where the overlapping availability will be displayed, same style as the one on the availability page, but we're not going to have that up for this*/}
               </div>
+              </div>
+              {/* AFTER CHOSING TIMES */}
               <Dialog
                 title="Confirm Casting"
                 actions={[
                   <FlatButton
                     label="Cancel"
-                    primary={true}
+                    style={{backgroundColor: '#708090', color: '#ffffff', marginRight: '20px'}}
+                    primary={false}
                     onClick={this.handleClose}
                   />,
                   <FlatButton
                     label="Post Casting"
-                    primary={true}
+                    style={{backgroundColor: '#22A7E0', color: '#ffffff'}}
+                    primary={false}
                     keyboardFocused={true}
                     onClick={this.postCasting}
                   />,
@@ -111,15 +141,14 @@ class SetRehearsals extends Component {
                 modal={false}
                 open={this.state.open}
                 onRequestClose={this.handleClose}
+                disabled={finished}
               >
-                By clicking Post Casting you confirm that your selected cast is <strong>accurate</strong>, there are <strong>no conflicts</strong> with other choreographers, and that your rehearsal times are :<br /> 
-                <div>
-                  {rehearsalList}
-                </div>
-                <br />
-                <br />
-                <strong>An email will be sent to your cast with these times, and they will accept or decline their casting.</strong>
+                <p className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong>, there are <strong className="importantText">no conflicts</strong> with other choreographers, and that your rehearsal times are :
+            <br /> insert rehearsal times here <br />
+                <br /> </p>
+                <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting.</p>
               </Dialog>
+            
             </div>
           </div>
         </div>

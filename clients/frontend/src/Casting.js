@@ -98,12 +98,16 @@ class Casting extends Component {
                   <div style={{ marginTop: 12 }}>
                     <FlatButton
                       label="Back"
+                      backgroundColor="#708090"
+                      style={{color: '#ffffff'}}
                       disabled={stepIndex === 0}
                       onClick={this.handlePrev}
                       className="back-button-styles-css"
                     />
                     <RaisedButton
                       label="Next"
+                      backgroundColor="#708090"
+                      style={{color: '#ffffff'}}
                       disabled={stepIndex === 3}
                       primary={true}
                       onClick={this.handleNext}

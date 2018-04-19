@@ -50,10 +50,12 @@ th{
 .overlapAvailability{
     width: 60%;
     background-color: red;
-    height: 400px;
-    position: relative;
+    height: 100%;
+    position: absolute;
     display: inline-block;
+    padding: 20px;
 }
+
 
 td{
     padding: 0;
@@ -77,29 +79,31 @@ tr{
 /* LAYOUT */
 /* small card with cast filter */
 .castList{
-    width: 40%;
+    width: 100%;
     position: relative;
 }
 
 /* HALF CARDS */
 /*inside of small card with cast filter*/
 .dancersList-filter{
-    width: 100%;
+    padding: 20px;
+    background-color: white;
+}
+
+
+.dancersList-filter, .extraClass {
+    width: 37%;
+    position: relative;
+    display: inline-block;
+    margin-right: 3%;
+  }
+
+.castList-v2, .castList-v2-1{
+    width: 47%;
 }
 
 .castList-v2{
-    width: 45%;
-}
-
-.v2-float{
-    float: right;
-}
-
-.dancersList-filter{
-    position: relative;
-    display: inline-block;
-    background-color: white;
-    padding: 20px;
+    margin-right: 7%;
 }
 
 /* RESOLVE CONFLICTS */
@@ -127,7 +131,39 @@ tr{
     padding: 25px;
 }
 
+
+/* ADD DANCERS */
+.addButton{
+    color: red !important;
+}
+
 /* STEP 4 */
 .setTimes{
+    width: 100%;
     padding: 25px;
+    background-color: white;
+}
+
+.pickDateTime{
+    color: red;
+}
+
+.chooseRehearsalTimes{
+    position: relative;
+}
+
+.buttonsWrap{
+    margin-top: 20px;
+}
+
+.postCastingWrap{
+    margin-top: 10%;
+}
+
+.importantText{
+    color: #22A7E0;
+}
+
+.warningText{
+    font-size: 15px;
 }
