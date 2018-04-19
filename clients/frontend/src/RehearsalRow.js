@@ -13,22 +13,43 @@ class RehearsalRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        day : "mon"
+      rehearsal:{
+        "day": "",
+        "startTime": "",
+        "endTime": ""
+      },
+      day: "",
+      startTime: "",
+      endTime: ""
     }
   };
 
-  handleChange = (event, index, value) => this.setState({day: value});
+  updateDay = (event, index, value) => {
+    let rehearsal = this.state.rehearsal
+    rehearsal.day = value
+    this.setState({
+      rehearsal: rehearsal
+    })
+    this.props.setRehearsal(this.state.rehearsal)
+  };
 
-  updateDay = (event) => {
-    console.log(event)
+
+  updateStartTime = (event, index, value) => {
+    let rehearsal = this.state.rehearsal
+    rehearsal.startTime = value
+    this.setState({
+      rehearsal: rehearsal
+    })
+    this.props.setRehearsal(this.state.rehearsal)
   }
 
-  updateStartTime = () => {
-    
-  }
-
-  updateEndTime = () => {
-      
+  updateEndTime = (event, index, value) => {
+    let rehearsal = this.state.rehearsal
+    rehearsal.endTime = value
+    this.setState({
+      rehearsal: rehearsal
+    })
+    this.props.setRehearsal(this.state.rehearsal)
   }
 
   render() {
@@ -40,11 +61,12 @@ class RehearsalRow extends Component {
             ) 
         )
       })
+
     return (
       <section>
         <SelectField
           floatingLabelText="Day"
-          value={this.state.day}
+          value={this.state.rehearsal.day}
           onChange={this.updateDay}
           autoWidth={true}
           disabled={this.props.finished}
@@ -61,7 +83,7 @@ class RehearsalRow extends Component {
         <br/>
         <SelectField
           floatingLabelText="Start Time"
-          value={this.state.day}
+          value={this.state.rehearsal.startTime}
           onChange={this.updateStartTime}
           autoWidth={true}
           disabled={this.props.finished}
@@ -72,7 +94,7 @@ class RehearsalRow extends Component {
         <br/>
         <SelectField
           floatingLabelText="End Time"
-          value={this.state.day}
+          value={this.state.rehearsal.endTime}
           onChange={this.updateEndTime}
           autoWidth={true}
           disabled={this.props.finished}

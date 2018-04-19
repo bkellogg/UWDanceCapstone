@@ -50,13 +50,25 @@ class SetRehearsals extends Component {
     })
   }
 
+  setRehearsal = (rehearsal) => {
+    if(rehearsal.day !== "" && rehearsal.startTime !== "" && rehearsal.endTime !== ""){
+      let rehearsals = this.state.rehearsalSchedule
+      rehearsals.push(rehearsal)
+      this.setState({
+        rehearsalSchedule: rehearsals
+      })
+
+      console.log(this.state.rehearsalSchedule)
+    }
+  }
+
 
   render() {
     const finished = this.state.finished
     let numRehearsals = this.state.numRehearsals
     let rehearsals = []
     for (let i = 0; i < numRehearsals; i++) {
-      rehearsals.push(<RehearsalRow key={i} />)
+      rehearsals.push(<RehearsalRow key={i} setRehearsal={(rehearsal) => this.setRehearsal(rehearsal)}/>)
     }
     return (
       <section >
