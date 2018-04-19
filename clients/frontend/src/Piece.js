@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
-let allViews = ['month', 'week','day']
+let views = ['month', 'week','day']
 
 let events = [
   {
@@ -24,16 +24,10 @@ let events = [
   {
     id: 2,
     title: 'DTS STARTS',
-    start: new Date(2016, 2, 13, 0, 0, 0),
-    end: new Date(2016, 2, 20, 0, 0, 0),
+    start: new Date(2018, 2, 13, 0, 0, 0),
+    end: new Date(2018, 2, 20, 0, 0, 0),
   },
-
-  {
-    id: 3,
-    title: 'DTS ENDS',
-    start: new Date(2016, 10, 6, 0, 0, 0),
-    end: new Date(2016, 10, 13, 0, 0, 0),
-  }]
+]
 
 class Piece extends Component {
   constructor(props) {
@@ -42,17 +36,15 @@ class Piece extends Component {
   };
 
   render() {
-    let date = moment().format('MMMM Do YYYY')
     return (
       <section className="main">
         <div className="mainView">
           <h1>My Piece</h1>
-          <BigCalendar style={{height : "1000px"}}
+          <BigCalendar style={{height : "800px", width: "800px"}}
+            defaultView='week'
             events={events}
-            views={allViews}
+            views={views}
             step={60}
-            showMultiDayTimes
-            defaultDate={new Date(2015, 3, 1)}
           />
           </div>
       </section>
