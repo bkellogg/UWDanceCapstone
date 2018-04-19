@@ -102,21 +102,23 @@ class CastingPersonRow extends Component {
         <td>
           numPieces
         </td>
+
         <div className="checkboxesGrouped">
         <td>
-        
         
         <div className="check">
             <Checkbox
                 value="1"
                 checked={this.state.checked.one}
                 onCheck={this.updateCheck}
-                iconStyle={{fill: '#22A7E0'}}
+                labelStyle={{color: 'red'}}
+                iconStyle={{fill: 'red'}}
             />
         </div>
         <div className="check">
             <Checkbox 
-                iconStyle={{fill: '#22A7E0'}}
+                labelStyle={{color: 'red'}}
+                iconStyle={{fill: 'red'}}
                 value="2"
                 checked={this.state.checked.two}
                 onCheck={this.updateCheck}

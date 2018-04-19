@@ -15,9 +15,22 @@ import './styling/Audition.css';
 
 
 const styles = {
-  customWidth: {
-    width: 150,
+  customWidthText: {
+    width: 500,
   },
+  customWidth:{
+    width:80,
+  }
+};
+
+const buttonStyle = {
+  disabledBackgroundColor: '#000000',
+  borderRadius: 3,
+  border: 0,
+  color: 'white',
+  height: 48,
+  padding: '0 30px',
+  boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .30)',
 };
 
 class Registration extends Component {
@@ -105,13 +118,17 @@ class Registration extends Component {
                 name="comments"
                 onChange={this.addComment}
                 multiLine={true}
+                style={styles.customWidthText}
                 rows={2}
               />
             </div>
             
           </div>
         </div>
-        <RaisedButton className='register' onClick={this.handleRegister} disabled={disabled} style={{ backgroundColor: "#BFB2E5" }}> Register </RaisedButton>
+        <RaisedButton 
+        onClick={this.handleRegister} 
+        disabled={disabled} > 
+        Register </RaisedButton>
       </div>
 
     )
