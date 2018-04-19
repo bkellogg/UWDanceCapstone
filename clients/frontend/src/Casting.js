@@ -11,13 +11,15 @@ import CheckAvailability from './CheckAvailability';
 import ResolveConflict from './ResolveConflict';
 import SetRehearsals from './SetRehearsals';
 import './styling/General.css';
+import './styling/CastingFlow.css';
 
 
 class Casting extends Component {
   constructor(props) {
    super(props);
    this.state ={
-     stepIndex: 0,
+    finished: false, 
+    stepIndex: 0,
      user: JSON.parse(localStorage.getItem("user"))
    }
   };
@@ -29,6 +31,7 @@ class Casting extends Component {
       this.setState({ stepIndex: stepIndex + 1 });
     }
   };
+  
 
   //handles a prev click
   handlePrev = () => {
@@ -62,29 +65,29 @@ class Casting extends Component {
       <section className="main">
         <div className="mainView">
           <h1>Casting</h1>
-        <div className="card1">
+        <div className="card-casting">
           <div className="castingFlowWrap">
 
               {/*This is the stepper styling - you can click the steps to go between them*/}
-              <div className="castingFlow" style={{ width: '100%', maxWidth: '90%', margin: 'auto' }}>
+              <div className="castingFlow" style={{ width: '100%', maxWidth: '100%', margin: 'auto'}}>
                 <Stepper linear={true} activeStep={stepIndex}>
                   <Step>
-                    <StepButton onClick={() => this.setState({ stepIndex: 0 })}>
+                    <StepButton className="steps"  onClick={() => this.setState({ stepIndex: 0 })} >
                       Select Your Cast
                     </StepButton>
                   </Step>
                   <Step>
-                    <StepButton onClick={() => this.setState({ stepIndex: 1 })}>
+                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 1 }) } style={{ color: 'red' }}>
                       Check Availability
                     </StepButton>
                   </Step>
                   <Step>
-                    <StepButton onClick={() => this.setState({ stepIndex: 2 })}>
+                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 2 })}>
                       Resolve Conflicts
                     </StepButton>
                   </Step>
                   <Step>
-                    <StepButton onClick={() => this.setState({ stepIndex: 3 })}>
+                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 3 })}>
                       Post Casting
                     </StepButton>
                   </Step>
@@ -97,25 +100,28 @@ class Casting extends Component {
                       label="Back"
                       disabled={stepIndex === 0}
                       onClick={this.handlePrev}
-                      style={{ marginRight: 12 }}
+                      className="back-button-styles-css"
                     />
                     <RaisedButton
                       label="Next"
                       disabled={stepIndex === 3}
                       primary={true}
                       onClick={this.handleNext}
+                      className="next-button-styles-css"
                     />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-
-
           {/*CONTENT*/}
-          {this.getStepContent(stepIndex)}
+         
         </div>
+
+        {this.getStepContent(stepIndex)}
+
       </section>
+      
     );
   };
 

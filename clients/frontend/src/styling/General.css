@@ -4,16 +4,42 @@ body{
 
 .mainView{
     padding-left: 5%;
-    margin-bottom: 20%;
+    margin-bottom: 7%;
 }
 
-.card1, .card2{
+.wrap{
+    display: flex;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.card1, .card2, .transparentCard{
     width: 95%;
     margin-bottom: 3%;
     margin-top: 3%;
-    padding: 1.5%;
+    padding: 15px;
+}
+
+.card1, .card2, .castList, .choreographersSelecteCast, .restOfCast{
+    border-radius: 5px;
+        
+    -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    -moz-box-shadow: rgba(0,0,0,0.3) 0 1px 3px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+}
+
+.transparentCard{
+    padding: 0;
+}
+
+.card1, .card2{
     background-color: white;
-    box-shadow: none;
+}
+
+.table{
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 h1 {
@@ -27,14 +53,18 @@ h1 {
     margin-bottom: 2%;
 }
 
+h2{
+    margin: 0;
+    padding: 0;
+}
+
 .dashboard{
     width: 90%;
 }
 
 .avatar {
     vertical-align: middle;
-    width: 75px;
-    height: 75px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
 }
-

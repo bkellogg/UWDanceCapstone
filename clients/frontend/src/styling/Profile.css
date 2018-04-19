@@ -3,14 +3,6 @@ body {
   color: #333;
 }
 
-.headerBorder{
-  display: flex;
-  position: relative;
-  height: 100%;
-  width: 100%;
-  
-}
-
 .header, .mainContentBorder{
   width: 100%;
   /* margin-bottom: 3%; */
@@ -59,7 +51,7 @@ img#photo {
 
 .card1, .card2, #photo{
   border-radius: 3px;
-  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px; 
+  /* box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;  */
 }
 
 

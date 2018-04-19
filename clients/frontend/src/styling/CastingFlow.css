@@ -1,0 +1,133 @@
+/* STEPPER  */
+.card-casting{
+    width: 95%;
+    margin-bottom: 3%;
+}
+
+.back-button-styles-css {
+    margin: 12 auto !important;
+    float: left;
+}
+
+.next-button-styles-css {
+    margin: 12 auto !important;
+    float: right;
+}
+
+.steps{
+    background-color: transparent !important;
+}
+
+
+/* HEADERS */
+th{
+    color: #22A7E0;    
+    padding:0;
+    padding-bottom: 20px;
+    border: none;
+}
+
+.centerText{
+    text-align: center;
+}
+
+.check {
+    display: inline-block;
+    align-items: center;
+}
+
+.rankDancer{
+    align-items: center;
+}
+
+.rank {
+    padding: 10px;
+    text-align: center;
+}
+
+
+/* AVAILABILITY CALENDAR */
+.overlapAvailability{
+    width: 60%;
+    background-color: red;
+    height: 400px;
+    position: relative;
+    display: inline-block;
+}
+
+td{
+    padding: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none;
+}
+
+/* REMOVE HORIZONTAL LINES IN TABLE */
+tr{
+    border: none;
+}
+
+.categories{
+    color: #22A7E0;
+    padding-bottom: 10px;
+    font-size: 13px;
+    font-weight: 100;
+}
+
+/* LAYOUT */
+/* small card with cast filter */
+.castList{
+    width: 40%;
+    position: relative;
+}
+
+/* HALF CARDS */
+/*inside of small card with cast filter*/
+.dancersList-filter{
+    width: 100%;
+}
+
+.castList-v2{
+    width: 45%;
+}
+
+.v2-float{
+    float: right;
+}
+
+.dancersList-filter{
+    position: relative;
+    display: inline-block;
+    background-color: white;
+    padding: 20px;
+}
+
+/* RESOLVE CONFLICTS */
+.conflictsCard{
+    width: 100%;
+    z-index: 1;
+}
+
+.conflictMessage{
+    font-weight: 500;
+    font-size: 15px;
+    color: #e65100;
+    margin: 0;
+    padding: 10px;
+}
+
+.smallHeading{
+    font-size: 15px;
+    font-weight: 500;
+    padding-bottom: 20px;
+}
+
+.choreographersSelecteCast, .restOfCast{
+    background-color: white;
+    padding: 25px;
+}
+
+/* STEP 4 */
+.setTimes{
+    padding: 25px;
+}
