@@ -220,7 +220,7 @@ class AllDancersRow extends Component {
             {!this.props.selectCast &&
                 <Button 
                 backgroundColor="#708090"
-                style={{color: '#ffffff'}}
+                style={{color: '#ffffff', float: 'right'}}
                 onClick={this.addToCast}
                 > ADD </Button>
             }

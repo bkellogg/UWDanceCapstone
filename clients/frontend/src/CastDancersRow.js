@@ -97,7 +97,7 @@ class CastDancersRow extends Component {
                 <td>
                     <Button 
                     backgroundColor="#708090"
-                    style={{color: '#ffffff'}}
+                    style={{color: '#ffffff', float: 'right'}}
                     onClick={this.dropFromCast}> 
                     DROP </Button>
                 </td>
