@@ -9,7 +9,8 @@ class SetRehearsals extends Component {
     super(props);
     this.state = {
       numRehearsals : 2,
-      open : false
+      open : false,
+      rehearsalSchedule : []
     }
   };
 
@@ -31,7 +32,6 @@ class SetRehearsals extends Component {
     newRehearsalNum++
     this.setState({
       numRehearsals: newRehearsalNum,
-      rehearsalSchedule: []
     })
   }
 

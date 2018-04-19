@@ -1,0 +1,52 @@
+.card-casting{
+    width: 95%;
+    margin-bottom: 3%;
+}
+
+.back-button-styles-css {
+    margin: 12 auto !important;
+    float: left;
+}
+
+.next-button-styles-css {
+    margin: 12 auto !important;
+    float: right;
+}
+
+.steps{
+    background-color: transparent !important;
+}
+
+
+/* svg {
+    color: transparent !important;
+    fill: red !important;
+} */
+
+th{
+    color: #22A7E0;
+    padding: 0;
+}
+
+.centerText{
+    text-align: center;
+}
+
+.check {
+    display: inline-block;
+    align-items: center;
+}
+
+.rankDancer{
+    align-items: center;
+}
+
+.rank {
+    padding: 10px;
+    text-align: center;
+}
+
+.userPicture{
+    height: 20px;
+    widows: 20px;
+}

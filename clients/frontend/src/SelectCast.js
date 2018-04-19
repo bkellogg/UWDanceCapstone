@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
 
-import './styling/selectCast.css';
+import './styling/CastingFlow.css';
 
 import AllDancersRow from './AllDancersRow';
 
@@ -61,13 +61,17 @@ class SelectCast extends Component {
 
   
   render() {
+    
     let rows = this.state.users.map((person) => {
         return(
           <AllDancersRow person={person}  key={person.id} rank={person.rank} selectCast={true}/>
         )
     })
     return (
+      
         <section>
+          <div className="mainView">
+          <div className="card1">
             <table>
             <tbody>
                 <tr>
@@ -75,7 +79,7 @@ class SelectCast extends Component {
                 <th>#</th>
                 <th>Name</th>
                 <th>Pieces</th>
-                <th>
+                <th className="centerText">
                     Rank
                     <br/>
                     <div className="check rank">1</div>
@@ -86,6 +90,8 @@ class SelectCast extends Component {
                 {rows}
             </tbody>
             </table>
+            </div>
+            </div>
         </section>
   );
 };
