@@ -50,11 +50,11 @@ func (ctx *CastingContext) BeginCastingHandler(w http.ResponseWriter, r *http.Re
 	}
 
 	// TODO: re-add this when ready for production
-	//client, found := ctx.Notifier.GetClient(u.ID)
-	//if !found {
-	//	return HTTPError("user must have at least one websocket connection to begin casting", http.StatusBadRequest)
-	//}
-	//client.AddCasting()
+	client, found := ctx.Session.GetClient(u.ID)
+	if !found {
+		return HTTPError("user must have at least one websocket connection to begin casting", http.StatusBadRequest)
+	}
+	client.AddCasting()
 
 	// if the session hasn't yet started, start it by loading users from the audition
 	// into it.
@@ -67,7 +67,7 @@ func (ctx *CastingContext) BeginCastingHandler(w http.ResponseWriter, r *http.Re
 	}
 
 	// add the current user as a choreographer to the current casting session
-	if err = ctx.Session.AddChoreographer(u.ID); err != nil {
+	if err = ctx.Session.AddChoreographer(u); err != nil {
 		return HTTPError(
 			fmt.Sprintf("error adding current user to casting session: %v", err),
 			http.StatusBadRequest)

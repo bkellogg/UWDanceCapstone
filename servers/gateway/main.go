@@ -75,14 +75,14 @@ func main() {
 	redis := sessions.NewRedisStore(nil, appvars.DefaultSessionDuration, redisAddr)
 
 	notifier := notify.NewNotifier()
-	castingSession := notify.NewCastingSession(db)
+	castingSession := notify.NewCastingSession(db, notifier)
 
 	permChecker, err := models.NewPermissionChecker(db)
 	if err != nil {
 		log.Fatalf("error creating permission checker: %v", err)
 	}
 
-	castingContext := handlers.NewCastingContext(permChecker, notifier, castingSession)
+	castingContext := handlers.NewCastingContext(permChecker, castingSession)
 
 	mailContext := handlers.NewMailContext(mailUser, mailPass, permChecker)
 	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials(), permChecker)

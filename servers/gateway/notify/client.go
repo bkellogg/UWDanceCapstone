@@ -60,10 +60,17 @@ func (c *WebSocketClient) hasConnections() bool {
 // shouldReceiveEvent returns true if this client should receive the
 // given event.
 func (c *WebSocketClient) shouldReceiveEvent(e *WebSocketEvent) bool {
+	return c.user.ID == e.Recipient || e.Recipient < 1 // temp
 	switch e.EventType {
 	case EventTypeAnnouncement:
+		if e.Recipient > 0 {
+			return c.user.ID == e.Recipient
+		}
 		return true
 	case EventTypeCasting:
+		if e.Recipient > 0 {
+			return c.isCasting && c.user.ID == e.Recipient
+		}
 		return c.isCasting
 	default:
 		return false

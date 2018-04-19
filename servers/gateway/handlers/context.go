@@ -53,18 +53,15 @@ func NewAnnouncementContext(store *models.Database, notifier *notify.Notifier, p
 // handlers that handle casting requests.
 type CastingContext struct {
 	permChecker *models.PermissionChecker
-	Notifier    *notify.Notifier
 	Session     *notify.CastingSession
 }
 
 // NewCastingContext returns a new CastingContext
 // from the given inputs.
 func NewCastingContext(pc *models.PermissionChecker,
-	notifier *notify.Notifier,
 	session *notify.CastingSession) *CastingContext {
 	return &CastingContext{
 		permChecker: pc,
-		Notifier:    notifier,
 		Session:     session,
 	}
 }
