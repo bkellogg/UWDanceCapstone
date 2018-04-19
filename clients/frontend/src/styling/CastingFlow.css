@@ -84,18 +84,19 @@ tr{
 /* HALF CARDS */
 /*inside of small card with cast filter*/
 .dancersList-filter {
-    width: 30%;
+    width: 37%;
     position: relative;
     display: inline-block;
     margin-right: 3%;
     padding: 20px;
     background-color: white;
   }
-  
+
   .overlapAvailability{
     width: 60%;
     position: relative;
     display: inline-block;
+    padding: 20px;
   }
 
 .castList-v2{
