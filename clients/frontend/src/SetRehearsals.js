@@ -56,20 +56,29 @@ class SetRehearsals extends Component {
     return (
       <section >
         <div className="mainView">
-          <div className="card1">
+          <div className="transparentCard">
             <div className="wrap">
-              <div className="setTimes">
-                <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
-                {rehearsals}
-                <Button onClick={this.addRehearsal}>Add Rehearsal</Button>
-                <Button onClick={this.removeRehearsal}>Remove Rehearsal</Button>
-              </div>
-              <div className="postCasting">
-                <Button onClick={this.handleOpen}>POST CASTING</Button>
-              </div>
-              <div className="overlap">
+              <div className="castList setTimesWrap">
+                <div className="setTimes">
+                  <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
+                  {rehearsals}
+                  <Button onClick={this.addRehearsal}>Add Rehearsal</Button>
+                  <Button onClick={this.removeRehearsal}>Remove Rehearsal</Button>
+                
+                  <div className="postCastingWrap">
+                  <div className="postCasting">
+                    <Button onClick={this.handleOpen}>POST CASTING</Button>
+                  </div>
+                </div>
+                </div>
+              
+
+
+              <div className="overlapAvailability">
                 {/*This is where the overlapping availability will be displayed, same style as the one on the availability page, but we're not going to have that up for this*/}
               </div>
+
+              {/* AFTER CHOSING TIMES */}
               <Dialog
                 title="Confirm Casting"
                 actions={[
@@ -94,6 +103,7 @@ class SetRehearsals extends Component {
                 <br />
                 <strong>An email will be sent to your cast with these times, and they will accept or decline their casting.</strong>
               </Dialog>
+            </div>
             </div>
           </div>
         </div>

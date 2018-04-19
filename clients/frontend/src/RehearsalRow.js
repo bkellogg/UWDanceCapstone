@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import TimePicker from 'material-ui/TimePicker';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import './styling/General.css';
+import './styling/CastingFlow.css';
 
 const times = ["1000", "1030","1100","1130","1200","1230","1300", "1330", "1400","1430", 
 "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100"]
@@ -47,6 +49,7 @@ class RehearsalRow extends Component {
           value={this.state.day}
           onChange={this.updateDay}
           autoWidth={true}
+          className="pickDateTime"
         >
           <MenuItem value={"mon"} primaryText="Monday" />
           <MenuItem value={"tues"} primaryText="Tuesday" />

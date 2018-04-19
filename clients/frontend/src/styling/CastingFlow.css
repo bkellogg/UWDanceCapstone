@@ -83,8 +83,11 @@ tr{
 
 /* HALF CARDS */
 /*inside of small card with cast filter*/
-.dancersList-filter {
+.dancersList-filter{
     width: 37%;
+}
+
+.dancersList-filter, .setTimes {
     position: relative;
     display: inline-block;
     margin-right: 3%;
@@ -141,9 +144,10 @@ tr{
 /* STEP 4 */
 .setTimes{
     padding: 25px;
+    width: 35%;
 }
 
 
-.check{
-
+.pickDateTime{
+    color: red;
 }

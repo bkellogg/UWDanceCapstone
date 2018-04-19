@@ -21,7 +21,7 @@ body{
     padding: 15px;
 }
 
-.card1, .card2, .dancersList-filter, .overlapAvailability, .choreographersSelecteCast, .restOfCast{
+.card1, .card2, .setTimes, .dancersList-filter, .overlapAvailability, .choreographersSelecteCast, .restOfCast{
     border-radius: 5px;
         
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
