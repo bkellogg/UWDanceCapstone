@@ -122,7 +122,7 @@ func (store *Database) RemoveUserFromPiece(userID, pieceID int) *DBError {
 
 // AddUserToAudition adds the given user to the given audition. Returns an error
 // if one occurred.
-func (store *Database) AddUserToAudition(userID, audID, creatorID int, availability *WeekTimeBlock, comment string) *DBError {
+func (store *Database) AddUserToAudition(userID, audID, creatorID, numShows int, availability *WeekTimeBlock, comment string) *DBError {
 	audition, dberr := store.GetAuditionByID(audID, false)
 	if dberr != nil {
 		return dberr
@@ -166,8 +166,9 @@ func (store *Database) AddUserToAudition(userID, audID, creatorID int, availabil
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error getting insert ID of new availability: %v", err), http.StatusInternalServerError)
 	}
-	res, err = tx.Exec(`INSERT INTO UserAudition (AuditionID, UserID, AvailabilityID, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
-		audID, userID, availID, creatorID, addTime, false)
+	res, err = tx.Exec(`INSERT INTO UserAudition
+		(AuditionID, UserID, AvailabilityID, NumShows, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		audID, userID, availID, numShows, creatorID, addTime, false)
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error inserting user audition: %v", err), http.StatusInternalServerError)
 	}

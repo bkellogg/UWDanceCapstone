@@ -96,3 +96,8 @@ func getStringParam(r *http.Request, param string) string {
 func getRoleParam(r *http.Request) string {
 	return getStringParam(r, "role")
 }
+
+// getNumShowsParam gets the value of the shows query parameter
+func getNumShowsParam(r *http.Request) (int, error) {
+	return strconv.Atoi(getStringParam(r, "shows"))
+}

@@ -119,8 +119,8 @@ func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.U
 
 // addUserToAudition adds the given user to the given audition with the given UserAuditionLink
 // return an HTTPError if one occurred.
-func (ctx *AuthContext) addUserToAudition(userID, audID, creatorID int, ual *models.UserAuditionLink) *middleware.HTTPError {
-	if dberr := ctx.store.AddUserToAudition(userID, audID, creatorID, ual.Availability, ual.Comment); dberr != nil {
+func (ctx *AuthContext) addUserToAudition(userID, audID, creatorID, numShows int, ual *models.UserAuditionLink) *middleware.HTTPError {
+	if dberr := ctx.store.AddUserToAudition(userID, audID, creatorID, numShows, ual.Availability, ual.Comment); dberr != nil {
 		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
 	return nil

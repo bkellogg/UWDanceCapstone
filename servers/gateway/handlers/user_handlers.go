@@ -207,17 +207,25 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 	if httperr != nil {
 		return httperr
 	}
+
 	switch r.Method {
 	case "LINK":
 		if objType == "auditions" {
 			if !ctx.permChecker.UserCanAddToAudition(u, int64(userID)) {
 				return permissionDenied()
 			}
+			numShows, err := getNumShowsParam(r)
+			if err != nil {
+				return HTTPError("number of shows is not a valid number", http.StatusBadRequest)
+			}
+			if numShows < 1 || numShows > 2 {
+				return HTTPError("number of shows must be 1 or 2", http.StatusBadRequest)
+			}
 			ual := &models.UserAuditionLink{}
 			if err := receive(r, ual); err != nil {
 				return err
 			}
-			if httperr := ctx.addUserToAudition(userID, objID, int(u.ID), ual); httperr != nil {
+			if httperr := ctx.addUserToAudition(userID, objID, int(u.ID), numShows, ual); httperr != nil {
 				return httperr
 			}
 			return respondWithString(w, "user added to audition", http.StatusOK)

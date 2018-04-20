@@ -71,6 +71,7 @@ type UserAudition struct {
 	AuditionID     int       `json:"auditionID"`
 	UserID         int       `json:"userID"`
 	AvailabilityID int       `json:"availabilityID"`
+	NumShows       int       `json:"numShows"`
 	CreatedAt      time.Time `json:"createdAt"`
 	CreatedBy      int       `json:"createdBy"`
 	IsDeleted      bool      `json:"isDeleted"`

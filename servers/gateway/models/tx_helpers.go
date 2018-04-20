@@ -65,7 +65,7 @@ func txGetUserAudition(tx *sql.Tx, userID, audID int) (*UserAudition, *DBError) 
 	ua := &UserAudition{}
 	err := res.Scan(
 		&ua.ID, &ua.AuditionID,
-		&ua.UserID, &ua.AvailabilityID,
+		&ua.UserID, &ua.AvailabilityID, &ua.NumShows,
 		&ua.CreatedAt, &ua.CreatedBy,
 		&ua.IsDeleted)
 	if err != nil && err != sql.ErrNoRows {
