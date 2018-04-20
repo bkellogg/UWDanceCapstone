@@ -27,10 +27,11 @@ class SelectCast extends Component {
     //TODO deal with pages
     //TODO get this to be just the people in a show
     //I don't think this works if they sign out and then come back to this page directly?
-    if (localStorage.getItem("allUsers") === null){
+    if (JSON.parse(localStorage.getItem("allUsers")) === null){
       Util.makeRequest("auditions/" + this.props.auditionID + "/users", "", "GET", true)
       .then( res => {
         if (res.ok) {
+          console.log(res)
           return res.json()
         }
         return res.text().then((t) => Promise.reject(t));
@@ -59,8 +60,8 @@ class SelectCast extends Component {
     } else {
       this.setState({
       users: JSON.parse(localStorage.getItem("allUsers"))
-      })
-    }
+    })
+   }
   }
 
   render() {

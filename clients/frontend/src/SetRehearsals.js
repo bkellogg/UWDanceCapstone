@@ -84,7 +84,7 @@ class SetRehearsals extends Component {
           <div className="transparentCard">
             <div className="wrap">
               <div className="castList setTimesWrap">
-                <div class="extraClass">
+                <div className="extraClass">
                   <div className="setTimes">
 
                     <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
