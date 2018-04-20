@@ -112,14 +112,18 @@ class Dashboard extends Component {
                 return (
                   <div key={index} className="announcement">
                     {
-                      <Card>
-                        <div className="cardBody">
-                          <CardText style={{padding: '0'}}>
+                      <div className="cardBody">
+                        <p className="announcementMessage"> {anncouncement.message} </p>
+                      </div>
+
+                      // <Card>
+                      //   <div className="cardBody">
+                      //     <CardText style={{padding: '0'}}>
                             
-                            <p className="announcementMessage"> {anncouncement.message} </p>
-                          </CardText>
-                        </div>
-                      </Card>
+                      //       <p className="announcementMessage"> {anncouncement.message} </p>
+                      //     </CardText>
+                      //   </div>
+                      // </Card>
                     }
                   </div>
                 )
@@ -134,19 +138,31 @@ class Dashboard extends Component {
                   <div key={index} className="announcement">
                   <div className="cardBody">
                     {
-                      <Card>
+
+                      <div className="auditionAnnouncementCard">
                         <div className="showTitle">
-                          <CardTitle 
-                            title="Audition"/>
+                          <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
                         </div>
-                        <CardText>
-                          <p> {anncouncement.name} </p>
-                          <p> {auditionDay} </p>
-                          <p> {auditionTime} </p>
-                          <p> {anncouncement.audition.location} </p>
+                        <div className="showInformation">
+                          <p> <b>Date:</b> {auditionDay} </p>
+                          <p> <b>Time:</b> {auditionTime} </p>
+                          <p> <b>Location:</b> {anncouncement.audition.location} </p>
                           <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
-                        </CardText>
-                      </Card>
+                        </div>
+                      </div>
+                      // <Card>
+                      //   <div className="showTitle">
+                      //     <CardTitle 
+                      //       title="Audition"/>
+                      //   </div>
+                      //   <CardText>
+                      //     <p> {anncouncement.name} </p>
+                      //     <p> {auditionDay} </p>
+                      //     <p> {auditionTime} </p>
+                      //     <p> {anncouncement.audition.location} </p>
+                      //     <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
+                      //   </CardText>
+                      // </Card>
                     }
                   </div>
                   </div>
