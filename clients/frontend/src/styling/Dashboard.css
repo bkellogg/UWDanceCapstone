@@ -1,15 +1,27 @@
 .announcement {
-  padding-top: 10px
+  padding-bottom: 20px
 }
 
 .cardBody{
-  background-color: #BFB2E5
+  background-color: white;
+  border: 1px solid #22A7E0;
+  border-radius: 3px;
 }
 
 .warning{
-  background-color:rgb(245, 155, 77)
+  background-color:#e65100;
 }
 
+.announcementMessage{
+  padding: 1px 25px;
+  font-weight: 400;
+  color: #333;
+  
+}
+
+.showTitle2{
+  font-size: 14px;
+}
 
 @media only screen and (max-width : 992px) {
 
