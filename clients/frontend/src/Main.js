@@ -15,6 +15,7 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import * as Util from './util';
 import 'materialize-css';
+import logo from './imgs/logo2-100.jpg'
 import './styling/Main.css';
 import './styling/Navigation.css';
 import './styling/MobileNavigation.css';
@@ -278,7 +279,7 @@ class Main extends Component {
               <div className="navigationBg">
                 <li>
                   <div id="logo">
-                    <img alt="logo" src="/clients/frontend/src/imgs/logo2-100.jpg"/>
+                    <img alt="logo" src={logo}/>
                   </div>
                 </li>
                 <li className="dropDown"><Link to="/">Dashboard</Link></li>
