@@ -1,0 +1,45 @@
+.mobileNavWrap{
+
+    position: relative;
+    width: 100%;
+    height: 40px;
+}
+
+.mobileNav{
+    width: 100%;
+    height: 100%;
+}
+
+.hamburger{
+    background-color: #27384A;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.hamburgerButton{
+    background-color: #27384A;
+    color: white;
+}
+
+.mobileNavItem{
+    color: white;
+    font-weight: 300;
+    letter-spacing: 1px;
+    font-size: 14px;
+}
+
+.fuckk{
+    background-color: #27384A;
+    height: 100%;
+    width: 100%;
+}
+
+.collapsible{
+    box-shadow: none;
+    border: none;
+}
+
+.collapsible-body{
+    border: none;
+}
