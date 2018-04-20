@@ -343,7 +343,11 @@ class Profile extends Component {
                 {!this.state.edit &&
                   <section>
                     {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                    <a href={this.state.resume} target="_blank">View PDF Resume</a>
+                    {this.state.resume != null && (
+                      <div>
+                        <a href={this.state.resume} target="_blank">View PDF Resume</a>
+                      </div>
+                    )}
 
                   </section>
                 }
@@ -357,7 +361,7 @@ class Profile extends Component {
 
             </div>
           </div>
-          
+
           {!this.state.edit &&
             <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Edit Profile
                   {/* <i className="large material-icons"> mode_edit </i> */}
