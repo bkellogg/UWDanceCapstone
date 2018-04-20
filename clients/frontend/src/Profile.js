@@ -4,6 +4,7 @@ import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg'
 import './styling/Profile.css';
 import './styling/General.css';
+import AvatarEditor from 'react-avatar-editor';
 
 class Profile extends Component {
   constructor(props) {
@@ -14,6 +15,9 @@ class Profile extends Component {
     this.resumeChange = this.resumeChange.bind(this);
     this.photoChange = this.photoChange.bind(this);
     this.formatHistory = this.formatHistory.bind(this);
+    this.handleScale = this.handleScale.bind(this);
+    this.handleRotateRight = this.handleRotateRight.bind(this);
+    this.handleRotateLeft = this.handleRotateLeft.bind(this);
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
@@ -29,7 +33,14 @@ class Profile extends Component {
       lastName: "",
       photoUpload: "",
       bioUpload: "",
-      resumeUpload: ""
+      resumeUpload: "",
+      width: 300,
+      height: 300,
+      border: 25,
+      color: [255, 255, 255, 0.6],
+      scale: 1,
+      rotate: 0,
+      newPhoto: img,
     }
   };
 
@@ -94,7 +105,7 @@ class Profile extends Component {
       })
   }
 
-getPhoto() {
+  getPhoto() {
     fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
       .then((res) => {
         if (res.ok) {
@@ -104,7 +115,8 @@ getPhoto() {
       })
       .then((data) => {
         this.setState({
-          photoSrc: URL.createObjectURL(data)
+          photoSrc: URL.createObjectURL(data),
+          newPhoto: URL.createObjectURL(data)
         })
       })
       .catch((err) => {
@@ -137,16 +149,15 @@ getPhoto() {
     let data = new FormData();
     data.append("image", file.files[0]);
     let xhr = new XMLHttpRequest();
-
     xhr.addEventListener("readystatechange", () => {
-        this.getPhoto()
+      this.getPhoto()
     });
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status < 400) {
-                return xhr.responseText
-            } 
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status < 400) {
+          return xhr.responseText
         }
+      }
     };
 
     xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
@@ -154,35 +165,35 @@ getPhoto() {
     xhr.setRequestHeader("ImageFieldName", "image");
 
     xhr.send(data);
-}
+  }
 
-uploadResume = (val) => {
-  let file = val;
-  let data = new FormData();
-  data.append("resume", file.files[0]);
+  uploadResume = (val) => {
+    let file = val;
+    let data = new FormData();
+    data.append("resume", file.files[0]);
 
-  let xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
 
-  xhr.addEventListener("readystatechange", () => {
+    xhr.addEventListener("readystatechange", () => {
       if (this.readyState === 4) {
-          this.getResume()
+        this.getResume()
       }
-  });
+    });
 
-  xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (xhr.status < 400) {
-              return xhr.responseText
-          }
+        if (xhr.status < 400) {
+          return xhr.responseText
+        }
       }
-  };
+    };
 
-  xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
-  xhr.setRequestHeader("Authorization", Util.getAuth());
-  xhr.setRequestHeader("ResumeFieldName", "resume");
+    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
+    xhr.setRequestHeader("Authorization", Util.getAuth());
+    xhr.setRequestHeader("ResumeFieldName", "resume");
 
-  xhr.send(data);
-}
+    xhr.send(data);
+  }
 
 
   onClick() {
@@ -237,132 +248,196 @@ uploadResume = (val) => {
     this.setState({
       photoUpload: val.target,
     })
+    console.log(this.state.photoUpload)
   }
+
+  handleScale(event) {
+    this.setState({
+      scale: event.target.value
+    })
+  }
+
+  handleRotateRight(event) {
+    let value = this.state.rotate;
+    let newValue = value + 90;
+    this.setState({
+      rotate: newValue
+    })
+  }
+
+  handleRotateLeft(event) {
+    let value = this.state.rotate;
+    let newValue = value - 90;
+    this.setState({
+      rotate: newValue
+    })
+  }
+
+  onClickSave = () => {
+    if (this.editor) {
+      //const canvasScaled = this.editor.getImageScaledToCanvas()
+      const canvas = this.editor.getImage().toDataURL();
+      let imageURL;
+      fetch(canvas)
+        .then(res => res.blob())
+        .then(blob => (imageURL = window.URL.createObjectURL(blob)))
+        .then((data) => {
+          this.setState({
+            newPhoto: data
+          })
+          console.log(this.state.newPhoto)
+        })
+    }
+  }
+
+  setEditorRef = (editor) => this.editor = editor
 
   render() {
     return (
       <section className="main">
-      <div className="mainView">
-      <h1 className="pagetitle">Your Profile </h1>
+        <div className="mainView">
+          <h1 className="pagetitle">Your Profile </h1>
 
 
-        <div className="card1">
-          {/* FIRST CARD */}
-          <div className="headerBorder">
-            <div className="header">
-              <div className="photoContainerWrap">
-                <div id="photoContainer" className="photoContainer">
-                  {!this.state.edit &&
+          <div className="card1">
+            {/* FIRST CARD */}
+            <div className="headerBorder">
+              <div className="header">
+                <div className="photoContainerWrap">
+                  <div id="photoContainer" className="photoContainer">
+                    {!this.state.edit &&
 
-                    <img id="photo" alt="profile" src={this.state.photoSrc}></img>
-                  }
-                  {this.state.edit &&
-                    <section>
-                      <div> Upload a head shot as a jpg file. </div>
-                      <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
-                    </section>
-                  }
-                </div>
-              </div>
+                      <img id="photo" alt="profile" src={this.state.photoSrc}></img>
+                    }
+                    {this.state.edit &&
+                      <section>
+                        <div> Upload a head shot as a jpg file. </div>
+                        <div>
+                          <AvatarEditor
+                            ref={this.setEditorRef}
+                            image={this.state.newPhoto}
+                            width={this.state.width}
+                            height={this.state.height}
+                            border={this.state.border}
+                            color={this.state.color} // RGBA
+                            scale={this.state.scale}
+                            rotate={this.state.rotate}
+                          />
 
-              <div className="nameAndBioWrap">
-                <div id="name" className="name">
-
-                  {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
-
-
-                  {this.state.edit &&
-                    <div id="editName">
-                      <Row>
-                        <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
-                        <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
-                      </Row>
-                    </div>
-                  }
-                </div>
-
-                <div id="bio" className="bio">
-                  <div className="subheader"><b>Dancer Bio:</b></div>
-                  {!this.state.edit &&
-                    <section>
-                      {this.state.bio !== "" && this.state.bio}
-                      {this.state.bio === "" && " Dancer has no bio"}
-                    </section>
-                  }
-                  {this.state.edit &&
-                    <div id="editBio">
-
-
-                      <div className="row">
-                        <form className="col s12">
-                          <div className="row">
-                            <div className="input-field col s12">
-                              <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
-                              <label htmlFor="textarea1">Bios should be 60 words or less</label>
-                            </div>
+                          <div>Zoom:
+                          <input type="range" min="1" max="2" step="0.01" onChange={this.handleScale} /></div>
+                          <div>Rotate:
+                            <button type="button" onClick={this.handleRotateLeft}>Left</button>
+                            <button type="button" onClick={this.handleRotateRight}>Right</button>
                           </div>
-                        </form>
-                      </div>
-                    </div>
+                        </div>
 
-                  }
-                </div>
-              </div>
-              {!this.state.edit &&
-                <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                  <i className="large material-icons"> mode_edit </i>
-                </Button>
+                        <button type="button" onClick={this.onClickSave}>Edit Photo</button>
 
-              }
-              {this.state.edit &&
-                <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                  <i className="large material-icons"> check </i>
-                </Button>
-              }
-            </div>
-          </div>
-        </div>
-
-        <div className="card2">
-
-          {/* SECOND CARD */}
-          <div className="mainContentBorder">
-            <div id="history">
-              <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-              {this.state.history.length > 0 && this.state.history.map((p, i) => {
-                return (
-                  //TODO STYLE THESE
-                  <div className="showHistory" key={i}>
-                    <p>{p.name}</p>
-                    <p>{p.year}</p>
+                        <Input id="photoUpload" name="photoUpload" type="file" onClick={this.onClickSave} />
+                      </section>
+                    }
                   </div>
-                )
-              })}
-              {this.state.history.length === 0 &&
-                <p> Dancer has no piece history </p>
-              }
+                </div>
+
+                <div className="nameAndBioWrap">
+                  <div id="name" className="name">
+
+                    {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+
+
+                    {this.state.edit &&
+                      <div id="editName">
+                        <Row>
+                          <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
+                          <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
+                        </Row>
+                      </div>
+                    }
+                  </div>
+
+                  <div id="bio" className="bio">
+                    <div className="subheader"><b>Dancer Bio:</b></div>
+                    {!this.state.edit &&
+                      <section>
+                        {this.state.bio !== "" && this.state.bio}
+                        {this.state.bio === "" && " Dancer has no bio"}
+                      </section>
+                    }
+                    {this.state.edit &&
+                      <div id="editBio">
+
+
+                        <div className="row">
+                          <form className="col s12">
+                            <div className="row">
+                              <div className="input-field col s12">
+                                <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
+                                <label htmlFor="textarea1">Bios should be 60 words or less</label>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+
+                    }
+                  </div>
+                </div>
+                {!this.state.edit &&
+                  <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                    <i className="large material-icons"> mode_edit </i>
+                  </Button>
+
+                }
+                {this.state.edit &&
+                  <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                    <i className="large material-icons"> check </i>
+                  </Button>
+                }
+              </div>
             </div>
-
-            <div id="resume">
-              {!this.state.edit &&
-                <section>
-                  {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                  <a href={this.state.resume} target="_blank">View PDF Resume</a>
-
-                </section>
-              }
-              {this.state.edit &&
-                <section>
-                  <div> Upload your dance resume as a PDF. </div>
-                  <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
-                </section>
-              }
-            </div>
-
           </div>
 
+          <div className="card2">
 
-        </div>
+            {/* SECOND CARD */}
+            <div className="mainContentBorder">
+              <div id="history">
+                <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+                {this.state.history.length > 0 && this.state.history.map((p, i) => {
+                  return (
+                    //TODO STYLE THESE
+                    <div className="showHistory" key={i}>
+                      <p>{p.name}</p>
+                      <p>{p.year}</p>
+                    </div>
+                  )
+                })}
+                {this.state.history.length === 0 &&
+                  <p> Dancer has no piece history </p>
+                }
+              </div>
+
+              <div id="resume">
+                {!this.state.edit &&
+                  <section>
+                    {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                    <a href={this.state.resume} target="_blank">View PDF Resume</a>
+
+                  </section>
+                }
+                {this.state.edit &&
+                  <section>
+                    <div> Upload your dance resume as a PDF. </div>
+                    <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                  </section>
+                }
+              </div>
+
+            </div>
+
+
+          </div>
 
         </div>
       </section>
