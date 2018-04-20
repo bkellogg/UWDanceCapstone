@@ -27,12 +27,10 @@ class PersonRow extends Component {
         return(URL.createObjectURL(data))
     })
     .then(url => {
-        console.log(url)
         this.setState({
             photoUrl : url
         })
     }).catch((err) => {
-      console.log(err)
       Util.handleError(err)
     });
   }

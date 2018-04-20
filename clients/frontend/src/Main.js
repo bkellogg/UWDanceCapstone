@@ -35,6 +35,8 @@ const styleNav = {
   backgroundColor: 'red',
 };
 
+const host = "dasc.capstone.ischool.uw.edu";
+const websocket = new WebSocket("wss://" + host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
 
 class Main extends Component {
   constructor(props) {
@@ -192,9 +194,8 @@ class Main extends Component {
                 open={this.state.open}
                 onRequestChange={(open) => this.setState({ open })}
               >
-                <div id="mobileLogo"> <img src="../imgs/logoex.png" /> </div>
 
-              <div className="fuckk">
+              <div className="menuList">
                 <Link to="/">
                   <MenuItem onClick={this.handleClose}>
                     <p className="mobileNavItem" >Dashboard</p>
@@ -234,20 +235,20 @@ class Main extends Component {
               routes.push(route)
             } else if (this.state.user.role.level === 70) {
               let route1 = <Route exact path={path + "/casting"} render={
-                props => <Casting {...props} name={show.name} audition={show.auditionID} />
-              } />
-              let route2 = <Route exact path={path + "/people"} render={
-                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show} />
-              } />
+                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket}/>
+              }/>
+              let route2 =  <Route exact path={path + "/people"} render={
+                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
+              }/>
               routes.push(route1)
               routes.push(route2)
             } else {
               let route1 = <Route exact path={path + "/casting"} render={
-                props => <Casting {...props} name={show.name} audition={show.auditionID} />
-              } />
-              let route2 = <Route exact path={path + "/people"} render={
-                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show} />
-              } />
+                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket}/>
+              }/>
+              let route2 =  <Route exact path={path + "/people"} render={
+                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
+              }/>
               let route3 = <Route exact path={path + "/audition"} render={
                 props => <Audition {...props} name={show.name} audition={show.auditionID} />
               } />
