@@ -31,9 +31,13 @@ th{
     text-align: center;
 }
 
-.check {
+.check, .checkOne {
     display: inline-block;
     align-items: center;
+}
+
+.checkOne {
+    padding-left: 30%;
 }
 
 .rankDancer{
@@ -49,7 +53,7 @@ th{
 /* AVAILABILITY CALENDAR */
 .overlapAvailability{
     width: 60%;
-    background-color: red;
+    background-color: lightgray;
     height: 100%;
     position: absolute;
     display: inline-block;
@@ -133,9 +137,6 @@ tr{
 
 
 /* ADD DANCERS */
-.addButton{
-    color: red !important;
-}
 
 /* STEP 4 */
 .setTimes{
@@ -145,7 +146,7 @@ tr{
 }
 
 .pickDateTime{
-    color: red;
+    color: lightblue;
 }
 
 .chooseRehearsalTimes{
