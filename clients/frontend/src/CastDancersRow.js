@@ -5,6 +5,8 @@ import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/RaisedButton';
 import img from './imgs/defaultProfile.jpg';
 import Avatar from 'material-ui/Avatar';
+import WarningIcon from 'material-ui/svg-icons/alert/warning';
+import {red500} from 'material-ui/styles/colors';
 
 class CastDancersRow extends Component {
   constructor(props) {
@@ -104,14 +106,14 @@ class CastDancersRow extends Component {
                 <img src={this.state.photoUrl} className="avatar"/>
             </td>
             <td className="dancerAssignedNumber">
-                regNum
+            {this.props.regNum}
             </td>
             <td>
                 {person.firstName + " " + person.lastName}
             </td>
-            {this.props.filter &&
+            {this.props.filter && this.props.comments[0].comment != "" &&
                 <td>
-                    !
+                    <WarningIcon color={red500}/>
                 </td>
             }
             {!this.props.filter && !this.props.uncast &&

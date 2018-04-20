@@ -94,7 +94,7 @@ class CastingPersonRow extends Component {
         <Avatar>:)</Avatar>
         </td>
         <td>
-            {this.props.regNum}
+            regNum
         </td>
         <td>
           {p.firstName + " " + p.lastName}
