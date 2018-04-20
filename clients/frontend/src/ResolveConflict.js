@@ -21,7 +21,7 @@ class ResolveConflict extends Component {
     const cast = JSON.parse(localStorage.socketCast)
     let yourCast = cast.map(dancer => {
       return (
-        <CastDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} filter={false} updateCast={() => { this.setState({ cast: JSON.parse(localStorage.getItem("cast")) }) }} />
+        <CastDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} filter={false} uncast={false} updateCast={() => { this.setState({ cast: JSON.parse(localStorage.getItem("cast")) }) }} />
       )
     })
 
@@ -36,7 +36,7 @@ class ResolveConflict extends Component {
     const conflicts = JSON.parse(localStorage.contested)
     let conflictsRow = conflicts.map(conflict => {
       return (
-        <ConflictRow choreographers = {conflict.choreographers} dancer = {conflict.rankedDancer.dancer} rank={conflict.rankedDancer.rank}/>
+        <ConflictRow choreographers = {conflict.choreographers} dancer = {conflict.rankedDancer.dancer} rank={conflict.rankedDancer.rank} />
       )
     })
 

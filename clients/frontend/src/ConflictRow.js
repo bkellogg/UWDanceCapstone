@@ -36,24 +36,7 @@ class ConflictRow extends Component {
   }
 
   dropFromCast = () => {
-    //this handles dropping them from the cast, but we also need to go through and update their rank in the allUsers
-    let cast = JSON.parse((localStorage).getItem("cast"))
-    let person = this.props.person
-
-    //update cast
-    cast = cast.filter(castMember => castMember.id !== person.id)
-    localStorage.setItem("cast", JSON.stringify(cast))
-    this.props.updateCast()
-
-    //update all users
-    let allUsers = JSON.parse(localStorage.getItem("allUsers"))
-    allUsers.forEach(user => {
-        if (user.id === person.id) {
-            user.rank = ""
-            return
-        }
-    })
-    localStorage.setItem("allUsers", JSON.stringify(allUsers))
+    console.log("drop")
   }
 
   render() {
@@ -64,7 +47,7 @@ class ConflictRow extends Component {
     let choreos = choreographers.map(choreo => {
         console.log(choreo)
         return (
-            <li> {choreo.firstName + " " + choreo.lastName} </li>
+            <p> {choreo.firstName + " " + choreo.lastName} </p>
         )
     })
     return (

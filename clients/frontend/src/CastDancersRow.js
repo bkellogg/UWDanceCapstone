@@ -93,13 +93,22 @@ class CastDancersRow extends Component {
                     !
                 </td>
             }
-            {!this.props.filter &&
+            {!this.props.filter && !this.props.uncast &&
                 <td>
                     <Button 
                     backgroundColor="#708090"
                     style={{color: '#ffffff', float: 'right'}}
                     onClick={this.dropFromCast}> 
                     DROP </Button>
+                </td>
+            }
+            {!this.props.filter && this.props.uncast &&
+                <td>
+                    <Button 
+                    backgroundColor="#708090"
+                    style={{color: '#ffffff', float: 'right'}}
+                    onClick={this.dropFromCast}> 
+                    ADD </Button>
                 </td>
             }
         </tr>
