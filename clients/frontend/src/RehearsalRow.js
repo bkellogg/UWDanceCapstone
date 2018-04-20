@@ -9,7 +9,7 @@ import './styling/CastingFlowMobile.css';
 
 const styles = {
   customWidth: {
-    width: 120,
+    width: 140,
   },
 };
 
