@@ -17,7 +17,7 @@ import * as Util from './util';
 import 'materialize-css';
 import {white} from 'material-ui/styles/colors';
 import muiThemeable from 'material-ui/styles/muiThemeable';
-import logo from './imgs/logo2-100.jpg'
+import logo from './imgs/logo2.png'
 import './styling/Main.css';
 import './styling/Navigation.css';
 import './styling/MobileNavigation.css';
