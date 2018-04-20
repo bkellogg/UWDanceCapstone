@@ -278,7 +278,7 @@ class Main extends Component {
               <div className="navigationBg">
                 <li>
                   <div id="logo">
-                    <img alt="logo" src="../clients/frontend/src/imgs/logo2-100.jpg"/>
+                    <img alt="logo" src="/clients/frontend/src/imgs/logo2-100.jpg"/>
                   </div>
                 </li>
                 <li className="dropDown"><Link to="/">Dashboard</Link></li>
