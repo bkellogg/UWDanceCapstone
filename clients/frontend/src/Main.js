@@ -184,32 +184,32 @@ class Main extends Component {
                   style={style}
                   label="MENU"
                   onClick={this.handleToggle}
-                  
+
                 />
               </div>
               <Drawer
-              style={styleNav}
+                style={styleNav}
                 docked={false}
                 width={250}
                 open={this.state.open}
                 onRequestChange={(open) => this.setState({ open })}
               >
 
-              <div className="menuList">
-                <Link to="/">
-                  <MenuItem onClick={this.handleClose}>
-                    <p className="mobileNavItem" >Dashboard</p>
-                  </MenuItem>
-                </Link>
-                {this.getMobileNavigation()}
+                <div className="menuList">
+                  <Link to="/">
+                    <MenuItem onClick={this.handleClose}>
+                      <p className="mobileNavItem" >Dashboard</p>
+                    </MenuItem>
+                  </Link>
+                  {this.getMobileNavigation()}
 
-                <Link to={{ pathname: "/profile" }}>
-                  <MenuItem onClick={this.handleClose}>
-                    <p className="mobileNavItem" >Profile</p>
-                  </MenuItem>
-                </Link>
+                  <Link to={{ pathname: "/profile" }}>
+                    <MenuItem onClick={this.handleClose}>
+                      <p className="mobileNavItem" >Profile</p>
+                    </MenuItem>
+                  </Link>
 
-                <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
+                  <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
                 </div>
               </Drawer>
             </div>
@@ -235,20 +235,20 @@ class Main extends Component {
               routes.push(route)
             } else if (this.state.user.role.level === 70) {
               let route1 = <Route exact path={path + "/casting"} render={
-                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket}/>
-              }/>
-              let route2 =  <Route exact path={path + "/people"} render={
-                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
-              }/>
+                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket} />
+              } />
+              let route2 = <Route exact path={path + "/people"} render={
+                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show} />
+              } />
               routes.push(route1)
               routes.push(route2)
             } else {
               let route1 = <Route exact path={path + "/casting"} render={
-                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket}/>
-              }/>
-              let route2 =  <Route exact path={path + "/people"} render={
-                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
-              }/>
+                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket} />
+              } />
+              let route2 = <Route exact path={path + "/people"} render={
+                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show} />
+              } />
               let route3 = <Route exact path={path + "/audition"} render={
                 props => <Audition {...props} name={show.name} audition={show.auditionID} />
               } />
@@ -276,9 +276,11 @@ class Main extends Component {
           <div className="navigationWrap">
             <ul id="slide-out" className="side-nav fixed">
               <div className="navigationBg">
-                <li><div id="logo">
-                  STAGE
-              </div></li>
+                <li>
+                  <div id="logo">
+                    <img alt="logo" src="../clients/frontend/src/imgs/logo2-100.jpg"/>
+                  </div>
+                </li>
                 <li className="dropDown"><Link to="/">Dashboard</Link></li>
                 <li>
                   {this.getNavigation()}
