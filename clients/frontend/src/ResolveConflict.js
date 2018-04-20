@@ -36,7 +36,7 @@ class ResolveConflict extends Component {
     const conflicts = JSON.parse(localStorage.contested)
     let conflictsRow = conflicts.map(conflict => {
       return (
-        <ConflictRow choreographers = {conflict.choreographers} dancer = {conflict.rankedDancer.dancer} />
+        <ConflictRow choreographers = {conflict.choreographers} dancer = {conflict.rankedDancer.dancer} rank={conflict.rankedDancer.rank}/>
       )
     })
 
