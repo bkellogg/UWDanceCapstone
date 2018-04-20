@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"net/http"
 	"time"
 )
 
@@ -29,24 +31,26 @@ type UserAuditionComment struct {
 	Comment        string    `json:"comment"`
 	CreatedAt      time.Time `json:"createdAt"`
 	CreatedBy      int       `json:"createdBy"`
-	IsDeleted      bool      `json:"bool"`
+	IsDeleted      bool      `json:"isDeleted"`
 }
 
 // parseUACommentsFromDatabase compiles the given result and err into a slice of UAComments or an error.
-func parseUACommentsFromDatabase(result *sql.Rows, err error) ([]*UserAuditionComment, error) {
+func parseUACommentsFromDatabase(result *sql.Rows, err error) ([]*UserAuditionComment, *DBError) {
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil
+			return nil, NewDBError("no comments for this user audition found", http.StatusNotFound)
 		}
-		return nil, err
+		return nil, NewDBError(fmt.Sprintf("error retrieving comments for user audition: %v", err), http.StatusInternalServerError)
 	}
+	defer result.Close()
 	comments := make([]*UserAuditionComment, 0)
 	for result.Next() {
 		c := &UserAuditionComment{}
 		if err = result.Scan(&c.ID, &c.UserAuditionID, &c.Comment, &c.CreatedAt, &c.CreatedBy, &c.IsDeleted); err != nil {
-			return nil, err
+			return nil, NewDBError(fmt.Sprintf("error scanning result into user audition comment: %v", err), http.StatusInternalServerError)
 		}
 		comments = append(comments, c)
 	}
+	result.Close()
 	return comments, nil
 }

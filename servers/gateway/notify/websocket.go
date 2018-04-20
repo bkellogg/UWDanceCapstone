@@ -68,9 +68,17 @@ func NewNotifier() *Notifier {
 	return n
 }
 
+// GetClient returns the WebSocketClient associated with the given
+// id. Will return nil and false if the id does not match a known
+// client, but will not report an error.
+func (n *Notifier) GetClient(id int64) (*WebSocketClient, bool) {
+	wsc, found := n.clients[id]
+	return wsc, found
+}
+
 // AddClient adds a new client to the Notifier
 func (n *Notifier) AddClient(u *models.User, c *websocket.Conn) {
-	client := NewWebSocketClient(u, c)
+	client := newWebSocketClient(u, c, false)
 	n.newClientQ <- client
 	n.readControlMessages(u.ID, c)
 }

@@ -3,6 +3,8 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -10,155 +12,205 @@ import (
 )
 
 // UserIsInPiece returns true if the given user is in the given piece or an error if one occurred.
-func (store *Database) UserIsInPiece(userID, pieceID int) (bool, error) {
+func (store *Database) UserIsInPiece(userID, pieceID int) (bool, *DBError) {
 	result, err := store.db.Query(`SELECT * FROM UserPiece UP WHERE UP.UserID = ? AND UP.PieceID = ? AND UP.IsDeleted = ?`,
 		userID, pieceID, false)
 	if result == nil {
-		return false, err
+		return false, NewDBError(fmt.Sprintf("error determining if user is in piece: %v", err), http.StatusInternalServerError)
 	}
+	defer result.Close()
 	return result.Next(), nil
 }
 
 // UserIsInAudition returns true if the given user is in the given audition or an error if one occurred.
-func (store *Database) UserIsInAudition(userID, audID int) (bool, error) {
+func (store *Database) UserIsInAudition(userID, audID int) (bool, *DBError) {
 	result, err := store.db.Query(`SELECT * FROM UserAudition UP WHERE UP.UserID = ? AND UP.AuditionID = ? AND UP.IsDeleted = ?`,
 		userID, audID, false)
 	if result == nil {
-		return false, err
+		return false, NewDBError(fmt.Sprintf("error determining if user is in audition: %v", err), http.StatusInternalServerError)
 	}
+	defer result.Close()
 	return result.Next(), nil
 }
 
 // AddUserToPiece adds the given user to the given piece.
-func (store *Database) AddUserToPiece(userID, pieceID int) error {
-	piece, err := store.GetPieceByID(pieceID, false)
-	if err != nil {
-		return err
-	}
-	if piece == nil {
-		return errors.New(appvars.ErrPieceDoesNotExist)
+func (store *Database) AddUserToPiece(userID, pieceID int) *DBError {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return dberr
 	}
 	addTime := time.Now()
-	exists, err := store.UserIsInPiece(userID, pieceID)
-	if err != nil {
-		return err
+	exists, dberr := store.UserIsInPiece(userID, pieceID)
+	if dberr != nil {
+		return dberr
 	}
 	if exists {
-		return errors.New("user is already in this piece")
+		return NewDBError("user is already in this piece", http.StatusBadRequest)
 	}
-	_, err = store.db.Exec(`INSERT INTO UserPiece (UserID, PieceID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?)`,
+	_, err := store.db.Exec(`INSERT INTO UserPiece (UserID, PieceID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?)`,
 		userID, pieceID, addTime, false)
-	return err
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error isnerting user piece link: %v", err), http.StatusInternalServerError)
+	}
+	return nil
 }
 
-// RemoveUserFromPiece removes the given user from the given piece.
-func (store *Database) RemoveUserFromPiece(userID, pieceID int) error {
-	piece, err := store.GetPieceByID(pieceID, false)
-	if err != nil {
-		return err
-	}
-	if piece == nil {
-		return errors.New("piece does not exist")
-	}
-	result, err := store.db.Exec(`UPDATE UserPiece UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.PieceID = ?`,
-		true, userID, pieceID)
-	if err == nil {
-		rowsAffected, _ := result.RowsAffected()
-		if rowsAffected == 0 {
-			return sql.ErrNoRows
-		}
-	}
-	return err
-}
-
-// AddUserToAudition adds the given user to the given audition. Returns an error
-// if one occurred.
-func (store *Database) AddUserToAudition(userID, audID, creatorID int, availability *WeekTimeBlock, comment string) error {
-	audition, err := store.GetAuditionByID(audID, false)
-	if err != nil {
-		return err
-	}
-	if audition == nil {
-		return errors.New(appvars.ErrAuditionDoesNotExist)
-	}
-	addTime := time.Now()
-	exists, err := store.UserIsInAudition(userID, audID)
-	if err != nil {
-		return err
-	}
-	if exists {
-		return errors.New(appvars.ErrUserAlreadyInAudition)
-	}
-
-	dayMap, err := availability.ToSerializedDayMap()
-	if err != nil {
-		return err
-	}
-
+// ChangeUserRole sets the role of the given user ID to role.
+// Returns an error if one occurred.
+func (store *Database) ChangeUserRole(userID int, roleName string) error {
 	tx, err := store.db.Begin()
 	if err != nil {
-		return errors.New("error beginning DB transaction: " + err.Error())
+		return errors.New("error beginning transaction: " + err.Error())
 	}
-	res, err := tx.Exec(`INSERT INTO UserAuditionAvailability
-		(Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		dayMap["sun"], dayMap["mon"], dayMap["tues"], dayMap["wed"], dayMap["thurs"], dayMap["fri"], dayMap["sat"], addTime, false)
+
+	rows, err := tx.Query(`SELECT * FROM Role R WHERE R.RoleName = ?`, roleName)
 	if err != nil {
-		tx.Rollback()
-		return errors.New("error inserting user audition availability: " + err.Error())
-	}
-	availID, err := res.LastInsertId()
-	if err != nil {
-		tx.Rollback()
-		return errors.New("error getting insert ID of new availability: " + err.Error())
-	}
-	res, err = tx.Exec(`INSERT INTO UserAudition (AuditionID, UserID, AvailabilityID, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
-		audID, userID, availID, creatorID, addTime, false)
-	if err != nil {
-		tx.Rollback()
-		return errors.New("error inserting user audition: " + err.Error())
-	}
-	userAudID, err := res.LastInsertId()
-	if err != nil {
-		return errors.New("error getting insert ID of new UserAudition: " + err.Error())
-	}
-	if len(comment) > 0 {
-		_, err = tx.Exec(`INSERT INTO UserAuditionComment (UserAuditionID, Comment, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
-			userAudID, comment, addTime, creatorID, false)
-		if err != nil {
-			tx.Rollback()
-			return errors.New("error inserting user audition comment")
+		if err == sql.ErrNoRows {
+			return errors.New(appvars.ErrNoRoleFound)
 		}
+		return errors.New("error querying role: " + err.Error())
 	}
-	if err = tx.Commit(); err != nil {
+	role := &Role{}
+	if rows.Next() {
+		err = rows.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level, &role.IsDeleted)
+		if err != nil {
+			return errors.New("error scanning role query into role: " + err.Error())
+		}
+	} else {
+		return errors.New(appvars.ErrNoRoleFound)
+	}
+	rows.Close()
+
+	rows, err = tx.Query(`SELECT * FROM Users U Where U.UserID = ?`, userID)
+	if err != nil {
 		tx.Rollback()
+		if err == sql.ErrNoRows {
+			return errors.New(appvars.ErrNoUserFound)
+		}
+		return errors.New("error querying user: " + err.Error())
+	}
+	if !rows.Next() {
+		return errors.New(appvars.ErrNoUserFound)
+	}
+	rows.Close()
+
+	_, err = tx.Exec(`UPDATE Users U SET U.RoleID = ? WHERE U.UserID = ?`, role.ID, userID)
+	if err != nil {
+		tx.Rollback()
+		return errors.New("error updating user: " + err.Error())
+	}
+
+	if err = tx.Commit(); err != nil {
 		return errors.New("error committing transaction: " + err.Error())
 	}
 	return nil
 }
 
-// RemoveUserFromPiece removes the given user from the given audition.
-func (store *Database) RemoveUserFromAudition(userID, audID int) error {
-	audition, err := store.GetAuditionByID(audID, false)
+// RemoveUserFromPiece removes the given user from the given piece.
+func (store *Database) RemoveUserFromPiece(userID, pieceID int) *DBError {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return dberr
+	}
+	_, err := store.db.Exec(`UPDATE UserPiece UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.PieceID = ?`,
+		true, userID, pieceID)
 	if err != nil {
-		return err
+		return NewDBError(fmt.Sprintf("error removing user from piece: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
+// AddUserToAudition adds the given user to the given audition. Returns an error
+// if one occurred.
+func (store *Database) AddUserToAudition(userID, audID, creatorID, numShows int, availability *WeekTimeBlock, comment string) *DBError {
+	audition, dberr := store.GetAuditionByID(audID, false)
+	if dberr != nil {
+		return dberr
 	}
 	if audition == nil {
-		return errors.New("audition does not exist")
+		return NewDBError(appvars.ErrAuditionDoesNotExist, http.StatusNotFound)
 	}
-	result, err := store.db.Exec(`UPDATE UserAudition UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.AuditionID = ?`,
-		true, userID, audID)
-	if err == nil {
-		rowsAffected, _ := result.RowsAffected()
-		if rowsAffected == 0 {
-			return sql.ErrNoRows
+
+	addTime := time.Now()
+	exists, dberr := store.UserIsInAudition(userID, audID)
+	if dberr != nil {
+		return dberr
+	}
+	if exists {
+		return NewDBError(appvars.ErrUserAlreadyInAudition, http.StatusBadRequest)
+	}
+
+	dayMap, err := availability.ToSerializedDayMap()
+	if err != nil {
+		return NewDBError(err.Error(), http.StatusBadRequest)
+	}
+
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	_, dberr = txGetUser(tx, userID)
+	if dberr != nil {
+		return dberr
+	}
+
+	regNum, dberr := txGetNextAuditionRegNumber(tx, audID)
+	if dberr != nil {
+		return dberr
+	}
+
+	res, err := tx.Exec(`INSERT INTO UserAuditionAvailability
+		(Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		dayMap["sun"], dayMap["mon"], dayMap["tues"], dayMap["wed"], dayMap["thurs"], dayMap["fri"], dayMap["sat"], addTime, false)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error inserting user audition availability: %v", err), http.StatusInternalServerError)
+	}
+	availID, err := res.LastInsertId()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error getting insert ID of new availability: %v", err), http.StatusInternalServerError)
+	}
+	res, err = tx.Exec(`INSERT INTO UserAudition
+		(AuditionID, UserID, AvailabilityID, RegNum, NumShows, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		audID, userID, availID, regNum, numShows, creatorID, addTime, false)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error inserting user audition: %v", err), http.StatusInternalServerError)
+	}
+	userAudID, err := res.LastInsertId()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving last insert id: %v", err), http.StatusInternalServerError)
+	}
+	if len(comment) > 0 {
+		_, err = tx.Exec(`INSERT INTO UserAuditionComment (UserAuditionID, Comment, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+			userAudID, comment, addTime, creatorID, false)
+		if err != nil {
+			return NewDBError(fmt.Sprintf("error inserting user audition comment: %v", err), http.StatusInternalServerError)
 		}
 	}
-	return err
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
+// RemoveUserFromPiece removes the given user from the given audition.
+func (store *Database) RemoveUserFromAudition(userID, audID int) *DBError {
+	_, dberr := store.GetAuditionByID(audID, false)
+	if dberr != nil {
+		return dberr
+	}
+	_, err := store.db.Exec(`UPDATE UserAudition UP SET UP.IsDeleted = ? WHERE UP.UserID = ? AND UP.AuditionID = ?`,
+		true, userID, audID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error removing user from audition: %v", err), http.StatusInternalServerError)
+	}
+	return nil
 }
 
 // GetAllUsers returns a slice of users of every user in the database, active or not.
-// Returns an error if one occured
-func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, error) {
+// Returns an error if one occurred
+func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, *DBError) {
 	offset := strconv.Itoa((page - 1) * 25)
 	query := `SELECT * FROM Users U `
 	if !includeInactive {
@@ -171,31 +223,63 @@ func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, err
 
 // ContainsUser returns true if this database contains a user with the same
 // email as the given newUser object. Returns an error if one occurred
-func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, error) {
+func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, *DBError) {
 	user, err := store.GetUserByEmail(newUser.Email, true)
-	if user != nil {
-		return true, nil
+	if err != nil {
+		if err.HTTPStatus == http.StatusNotFound {
+			return false, nil
+		}
+		return false, err
 	}
-	return false, err
+	return user == nil, nil
 }
 
 // InsertNewUser inserts the given new user into the store
 // and populates the ID field of the user
-func (store *Database) InsertNewUser(user *User) error {
-	result, err := store.db.Exec(
-		`INSERT INTO Users (FirstName, LastName, Email, Bio, PassHash, Role, Active, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-		user.FirstName, user.LastName, user.Email, "", user.PassHash, user.Role, true, user.CreatedAt)
+func (store *Database) InsertNewUser(user *User) *DBError {
+	tx, err := store.db.Begin()
 	if err != nil {
-		return err
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
 	}
-	user.ID, _ = result.LastInsertId()
+	defer tx.Rollback()
+
+	res, err := tx.Query(`SELECT R.RoleID FROM Role R WHERE R.RoleName = ?`, appvars.RoleDancer)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return NewDBError(fmt.Sprintf("no role found with name %s", appvars.RoleDancer), http.StatusNotFound)
+		}
+		return NewDBError(fmt.Sprintf("error retrieving role from database: %v", err), http.StatusInternalServerError)
+	}
+	if !res.Next() {
+		return NewDBError(fmt.Sprintf("no role found with name %s", appvars.RoleDancer), http.StatusNotFound)
+	}
+	role := &Role{}
+	if err = res.Scan(&role.ID); err != nil {
+		return NewDBError(fmt.Sprintf("error scanning result into role: %v", err), http.StatusInternalServerError)
+	}
+	res.Close()
+
+	result, err := tx.Exec(
+		`INSERT INTO Users (FirstName, LastName, Email, Bio, PassHash, RoleID, Active, CreatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		user.FirstName, user.LastName, user.Email, "", user.PassHash, role.ID, true, user.CreatedAt)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error inserting user: %v", err), http.StatusInternalServerError)
+	}
+	user.ID, err = result.LastInsertId()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving last insert id: %v", err), http.StatusInternalServerError)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error commiting transaction: %v", err), http.StatusInternalServerError)
+	}
+	user.RoleID = int(role.ID)
 	return nil
 }
 
 // GetUserByID gets the user with the given id, if it exists and it is active.
 // returns an error if the lookup failed
 // TODO: Test this
-func (store *Database) GetUserByID(id int, includeInactive bool) (*User, error) {
+func (store *Database) GetUserByID(id int, includeInactive bool) (*User, *DBError) {
 	query := `SELECT * FROM Users U WHERE U.UserID =?`
 	if !includeInactive {
 		query += ` AND U.Active = true`
@@ -203,20 +287,20 @@ func (store *Database) GetUserByID(id int, includeInactive bool) (*User, error) 
 	user := &User{}
 	err := store.db.QueryRow(
 		query, id).Scan(
-		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Bio, &user.PassHash, &user.Role, &user.Active, &user.CreatedAt)
+		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Bio, &user.PassHash, &user.RoleID, &user.Active, &user.CreatedAt)
 	if err != nil {
-		user = nil
+		if err == sql.ErrNoRows {
+			return nil, NewDBError("no user found with the given email", http.StatusNotFound)
+		}
+		return nil, NewDBError(fmt.Sprintf("error retrieving user from database: %v", err), http.StatusInternalServerError)
 	}
-	if err == sql.ErrNoRows {
-		err = nil
-	}
-	return user, err
+	return user, nil
 }
 
 // GetUserByEmail gets the user with the given email, if it exists.
 // returns an error if the lookup failed
 // TODO: Test this
-func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User, error) {
+func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User, *DBError) {
 	query := `SELECT * FROM Users U WHERE U.Email =?`
 	if !includeInactive {
 		query += ` AND U.Active = true`
@@ -225,19 +309,19 @@ func (store *Database) GetUserByEmail(email string, includeInactive bool) (*User
 	err := store.db.QueryRow(
 		query,
 		email).Scan(
-		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Bio, &user.PassHash, &user.Role, &user.Active, &user.CreatedAt)
+		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Bio, &user.PassHash, &user.RoleID, &user.Active, &user.CreatedAt)
 	if err != nil {
-		user = nil
+		if err == sql.ErrNoRows {
+			return nil, NewDBError("no user found with the given email", http.StatusNotFound)
+		}
+		return nil, NewDBError(fmt.Sprintf("error retrieving user from database: %v", err), http.StatusInternalServerError)
 	}
-	if err == sql.ErrNoRows {
-		err = nil
-	}
-	return user, err
+	return user, nil
 }
 
 // UpdateUserByID updates the user with the given ID to match the values
 // of newValues. Returns an error if one occurred.
-func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeInactive bool) error {
+func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeInactive bool) *DBError {
 	query := `
 		UPDATE Users U SET 
 		U.FirstName = COALESCE(NULLIF(?, ''), FirstName),
@@ -249,76 +333,99 @@ func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeI
 	}
 	_, err := store.db.Exec(query, updates.FirstName, updates.LastName, updates.Bio, userID)
 	if err != nil {
-		return errors.New("error updating user: " + err.Error())
+		return NewDBError(fmt.Sprintf("error updating user: %v", err), http.StatusInternalServerError)
 	}
 	return nil
 }
 
 // DeactivateUserByID marks the user with the given userID as inactive. Returns
 // an error if one occured.
-func (store *Database) DeactivateUserByID(userID int) error {
-	result, err := store.db.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, false, userID)
+func (store *Database) DeactivateUserByID(userID int) *DBError {
+	tx, err := store.db.Begin()
 	if err != nil {
-		return err
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	result, err := tx.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, false, userID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error deactivating user by id: %v", err), http.StatusInternalServerError)
 	}
 	numRows, err := result.RowsAffected()
 	if err != nil {
-		return err
+		return NewDBError(fmt.Sprintf("error retrieving rows affected %v", err), http.StatusInternalServerError)
 	}
 	if numRows == 0 {
-		return sql.ErrNoRows
+		return NewDBError("no user exists with the given id", http.StatusNotFound)
 	}
-	return err
+	return nil
 }
 
 // ActivateUserByID marks the user with the given userID as active. Returns
 // an error if one occured.
-func (store *Database) ActivateUserByID(userID int) error {
+func (store *Database) ActivateUserByID(userID int) *DBError {
 	_, err := store.db.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, true, userID)
-	return err
+	return NewDBError(fmt.Sprintf("error activating user: %v", err), http.StatusInternalServerError)
 }
 
 // TODO: Modularize these GetUsersByX functions...
 
 // GetUsersByAuditionID returns a slice of users that are in the given audition, if any.
-// Returns an error if one occured.
-func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) ([]*User, error) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
-	JOIN UserPiece UP On UP.UserID = U.UserID
-	JOIN Pieces P ON P.PieceID = UP.PieceID
-	JOIN Shows S ON S.ShowID = P.ShowID
-	WHERE S.AuditionID = ?`
-	if !includeDeleted {
-		query += ` AND UP.IsDeleted = FALSE
-		AND P.IsDeleted = FALSE
-		AND S.IsDeleted = FALSE`
+// Returns an error if one occurred.
+func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) ([]*User, *DBError) {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handleUsersFromDatabase(store.db.Query(query, id, offset))
+	defer tx.Rollback()
+
+	offset := getSQLPageOffset(page)
+	result, err := tx.Query(`
+		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.RoleID, U.RoleID, U.Active, U.CreatedAt FROM Users U
+		JOIN UserAudition UA ON U.UserID = UA.UserID
+		WHERE UA.AuditionID = ? AND UA.IsDeleted = false
+		LIMIT 25 OFFSET ?`, id, offset)
+	users, dberr := handleUsersFromDatabase(result, err)
+	if dberr != nil {
+		return nil, dberr
+	}
+	if err = tx.Commit(); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return users, nil
 }
 
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
 // Returns an error if one occurred.
-func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, error) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
-	JOIN UserPiece UP On UP.UserID = U.UserID
-	JOIN Pieces P ON P.PieceID = UP.PieceID
-	WHERE P.ShowID = ?`
-	if !includeDeleted {
-		query += ` AND UP.IsDeleted = FALSE
-		AND P.IsDeleted = FALSE`
+func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, *DBError) {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handleUsersFromDatabase(store.db.Query(query, id, offset))
+	defer tx.Rollback()
+
+	offset := getSQLPageOffset(page)
+	result, err := tx.Query(`
+		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.RoleID, U.RoleID, U.Active, U.CreatedAt FROM Users U
+		JOIN UserPiece UP ON U.UserID = UP.UserID
+		JOIN Pieces P ON UP.PieceID = P.PieceID
+		WHERE P.ShowID = ? AND UP.IsDeleted = false
+		LIMIT 25 OFFSET ?`, id, offset)
+	users, dberr := handleUsersFromDatabase(result, err)
+	if dberr != nil {
+		return nil, dberr
+	}
+	if err = tx.Commit(); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return users, nil
 }
 
 // GetUsersByPieceID returns a slice of users that are in the given piece, if any.
 // Returns an error if one occurred.
-func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, error) {
+func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, *DBError) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.Role, U.Active, U.CreatedAt FROM Users U
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
 	JOIN UserPiece UP On UP.UserID = U.UserID
 	WHERE UP.PieceID = ?`
 	if !includeDeleted {
@@ -336,20 +443,42 @@ func (store *Database) UpdatePasswordByID(id int, passHash []byte) error {
 	return err
 }
 
+// getUserRoleLevel gets the role level of the given user.
+// Returns an error if one occurred.
+func (store *Database) getUserRoleLevel(userID int64) (int, error) {
+	rows, err := store.db.Query(`
+		SELECT RoleLevel FROM Role R
+			JOIN Users U ON U.RoleID = R.RoleID
+			WHERE U.UserID = ?`, userID)
+	if err != nil {
+		return -1, err
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return -1, sql.ErrNoRows
+	}
+	role := 0
+	if err = rows.Scan(&role); err != nil {
+		return -1, err
+	}
+	return role, nil
+}
+
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
-func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, error) {
+func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, *DBError) {
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil
+			return nil, NewDBError("no users found", http.StatusNotFound)
 		}
-		return nil, err
+		return nil, NewDBError(fmt.Sprintf("error retrieving users from database: %v", err), http.StatusInternalServerError)
 	}
+	defer result.Close()
 	users := make([]*User, 0)
 	for result.Next() {
 		u := &User{}
 		if err = result.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Email, &u.Bio, &u.PassHash,
-			&u.Role, &u.Active, &u.CreatedAt); err != nil {
-			return nil, err
+			&u.RoleID, &u.Active, &u.CreatedAt); err != nil {
+			return nil, NewDBError(fmt.Sprintf("error scanning result into role: %v", err), http.StatusInternalServerError)
 		}
 		users = append(users, u)
 	}

@@ -170,6 +170,14 @@ func (wtb *WeekTimeBlock) ToSerializedDayMap() (map[string]string, error) {
 		val += serial
 		result[key] = val
 	}
+
+	// For any day not supplied, add empty JSON braces to it so
+	// empty days are properly handled by the JSON encoder.
+	for _, day := range []string{"sun", "mon", "tues", "wed", "thurs", "fri", "sat"} {
+		if len(result[day]) == 0 {
+			result[day] = "{}"
+		}
+	}
 	return result, nil
 }
 

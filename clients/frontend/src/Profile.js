@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
-import img from './imgs/defaultProfile.jpg'
+import img from './imgs/defaultProfile.jpg';
 import './styling/Profile.css';
 import './styling/General.css';
 import AvatarEditor from 'react-avatar-editor';
@@ -338,6 +338,25 @@ class Profile extends Component {
                       </section>
                     }
                   </div>
+      <div className="mainView">
+      <h1 className="pagetitle">Your Profile </h1>
+
+        <div className="card1">
+          {/* FIRST CARD */}
+          <div className="wrap">
+            <div className="header">
+              <div className="photoContainerWrap">
+                <div id="photoContainer" className="photoContainer">
+                  {!this.state.edit &&
+
+                    <img id="photo" alt="profile" src={this.state.photoSrc}></img>
+                  }
+                  {this.state.edit &&
+                    <section>
+                      <div> Upload a head shot as a jpg file. </div>
+                      <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
+                    </section>
+                  }
                 </div>
 
                 <div className="nameAndBioWrap">
@@ -439,6 +458,17 @@ class Profile extends Component {
 
           </div>
 
+              {!this.state.edit &&
+                <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Edit Profile
+                  {/* <i className="large material-icons"> mode_edit </i> */}
+                </Button>
+
+              }
+              {this.state.edit &&
+                <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Save Changes
+                  {/* <i className="large material-icons"> check </i> */}
+                </Button>
+              }
         </div>
       </section>
     );

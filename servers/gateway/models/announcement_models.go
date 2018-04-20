@@ -45,9 +45,6 @@ func (na *NewAnnouncement) Validate() error {
 	if len(na.Message) == 0 {
 		return errors.New("new announcement must have a message")
 	}
-	if na.UserID == 0 {
-		return errors.New("new announcement must have a userID")
-	}
 	return nil
 }
 
@@ -79,9 +76,6 @@ func (at *AnnouncementType) Validate() error {
 	}
 	if len(at.Name) == 0 {
 		return errors.New("announcement type must have a name")
-	}
-	if at.CreatedBy == 0 {
-		return errors.New("announcement type must have a value for created by")
 	}
 	at.CreatedAt = time.Now()
 	at.IsDeleted = false

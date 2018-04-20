@@ -3,12 +3,6 @@
     position: relative;
 }
 
-.card101wrap{
-    display: flex;
-    position: relative;
-    height: 100%;
-    width: 100%;
-}
 
 .card101{
     width: 100%;
@@ -18,7 +12,8 @@
 }
 .card102{
     z-index: 2;
-    display: block
+    display: block;
+    margin-top: 2%;
 }
 
 .numberDiv, .informationalDiv{
@@ -53,12 +48,12 @@
     text-transform: capitalize;
 }
 
-.unregisterButton:hover{
-    background-color: #ef5350;
+.unregisterButton, .changeAvailabilityButton{
+    background-color: #708090;
 }
 
-.changeAvailabilityButton:hover{
-    background-color: rgb(18, 160, 221);
+.unregisterButton:hover{
+    background-color: #ef5350;
 }
 
 #numberMessage{
