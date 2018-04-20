@@ -67,8 +67,6 @@ class Casting extends Component {
     //direct traffic
     if (stepIndex === 0){
       this.setCast()
-    } else if (stepIndex === 2){
-      console.log('sending cast updates')
     }
 
     if (stepIndex < 3) {
