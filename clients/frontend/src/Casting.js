@@ -157,7 +157,7 @@ class Casting extends Component {
           <div className="castingFlowWrap">
 
               {/*This is the stepper styling - you can click the steps to go between them*/}
-              <div className="castingFlow" style={{ width: '100%', maxWidth: '100%', margin: 'auto'}}>
+              <div className="castingFlow" style={{ width: '100%', maxWidth: '100%', margin: 'auto', color: "red"}}>
                 <Stepper linear={true} activeStep={stepIndex}>
                   <Step>
                     <StepButton className="steps"  onClick={() => this.setState({ stepIndex: 0 })} >

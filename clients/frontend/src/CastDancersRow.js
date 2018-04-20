@@ -5,8 +5,8 @@ import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/RaisedButton';
 import img from './imgs/defaultProfile.jpg';
 import Avatar from 'material-ui/Avatar';
-import WarningIcon from 'material-ui/svg-icons/alert/warning';
-import {red500} from 'material-ui/styles/colors';
+import IconButton from 'material-ui/IconButton';
+
 
 class CastDancersRow extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class CastDancersRow extends Component {
   };
 
   componentDidMount(){
-      this.getPhoto()
+    this.getPhoto()
   }
 
   onCheck = () => {
@@ -113,7 +113,7 @@ class CastDancersRow extends Component {
             </td>
             {this.props.filter && this.props.comments[0].comment != "" &&
                 <td>
-                    <WarningIcon color={red500}/>
+                    <i class="fas fa-exclamation-circle"></i>
                 </td>
             }
             {!this.props.filter && !this.props.uncast &&
