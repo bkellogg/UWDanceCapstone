@@ -17,7 +17,7 @@ class NavigationElement extends Component {
     return (
         <li>
 
-            <div className="collapsible-header" style={{paddingLeft: 32}} to={{pathname: "/"}}>{this.props.showTitle}</div>
+            <div className="collapsible-header" to={{pathname: "/"}}><div className="hoverColor">{this.props.showTitle}</div></div>
             <div className="collapsible-body">
                 <ul>
                     {/*Dancer (new user)*/}

@@ -89,6 +89,7 @@ class Dashboard extends Component {
     return (
       <section className='main' >
         <div className="mainView">
+        <div className="transparentCard">
           <div className='dashboard'>
             <div id='welcome'> 
             <h1> Welcome, {this.state.user.firstName}!</h1>
@@ -113,8 +114,9 @@ class Dashboard extends Component {
                     {
                       <Card>
                         <div className="cardBody">
-                          <CardText>
-                            <p> {anncouncement.message} </p>
+                          <CardText style={{padding: '0'}}>
+                            
+                            <p className="announcementMessage"> {anncouncement.message} </p>
                           </CardText>
                         </div>
                       </Card>
@@ -130,10 +132,12 @@ class Dashboard extends Component {
                 var auditionLink = anncouncement.name.split(' ').join('');
                 return (
                   <div key={index} className="announcement">
+                  <div className="cardBody">
                     {
                       <Card>
-                        <div className="title">
-                          <CardTitle title="Audition"/>
+                        <div className="showTitle">
+                          <CardTitle 
+                            title="Audition"/>
                         </div>
                         <CardText>
                           <p> {anncouncement.name} </p>
@@ -145,11 +149,13 @@ class Dashboard extends Component {
                       </Card>
                     }
                   </div>
+                  </div>
                 )
               })}
 
             </div>
           </div>
+        </div>
         </div>
       </section>
     )

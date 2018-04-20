@@ -27,9 +27,9 @@ th{
     border: none;
 }
 
-.centerText{
+/* .centerText{
     text-align: center;
-}
+} */
 
 .check, .checkOne {
     display: inline-block;
@@ -103,16 +103,18 @@ tr{
   }
 
 .castList-v2, .castList-v2-1{
-    width: 47%;
+    width: 48%;
 }
 
 .castList-v2{
-    margin-right: 7%;
+    margin-right: 4%;
 }
 
 /* RESOLVE CONFLICTS */
 .conflictsCard{
     width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
     z-index: 1;
 }
 
@@ -122,6 +124,7 @@ tr{
     color: #e65100;
     margin: 0;
     padding: 10px;
+    padding-bottom: 20px;
 }
 
 .smallHeading{
@@ -151,10 +154,18 @@ tr{
 
 .chooseRehearsalTimes{
     position: relative;
+    display: inline-block;
+    border: 1px solid lightgray;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    border-radius: 3px;
 }
 
 .buttonsWrap{
     margin-top: 20px;
+    height: 100%;
+    position: relative;
 }
 
 .postCastingWrap{
@@ -167,4 +178,13 @@ tr{
 
 .warningText{
     font-size: 15px;
+}
+
+.choreos{
+    display: inline-block;
+}
+
+.dancerAssignedNumber{
+    font-weight: 600;
+    padding-right: 5px;
 }

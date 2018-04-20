@@ -4,6 +4,8 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import './styling/General.css';
 import './styling/CastingFlow.css';
+import './styling/CastingFlowMobile.css';
+
 
 const styles = {
   customWidth: {

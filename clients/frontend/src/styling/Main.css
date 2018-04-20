@@ -17,7 +17,8 @@
 }
 
 .mobile {
-    visibility: hidden
+    visibility: hidden;
+    margin-bottom: 0;
 }
 
 @media only screen and (max-width : 992px) {
@@ -26,7 +27,8 @@
     }
 
     .mobile {
-        visibility: visible
+        visibility: visible;
+        margin-bottom: 4%;
     }
 
     .desktop {

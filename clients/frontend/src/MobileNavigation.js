@@ -17,7 +17,6 @@ class MobileNavigationElement extends Component {
         let address = "/" + this.props.showTitle.split(' ').join('');
         return (
             <li>
-
                 <MenuItem className="collapsible-header">
                     <p className="mobileNavItem" >{this.props.showTitle} </p>
                 </MenuItem>
@@ -78,11 +77,11 @@ class MobileNavigationElement extends Component {
                         }
                         <li>
                             <Link to={{ pathname: address + "/piece" }}>
-                            <MenuItem onClick={this.props.handleClose}>
-                            <p className="mobileNavItem" >My Piece</p>
-                            </MenuItem>
+                                <MenuItem onClick={this.props.handleClose}>
+                                    <p className="mobileNavItem" >My Piece</p>
+                                </MenuItem>
                             </Link>
-                            </li>
+                        </li>
                     </ul>
                 </div>
 

@@ -57,9 +57,9 @@ class People extends Component {
         <table>
           <tbody>
             <tr className="categories">
-              <th>Photo</th>
+              <th className="avatar2">Photo</th>
               <th>Name</th>
-              <th>Role</th>
+              <th className="userRoleDisp">Role</th>
               <th>Email</th>
             </tr>
             {rows}

@@ -13,6 +13,7 @@ import ResolveConflict from './ResolveConflict';
 import SetRehearsals from './SetRehearsals';
 import './styling/General.css';
 import './styling/CastingFlow.css';
+import './styling/CastingFlowMobile.css';
 
 
 class Casting extends Component {

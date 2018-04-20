@@ -45,7 +45,7 @@ class PersonRow extends Component {
           <td>
             {p.firstName + " " + p.lastName}
           </td>
-          <td>
+          <td className="userRoleDisp">
             {p.role.displayName}
           </td>
           <td>
