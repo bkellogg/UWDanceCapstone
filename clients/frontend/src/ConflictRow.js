@@ -63,7 +63,7 @@ class ConflictRow extends Component {
     let choreos = choreographers.map(choreo => {
         console.log(choreo)
         return (
-            <p> {choreo.firstName + " " + choreo.lastName} </p>
+            <p className="choreos">{ choreo.firstName + " " + choreo.lastName }  </p>
         )
     })
     return (
@@ -71,7 +71,7 @@ class ConflictRow extends Component {
             <td>
                 <img src={this.state.photoUrl} className="avatar"/>
             </td>
-            <td>
+            <td className="dancerAssignedNumber">
                 {dancer.regNum}
             </td>
             <td>

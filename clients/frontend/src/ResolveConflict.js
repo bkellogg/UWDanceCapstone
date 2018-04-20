@@ -49,7 +49,7 @@ class ResolveConflict extends Component {
               <div className="conflictsCard">
                 <h2 className="conflictMessage">Conflicts of interest between you and other choreographers.</h2>
                 
-              </div>
+              
               <table>
                   <tbody>
                     <tr className="categories">
@@ -64,7 +64,7 @@ class ResolveConflict extends Component {
                     {conflictsRow}
                   </tbody>
                 </table>
-
+                </div>
             </div>
           </div>
           
