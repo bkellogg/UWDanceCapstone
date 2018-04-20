@@ -36,7 +36,23 @@ class ConflictRow extends Component {
   }
 
   dropFromCast = () => {
-    console.log("drop")
+    let removeBody = {
+        "action":"remove",
+        "drops":[
+            this.props.dancer.user.id
+        ]
+    }
+    let audition = "1"
+    Util.makeRequest("auditions/" + audition + "/casting", removeBody, "PATCH", true)
+    .then( res => {
+      if(res.ok){
+        return res.text()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(
+        this.props.updateCast
+    )
   }
 
   render() {

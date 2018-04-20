@@ -54,7 +54,8 @@ class CastDancersRow extends Component {
         "rank2" : [],
         "rank3" : []
     }
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", castBody, "PATCH", true)
+    let audition = "1"
+    Util.makeRequest("auditions/" + audition + "/casting", castBody, "PATCH", true)
     .then( res => {
       if(res.ok){
         return res.text()
