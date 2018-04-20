@@ -244,10 +244,10 @@ func (c *CastingSession) rankAll(chorID int64, cu *ChoreographerUpdate) error {
 
 // makeContestedDancer returns a ContestedDancer from the given
 // dancer and choreographers
-func (c *CastingSession) makeContestedDancer(id DancerID, chors []Choreographer) *ContestedDancer {
+func (c *CastingSession) makeContestedDancer(id DancerID, rank int, chors []Choreographer) *ContestedDancer {
 	cd := &ContestedDancer{}
 	dancer, _ := c.dancer(id.int())
-	cd.Dancer = dancer
+	cd.Dancer = dancer.Rank(rank)
 	fullChorSlice := make([]*models.User, 0, len(chors))
 	for _, chor := range chors {
 		fullChorSlice = append(fullChorSlice, c.Choreographers[chor])
@@ -279,15 +279,15 @@ func (c *CastingSession) ToCastingUpdate(chorID int64) (*CastingUpdate, error) {
 
 	// build list of un/contested dancers
 	castingUpdate.Contested = make([]*ContestedDancer, 0)
-	castingUpdate.Cast = make([]*Dancer, 0)
+	castingUpdate.Cast = make([]*RankedDancer, 0)
 	chorDancers := c.ChorCast[Choreographer(chorID)]
-	for dancerID, _ := range chorDancers {
+	for dancerID, rank := range chorDancers {
 		chorsContesting, isContested := c.dancerIsContested(dancerID)
 		if isContested {
-			castingUpdate.Contested = append(castingUpdate.Contested, c.makeContestedDancer(dancerID, chorsContesting))
+			castingUpdate.Contested = append(castingUpdate.Contested, c.makeContestedDancer(dancerID, int(rank), chorsContesting))
 		} else {
 			dancer, _ := c.dancer(dancerID.int())
-			castingUpdate.Cast = append(castingUpdate.Cast, dancer)
+			castingUpdate.Cast = append(castingUpdate.Cast, dancer.Rank(int(rank)))
 		}
 	}
 
@@ -328,14 +328,14 @@ func (cu *ChoreographerUpdate) Validate() error {
 // ContestedDancer represents a dancer that is Contested
 // and which ChorCast are wanted that dancer
 type ContestedDancer struct {
-	Dancer         *Dancer        `json:"dancer"`
+	Dancer         *RankedDancer  `json:"rankedDancer"`
 	Choreographers []*models.User `json:"choreographers"`
 }
 
 // CastingUpdate defines how an update to the casting session
 // will be sent to all casting websocket clients.
 type CastingUpdate struct {
-	Cast      []*Dancer          `json:"cast"`
+	Cast      []*RankedDancer    `json:"cast"`
 	Contested []*ContestedDancer `json:"contested"`
 	Uncasted  []*Dancer          `json:"uncasted"`
 }

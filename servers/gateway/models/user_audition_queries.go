@@ -53,7 +53,6 @@ func (store *Database) GetUserAuditionLink(userID, audID int) (*UserAuditionLink
 	defer txCleanup(tx, dberr)
 
 	ualr := &UserAuditionLinkResponse{}
-	ualr.NumShows = 2 // temp until this is implemented
 
 	user, dberr := txGetUser(tx, userID)
 	if dberr != nil {
@@ -71,6 +70,7 @@ func (store *Database) GetUserAuditionLink(userID, audID int) (*UserAuditionLink
 	if dberr != nil {
 		return nil, dberr
 	}
+	ualr.RegNum = ua.RegNum
 	ualr.NumShows = ua.NumShows
 	ualr.AddedAt = ua.CreatedAt
 	ualr.AddedBy = ua.CreatedBy

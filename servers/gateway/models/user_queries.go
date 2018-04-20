@@ -156,6 +156,11 @@ func (store *Database) AddUserToAudition(userID, audID, creatorID, numShows int,
 		return dberr
 	}
 
+	regNum, dberr := txGetNextAuditionRegNumber(tx, audID)
+	if dberr != nil {
+		return dberr
+	}
+
 	res, err := tx.Exec(`INSERT INTO UserAuditionAvailability
 		(Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		dayMap["sun"], dayMap["mon"], dayMap["tues"], dayMap["wed"], dayMap["thurs"], dayMap["fri"], dayMap["sat"], addTime, false)
@@ -167,8 +172,8 @@ func (store *Database) AddUserToAudition(userID, audID, creatorID, numShows int,
 		return NewDBError(fmt.Sprintf("error getting insert ID of new availability: %v", err), http.StatusInternalServerError)
 	}
 	res, err = tx.Exec(`INSERT INTO UserAudition
-		(AuditionID, UserID, AvailabilityID, NumShows, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-		audID, userID, availID, numShows, creatorID, addTime, false)
+		(AuditionID, UserID, AvailabilityID, RegNum, NumShows, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		audID, userID, availID, regNum, numShows, creatorID, addTime, false)
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error inserting user audition: %v", err), http.StatusInternalServerError)
 	}
