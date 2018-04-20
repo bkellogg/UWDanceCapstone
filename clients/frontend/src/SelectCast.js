@@ -31,7 +31,6 @@ class SelectCast extends Component {
       Util.makeRequest("auditions/" + this.props.auditionID + "/users", "", "GET", true)
       .then( res => {
         if (res.ok) {
-          console.log(res)
           return res.json()
         }
         return res.text().then((t) => Promise.reject(t));

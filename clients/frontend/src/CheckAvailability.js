@@ -15,9 +15,7 @@ class CheckAvailability extends Component {
 
   render() {
    const cast = JSON.parse(localStorage.getItem("socketCast"))
-   console.log(cast)
     let rows = cast.map(dancer => {
-      console.log(dancer)
       return (
         <CastDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} regNum={dancer.dancer.regNum} comments ={dancer.dancer.comments} filter={true} />
       )
