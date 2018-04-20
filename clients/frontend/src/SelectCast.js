@@ -23,6 +23,7 @@ class SelectCast extends Component {
     //API route to get people in an audition will go here
     //TODO deal with pages
     //TODO get this to be just the people in a show
+    //I don't think this works if they sign out and then come back to this page directly?
     if (localStorage.getItem("allUsers") === null){
       Util.makeRequest("auditions/" + this.props.auditionID + "/users", "", "GET", true)
       .then( res => {
@@ -59,9 +60,7 @@ class SelectCast extends Component {
     }
   }
 
-  
   render() {
-    
     let rows = this.state.users.map((person) => {
         return(
           <AllDancersRow person={person}  key={person.id} rank={person.rank} selectCast={true}/>

@@ -18,6 +18,8 @@ import 'materialize-css';
 import './styling/Main.css';
 import './styling/Navigation.css';
 
+const host = "dasc.capstone.ischool.uw.edu";
+const websocket = new WebSocket("wss://" + host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
 
 class Main extends Component {
   constructor(props) {
@@ -196,7 +198,7 @@ class Main extends Component {
               routes.push(route)
             } else if (this.state.user.role.level === 70) {
               let route1 = <Route exact path={path + "/casting"} render={
-                props => <Casting {...props} name={show.name} audition={show.auditionID}/>
+                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket}/>
               }/>
               let route2 =  <Route exact path={path + "/people"} render={
                 props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
@@ -205,7 +207,7 @@ class Main extends Component {
               routes.push(route2)
             } else {
               let route1 = <Route exact path={path + "/casting"} render={
-                props => <Casting {...props} name={show.name} audition={show.auditionID}/>
+                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket}/>
               }/>
               let route2 =  <Route exact path={path + "/people"} render={
                 props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>

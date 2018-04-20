@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import CastDancersRow from './CastDancersRow';
-import AllDancersRow from './AllDancersRow';
+import ConflictRow from './ConflictRow';
 import './styling/General.css';
 import './styling/CastingFlow.css';
 
@@ -14,29 +14,32 @@ class ResolveConflict extends Component {
     }
   };
 
+
   render() {
-    const cast = JSON.parse(localStorage.getItem("cast"))
+    //console.log(dancers)
+    //const cast = JSON.parse(localStorage.getItem("cast"))
+    const cast = JSON.parse(localStorage.socketCast)
     let yourCast = cast.map(dancer => {
       return (
-        <CastDancersRow key={dancer.id} person={dancer} filter={false} updateCast={() => { this.setState({ cast: JSON.parse(localStorage.getItem("cast")) }) }} />
+        <CastDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} filter={false} updateCast={() => { this.setState({ cast: JSON.parse(localStorage.getItem("cast")) }) }} />
       )
     })
-    let allDancers = this.state.dancers.map((person) => {
-      let dancerInCast = false
-      cast.forEach(dancer => {
-        //if the dancer in all is also in cast dancer
-        console.log(person.firstName + " id: " + person.id + " dancerID: " + dancer.id)
-        if (dancer.id === person.id) {
-          dancerInCast = true
-        }
-      })
-      if (!dancerInCast) {
-        return (
-          //only return a row for dancers that are not in the cast
-          <AllDancersRow person={person} key={person.id} rank={person.rank} selectCast={false} updateCast={() => { this.setState({ dancers: JSON.parse(localStorage.getItem("allUsers")) }) }} />
-        )
-      }
+
+    const dancers = JSON.parse(localStorage.uncasted)
+    let allDancers = dancers.map(person => {
+      return (
+        //only return a row for dancers that are not in the cast
+        <CastDancersRow key={person.user.id} person={person.user} filter={false} uncast={true} updateCast={() => { this.setState({ dancers: JSON.parse(localStorage.getItem("allUsers")) }) }} />
+      )
     })
+
+    const conflicts = JSON.parse(localStorage.contested)
+    let conflictsRow = conflicts.map(conflict => {
+      return (
+        <ConflictRow choreographers = {conflict.choreographers} dancer = {conflict.rankedDancer.dancer} />
+      )
+    })
+
     return (
       <section>
         <div className="mainView">
@@ -45,7 +48,22 @@ class ResolveConflict extends Component {
               {/*STYLING these h1s should definitely be h2s so we can have an accurate HTML tree, putting as h1 temporarily*/}
               <div className="conflictsCard">
                 <h2 className="conflictMessage">Conflicts of interest between you and other choreographers.</h2>
+                
               </div>
+              <table>
+                  <tbody>
+                    <tr className="categories">
+                      <th></th>
+                      <th>#</th>
+                      <th>Dancer</th>
+                      <th>Pieces</th>
+                      <th>Rank</th>
+                      <th>Choreographers</th>
+                      <th></th>
+                    </tr>
+                    {conflictsRow}
+                  </tbody>
+                </table>
 
             </div>
           </div>
