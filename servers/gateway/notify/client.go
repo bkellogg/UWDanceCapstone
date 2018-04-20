@@ -97,7 +97,11 @@ func (c *WebSocketClient) writeToAll(e *WebSocketEvent) bool {
 // removeConn removes the given websocket conn from this WebSocketClient.
 func (c *WebSocketClient) removeConn(connToRemove *websocket.Conn) {
 	connToRemove.Close()
-	newConns := make([]*websocket.Conn, 0, len(c.conns)-1)
+	newConnsLength := len(c.conns) - 1
+	if newConnsLength < 0 {
+		newConnsLength = 0
+	}
+	newConns := make([]*websocket.Conn, 0, newConnsLength)
 	c.mx.Lock()
 	defer c.mx.Unlock()
 	for _, conn := range c.conns {
