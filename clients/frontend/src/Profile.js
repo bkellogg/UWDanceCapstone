@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
-import img from './imgs/defaultProfile.jpg'
+import img from './imgs/defaultProfile.jpg';
 import './styling/Profile.css';
 import './styling/General.css';
 
@@ -245,10 +245,9 @@ uploadResume = (val) => {
       <div className="mainView">
       <h1 className="pagetitle">Your Profile </h1>
 
-
         <div className="card1">
           {/* FIRST CARD */}
-          <div className="headerBorder">
+          <div className="wrap">
             <div className="header">
               <div className="photoContainerWrap">
                 <div id="photoContainer" className="photoContainer">
@@ -308,17 +307,6 @@ uploadResume = (val) => {
                   }
                 </div>
               </div>
-              {!this.state.edit &&
-                <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                  <i className="large material-icons"> mode_edit </i>
-                </Button>
-
-              }
-              {this.state.edit &&
-                <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                  <i className="large material-icons"> check </i>
-                </Button>
-              }
             </div>
           </div>
         </div>
@@ -364,6 +352,17 @@ uploadResume = (val) => {
 
         </div>
 
+              {!this.state.edit &&
+                <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Edit Profile
+                  {/* <i className="large material-icons"> mode_edit </i> */}
+                </Button>
+
+              }
+              {this.state.edit &&
+                <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Save Changes
+                  {/* <i className="large material-icons"> check </i> */}
+                </Button>
+              }
         </div>
       </section>
     );

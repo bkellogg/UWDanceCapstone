@@ -3,6 +3,8 @@ import './styling/selectCast.css';
 
 import Avatar from 'material-ui/Avatar';
 import Checkbox from 'material-ui/Checkbox';
+import './styling/General.css';
+import './styling/CastingFlow.css';
 
 class CastingPersonRow extends Component {
   constructor(props) {
@@ -83,8 +85,10 @@ class CastingPersonRow extends Component {
   }
 
   render() {
+      
     let p = this.state.person
     return (
+        <div className="mainView">
       <tr>
         <td>
         <Avatar>:)</Avatar>
@@ -98,8 +102,11 @@ class CastingPersonRow extends Component {
         <td>
           numPieces
         </td>
+
+        <div className="checkboxesGrouped">
         <td>
-        <div className="check">
+        
+        <div className="checkOne">
             <Checkbox
                 value="1"
                 checked={this.state.checked.one}
@@ -111,6 +118,7 @@ class CastingPersonRow extends Component {
                 value="2"
                 checked={this.state.checked.two}
                 onCheck={this.updateCheck}
+                
             />
         </div>
         <div className="check">
@@ -120,8 +128,11 @@ class CastingPersonRow extends Component {
                 onCheck={this.updateCheck}
             />
         </div>
+
         </td>
+        </div>
       </tr>
+      </div>
   );
 };
 
