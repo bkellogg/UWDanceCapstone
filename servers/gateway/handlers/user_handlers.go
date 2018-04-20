@@ -126,6 +126,12 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
 				return permissionDenied()
 			}
+
+			// make sure the user exists
+			_, dberr := ctx.store.GetUserByID(userID, includeDeleted)
+			if dberr != nil {
+				return HTTPError(dberr.Message, dberr.HTTPStatus)
+			}
 			imageBytes, err := getUserProfilePicture(userID)
 			if err != nil {
 				return err

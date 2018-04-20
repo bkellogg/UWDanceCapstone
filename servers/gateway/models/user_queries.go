@@ -290,7 +290,7 @@ func (store *Database) GetUserByID(id int, includeInactive bool) (*User, *DBErro
 		&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.Bio, &user.PassHash, &user.RoleID, &user.Active, &user.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, NewDBError("no user found with the given email", http.StatusNotFound)
+			return nil, NewDBError("no user found with the given id", http.StatusNotFound)
 		}
 		return nil, NewDBError(fmt.Sprintf("error retrieving user from database: %v", err), http.StatusInternalServerError)
 	}

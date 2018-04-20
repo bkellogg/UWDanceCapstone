@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"fmt"
 	"image"
 	"image/jpeg"
 	"image/png"
@@ -125,9 +126,18 @@ func getUserResume(userID int) ([]byte, *middleware.HTTPError) {
 func getUserProfilePicture(userID int) ([]byte, *middleware.HTTPError) {
 	userIDString := strconv.Itoa(userID)
 	imageBytes, err := ioutil.ReadFile(appvars.ProfilePicturePath + userIDString + ".jpg")
-	if err != nil {
-		return nil, HTTPError("profile picture not found", http.StatusNotFound)
+
+	// if an actual profile picture was found, return it
+	if err == nil {
+		return imageBytes, nil
 	}
+
+	// otherwise return the default profile picture
+	imageBytes, err = ioutil.ReadFile(appvars.ProfilePicturePath + "def.jpg")
+	if err != nil {
+		return nil, HTTPError(fmt.Sprintf("error retreiving default profile picture: %v", err), http.StatusInternalServerError)
+	}
+
 	return imageBytes, nil
 }
 
