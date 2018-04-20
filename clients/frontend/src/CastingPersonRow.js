@@ -106,19 +106,15 @@ class CastingPersonRow extends Component {
         <div className="checkboxesGrouped">
         <td>
         
-        <div className="check">
+        <div className="checkOne">
             <Checkbox
                 value="1"
                 checked={this.state.checked.one}
                 onCheck={this.updateCheck}
-                labelStyle={{color: 'red'}}
-                iconStyle={{fill: 'red'}}
             />
         </div>
         <div className="check">
             <Checkbox 
-                labelStyle={{color: 'red'}}
-                iconStyle={{fill: 'red'}}
                 value="2"
                 checked={this.state.checked.two}
                 onCheck={this.updateCheck}
@@ -130,7 +126,6 @@ class CastingPersonRow extends Component {
                 value="3"
                 checked={this.state.checked.three}
                 onCheck={this.updateCheck}
-                iconStyle={{fill: '#22A7E0'}}
             />
         </div>
 

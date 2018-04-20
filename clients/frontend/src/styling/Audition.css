@@ -6,10 +6,6 @@
     padding-left: 2%;
 }
 
-Checkbox{
-    color: red;
-}
-
 .table-drag-select td.cell-selected{
     background-color: #22A7E0;
 }
