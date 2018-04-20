@@ -15,6 +15,9 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import * as Util from './util';
 import 'materialize-css';
+import {white} from 'material-ui/styles/colors';
+import muiThemeable from 'material-ui/styles/muiThemeable';
+import logo from './imgs/logo2-100.jpg'
 import './styling/Main.css';
 import './styling/Navigation.css';
 import './styling/MobileNavigation.css';
@@ -24,10 +27,10 @@ import { withStyles } from 'material-ui/styles';
 import SvgIcon from 'material-ui/SvgIcon';
 
 const style = {
-  color: '#ffffff',
+  textColor:'white',
   boxShadow: 'none',
   backgroundColor: 'none',
-  label: '#ffffff'
+  height: '46'
 };
 
 const styleNav = {
@@ -179,13 +182,16 @@ class Main extends Component {
             <div className="mobileNav">
               <div className="hamburger">
                 <RaisedButton
+
+                
                   backgroundColor="#27384A"
+                  
                   className="hamburgerButton"
                   style={style}
-                  label="MENU"
+             
                   onClick={this.handleToggle}
-
-                />
+                ><p  className="hambMenu">MENU</p>
+                </RaisedButton>
               </div>
               <Drawer
                 style={styleNav}
@@ -235,20 +241,20 @@ class Main extends Component {
               routes.push(route)
             } else if (this.state.user.role.level === 70) {
               let route1 = <Route exact path={path + "/casting"} render={
-                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket} />
-              } />
-              let route2 = <Route exact path={path + "/people"} render={
-                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show} />
-              } />
+                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket}/>
+              }/>
+              let route2 =  <Route exact path={path + "/people"} render={
+                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
+              }/>
               routes.push(route1)
               routes.push(route2)
             } else {
               let route1 = <Route exact path={path + "/casting"} render={
-                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket} />
-              } />
-              let route2 = <Route exact path={path + "/people"} render={
-                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show} />
-              } />
+                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket}/>
+              }/>
+              let route2 =  <Route exact path={path + "/people"} render={
+                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
+              }/>
               let route3 = <Route exact path={path + "/audition"} render={
                 props => <Audition {...props} name={show.name} audition={show.auditionID} />
               } />
@@ -278,7 +284,7 @@ class Main extends Component {
               <div className="navigationBg">
                 <li>
                   <div id="logo">
-                    <img alt="logo" src="/clients/frontend/src/imgs/logo2-100.jpg"/>
+                    <img className="officialLogoImage" alt="logo" src={logo}/>
                   </div>
                 </li>
                 <li className="dropDown"><Link to="/">Dashboard</Link></li>
