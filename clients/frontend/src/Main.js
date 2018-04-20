@@ -15,6 +15,8 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import * as Util from './util';
 import 'materialize-css';
+import {white} from 'material-ui/styles/colors';
+import muiThemeable from 'material-ui/styles/muiThemeable';
 import logo from './imgs/logo2-100.jpg'
 import './styling/Main.css';
 import './styling/Navigation.css';
@@ -25,10 +27,10 @@ import { withStyles } from 'material-ui/styles';
 import SvgIcon from 'material-ui/SvgIcon';
 
 const style = {
-  color: '#ffffff',
+  textColor:'white',
   boxShadow: 'none',
   backgroundColor: 'none',
-  label: '#ffffff'
+  height: '46'
 };
 
 const styleNav = {
@@ -180,13 +182,16 @@ class Main extends Component {
             <div className="mobileNav">
               <div className="hamburger">
                 <RaisedButton
+
+                
                   backgroundColor="#27384A"
+                  
                   className="hamburgerButton"
                   style={style}
-                  label="MENU"
+             
                   onClick={this.handleToggle}
-
-                />
+                ><p  className="hambMenu">MENU</p>
+                </RaisedButton>
               </div>
               <Drawer
                 style={styleNav}
@@ -279,7 +284,7 @@ class Main extends Component {
               <div className="navigationBg">
                 <li>
                   <div id="logo">
-                    <img alt="logo" src={logo}/>
+                    <img className="officialLogoImage" alt="logo" src={logo}/>
                   </div>
                 </li>
                 <li className="dropDown"><Link to="/">Dashboard</Link></li>
