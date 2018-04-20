@@ -26,24 +26,44 @@ class CastDancersRow extends Component {
   }
 
   dropFromCast = () => {
-    //this handles dropping them from the cast, but we also need to go through and update their rank in the allUsers
-    let cast = JSON.parse((localStorage).getItem("cast"))
-    let person = this.props.person
 
-    //update cast
-    cast = cast.filter(castMember => castMember.id !== person.id)
-    localStorage.setItem("cast", JSON.stringify(cast))
-    this.props.updateCast()
-
-    //update all users
-    let allUsers = JSON.parse(localStorage.getItem("allUsers"))
-    allUsers.forEach(user => {
-        if (user.id === person.id) {
-            user.rank = ""
-            return
-        }
+    let removeBody = {
+        "action":"remove",
+        "drops":[
+            this.props.person.id
+        ]
+    }
+    let audition = "1"
+    Util.makeRequest("auditions/" + audition + "/casting", removeBody, "PATCH", true)
+    .then( res => {
+      if(res.ok){
+        return res.text()
+      }
+      return res.text().then((t) => Promise.reject(t));
     })
-    localStorage.setItem("allUsers", JSON.stringify(allUsers))
+    .then(
+        this.props.updateCast
+    )
+
+  }
+
+  addToCast = () => {
+    let castBody = {
+        "action" : "add",
+        "rank1" : [this.props.person.id],
+        "rank2" : [],
+        "rank3" : []
+    }
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", castBody, "PATCH", true)
+    .then( res => {
+      if(res.ok){
+        return res.text()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(
+        this.props.updateCast
+    )
   }
 
   getPhoto = () => {
@@ -107,7 +127,7 @@ class CastDancersRow extends Component {
                     <Button 
                     backgroundColor="#708090"
                     style={{color: '#ffffff', float: 'right'}}
-                    onClick={this.dropFromCast}> 
+                    onClick={this.addToCast}> 
                     ADD </Button>
                 </td>
             }
