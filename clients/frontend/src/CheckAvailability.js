@@ -13,6 +13,8 @@ class CheckAvailability extends Component {
 
 
   render() {
+    setTimeout(()=> { this.setState({cast: JSON.parse(localStorage.getItem("socketCast"))})}, 50);
+
 
     //let cast = JSON.parse(localStorage.socketCast)
     //console.log(cast)
