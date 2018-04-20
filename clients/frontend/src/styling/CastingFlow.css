@@ -27,9 +27,9 @@ th{
     border: none;
 }
 
-.centerText{
+/* .centerText{
     text-align: center;
-}
+} */
 
 .check, .checkOne {
     display: inline-block;

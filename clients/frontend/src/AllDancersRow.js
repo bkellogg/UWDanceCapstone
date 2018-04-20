@@ -180,7 +180,7 @@ class AllDancersRow extends Component {
         <td>
         <img src={this.state.photoUrl} className="avatar"/>
         </td>
-        <td>
+        <td className="dancerAssignedNumber">
             regNum
         </td>
         <td>
