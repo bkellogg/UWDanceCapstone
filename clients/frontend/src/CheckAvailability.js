@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import CastDancersRow from './CastDancersRow'
 import './styling/General.css';
 import './styling/CastingFlow.css';
+import './styling/CastingFlowMobile.css';
+
 
 class CheckAvailability extends Component {
   constructor(props) {
@@ -44,7 +46,7 @@ class CheckAvailability extends Component {
                     </tbody>
                   </table>
                 </div>
-                <div className="overlapAvailability">calendar goes here </div>
+                <div className="overlapAvailability">Cast availability goes here </div>
               </div>
             </div>
           </div>

@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
 
+import './styling/General.css';
 import './styling/CastingFlow.css';
+import './styling/CastingFlowMobile.css';
+
 
 import AllDancersRow from './AllDancersRow';
 

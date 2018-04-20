@@ -1,0 +1,28 @@
+@media only screen and (max-width : 992px) {
+    .categories{
+        font-size: 12px;
+    }
+
+    .avatar, .dancerRank, .userRoleDisp, .avatar2{
+        visibility: hidden;
+        position: absolute;
+    }
+
+    .check{
+        width: 20px;
+    }
+
+    .castList, .dancersList-filter, .overlapAvailability, .castList-v2, .castList-v2-1, .wrap{
+        display: block;
+    }
+
+    .dancersList-filter, .overlapAvailability, .castList-v2, .castList-v2-1{
+        width: 100%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .extraClass, .castList{
+        width: 100%;
+    }
+}

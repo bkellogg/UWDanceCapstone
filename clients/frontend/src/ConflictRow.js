@@ -80,7 +80,7 @@ class ConflictRow extends Component {
             <td>
                 {dancer.numShows}
             </td>
-            <td>
+            <td className="dancerRank">
                 {this.props.rank}
             </td>
             <td>

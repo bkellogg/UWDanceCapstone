@@ -4,6 +4,8 @@ import CastDancersRow from './CastDancersRow';
 import ConflictRow from './ConflictRow';
 import './styling/General.css';
 import './styling/CastingFlow.css';
+import './styling/CastingFlowMobile.css';
+
 
 class ResolveConflict extends Component {
   constructor(props) {
@@ -47,9 +49,7 @@ class ResolveConflict extends Component {
             <div className="wrap">
               {/*STYLING these h1s should definitely be h2s so we can have an accurate HTML tree, putting as h1 temporarily*/}
               <div className="conflictsCard">
-                <h2 className="conflictMessage">Conflicts of interest between you and other choreographers.</h2>
-                
-              
+                <h2 className="conflictMessage">Conflicts of interest between you and other choreographers.</h2> 
               <table>
                   <tbody>
                     <tr className="categories">
@@ -57,7 +57,7 @@ class ResolveConflict extends Component {
                       <th>#</th>
                       <th>Dancer</th>
                       <th>Pieces</th>
-                      <th>Rank</th>
+                      <th className="dancerRank">Rank</th>
                       <th>Choreographers</th>
                       <th></th>
                     </tr>
