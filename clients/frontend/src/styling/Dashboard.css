@@ -3,8 +3,8 @@
 }
 
 .cardBody{
-  background-color: white;
-  border: 1px solid #22A7E0;
+  background-color: lavender;
+  padding: 1px 25px;
   border-radius: 3px;
 }
 
@@ -13,7 +13,7 @@
 }
 
 .announcementMessage{
-  padding: 1px 25px;
+
   font-weight: 400;
   color: #333;
   
