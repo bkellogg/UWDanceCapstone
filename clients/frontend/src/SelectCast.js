@@ -64,9 +64,7 @@ class SelectCast extends Component {
   }
 
   render() {
-    console.log(this.state)
     let rows = this.state.users.map((person) => {
-      console.log(person)
         return(
           <AllDancersRow person={person}  key={person.id} rank={person.rank} selectCast={true}/>
         )

@@ -28,6 +28,9 @@ export function clearAuthAndUser() {
     localStorage.removeItem("user");
     localStorage.removeItem("allUsers");
     localStorage.removeItem("firstLoad")
+    localStorage.removeItem("socketCast")
+    localStorage.removeItem("uncast")
+    localStorage.removeItem("contested")
 };
 
 export function makeRequest(resource, payload = "", method = "GET", useAuth = false) {

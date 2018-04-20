@@ -50,6 +50,7 @@ class Casting extends Component {
     Util.makeRequest("auditions/" + this.props.audition + "/casting", "", "POST", true)
     .then((res) => {
       if(res.ok){
+        console.log("Added")
         return res.text()
       }
       return res.text().then((t) => Promise.reject(t));
