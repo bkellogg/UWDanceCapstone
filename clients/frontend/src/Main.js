@@ -235,36 +235,20 @@ class Main extends Component {
               routes.push(route)
             } else if (this.state.user.role.level === 70) {
               let route1 = <Route exact path={path + "/casting"} render={
-<<<<<<< HEAD
                 props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket}/>
               }/>
               let route2 =  <Route exact path={path + "/people"} render={
                 props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
               }/>
-=======
-                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket} />
-              } />
-              let route2 = <Route exact path={path + "/people"} render={
-                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show} />
-              } />
->>>>>>> 6cedeb79bd6399bc2edc8544fb20626b6fa0cf6f
               routes.push(route1)
               routes.push(route2)
             } else {
               let route1 = <Route exact path={path + "/casting"} render={
-<<<<<<< HEAD
                 props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket}/>
               }/>
               let route2 =  <Route exact path={path + "/people"} render={
                 props => <People {...props} name={show.name} audition={show.auditionID} show={show.show}/>
               }/>
-=======
-                props => <Casting {...props} name={show.name} audition={show.auditionID} websocket={websocket} />
-              } />
-              let route2 = <Route exact path={path + "/people"} render={
-                props => <People {...props} name={show.name} audition={show.auditionID} show={show.show} />
-              } />
->>>>>>> 6cedeb79bd6399bc2edc8544fb20626b6fa0cf6f
               let route3 = <Route exact path={path + "/audition"} render={
                 props => <Audition {...props} name={show.name} audition={show.auditionID} />
               } />
