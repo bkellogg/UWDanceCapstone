@@ -9,6 +9,37 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
+// GetUserAuditionLinksByAuditionID returns all user audition links of users who are in the
+// the given audition and returns them. Returns an error if one occurred.
+func (store *Database) GetUserAuditionLinksByAuditionID(audID int) ([]*UserAuditionLinkResponse, *DBError) {
+	// TODO: TEMP IMPLEMENTATION!!! make this way better
+	res, err := store.db.Query(
+		`SELECT DISTINCT UA.UserID FROM UserAudition UA
+		WHERE UA.AuditionID = ? AND UA.IsDeleted = false`, audID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error getting user ids from UserAudition: %v", err), http.StatusInternalServerError)
+	}
+	userIDs := make([]int64, 0)
+	for res.Next() {
+		var userID int64
+		if err = res.Scan(&userID); err != nil {
+			return nil, NewDBError(fmt.Sprintf("error scanning result into userID"), http.StatusInternalServerError)
+		}
+		userIDs = append(userIDs, userID)
+	}
+
+	ualrs := make([]*UserAuditionLinkResponse, 0, len(userIDs))
+	for _, uid := range userIDs {
+		ualr, dberr := store.GetUserAuditionLink(int(uid), audID)
+		if dberr != nil {
+			return nil, dberr
+		}
+		ualrs = append(ualrs, ualr)
+	}
+
+	return ualrs, nil
+}
+
 // GetUserAuditionLink gets the UserAuditionLinkResponse that is affiliated with the
 // given link between the given user and audition, if it exists. Returns an error
 // if one occurred.
@@ -22,8 +53,6 @@ func (store *Database) GetUserAuditionLink(userID, audID int) (*UserAuditionLink
 	defer txCleanup(tx, dberr)
 
 	ualr := &UserAuditionLinkResponse{}
-	ualr.RegNumber = -1 // temp until this is implemented
-	ualr.NumShows = 2   // temp until this is implemented
 
 	user, dberr := txGetUser(tx, userID)
 	if dberr != nil {
@@ -41,6 +70,8 @@ func (store *Database) GetUserAuditionLink(userID, audID int) (*UserAuditionLink
 	if dberr != nil {
 		return nil, dberr
 	}
+	ualr.RegNum = ua.RegNum
+	ualr.NumShows = ua.NumShows
 	ualr.AddedAt = ua.CreatedAt
 	ualr.AddedBy = ua.CreatedBy
 

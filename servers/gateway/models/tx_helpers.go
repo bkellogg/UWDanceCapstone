@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"sort"
 )
 
 // txCleanup commits the given transaction if
@@ -66,6 +67,7 @@ func txGetUserAudition(tx *sql.Tx, userID, audID int) (*UserAudition, *DBError) 
 	err := res.Scan(
 		&ua.ID, &ua.AuditionID,
 		&ua.UserID, &ua.AvailabilityID,
+		&ua.RegNum, &ua.NumShows,
 		&ua.CreatedAt, &ua.CreatedBy,
 		&ua.IsDeleted)
 	if err != nil && err != sql.ErrNoRows {
@@ -167,4 +169,55 @@ func txGetShowByAuditionID(tx *sql.Tx, audID int) (*Show, *DBError) {
 	}
 	rows.Close()
 	return show, nil
+}
+
+// txGetNextAuditionRegNumber returns the next reg number that a dancer
+// should get when registering for an audition. Returns an error if one occurred.
+func txGetNextAuditionRegNumber(tx *sql.Tx, audID int) (int, *DBError) {
+	rows, err := tx.Query(`SELECT UA.RegNum FROM UserAudition UA
+		WHERE UA.AuditionID = ? AND UA.IsDeleted = FALSE`, audID)
+	if err != nil {
+		return -1, NewDBError(fmt.Sprintf("error querying existing reg numbers: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+
+	regNums := make([]int, 0)
+	for rows.Next() {
+		var num int
+		if err = rows.Scan(&num); err != nil {
+			return -1, NewDBError(fmt.Sprintf("error scanning row into reg number: %v", err), http.StatusInternalServerError)
+		}
+		regNums = append(regNums, num)
+	}
+
+	// if the number of reg nums with the given conversation is 0,
+	// return 1
+	if len(regNums) == 0 {
+		return 1, nil
+	}
+
+	// sort it to make it easier to look for a missing number
+	sort.Ints(regNums)
+
+	num := 1
+	for i := 1; i <= len(regNums); i++ {
+		// there are no missing numbers and we've reached the end
+		// give it the next number
+		if i == len(regNums) {
+			return len(regNums) + 1, nil
+		}
+
+		// handle the case where the next number is one greater
+		// than the last one
+		if regNums[i]-num == 1 {
+			num++
+			continue // skip the rest of this cycle
+		}
+
+		if regNums[i]-num > 1 {
+			num++
+			break
+		}
+	}
+	return num, nil
 }

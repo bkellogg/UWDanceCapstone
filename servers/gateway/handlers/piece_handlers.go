@@ -27,7 +27,7 @@ func (ctx *AuthContext) PiecesHandler(w http.ResponseWriter, r *http.Request, u 
 		if dberr != nil {
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
-		if !ctx.permChecker.UserIs(user, appvars.PermChoreographer) {
+		if !ctx.permChecker.UserIsAtLeast(user, appvars.PermChoreographer) {
 			return HTTPError("cannot add non choreographers as choreographers to pieces", http.StatusBadRequest)
 		}
 		newPiece.CreatedBy = int(u.ID)
@@ -108,7 +108,7 @@ func (ctx *AuthContext) PieceChoreographerHandler(w http.ResponseWriter, r *http
 	if user == nil {
 		return HTTPError("no user exists with the given id", http.StatusNotFound)
 	}
-	if !ctx.permChecker.UserIs(user, appvars.PermChoreographer) {
+	if !ctx.permChecker.UserIsAtLeast(user, appvars.PermChoreographer) {
 		return HTTPError("cannot add non choreographers as choreographers to pieces", http.StatusBadRequest)
 	}
 

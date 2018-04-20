@@ -9,7 +9,7 @@ type UserAuditionLinkResponse struct {
 	Audition     *Audition              `json:"audition,omitempty"`
 	AddedAt      time.Time              `json:"addedAt"`
 	AddedBy      int                    `json:"addedBy"`
-	RegNumber    int                    `json:"regNum"`
+	RegNum       int                    `json:"regNum"`
 	NumShows     int                    `json:"numShows"`
 	Comments     []*UserAuditionComment `json:"comments"`
 	Availability *WeekTimeBlock         `json:"availability"`

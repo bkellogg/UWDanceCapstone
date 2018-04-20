@@ -10,8 +10,6 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/startup"
 	"github.com/gorilla/mux"
 
-	_ "github.com/go-sql-driver/mysql"
-
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/handlers"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -34,35 +32,35 @@ func main() {
 	}
 
 	// Gateway server environment variables
-	addr := getRequiredENVOrExit("ADDR", ":443")
-	httpRedirAddr := getRequiredENVOrExit("HTTPREDIRADDR", ":80")
-	tlsKey := getRequiredENVOrExit("TLSKEY", "")
-	tlsCert := getRequiredENVOrExit("TLSCERT", "")
-	sessionKey := getRequiredENVOrExit("SESSIONKEY", "")
+	addr := require("ADDR", ":443")
+	httpRedirAddr := require("HTTPREDIRADDR", ":80")
+	tlsKey := require("TLSKEY", "")
+	tlsCert := require("TLSCERT", "")
+	sessionKey := require("SESSIONKEY", "")
 
 	// MYSQL store environment variables
-	mySQLPass := getRequiredENVOrExit("MYSQLPASS", "")
-	mySQLAddr := getRequiredENVOrExit("MYSQLADDR", "")
-	mySQLDBName := getRequiredENVOrExit("MYSQLDBNAME", "DanceDB")
+	mySQLPass := require("MYSQLPASS", "")
+	mySQLAddr := require("MYSQLADDR", "")
+	mySQLDBName := require("MYSQLDBNAME", "DanceDB")
 
 	// Redis store environment variables
-	redisAddr := getRequiredENVOrExit("REDISADDR", "")
+	redisAddr := require("REDISADDR", "")
 
 	// Mail Info
-	mailUser := getRequiredENVOrExit("MAILUSER", "")
-	mailPass := getRequiredENVOrExit("MAILPASS", "")
+	mailUser := require("MAILUSER", "")
+	mailPass := require("MAILPASS", "")
 
-	templatesPath := getRequiredENVOrExit("TEMPLATESPATH", "")
-	resetPasswordClientPath := getRequiredENVOrExit("RESETPASSWORDCLIENTPATH", "")
-	adminConsolePath := getRequiredENVOrExit("ADMINCONSOLEPATH", "")
-	frontEndPath := getRequiredENVOrExit("FRONTENDPATH", "")
-	assetsPath := getRequiredENVOrExit("ASSETSPATH", "")
+	templatesPath := require("TEMPLATESPATH", "")
+	resetPasswordClientPath := require("RESETPASSWORDCLIENTPATH", "")
+	adminConsolePath := require("ADMINCONSOLEPATH", "")
+	frontEndPath := require("FRONTENDPATH", "")
+	assetsPath := require("ASSETSPATH", "")
 
 	// admin user info
-	adminFName := getRequiredENVOrExit("STAGE_ADMIN_FIRSTNAME", "")
-	adminLName := getRequiredENVOrExit("STAGE_ADMIN_LASTNAME", "")
-	adminEmail := getRequiredENVOrExit("STAGE_ADMIN_EMAIL", "")
-	adminPaswd := getRequiredENVOrExit("STAGE_ADMIN_PASSWORD", "")
+	adminFName := require("STAGE_ADMIN_FIRSTNAME", "")
+	adminLName := require("STAGE_ADMIN_LASTNAME", "")
+	adminEmail := require("STAGE_ADMIN_EMAIL", "")
+	adminPaswd := require("STAGE_ADMIN_PASSWORD", "")
 
 	// Open connections to the databases
 	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
@@ -77,11 +75,14 @@ func main() {
 	redis := sessions.NewRedisStore(nil, appvars.DefaultSessionDuration, redisAddr)
 
 	notifier := notify.NewNotifier()
+	castingSession := notify.NewCastingSession(db, notifier)
 
 	permChecker, err := models.NewPermissionChecker(db)
 	if err != nil {
 		log.Fatalf("error creating permission checker: %v", err)
 	}
+
+	castingContext := handlers.NewCastingContext(permChecker, castingSession)
 
 	mailContext := handlers.NewMailContext(mailUser, mailPass, permChecker)
 	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials(), permChecker)
@@ -96,6 +97,10 @@ func main() {
 	baseRouter.PathPrefix("/admin").Handler(handlers.AddTrailingSlash(http.StripPrefix("/admin/", http.FileServer(http.Dir(adminConsolePath)))))
 	baseRouter.PathPrefix("/assets/tpl/").Handler(http.NotFoundHandler()) // don't serve the assets/tpl directory
 	baseRouter.PathPrefix("/assets/").Handler(handlers.PreventDirListing(http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsPath)))))
+	baseRouter.PathPrefix(appvars.BaseAPIPath + "/flushcasting").Handler(authorizer.Authorize(castingContext.FlushCastingHandler)).
+		Methods(http.MethodDelete)
+	baseRouter.PathPrefix(appvars.BaseAPIPath + "/castingstate").Handler(authorizer.Authorize(castingContext.DebugCastingStateHandler)).
+		Methods(http.MethodGet)
 
 	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()
 	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
@@ -110,13 +115,18 @@ func main() {
 	usersRouter.Handle(appvars.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
 	usersRouter.Handle(appvars.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
 	usersRouter.Handle(appvars.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
-	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler)).Methods("LINK", "UNLINK")
+	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler)).
+		Methods("LINK", "UNLINK")
 	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserAuditionHandler))
 	usersRouter.Handle(appvars.UserMembershipObjectPath, authorizer.Authorize(authContext.UserMembershipActionDispatcher))
 
 	auditionRouter := baseRouter.PathPrefix(appvars.AuditionsPath).Subrouter()
 	auditionRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
 	auditionRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificAuditionHandler))
+	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(castingContext.BeginCastingHandler)).
+		Methods(http.MethodPost)
+	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(castingContext.CastingUpdateHandler)).
+		Methods(http.MethodPatch)
 	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.AuditionObjectDispatcher))
 
 	showRouter := baseRouter.PathPrefix(appvars.ShowsPath).Subrouter()
@@ -124,7 +134,8 @@ func main() {
 	showRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.ShowsHandler))
 	showRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificShowHandler))
 	showRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ShowObjectDispatcher))
-	showRouter.Handle(appvars.ResourceIDObjectID, authorizer.Authorize(authContext.ShowAuditionRelationshipHandler)).Methods("LINK", "UNLINK")
+	showRouter.Handle(appvars.ResourceIDObjectID, authorizer.Authorize(authContext.ShowAuditionRelationshipHandler)).
+		Methods("LINK", "UNLINK")
 
 	pieceRouter := baseRouter.PathPrefix(appvars.PiecesPath).Subrouter()
 	pieceRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
@@ -136,7 +147,7 @@ func main() {
 
 	baseRouter.Handle(appvars.BaseAPIPath, http.NotFoundHandler())
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
-	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath + "index.html"))
+	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath + "index.html")).Methods(http.MethodGet)
 
 	treatedRouter := middleware.EnsureHeaders(middleware.BlockIE(
 		middleware.LogErrors(baseRouter, db)))
@@ -158,7 +169,7 @@ func main() {
 
 // Gets the value of env from the environment or defaults it to the given
 // def. Exits the process if env and def are not set
-func getRequiredENVOrExit(env, def string) string {
+func require(env, def string) string {
 	if envVal := os.Getenv(env); len(envVal) != 0 {
 		return envVal
 	}

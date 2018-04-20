@@ -122,7 +122,7 @@ func (store *Database) RemoveUserFromPiece(userID, pieceID int) *DBError {
 
 // AddUserToAudition adds the given user to the given audition. Returns an error
 // if one occurred.
-func (store *Database) AddUserToAudition(userID, audID, creatorID int, availability *WeekTimeBlock, comment string) *DBError {
+func (store *Database) AddUserToAudition(userID, audID, creatorID, numShows int, availability *WeekTimeBlock, comment string) *DBError {
 	audition, dberr := store.GetAuditionByID(audID, false)
 	if dberr != nil {
 		return dberr
@@ -156,6 +156,11 @@ func (store *Database) AddUserToAudition(userID, audID, creatorID int, availabil
 		return dberr
 	}
 
+	regNum, dberr := txGetNextAuditionRegNumber(tx, audID)
+	if dberr != nil {
+		return dberr
+	}
+
 	res, err := tx.Exec(`INSERT INTO UserAuditionAvailability
 		(Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		dayMap["sun"], dayMap["mon"], dayMap["tues"], dayMap["wed"], dayMap["thurs"], dayMap["fri"], dayMap["sat"], addTime, false)
@@ -166,8 +171,9 @@ func (store *Database) AddUserToAudition(userID, audID, creatorID int, availabil
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error getting insert ID of new availability: %v", err), http.StatusInternalServerError)
 	}
-	res, err = tx.Exec(`INSERT INTO UserAudition (AuditionID, UserID, AvailabilityID, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
-		audID, userID, availID, creatorID, addTime, false)
+	res, err = tx.Exec(`INSERT INTO UserAudition
+		(AuditionID, UserID, AvailabilityID, RegNum, NumShows, CreatedBy, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		audID, userID, availID, regNum, numShows, creatorID, addTime, false)
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error inserting user audition: %v", err), http.StatusInternalServerError)
 	}
@@ -387,16 +393,6 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
 	}
 	return users, nil
-}
-
-// GetUsersAuditionLinksByAuditionID returns a slice of UserAuditionLinkResponses
-func (store *Database) GetUsersAuditionLinksByAuditionID(id, page int, includeDeleted bool) ([]*UserAuditionLinkResponse, *DBError) {
-	tx, err := store.db.Begin()
-	if err != nil {
-		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
-	}
-	defer tx.Rollback()
-	return nil, nil
 }
 
 // GetUsersByShowID returns a slice of users that are in the given show, if any.

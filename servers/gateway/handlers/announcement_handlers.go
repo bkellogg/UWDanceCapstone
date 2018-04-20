@@ -44,11 +44,8 @@ func (ctx *AnnouncementContext) AnnouncementsHandler(w http.ResponseWriter, r *h
 		if dberr != nil {
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
-		wse, err := notify.NewWebSocketEvent(notify.EventTypeAnnouncement,
+		wse := notify.NewWebSocketEvent(-1, notify.EventTypeAnnouncement,
 			announcement.AsAnnouncementResponse(u))
-		if err != nil {
-			return HTTPError("error creating web socket announcement: "+err.Error(), http.StatusInternalServerError)
-		}
 		ctx.Notifier.Notify(wse)
 		return respond(w, announcement, http.StatusCreated)
 	default:
@@ -106,11 +103,7 @@ func (ctx *AnnouncementContext) DummyAnnouncementHandler(w http.ResponseWriter, 
 		Message:   randomdata.Letters(randomdata.Number(10, 75)),
 		IsDeleted: false,
 	}
-	wse, err := notify.NewWebSocketEvent(notify.EventTypeAnnouncement, wsa)
-	if err != nil {
-		return HTTPError("error creating web socket announcement: "+err.Error(), http.StatusInternalServerError)
-	}
-	ctx.Notifier.Notify(wse)
+	ctx.Notifier.Notify(notify.NewWebSocketEvent(-1, notify.EventTypeAnnouncement, wsa))
 	return respondWithString(w,
 		"Randomly generated announcement send over the announcement websocket. This announcement was not persisted to the database",
 		http.StatusCreated)

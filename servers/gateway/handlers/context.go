@@ -49,6 +49,23 @@ func NewAnnouncementContext(store *models.Database, notifier *notify.Notifier, p
 	}
 }
 
+// CastingContext defines information needed for
+// handlers that handle casting requests.
+type CastingContext struct {
+	permChecker *models.PermissionChecker
+	Session     *notify.CastingSession
+}
+
+// NewCastingContext returns a new CastingContext
+// from the given inputs.
+func NewCastingContext(pc *models.PermissionChecker,
+	session *notify.CastingSession) *CastingContext {
+	return &CastingContext{
+		permChecker: pc,
+		Session:     session,
+	}
+}
+
 // HandlerContext defines context for non-auth related handlers.
 type HandlerContext struct {
 	Store *models.Database
