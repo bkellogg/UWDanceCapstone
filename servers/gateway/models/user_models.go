@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
-
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/Pallinder/go-randomdata"
 	"golang.org/x/crypto/bcrypt"
@@ -32,7 +30,20 @@ type User struct {
 	Email     string    `json:"email"`
 	Bio       string    `json:"bio"`
 	PassHash  []byte    `json:"-"`
-	Role      int       `json:"role"`
+	RoleID    int       `json:"roleID"`
+	Active    bool      `json:"active"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
+// UserResponse defines how a user is encoded back
+// the the client.
+type UserResponse struct {
+	ID        int64     `json:"id"`
+	FirstName string    `json:"firstName"`
+	LastName  string    `json:"lastName"`
+	Email     string    `json:"email"`
+	Bio       string    `json:"bio"`
+	Role      *Role     `json:"role"`
 	Active    bool      `json:"active"`
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -49,7 +60,7 @@ type UserUpdates struct {
 // add a user to an audition.
 // UserID and AuditionID will come from request URI
 type UserAuditionLink struct {
-	Comment      string         `json:"comment"`
+	Comment      string         `json:"comment,omitempty"`
 	Availability *WeekTimeBlock `json:"availability,omitempty"`
 }
 
@@ -60,9 +71,21 @@ type UserAudition struct {
 	AuditionID     int       `json:"auditionID"`
 	UserID         int       `json:"userID"`
 	AvailabilityID int       `json:"availabilityID"`
+	RegNum         int       `json:"regNum"`
+	NumShows       int       `json:"numShows"`
 	CreatedAt      time.Time `json:"createdAt"`
 	CreatedBy      int       `json:"createdBy"`
 	IsDeleted      bool      `json:"isDeleted"`
+}
+
+// RoleChange defines how a role is sent to the server
+type RoleChange struct {
+	RoleName string `json:"roleName"`
+}
+
+// Validate validates the current role and returns an error if one occurred.
+func (r *RoleChange) Validate() error {
+	return nil
 }
 
 // Validate validates the current UserAuditionLink and returns
@@ -85,7 +108,7 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 		LastName:  u.LastName,
 		Email:     u.Email,
 		Bio:       u.Bio,
-		Role:      appvars.UserDefaultRole,
+		RoleID:    appvars.UserDefaultRole,
 		Active:    true,
 		CreatedAt: time.Now(),
 	}
@@ -123,6 +146,9 @@ func (u *NewUserRequest) validate() error {
 	if len(u.Password) != len(u.PasswordConf) {
 		return errors.New("passwords do not match")
 	}
+	u.FirstName = strings.Title(u.FirstName)
+	u.LastName = strings.Title(u.LastName)
+	u.Email = strings.ToLower(u.Email)
 	return nil
 }
 
@@ -145,37 +171,24 @@ func (u *User) Authenticate(password string) error {
 	return nil
 }
 
-// Can returns true if the user has permissions to perform
-// the given action
-func (u *User) Can(action int) bool {
-	return action <= u.Role
-}
-
-// CanSeeUser returns true if the user has permissions
-// to view the user with the given ID
-func (u *User) CanSeeUser(id int) bool {
-	return u.hasPermissionTo(permissions.SeeAllUsers, id)
-}
-
-// CanModifyUser returns true if the user has permissions
-// to modify the user with the given ID
-func (u *User) CanModifyUser(id int) bool {
-	return u.hasPermissionTo(permissions.ModifyUsers, id)
-}
-
-// CanDeleteUser returns true if the user has permissions
-// to delete the user with the given ID
-func (u *User) CanDeleteUser(id int) bool {
-	return u.hasPermissionTo(permissions.DeleteUsers, id)
-}
-
-// hasPermissionTo returns true if the user can perform the given
-// action on the given user id
-func (u *User) hasPermissionTo(action, id int) bool {
-	if int(u.ID) == id {
-		return true
+// ConvertUserToUserResponse converts the given user to a User
+// prepared to be written back to the client.
+func (store *Database) ConvertUserToUserResponse(u *User) (*UserResponse, error) {
+	userResponse := &UserResponse{
+		ID:        u.ID,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Bio:       u.Bio,
+		Active:    u.Active,
+		CreatedAt: u.CreatedAt,
 	}
-	return u.Role >= action
+	role, err := store.GetRoleByID(u.RoleID)
+	if err != nil {
+		return nil, errors.New(err.Message)
+	}
+	userResponse.Role = role
+	return userResponse, nil
 }
 
 // generateRandomUser creates a random user and returns it
@@ -184,7 +197,7 @@ func generateRandomUser() *User {
 		FirstName: randomdata.FirstName(randomdata.RandomGender),
 		LastName:  randomdata.LastName(),
 		Email:     randomdata.Email(),
-		Role:      appvars.UserDefaultRole,
+		RoleID:    appvars.UserDefaultRole,
 	}
 	user.SetPassword(randomdata.FirstName(randomdata.RandomGender) + randomdata.Street())
 	return user

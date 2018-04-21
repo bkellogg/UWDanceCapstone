@@ -54,7 +54,7 @@ func (ctx *AuthContext) PasswordResetHandler(w http.ResponseWriter, r *http.Requ
 	case "PATCH":
 		reset := &models.PasswordResetRequest{}
 		if err := receive(r, reset); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Error(w, err.Message, err.Status)
 			return
 		}
 		if ok, err := ctx.SessionsStore.ValidatePasswordResetToken(email, reset.Token); !ok {

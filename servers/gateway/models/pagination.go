@@ -17,6 +17,23 @@ func PaginateUsers(users []*User, page int) *PaginatedUsers {
 	}
 }
 
+// PaginatedUserResponses defines the object that is written
+// back to the client for requests that can contain multiple
+// pages of UserResponse.
+type PaginatedUserResponses struct {
+	Page  int             `json:"page"`
+	Users []*UserResponse `json:"users"`
+}
+
+// PaginateUsers returns the given slice of users and the page
+// as a PaginatedUsers struct.
+func PaginateUserResponses(users []*UserResponse, page int) *PaginatedUserResponses {
+	return &PaginatedUserResponses{
+		Users: users,
+		Page:  page,
+	}
+}
+
 // PaginatedAuditions defines the object that is written
 // back to the client for requests that can contain multiple
 // pages of auditions.

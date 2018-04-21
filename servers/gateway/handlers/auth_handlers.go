@@ -17,13 +17,13 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 	}
 	newUser := &models.NewUserRequest{}
 	if err := receive(r, newUser); err != nil {
-		http.Error(w, "error decoding request: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "error decoding request: "+err.Message, err.Status)
 		return
 	}
 
-	userAlreadyExists, err := ctx.store.ContainsUser(newUser)
-	if err != nil {
-		http.Error(w, "error looking up user in database: "+err.Error(), http.StatusInternalServerError)
+	userAlreadyExists, dberr := ctx.store.ContainsUser(newUser)
+	if dberr != nil {
+		http.Error(w, dberr.Message, dberr.HTTPStatus)
 		return
 	}
 	if userAlreadyExists {
@@ -37,8 +37,8 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	if err = ctx.store.InsertNewUser(user); err != nil {
-		http.Error(w, "error inserting user: "+err.Error(), http.StatusInternalServerError)
+	if dberr = ctx.store.InsertNewUser(user); dberr != nil {
+		http.Error(w, "error inserting user: "+dberr.Message, dberr.HTTPStatus)
 		return
 	}
 
@@ -48,7 +48,12 @@ func (ctx *AuthContext) UserSignUpHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	respond(w, user, http.StatusCreated)
+	userResponse, err := ctx.permChecker.ConvertUserToUserResponse(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	respond(w, userResponse, http.StatusCreated)
 }
 
 // UserSignInHandler handles requests for user sign ins
@@ -59,14 +64,14 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 	}
 	signInRequest := &models.SignInRequest{}
 	if err := receive(r, signInRequest); err != nil {
-		http.Error(w, "error decoding request: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "error decoding request: "+err.Message, err.Status)
 		return
 	}
 
 	// Get the user from the database corresponding to the given email
-	user, err := ctx.store.GetUserByEmail(signInRequest.Email, true)
-	if err != nil {
-		http.Error(w, "error performing database lookup: "+err.Error(), http.StatusInternalServerError)
+	user, dberr := ctx.store.GetUserByEmail(signInRequest.Email, true)
+	if dberr != nil {
+		http.Error(w, "error performing database lookup: "+dberr.Message, dberr.HTTPStatus)
 		return
 	}
 	if user == nil || !user.Active {
@@ -77,18 +82,23 @@ func (ctx *AuthContext) UserSignInHandler(w http.ResponseWriter, r *http.Request
 
 	// Compare the passwords to check if they match. If they do, then the sign in is valid
 	// If they don't, then reject the signin request.
-	if err = user.Authenticate(signInRequest.Password); err != nil {
+	if err := user.Authenticate(signInRequest.Password); err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	state := sessions.NewSessionState(user)
-	if _, err = sessions.BeginSession(ctx.SessionKey, ctx.SessionsStore, state, w); err != nil {
+	if _, err := sessions.BeginSession(ctx.SessionKey, ctx.SessionsStore, state, w); err != nil {
 		http.Error(w, "error beginning session: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	respond(w, user, http.StatusOK)
+	userResponse, err := ctx.permChecker.ConvertUserToUserResponse(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	respond(w, userResponse, http.StatusOK)
 }
 
 // performs a dummy authentication to mimic a real authentication to
