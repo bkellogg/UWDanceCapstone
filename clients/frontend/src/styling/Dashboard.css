@@ -1,28 +1,39 @@
-.dashboard {
-    padding-left:25px;
-}
-
-#welcome {
-  margin-top: 50px;
-  font-size: 35px;
-}
-
 .announcement {
-  padding-top: 10px
-}
-
-.title{
-  background-color: lavender;
+  padding-top: 20px;
 }
 
 .cardBody{
-  background-color: #BFB2E5
+  background-color: lavender;
+  border: 1px solid lavender;
+  border-radius: 3px;
 }
 
 .warning{
-  background-color:#F7AC69
+  background-color:#e65100;
 }
 
+.announcementMessage{
+  padding: 1px 25px;
+  font-weight: 400;
+  color: #333;
+  
+}
+
+.showTitle2{
+  font-size: 14px;
+}
+
+.auditionAnnouncementCard{
+  padding: 15px 25px;
+  background-color: rgb(223, 234, 250);
+}
+
+.auditionHeading{
+  font-size: 16px;
+  font-weight: 500;
+  color: #e65100;
+  padding-bottom: 10px;
+}
 
 @media only screen and (max-width : 992px) {
 

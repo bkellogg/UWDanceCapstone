@@ -1,34 +1,59 @@
-.header{
-  display: flex;
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+.header, .mainContentBorder{
+  width: 100%;
+  /* margin-bottom: 3%; */
+  padding: 2%;
   position: relative;
-  height: 150px
 }
 
-#photo {
-  height: 150px;
-  width: 150px
+.photoContainerWrap {
+  position: relative;
+  display: inline-block;
+  margin-right: 3%;
 }
 
-.name {
-  height: 150px;
-  width: 150px
+.nameAndBioWrap{
+  width: 70%;
+  position: relative;
+  display: inline-block;
 }
 
-#profileName{
+/* #edit {
   position: absolute;
-  bottom: 0px;
-  margin-bottom:0px;
-  padding-left:25px
+  top: 0;
+  right: 0;
+} */
+
+img#photo {
+  width: 150px;
+  height: 150px;
+  
+  
 }
 
-.sub {
-  padding-left: 50px;
-  padding-top: 80px;
+.name, .bio{
+  width: auto;
 }
 
-#bio{
-  padding-top:30px;
+.name, #editName {
+  z-index: 1;
+  text-transform: capitalize;
+  padding-bottom: 1%;
 }
+
+.bio, #editBio{
+  z-index: 2;
+}
+
+.card1, .card2, #photo{
+  border-radius: 3px;
+  /* box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;  */
+}
+
 
 #historyTitle {
   margin-bottom:15px
@@ -38,30 +63,26 @@
   margin-bottom: 15px
 }
 
-#bio, #history, #resume {
-  margin-top: 20px;
+#history, #resume {
   margin-bottom:40px
 }
 
+
 .subheader {
-  font-size: 20px;
+  font-size: 15px;
+
 }
 
-#editName{
-  padding-left: 25px;
-  display: flex;
-  position: absolute;
-  bottom: 0px;
-  margin-bottom:0px;
+section{
+  font-size: 14px;
 }
+
 
 #firstName, #lastName{
   margin-right: 10px
 }
 
-#editBio{
-  width: 80%;
-}
+
 @media only screen and (max-width : 992px) {
 
 }

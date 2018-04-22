@@ -2,6 +2,7 @@ export const headerAuthorization = "Authorization";
 
 export const API_URL_BASE = "https://dasc.capstone.ischool.uw.edu/api/v1/";
 
+
 export function saveAuth(auth) {
     localStorage.setItem("auth", auth);
 };
@@ -25,6 +26,11 @@ export function getAuth() {
 export function clearAuthAndUser() {
     localStorage.removeItem("auth");
     localStorage.removeItem("user");
+    localStorage.removeItem("allUsers");
+    localStorage.removeItem("firstLoad")
+    localStorage.removeItem("socketCast")
+    localStorage.removeItem("uncast")
+    localStorage.removeItem("contested")
 };
 
 export function makeRequest(resource, payload = "", method = "GET", useAuth = false) {
@@ -58,43 +64,72 @@ export function refreshLocalUser() {
         setLocalUser(JSON.stringify(data));
     })
     .catch((err) => {
-        console.error(err);
-        //alert(err);
         signOut();
     })
 }
 
 export function signOut() {
-    //makeRequest("sessions", {}, "DELETE", true);
-    // no need to handle the respose here. If it fails, you can treat the auth and
-    // user as invalid and clear their local storage entries anyway.
     clearAuthAndUser();
+    window.location.reload()
 }
 
-export function uploadPhoto(){
-    
+export function uploadPhoto(val){
+    let file = val;
+    let data = new FormData();
+    data.append("image", file.files[0]);
+    let xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+        
+    });
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status < 400) {
+                return xhr.responseText
+            } 
+        }
+    };
+
+    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
+    xhr.setRequestHeader("Authorization", getAuth());
+    xhr.setRequestHeader("ImageFieldName", "image");
+
+    xhr.send(data);
 }
 
 export function uploadResume(val){
-    let payload = {
-        "resume": val
+    let file = val;
+    let data = new FormData();
+    data.append("resume", file.files[0]);
+
+    let xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            
+        }
+    });
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status < 400) {
+                return xhr.responseText
+            } 
+        }
     };
-    makeRequest(("users" + getID()), payload, "POST", true)
-        .then((res) =>{
-            if (res.ok) {
-                refreshLocalUser()
-                return
-            }
-            return res.text().then((t) => Promise.reject(t));
-        })
-        .catch((err) => {})
+
+    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
+    xhr.setRequestHeader("Authorization", getAuth());
+    xhr.setRequestHeader("ResumeFieldName", "resume");
+
+    xhr.send(data);
 }
 
 export function uploadBio(val){
     let payload = {
         "bio": val
     };
-    makeRequest("users/", payload, "PATCH", true)
+    makeRequest("users/me", payload, "PATCH", true)
         .then((res) => {
             if (res.ok) {
                 refreshLocalUser()
@@ -105,12 +140,14 @@ export function uploadBio(val){
         .then(() => {
             refreshLocalUser()
         })
-        .catch((err) => {})
+        .catch((err) => {
+            console.error(err)
+        })
 }
 
 export function uploadFName(val){
     let payload = {
-        "firstname": val
+        "firstName": val
     };
     makeRequest("users/me", payload, "PATCH", true)
         .then((res) => {
@@ -123,12 +160,14 @@ export function uploadFName(val){
         .then(() => {
             refreshLocalUser()
         })
-        .catch((err) => {})
+        .catch((err) => {
+            console.error(err)
+        })
 }
 
 export function uploadLName(val){
     let payload = {
-        "lastname": val
+        "lastName": val
     };
     makeRequest("users/me", payload, "PATCH", true)
         .then((res) => {
@@ -141,49 +180,39 @@ export function uploadLName(val){
         .then(() => {
             refreshLocalUser()
         })
-        .catch((err) => {})
+        .catch((err) => {
+            console.error(err)
+        })
 }
 
-/*
+//TODO - needs to use the resume header? not sure how we're going to display this
 export function getResume(){
-  let id = this.state.user.id;
-  let auth = this.state.auth;
-  fetch(Util.API_URL_BASE + "users/" + id + "/resume?auth=" + auth)
-        .then((res) => {
-            if (res.ok) {
-                return res.blob();
-            }
-            return res.text().then((t) => Promise.reject(t));
-        })
-        .then((data) => {
-            this.setState({
-              resume : data
-            })
-        })
-        .catch((err) => {
-            this.setState({
-              resumeErr: err
-            })
-        });
-} */
+    return makeRequest("users/me/resume", {}, "GET", true)
+    .then((res) => {
+        if (res.ok) {
+            console.log(res)
+            return res.json();
+        }
+    })
+    .catch((err) => {
+        console.error(err);
+    })
+}
 
-/*
-export function getPhoto(){
-    fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
-        .then((res) => {
-            if (res.ok) {
-                return res.blob();
-            }
-            return res.text().then((t) => Promise.reject(t));
-        })
-        .then((data) => {
-            this.setState({
-              photoSrc : URL.createObjectURL(data)
-            })
-        })
-        .catch((err) => {
-            this.setState({
-              photoError: err
-            })
-        });
-} */
+//TODO - this is a TEST, change uid 1 to me to get the actual current users history
+export function getDancerHistory(){
+  return makeRequest("users/1/shows?history=all", {}, "GET", true)
+  .then((res) => {
+      if(res.ok){
+          return res.json()
+      }
+  }).catch((err) => {
+    console.error(err)
+  })
+}
+
+export function handleError(err){
+    if (err === "you must be signed in to use this resource"){
+        signOut()
+    }
+}

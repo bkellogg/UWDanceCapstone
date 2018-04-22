@@ -1,47 +1,20 @@
-.audition {
-    padding-left: 25px;
-    margin-top: 50px
-}
-
-#auditionTitle{
-    font-size: 35px
-}
-
 .row{
-    display: block
+    display: block;
 }
 
-.audition{
-    margin-bottom: 200px
+.formWrap{
+    padding-left: 2%;
 }
 
-.register{
-    margin-top: 15px;
-    background-color: lavender 
+.table-drag-select td.cell-selected{
+    background-color: #22A7E0;
 }
 
-.success{
-    background-color: lavender
+.table-drag-select td.cell-being-selected{
+    background-color: #708090;
 }
-
-.successCard{
-    margin-top: 10px
-}
-
-#number{
-    font-size: 65px;
-    margin: 0
-}
-
-#regCard{
-    text-align: center;
-    width: 300px
-}
-
-#numArea{
-    padding: 0px;
-}
-
-.regNum{
-    background-color: #BFB2E5
-}
+  
+RaisedButton:hover{
+    background-color: #22A7E0;
+    color: white;
+  }
