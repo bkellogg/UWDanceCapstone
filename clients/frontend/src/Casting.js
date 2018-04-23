@@ -150,11 +150,6 @@ class Casting extends Component {
   render() {
     const { stepIndex } = this.state;
     const contentStyle = { margin: '0 16px' };
-    const conflicts = JSON.parse(localStorage.contested)
-    let warningProps = {}
-    if (conflicts.length === 0) {
-      //do warning styles here
-    }
     return (
       <section className="main">
         <div className="mainView">
