@@ -193,7 +193,7 @@ class AllDancersRow extends Component {
         }
         <td>
             {this.props.selectCast && 
-                <section>
+                <section className="personRankBoxes">
                     <div className="check">
                         <Checkbox
                             value="1"

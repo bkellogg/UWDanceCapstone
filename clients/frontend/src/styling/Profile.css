@@ -2,6 +2,7 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+
 .header, .mainContentBorder{
   width: 100%;
   /* margin-bottom: 3%; */
@@ -28,9 +29,9 @@ body {
 }
 
 img#photo {
-  width: 150px;
-  height: 150px;
-  
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
   
 }
 
@@ -70,10 +71,6 @@ img#photo {
 .subheader {
   font-size: 15px;
 
-}
-
-section{
-  font-size: 14px;
 }
 
 

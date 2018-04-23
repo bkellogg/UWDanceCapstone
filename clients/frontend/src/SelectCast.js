@@ -83,7 +83,7 @@ class SelectCast extends Component {
                 <th>#</th>
                 <th>Name</th>
                 <th>Pieces</th>
-                <th className="centerText">
+                <th className="personRankBoxes">
                     Rank
                     <br/>
                     <div className="check rank">1</div>
