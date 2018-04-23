@@ -9,20 +9,15 @@ class CheckAvailability extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cast: JSON.parse(localStorage.getItem("cast"))
+      cast: JSON.parse(localStorage.getItem("socketCast"))
     }
   };
 
-
   render() {
-    setTimeout(()=> { this.setState({cast: JSON.parse(localStorage.getItem("socketCast"))})}, 50);
-
-
-    //let cast = JSON.parse(localStorage.socketCast)
-    //console.log(cast)
-    let rows = this.state.cast.map(dancer => {
+   const cast = JSON.parse(localStorage.getItem("socketCast"))
+    let rows = cast.map(dancer => {
       return (
-        <CastDancersRow key={dancer.id} person={dancer} filter={true} />
+        <CastDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} regNum={dancer.dancer.regNum} comments ={dancer.dancer.comments} filter={true} />
       )
     })
 

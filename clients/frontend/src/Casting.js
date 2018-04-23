@@ -11,6 +11,8 @@ import SelectCast from './SelectCast';
 import CheckAvailability from './CheckAvailability';
 import ResolveConflict from './ResolveConflict';
 import SetRehearsals from './SetRehearsals';
+import WarningIcon from 'material-ui/svg-icons/alert/warning';
+import {red500} from 'material-ui/styles/colors';
 import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
@@ -66,8 +68,6 @@ class Casting extends Component {
     //direct traffic
     if (stepIndex === 0){
       this.setCast()
-    } else if (stepIndex === 2){
-      console.log('sending cast updates')
     }
 
     if (stepIndex < 3) {
@@ -150,7 +150,11 @@ class Casting extends Component {
   render() {
     const { stepIndex } = this.state;
     const contentStyle = { margin: '0 16px' };
-
+    const conflicts = JSON.parse(localStorage.contested)
+    let warningProps = {}
+    if (conflicts.length === 0) {
+      //do warning styles here
+    }
     return (
       <section className="main">
         <div className="mainView">
@@ -159,7 +163,7 @@ class Casting extends Component {
           <div className="castingFlowWrap">
 
               {/*This is the stepper styling - you can click the steps to go between them*/}
-              <div className="castingFlow" style={{ width: '100%', maxWidth: '100%', margin: 'auto'}}>
+              <div className="castingFlow" style={{ width: '100%', maxWidth: '100%', margin: 'auto', color: "red"}}>
                 <Stepper linear={true} activeStep={stepIndex}>
                   <Step>
                     <StepButton className="steps"  onClick={() => this.setState({ stepIndex: 0 })} >
@@ -172,7 +176,8 @@ class Casting extends Component {
                     </StepButton>
                   </Step>
                   <Step>
-                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 2 })}>
+                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 2 })} icon={<WarningIcon color={red500} />}
+                      style={{color: red500}}>
                       Resolve Conflicts
                     </StepButton>
                   </Step>

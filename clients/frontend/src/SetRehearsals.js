@@ -75,7 +75,7 @@ class SetRehearsals extends Component {
     let rehearsalList = []
     this.state.rehearsalSchedule.forEach((rehearsal, i) => {
       rehearsalList.push(
-        <div key={i}> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime}. </div>
+        <div key={i}> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime} </div>
       )
     })
     return (
@@ -84,7 +84,7 @@ class SetRehearsals extends Component {
           <div className="transparentCard">
             <div className="wrap">
               <div className="castList setTimesWrap">
-                <div class="extraClass">
+                <div className="extraClass">
                   <div className="setTimes">
 
                     <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
@@ -146,7 +146,10 @@ class SetRehearsals extends Component {
                 disabled={finished}
               >
                 <p className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong>, there are <strong className="importantText">no conflicts</strong> with other choreographers, and that your rehearsal times are :
-            <br /> insert rehearsal times here <br />
+                <br />
+                <div style={{padding:"20px"}}>
+                 {rehearsalList}
+                 </div>
                   <br /> </p>
                 <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting.</p>
               </Dialog>

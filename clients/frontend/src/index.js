@@ -4,10 +4,17 @@ import './styling/index.css';
 import App from './App';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import registerServiceWorker from './registerServiceWorker';
-import { BrowserRouter } from 'react-router-dom'
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import { BrowserRouter } from 'react-router-dom';
+
+const muiTheme = getMuiTheme({
+    stepper: {
+        iconColor: 'green' // or logic to change color
+    }
+})
 
 ReactDOM.render(
-    <MuiThemeProvider>
+    <MuiThemeProvider muiTheme={muiTheme}>
         <BrowserRouter>
             <App />
         </BrowserRouter>
