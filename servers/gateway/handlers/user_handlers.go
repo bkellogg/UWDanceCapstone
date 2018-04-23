@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
-	"strings"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -20,7 +18,7 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	if r.Method != "GET" {
 		return methodNotAllowed()
 	}
-	if !u.Can(permissions.SeeAllUsers) {
+	if !ctx.permChecker.UserCan(u, permissions.SeeAllUsers) {
 		return permissionDenied()
 	}
 	page, httperror := getPageParam(r)
@@ -28,11 +26,15 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 		return httperror
 	}
 	includeInactive := getIncludeInactiveParam(r)
-	users, err := ctx.store.GetAllUsers(page, includeInactive)
-	if err != nil {
-		return HTTPError("error getting users: "+err.Error(), http.StatusInternalServerError)
+	users, dberr := ctx.store.GetAllUsers(page, includeInactive)
+	if dberr != nil {
+		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
-	return respond(w, models.PaginateUsers(users, page), http.StatusOK)
+	userResponses, err := ctx.permChecker.ConvertUserSliceToUserResponseSlice(users)
+	if err != nil {
+		return HTTPError(err.Error(), http.StatusInternalServerError)
+	}
+	return respond(w, models.PaginateUserResponses(userResponses, page), http.StatusOK)
 }
 
 // SpecificUserHandler handles requests for a specific user
@@ -44,43 +46,45 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 	includeInactive := getIncludeInactiveParam(r)
 	switch r.Method {
 	case "GET":
-		if !u.CanSeeUser(userID) {
+		if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
 			return permissionDenied()
 		}
-		user, err := ctx.store.GetUserByID(userID, includeInactive)
-		if err != nil {
-			return HTTPError("error looking up user: "+err.Error(), http.StatusInternalServerError)
+		user, dberr := ctx.store.GetUserByID(userID, includeInactive)
+		if dberr != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		if user == nil {
 			return objectNotFound("user")
 		}
 
-		return respond(w, user, http.StatusOK)
+		userResponse, err := ctx.permChecker.ConvertUserToUserResponse(user)
+		if err != nil {
+			return HTTPError(err.Error(), http.StatusInternalServerError)
+		}
+
+		return respond(w, userResponse, http.StatusOK)
 	case "PATCH":
-		if !u.CanModifyUser(userID) {
+		if !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
 			return permissionDenied()
 		}
 		updates := &models.UserUpdates{}
 		if err := receive(r, updates); err != nil {
-			return receiveFailed()
+			return err
 		}
 		if err := updates.CheckBioLength(); err != nil {
 			return HTTPError(err.Error(), http.StatusBadRequest)
 		}
-		err := ctx.store.UpdateUserByID(userID, updates, includeInactive)
-		if err != nil {
-			return HTTPError(err.Error(), http.StatusInternalServerError)
+		dberr := ctx.store.UpdateUserByID(userID, updates, includeInactive)
+		if dberr != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		return respondWithString(w, "user updated", http.StatusOK)
 	case "DELETE":
-		if !u.CanDeleteUser(userID) {
+		if !!ctx.permChecker.UserCanDeleteUser(u, int64(userID)) {
 			return permissionDenied()
 		}
-		if err := ctx.store.DeactivateUserByID(userID); err != nil {
-			if err != sql.ErrNoRows {
-				return HTTPError("error deleting user: "+err.Error(), http.StatusInternalServerError)
-			}
-			return objectNotFound("user")
+		if dberr := ctx.store.DeactivateUserByID(userID); err != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		return respondWithString(w, "user has been deleted", http.StatusOK)
 	default:
@@ -104,17 +108,13 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 	case "pieces":
 		pieces, err := ctx.store.GetPiecesByUserID(userID, page, includeDeleted)
 		if err != nil {
-			return HTTPError("error getting pieces by user id: "+err.Error(), http.StatusInternalServerError)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
 	case "shows":
 		shows, err := ctx.store.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
 		if err != nil {
-			code := http.StatusInternalServerError
-			if err.Error() == appvars.ErrInvalidHistoryOption {
-				code = http.StatusBadRequest
-			}
-			return HTTPError("error getting shows by user id: "+err.Error(), code)
+			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
 	case "photo":
@@ -123,7 +123,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return err
 		}
 		if r.Method == "GET" {
-			if !u.CanSeeUser(userID) {
+			if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
 				return permissionDenied()
 			}
 			imageBytes, err := getUserProfilePicture(userID)
@@ -132,7 +132,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			}
 			return respondWithImage(w, imageBytes, http.StatusOK)
 		} else if r.Method == "POST" {
-			if !u.CanModifyUser(userID) {
+			if !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
 				return permissionDenied()
 			}
 			err = saveImageFromRequest(r, userID)
@@ -157,6 +157,11 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return respondWithString(w, "resume uploaded!", http.StatusCreated)
 		}
 		return methodNotAllowed()
+	case "role":
+		if !ctx.permChecker.UserCan(u, permissions.ChangeUserRole) {
+			return permissionDenied()
+		}
+		return ctx.handleUserRole(w, r, userID)
 	default:
 		return objectTypeNotSupported()
 	}
@@ -186,97 +191,11 @@ func (ctx *AuthContext) UserMembershipActionDispatcher(w http.ResponseWriter, r 
 	}
 }
 
-// handleUserAuditionAvailability handles requests related to availability on a User Audition
-func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *models.User, w http.ResponseWriter, r *http.Request) *middleware.HTTPError {
-	switch r.Method {
-	case "GET":
-		if !u.Can(permissions.SeeUserAvailability) {
-			return permissionDenied()
-		}
-		avail, err := ctx.store.GetUserAuditionAvailability(userID, audID)
-		if err != nil {
-			code := http.StatusInternalServerError
-			if err.Error() == appvars.ErrUserAuditionDoesNotExist {
-				code = http.StatusBadRequest
-			}
-			return HTTPError(err.Error(), code)
-		}
-		return respond(w, avail, http.StatusOK)
-	case "PATCH":
-		if !u.Can(permissions.ChangeUserAvailability) {
-			return permissionDenied()
-		}
-		wtb := &models.WeekTimeBlock{}
-		if err := receive(r, wtb); err != nil {
-			return receiveFailed()
-		}
-		if err := ctx.store.UpdateUserAuditionAvailability(userID, audID, wtb); err != nil {
-			code := http.StatusInternalServerError
-			if err.Error() == appvars.ErrUserAuditionDoesNotExist ||
-				strings.Contains(err.Error(), "validation failed") {
-				code = http.StatusBadRequest
-			}
-			return HTTPError(err.Error(), code)
-		}
-		return respondWithString(w, "availability updated", http.StatusOK)
-	default:
-		return methodNotAllowed()
-	}
-	return nil
-}
-
-// handleUserAuditionComment handles requests related to comments on a User Audition
-func (ctx *AuthContext) handleUserAuditionComment(userID, audID int, u *models.User, w http.ResponseWriter, r *http.Request) *middleware.HTTPError {
-	switch r.Method {
-	case "POST":
-		if !u.Can(permissions.CommentOnUserAudition) {
-			return permissionDenied()
-		}
-		newComment := &models.AuditionComment{}
-		if receive(r, newComment) != nil {
-			return receiveFailed()
-		}
-		comment, err := ctx.store.InsertUserAuditionComment(userID, audID, int(u.ID), newComment.Comment)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				return HTTPError(appvars.ErrUserAuditionDoesNotExist, http.StatusNotFound)
-			}
-			return HTTPError("error inserting audition comment: "+err.Error(), http.StatusInternalServerError)
-		}
-		return respond(w, comment, http.StatusCreated)
-	case "GET":
-		if !u.Can(permissions.SeeCommentsOnUserAudition) {
-			return permissionDenied()
-		}
-		includeDeleted := getIncludeDeletedParam(r)
-		page, httperr := getPageParam(r)
-		if httperr != nil {
-			return httperr
-		}
-		creator, httperr := getCreatorParam(r)
-		if httperr != nil {
-			return httperr
-		}
-		comments, err := ctx.store.GetUserAuditionComments(userID, audID, creator, page, includeDeleted)
-		if err != nil {
-			if err == sql.ErrNoRows ||
-				err.Error() == appvars.ErrUserAuditionDoesNotMatch ||
-				err.Error() == appvars.ErrUserAuditionDoesNotExist {
-				return HTTPError(err.Error(), http.StatusNotFound)
-			}
-			return HTTPError("error getting user audition comments: "+err.Error(), http.StatusInternalServerError)
-		}
-		return respond(w, models.PaginateUserAuditionComments(comments, page), http.StatusOK)
-	default:
-		return methodNotAllowed()
-	}
-}
-
 // UserMemberShipHandler handles all requests to add or remove a user to
 // an entity.
 func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	function := ctx.store.AddUserToPiece
-	message := "user added to piece"
+	function := ctx.store.RemoveUserFromPiece
+	message := "user removed from piece"
 	vars := mux.Vars(r)
 	objType := vars["object"]
 	objID, err := strconv.Atoi(vars["objectID"])
@@ -288,36 +207,49 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 	if httperr != nil {
 		return httperr
 	}
+
 	switch r.Method {
 	case "LINK":
 		if objType == "auditions" {
-			if !u.Can(permissions.AddUserToAudition) {
+			if !ctx.permChecker.UserCanAddToAudition(u, int64(userID)) {
 				return permissionDenied()
+			}
+			numShows, err := getNumShowsParam(r)
+			if err != nil {
+				return HTTPError("number of shows is not a valid number", http.StatusBadRequest)
+			}
+			if numShows < 1 || numShows > 2 {
+				return HTTPError("number of shows must be 1 or 2", http.StatusBadRequest)
 			}
 			ual := &models.UserAuditionLink{}
 			if err := receive(r, ual); err != nil {
-				return receiveFailed()
+				return err
 			}
-			if httperr := ctx.addUserToAudition(userID, objID, int(u.ID), ual); httperr != nil {
+			if httperr := ctx.addUserToAudition(userID, objID, int(u.ID), numShows, ual); httperr != nil {
 				return httperr
 			}
 			return respondWithString(w, "user added to audition", http.StatusOK)
 		} else if objType == "pieces" {
-			if !u.Can(permissions.AddUserToPiece) {
+			if !ctx.permChecker.UserCan(u, permissions.AddUserToPiece) {
 				return permissionDenied()
 			}
+			err := ctx.store.AddUserToPiece(userID, objID)
+			if err != nil {
+				return HTTPError(err.Message, err.HTTPStatus)
+			}
+			return respondWithString(w, "user added to piece", http.StatusOK)
 		} else {
 			return objectTypeNotSupported()
 		}
 	case "UNLINK":
 		if objType == "pieces" {
-			if !u.Can(permissions.RemoveUserFromPiece) {
+			if !ctx.permChecker.UserCan(u, permissions.RemoveUserFromPiece) {
 				return permissionDenied()
 			}
 			function = ctx.store.RemoveUserFromPiece
 			message = "user removed from piece"
 		} else if objType == "auditions" {
-			if !u.Can(permissions.RemoveUserFromAudition) {
+			if !ctx.permChecker.UserCan(u, permissions.RemoveUserFromAudition) {
 				return permissionDenied()
 			}
 			function = ctx.store.RemoveUserFromAudition
@@ -328,32 +260,28 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 	default:
 		return methodNotAllowed()
 	}
-	err = function(userID, objID)
-	if err != nil {
-		code := http.StatusInternalServerError
-		if err == sql.ErrNoRows {
-			code = http.StatusBadRequest
-		} else if err.Error() == appvars.ErrPieceDoesNotExist ||
-			err.Error() == appvars.ErrAuditionDoesNotExist {
-			code = http.StatusNotFound
-		}
-		return HTTPError("error performing membership change: "+err.Error(), code)
+	dberr := function(userID, objID)
+	if dberr != nil {
+		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
 	return respondWithString(w, message, http.StatusOK)
 }
 
-// addUserToAudition adds the given user to the given audition with the given UserAuditionLink
-// return an HTTPError if one occurred.
-func (ctx *AuthContext) addUserToAudition(userID, audID, creatorID int, ual *models.UserAuditionLink) *middleware.HTTPError {
-	if err := ual.Validate(); err != nil {
-		return HTTPError("error validating user audition link: "+err.Error(), http.StatusBadRequest)
+// handleUserRole handles all requests to change a user's role.
+func (ctx *AuthContext) handleUserRole(w http.ResponseWriter, r *http.Request, userID int) *middleware.HTTPError {
+	if r.Method != "PATCH" {
+		return methodNotAllowed()
 	}
-	if err := ctx.store.AddUserToAudition(userID, audID, creatorID, ual.Availability, ual.Comment); err != nil {
-		code := http.StatusInternalServerError
-		if err.Error() == appvars.ErrAuditionDoesNotExist || err.Error() == appvars.ErrUserAlreadyInAudition {
-			code = http.StatusBadRequest
+	roleChange := &models.RoleChange{}
+	if err := receive(r, roleChange); err != nil {
+		return err
+	}
+	err := ctx.store.ChangeUserRole(userID, roleChange.RoleName)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return HTTPError("user not found", http.StatusNotFound)
 		}
-		return HTTPError("error performing membership change: "+err.Error(), code)
+		return HTTPError("error changing user role: "+err.Error(), http.StatusInternalServerError)
 	}
-	return nil
+	return respondWithString(w, "user role updated", http.StatusOK)
 }

@@ -70,7 +70,7 @@ class ResolveConflict extends Component {
           
           <div className="transparentCard">
           <div className="wrap">
-            <div className="castList-v2">
+            <div className="castList-v2 cardAddMargin">
               <div className="choreographersSelecteCast">
                 <h2 className="smallHeading"> Your cast </h2>
                 <table>
@@ -86,7 +86,7 @@ class ResolveConflict extends Component {
                 </table>
               </div>
               </div>
-              <div className="castList-v2-1">
+              <div className="castList-v2">
               <div className="restOfCast">
                 <h2 className="smallHeading"> All dancers </h2>
                 <table>

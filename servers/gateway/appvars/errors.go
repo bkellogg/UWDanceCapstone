@@ -28,4 +28,7 @@ const (
 	ErrUserAuditionDoesNotMatch = "combination of user id and audition id does not match the given user audition id"
 
 	ErrNoResultsMatchedGivenFilters = "no results matched the given filters"
+
+	ErrNoRoleFound = "role not found"
+	ErrNoUserFound = "user not found"
 )

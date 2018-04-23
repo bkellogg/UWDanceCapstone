@@ -47,6 +47,7 @@ class Casting extends Component {
       //}
     })
 
+    console.log(this.props.audition)
     //add user to casting session
     Util.makeRequest("auditions/" + this.props.audition + "/casting", "", "POST", true)
       .then((res) => {
@@ -151,7 +152,6 @@ class Casting extends Component {
   render() {
     const { stepIndex } = this.state;
     const contentStyle = { margin: '0 16px' };
-
     return (
       <section className="main">
         <div className="mainView">

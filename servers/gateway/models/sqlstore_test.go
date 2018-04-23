@@ -130,7 +130,7 @@ func compareUsers(user1, user2 *User) error {
 	if user1.Email != user2.Email {
 		return fmt.Errorf("inserted and retrieved emails did not match")
 	}
-	if user1.Role != user2.Role {
+	if user1.RoleID != user2.RoleID {
 		return fmt.Errorf("inserted and retrieved roles did not match")
 	}
 	return nil

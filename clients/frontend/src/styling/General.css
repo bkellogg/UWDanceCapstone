@@ -14,7 +14,7 @@
     width: 95%;
     margin-bottom: 30px;
     margin-top: 30px;
-    padding: 15px;
+    padding: 25px;
 }
 
 .card1, .card2, .setTimes, .dancersList-filter, .overlapAvailability, .choreographersSelecteCast, .restOfCast, .cardBody{
@@ -28,13 +28,8 @@
     padding: 0;
 }
 
-.card1, .card2{
+.card1, .card2, .choreographersSelecteCast, .restOfCast, .dancersList-filter{
     background-color: #F6F8FC;
-}
-
-.table{
-    margin-left: 10px;
-    margin-right: 10px;
 }
 
 h1 {

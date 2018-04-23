@@ -89,8 +89,7 @@ tr{
 /* HALF CARDS */
 /*inside of small card with cast filter*/
 .dancersList-filter{
-    padding: 20px;
-    background-color: white;
+    padding: 25px;
 }
 
 
@@ -101,19 +100,17 @@ tr{
     margin-right: 3%;
   }
 
-.castList-v2, .castList-v2-1{
+.castList-v2{
     width: 48%;
 }
 
-.castList-v2{
+.cardAddMargin{
     margin-right: 4%;
 }
 
 /* RESOLVE CONFLICTS */
 .conflictsCard{
     width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
     z-index: 1;
 }
 
@@ -133,7 +130,6 @@ tr{
 }
 
 .choreographersSelecteCast, .restOfCast{
-    background-color: white;
     padding: 25px;
 }
 
