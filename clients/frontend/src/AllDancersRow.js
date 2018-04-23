@@ -74,6 +74,7 @@ class AllDancersRow extends Component {
                 two: false,
                 three: false
             }
+            
         })
     } else if (val === "2") {
         this.setState({
@@ -196,6 +197,8 @@ class AllDancersRow extends Component {
                 <section className="personRankBoxes">
                     <div className="check">
                         <Checkbox
+                        inputStyle={{backgroundColor: 'red'}}
+                        iconStyle={{fill:'black'}}
                             value="1"
                             checked={this.state.checked.one}
                             onCheck={this.updateCheck}
@@ -203,6 +206,7 @@ class AllDancersRow extends Component {
                     </div>
                     <div className="check">
                         <Checkbox 
+                        iconStyle={{fill:'black'}}
                             value="2"
                             checked={this.state.checked.two}
                             onCheck={this.updateCheck}
@@ -210,6 +214,7 @@ class AllDancersRow extends Component {
                     </div>
                     <div className="check">
                         <Checkbox
+                        iconStyle={{fill:'black'}}
                             value="3"
                             checked={this.state.checked.three}
                             onCheck={this.updateCheck}

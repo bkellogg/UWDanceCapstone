@@ -7,6 +7,11 @@
 .back-button-styles-css {
     margin: 12 auto !important;
     float: left;
+
+}
+
+.back-button-styles-css:hover{
+    background-color: transparent;
 }
 
 .next-button-styles-css {
@@ -35,7 +40,6 @@ th{
 
 .check, .checkOne {
     display: inline-block;
-    align-items: center;
 }
 
 .checkOne {
@@ -183,7 +187,6 @@ tr{
     font-weight: 600;
     padding-right: 5px;
 }
-
 
 .personRankBoxes{
     text-align: center;
