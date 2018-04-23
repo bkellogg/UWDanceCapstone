@@ -21,11 +21,11 @@ body {
   display: inline-block;
 }
 
-/* #edit {
+#edit {
   position: absolute;
   top: 0;
   right: 0;
-} */
+}
 
 img#photo {
   width: 150px;

@@ -23,8 +23,10 @@
 th{
     color: #22A7E0;    
     padding:0;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     border: none;
+    font-weight: 500;
+    font-size: 13px;
 }
 
 /* .centerText{
@@ -73,13 +75,6 @@ tr{
     border: none;
 }
 
-.categories{
-    color: #22A7E0;
-    padding-bottom: 10px;
-    font-size: 13px;
-    font-weight: 100;
-}
-
 /* LAYOUT */
 /* small card with cast filter */
 .castList{
@@ -123,8 +118,8 @@ tr{
     font-size: 15px;
     color: #e65100;
     margin: 0;
-    padding: 10px;
-    padding-bottom: 20px;
+    padding-top: 10px;
+    padding-bottom: 30px;
 }
 
 .smallHeading{
