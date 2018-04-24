@@ -1,7 +1,3 @@
-body{
-    background-color: #F6F8FC;
-}
-
 .mainView{
     padding-left: 5%;
     margin-bottom: 7%;
@@ -18,28 +14,22 @@ body{
     width: 95%;
     margin-bottom: 30px;
     margin-top: 30px;
-    padding: 15px;
+    padding: 25px;
 }
 
 .card1, .card2, .setTimes, .dancersList-filter, .overlapAvailability, .choreographersSelecteCast, .restOfCast, .cardBody{
-    border-radius: 5px;
-        
-    -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
-    -moz-box-shadow: rgba(0,0,0,0.3) 0 1px 3px;
-    box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+        border: 0;
+    -webkit-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+    -moz-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+    box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
 }
 
 .transparentCard{
     padding: 0;
 }
 
-.card1, .card2{
-    background-color: white;
-}
-
-.table{
-    margin-left: 10px;
-    margin-right: 10px;
+.card1, .card2, .choreographersSelecteCast, .restOfCast, .dancersList-filter{
+    background-color: #F6F8FC;
 }
 
 h1 {
@@ -48,7 +38,7 @@ h1 {
     font-variant: normal;
     font-weight: 400;
     letter-spacing: 1px;
-    color: #27384A;
+    color: hsl(0, 0%, 13%);
     text-transform: capitalize;
     margin-bottom: 2%;
 }

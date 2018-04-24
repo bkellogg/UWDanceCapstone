@@ -9,7 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 const muiTheme = getMuiTheme({
     stepper: {
-        iconColor: 'green' // or logic to change color
+        iconColor: '#22A7E0' // or logic to change color
     }
 })
 

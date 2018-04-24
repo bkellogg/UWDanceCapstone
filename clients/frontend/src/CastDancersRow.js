@@ -15,7 +15,7 @@ class CastDancersRow extends Component {
   };
 
   componentDidMount(){
-    this.getPhoto()
+      this.getPhoto()
   }
 
   onCheck = () => {
@@ -103,14 +103,14 @@ class CastDancersRow extends Component {
                 <img src={this.state.photoUrl} alt="profile" className="avatar"/>
             </td>
             <td className="dancerAssignedNumber">
-            {this.props.regNum}
+                regNum
             </td>
             <td>
                 {person.firstName + " " + person.lastName}
             </td>
             {this.props.filter && this.props.comments[0].comment !== "" &&
                 <td>
-                    <i class="fas fa-exclamation-circle"></i>
+                    !
                 </td>
             }
             {!this.props.filter && !this.props.uncast &&

@@ -94,7 +94,7 @@ class Profile extends Component {
       })
   }
 
-getPhoto() {
+  getPhoto() {
     fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
       .then((res) => {
         if (res.ok) {
@@ -139,14 +139,14 @@ getPhoto() {
     let xhr = new XMLHttpRequest();
 
     xhr.addEventListener("readystatechange", () => {
-        this.getPhoto()
+      this.getPhoto()
     });
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status < 400) {
-                return xhr.responseText
-            } 
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status < 400) {
+          return xhr.responseText
         }
+      }
     };
 
     xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
@@ -154,35 +154,35 @@ getPhoto() {
     xhr.setRequestHeader("ImageFieldName", "image");
 
     xhr.send(data);
-}
+  }
 
-uploadResume = (val) => {
-  let file = val;
-  let data = new FormData();
-  data.append("resume", file.files[0]);
+  uploadResume = (val) => {
+    let file = val;
+    let data = new FormData();
+    data.append("resume", file.files[0]);
 
-  let xhr = new XMLHttpRequest();
+    let xhr = new XMLHttpRequest();
 
-  xhr.addEventListener("readystatechange", () => {
+    xhr.addEventListener("readystatechange", () => {
       if (this.readyState === 4) {
-          this.getResume()
+        this.getResume()
       }
-  });
+    });
 
-  xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
       if (xhr.readyState === XMLHttpRequest.DONE) {
-          if (xhr.status < 400) {
-              return xhr.responseText
-          }
+        if (xhr.status < 400) {
+          return xhr.responseText
+        }
       }
-  };
+    };
 
-  xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
-  xhr.setRequestHeader("Authorization", Util.getAuth());
-  xhr.setRequestHeader("ResumeFieldName", "resume");
+    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
+    xhr.setRequestHeader("Authorization", Util.getAuth());
+    xhr.setRequestHeader("ResumeFieldName", "resume");
 
-  xhr.send(data);
-}
+    xhr.send(data);
+  }
 
 
   onClick() {
@@ -242,127 +242,142 @@ uploadResume = (val) => {
   render() {
     return (
       <section className="main">
-      <div className="mainView">
-      <h1 className="pagetitle">Your Profile </h1>
+        <div className="mainView">
+          <h1 className="pagetitle">Your Profile </h1>
 
-        <div className="card1">
-          {/* FIRST CARD */}
-          <div className="wrap">
-            <div className="header">
-              <div className="photoContainerWrap">
-                <div id="photoContainer" className="photoContainer">
-                  {!this.state.edit &&
+          <div className="card1">
+            {/* FIRST CARD */}
+            <div className="wrap">
+              <div className="header">
+                <div className="photoContainerWrap">
+                  <div id="photoContainer" className="photoContainer">
+                    {!this.state.edit &&
 
-                    <img id="photo" alt="profile" src={this.state.photoSrc}></img>
-                  }
-                  {this.state.edit &&
-                    <section>
-                      <div> Upload a head shot as a jpg file. </div>
-                      <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
-                    </section>
-                  }
-                </div>
-              </div>
-
-              <div className="nameAndBioWrap">
-                <div id="name" className="name">
-
-                  {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
-
-
-                  {this.state.edit &&
-                    <div id="editName">
-                      <Row>
-                        <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
-                        <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
-                      </Row>
-                    </div>
-                  }
-                </div>
-
-                <div id="bio" className="bio">
-                  <div className="subheader"><b>Dancer Bio:</b></div>
-                  {!this.state.edit &&
-                    <section>
-                      {this.state.bio !== "" && this.state.bio}
-                      {this.state.bio === "" && " Dancer has no bio"}
-                    </section>
-                  }
-                  {this.state.edit &&
-                    <div id="editBio">
-
-
-                      <div className="row">
-                        <form className="col s12">
-                          <div className="row">
-                            <div className="input-field col s12">
-                              <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
-                              <label htmlFor="textarea1">Bios should be 60 words or less</label>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-
-                  }
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="card2">
-
-          {/* SECOND CARD */}
-          <div className="mainContentBorder">
-            <div id="history">
-              <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-              {this.state.history.length > 0 && this.state.history.map((p, i) => {
-                return (
-                  //TODO STYLE THESE
-                  <div className="showHistory" key={i}>
-                    <p>{p.name}</p>
-                    <p>{p.year}</p>
+                      <img id="photo" alt="profile" src={this.state.photoSrc}></img>
+                    }
+                    {this.state.edit &&
+                      <section>
+                        <div> Upload a head shot as a jpg file. </div>
+                        <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
+                      </section>
+                    }
                   </div>
-                )
-              })}
-              {this.state.history.length === 0 &&
-                <p> Dancer has no piece history </p>
-              }
+                </div>
+
+                <div className="nameAndBioWrap">
+                  <div id="name" className="name">
+
+                    {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+
+
+                    {this.state.edit &&
+                      <div id="editName">
+                        <Row>
+                          <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
+                          <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
+                        </Row>
+                      </div>
+                    }
+                  </div>
+
+                  <div id="bio" className="bio">
+                    <div className="subheader"><b>Dancer Bio:</b></div>
+                    {!this.state.edit &&
+                      <section>
+                        {this.state.bio !== "" && this.state.bio}
+                        {this.state.bio === "" && " Dancer has no bio"}
+                      </section>
+                    }
+                    {this.state.edit &&
+                      <div id="editBio">
+
+
+                        <div className="row">
+                          <form className="col s12">
+                            <div className="row">
+                              <div className="input-field col s12">
+                                <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
+                                <label htmlFor="textarea1">Bios should be 60 words or less</label>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+
+                    }
+
+                    
+
+                  </div>
+                  
+                </div>
+                {!this.state.edit &&
+                      <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                        <i className="large material-icons"> mode_edit </i>
+                      </Button>
+
+                    }
+                    {this.state.edit &&
+                      <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                        <i className="large material-icons"> check </i>
+                      </Button>
+                    }
+              </div>
+            </div>
+            {/* </div>
+
+        <div className="card2"> */}
+
+            {/* SECOND CARD */}
+            <div className="mainContentBorder">
+              <div id="history">
+                <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+                {this.state.history.length > 0 && this.state.history.map((p, i) => {
+                  return (
+                    //TODO STYLE THESE
+                    <div className="showHistory" key={i}>
+                      <p>{p.name}</p>
+                      <p>{p.year}</p>
+                    </div>
+                  )
+                })}
+                {this.state.history.length === 0 &&
+                  <p> Dancer has no piece history </p>
+                }
+              </div>
+
+              <div id="resume">
+                {!this.state.edit &&
+                  <section>
+                    {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                    <a href={this.state.resume} target="_blank">View PDF Resume</a>
+
+                  </section>
+                }
+                {this.state.edit &&
+                  <section>
+                    <div> Upload your dance resume as a PDF. </div>
+                    <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                  </section>
+                }
+              </div>
+
             </div>
 
-            <div id="resume">
-              {!this.state.edit &&
-                <section>
-                  {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                  <a href={this.state.resume} target="_blank">View PDF Resume</a>
-
-                </section>
-              }
-              {this.state.edit &&
-                <section>
-                  <div> Upload your dance resume as a PDF. </div>
-                  <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
-                </section>
-              }
-            </div>
 
           </div>
 
-
-        </div>
-
-              {!this.state.edit &&
-                <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Edit Profile
-                  {/* <i className="large material-icons"> mode_edit </i> */}
+          {/* {!this.state.edit &&
+                <Button id="edit" className="btn-floating" onClick={() => this.onClick()}>
+                  <i className="large material-icons"> mode_edit </i>
                 </Button>
 
               }
               {this.state.edit &&
-                <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Save Changes
-                  {/* <i className="large material-icons"> check </i> */}
+                <Button id="edit" className="btn-floating" onClick={() => this.onClick()}>
+                  <i className="large material-icons"> check </i>
                 </Button>
-              }
+              } */}
         </div>
       </section>
     );

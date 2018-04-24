@@ -2,19 +2,38 @@
     display: block;
 }
 
-.formWrap{
-    padding-left: 2%;
+.audition{
+    margin-bottom: 200px
 }
 
-.table-drag-select td.cell-selected{
-    background-color: #22A7E0;
+
+.question {
+    margin-top: 10px;
 }
 
-.table-drag-select td.cell-being-selected{
-    background-color: #708090;
+
+
+
+
+
+.success{
+    background-color: lavender
 }
-  
-RaisedButton:hover{
-    background-color: #22A7E0;
-    color: white;
-  }
+
+.successCard{
+    margin-top: 10px
+}
+
+#number{
+    font-size: 65px;
+    margin: 0
+}
+
+#regCard{
+    text-align: center;
+    width: 300px
+}
+
+#numArea{
+    padding: 0px;
+}

@@ -34,7 +34,7 @@ const styleNav = {
 };
 
 const host = "dasc.capstone.ischool.uw.edu";
-const websocket = new WebSocket("wss://" + host + "/api/v1/updates?auth=" + localStorage.auth);
+const websocket = new WebSocket("wss://" + host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
 
 class Main extends Component {
   constructor(props) {

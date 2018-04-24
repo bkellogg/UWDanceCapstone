@@ -7,59 +7,62 @@ import {
 } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
 import SelectCast from './SelectCast';
 import CheckAvailability from './CheckAvailability';
 import ResolveConflict from './ResolveConflict';
 import SetRehearsals from './SetRehearsals';
-import WarningIcon from 'material-ui/svg-icons/alert/warning';
-import {red500} from 'material-ui/styles/colors';
 import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
 
+//icons
+import ArrowBackIcon from 'mdi-react/ArrowBackIcon';
+import ArrowForwardIcon from 'mdi-react/ArrowForwardIcon';
+
 
 class Casting extends Component {
   constructor(props) {
-   super(props);
-   this.state ={
-    finished: false, 
-    stepIndex: 0,
-     user: JSON.parse(localStorage.getItem("user"))
-   }
+    super(props);
+    this.state = {
+      finished: false,
+      stepIndex: 0,
+      user: JSON.parse(localStorage.getItem("user"))
+    }
   };
 
-  componentDidMount(){
+  componentDidMount() {
     localStorage.setItem("socketCast", JSON.stringify([]))
     localStorage.setItem("contested", JSON.stringify([]))
     localStorage.setItem("uncasted", JSON.stringify([]))
     //this will take the message returned from the socket and do something with it
-    this.props.websocket.addEventListener("message", function(event) {
+    this.props.websocket.addEventListener("message", function (event) {
 
       //if(event.data.eventType === "casting"){
-        let update = JSON.parse(event.data)
-        
-        let cast = JSON.stringify(update.data.cast)
-        let uncast = JSON.stringify(update.data.uncasted)
-        let contested = JSON.stringify(update.data.contested)
+      let update = JSON.parse(event.data)
 
-        localStorage.socketCast = cast
-        localStorage.contested = contested
-        localStorage.uncasted = uncast
+      let cast = JSON.stringify(update.data.cast)
+      let uncast = JSON.stringify(update.data.uncasted)
+      let contested = JSON.stringify(update.data.contested)
+
+      localStorage.socketCast = cast
+      localStorage.contested = contested
+      localStorage.uncasted = uncast
       //}
     })
 
     console.log(this.props.audition)
     //add user to casting session
     Util.makeRequest("auditions/" + this.props.audition + "/casting", "", "POST", true)
-    .then((res) => {
-      if(res.ok){
-        return res.text()
-      }
-      return res.text().then((t) => Promise.reject(t));
-    })
-    .catch(err => {
-      //console.error(err)
-    })
+      .then((res) => {
+        if (res.ok) {
+          return res.text()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .catch(err => {
+        //console.error(err)
+      })
   }
 
   //handles a next click
@@ -67,15 +70,17 @@ class Casting extends Component {
     const stepIndex = this.state.stepIndex;
 
     //direct traffic
-    if (stepIndex === 0){
+    if (stepIndex === 0) {
       this.setCast()
+    } else if (stepIndex === 2) {
+      console.log('sending cast updates')
     }
 
     if (stepIndex < 3) {
       this.setState({ stepIndex: stepIndex + 1 });
     }
   };
-  
+
 
   //handles a prev click
   handlePrev = () => {
@@ -104,10 +109,10 @@ class Casting extends Component {
   setCast = () => {
     //format casting into the proper body
     let castBody = {
-      "action" : "add",
-      "rank1" : [],
-      "rank2" : [],
-      "rank3" : []
+      "action": "add",
+      "rank1": [],
+      "rank2": [],
+      "rank3": []
     }
 
     let rank1 = castBody.rank1
@@ -137,12 +142,12 @@ class Casting extends Component {
 
 
     Util.makeRequest("auditions/" + this.props.audition + "/casting", castBody, "PATCH", true)
-    .then( res => {
-      if(res.ok){
-        return res.text()
-      }
-      return res.text().then((t) => Promise.reject(t));
-    })
+      .then(res => {
+        if (res.ok) {
+          return res.text()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
 
 
     this.setState({ stepIndex: 0 })
@@ -155,25 +160,24 @@ class Casting extends Component {
       <section className="main">
         <div className="mainView">
           <h1>Casting</h1>
-        <div className="card-casting">
-          <div className="castingFlowWrap">
+          <div className="card-casting">
+            <div className="castingFlowWrap">
 
               {/*This is the stepper styling - you can click the steps to go between them*/}
-              <div className="castingFlow" style={{ width: '100%', maxWidth: '100%', margin: 'auto', color: "red"}}>
+              <div className="castingFlow" style={{ width: '100%', maxWidth: '100%', margin: 'auto', color: "red" }}>
                 <Stepper linear={true} activeStep={stepIndex}>
                   <Step>
-                    <StepButton className="steps"  onClick={() => this.setState({ stepIndex: 0 })} >
+                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 0 })} >
                       Select Your Cast
                     </StepButton>
                   </Step>
                   <Step>
-                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 1 }) } style={{ color: 'red' }}>
+                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 1 })}>
                       Check Availability
                     </StepButton>
                   </Step>
                   <Step>
-                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 2 })} icon={<WarningIcon color={red500} />}
-                      style={{color: red500}}>
+                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 2 })}>
                       Resolve Conflicts
                     </StepButton>
                   </Step>
@@ -187,36 +191,49 @@ class Casting extends Component {
                 {/*BUTTONS*/}
                 <div style={contentStyle}>
                   <div style={{ marginTop: 12 }}>
-                    <FlatButton
-                      label="Back"
-                      backgroundColor="#708090"
-                      style={{color: '#ffffff'}}
+                    <ArrowBackIcon 
+                      size={26} 
                       disabled={stepIndex === 0}
                       onClick={this.handlePrev}
                       className="back-button-styles-css"
                     />
-                    <RaisedButton
-                      label="Next"
-                      backgroundColor="#708090"
-                      style={{color: '#ffffff'}}
+                    <ArrowForwardIcon 
+                      size={26} 
                       disabled={stepIndex === 3}
                       primary={true}
                       onClick={this.handleNext}
                       className="next-button-styles-css"
                     />
+                    {/* <FlatButton
+                      label="Back"
+                      // backgroundColor="transparent"
+                      // style={{ color: '#333333' }}
+                      disabled={stepIndex === 0}
+                      onClick={this.handlePrev}
+                      className="back-button-styles-css"
+                    /> */}
+                    {/* <FlatButton
+                      label="Next"
+                      // backgroundColor="transparent"
+                      // style={{ color: '#333333' }}
+                      disabled={stepIndex === 3}
+                      // primary={true}
+                      onClick={this.handleNext}
+                      className="next-button-styles-css"
+                    /> */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
           {/*CONTENT*/}
-         
+
         </div>
 
         {this.getStepContent(stepIndex)}
 
       </section>
-      
+
     );
   };
 

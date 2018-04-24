@@ -66,7 +66,7 @@ class RehearsalRow extends Component {
       times.forEach((time, index) => {
         return (
             timePicker.push(
-                <MenuItem value={formattedTimes[index]} primaryText={formattedTimes[index]} />
+                <MenuItem value={time} primaryText={formattedTimes[index]} />
             ) 
         )
       })
@@ -82,13 +82,13 @@ class RehearsalRow extends Component {
           disabled={finished}
           className="pickDateTime"
         >
-          <MenuItem value={"Monday"} primaryText="Monday" />
-          <MenuItem value={"Tuesday"} primaryText="Tuesday" />
-          <MenuItem value={"Wednesday"} primaryText="Wednesday" />
-          <MenuItem value={"Thursday"} primaryText="Thursday" />
-          <MenuItem value={"Friday"} primaryText="Friday" />
-          <MenuItem value={"Saturday"} primaryText="Saturday" />
-          <MenuItem value={"Sunday"} primaryText="Sunday" />
+          <MenuItem value={"mon"} primaryText="Monday" />
+          <MenuItem value={"tues"} primaryText="Tuesday" />
+          <MenuItem value={"wed"} primaryText="Wednesday" />
+          <MenuItem value={"thurs"} primaryText="Thursday" />
+          <MenuItem value={"fri"} primaryText="Friday" />
+          <MenuItem value={"sat"} primaryText="Saturday" />
+          <MenuItem value={"sun"} primaryText="Sunday" />
 
         </SelectField>
         <br/>

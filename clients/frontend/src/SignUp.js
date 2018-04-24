@@ -3,6 +3,7 @@ import { Button } from 'react-materialize';
 import * as Util from './util.js';
 import SignUpExtra from './SignUpExtra.js'
 import './styling/SignIn.css';
+import './styling/SignUp.css';
 
 class SignUp extends Component {
   constructor(props) {
@@ -104,8 +105,9 @@ class SignUp extends Component {
 
   render() {
     return (
-      <div className="LogInLanding">
-        <section className="signUp">
+
+      <section className="signUp">
+        <div className="LogInLanding">
           <div className="Functionality">
             <div className="Logo"></div>
             <div className='content'>
@@ -118,9 +120,9 @@ class SignUp extends Component {
               </div>
               {
                 this.state.signUpExtra === false &&
-                <div>
-                  <div>
-                    <form>
+                <div className="SignUp">
+                  <div className="Input">
+                    <form className="authenticate">
                       <div className="row">
                         <div className="input-field col s12">
                           <input type="text" name="firstname" id="firstname" onChange={this.inputChange} />
@@ -140,14 +142,17 @@ class SignUp extends Component {
                         </div>
                         <div className="input-field col s12">
                           <input type="password" name="passwordConf" id="passwordConf" onChange={this.inputChange} onKeyPress={this.inputChange} />
-                          <label htmlFor="passwordConf">Confirm Password</label>
+                          <label htmlF or="passwordConf">Confirm Password</label>
                         </div>
                       </div>
                     </form>
-                    <Button onClick={this.onClick}> Sign Up </Button>
+                    <div className="Buttons">
+                      <Button onClick={this.onClick}> Sign Up </Button>
+                    </div>
                     <div className="Link">
                       <a className="signlink" onClick={this.goBack}> Sign In </a>
                     </div>
+
 
                   </div>
                 </div>
@@ -159,8 +164,9 @@ class SignUp extends Component {
               }
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
     )
   };
 }
