@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import TimePicker from 'material-ui/TimePicker';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import './styling/General.css';

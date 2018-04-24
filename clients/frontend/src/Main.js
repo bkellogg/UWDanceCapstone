@@ -15,16 +15,11 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import * as Util from './util';
 import 'materialize-css';
-import {white} from 'material-ui/styles/colors';
-import muiThemeable from 'material-ui/styles/muiThemeable';
 import logo from './imgs/logo2.png'
 import './styling/Main.css';
 import './styling/Navigation.css';
 import './styling/MobileNavigation.css';
 import './styling/General.css';
-
-import {withStyles} from 'material-ui/styles';
-import SvgIcon from 'material-ui/SvgIcon';
 
 const style = {
   textColor: 'white',

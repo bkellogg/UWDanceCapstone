@@ -4,7 +4,6 @@ import './styling/CastingFlow.css';
 import './styling/General.css';
 import img from './imgs/defaultProfile.jpg';
 import Button from 'material-ui/RaisedButton';
-import Avatar from 'material-ui/Avatar';
 import Checkbox from 'material-ui/Checkbox';
 
 
@@ -178,7 +177,7 @@ class AllDancersRow extends Component {
     return (
       <tr>
         <td>
-        <img src={this.state.photoUrl} className="avatar"/>
+        <img src={this.state.photoUrl} alt="profile" className="avatar"/>
         </td>
         <td className="dancerAssignedNumber">
             regNum

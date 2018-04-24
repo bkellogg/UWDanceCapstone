@@ -12,7 +12,7 @@ class ConflictRow extends Component {
   };
 
   componentDidMount(){
-      this.getPhoto
+      this.getPhoto()
   }
 
   getPhoto = () => {
@@ -69,7 +69,7 @@ class ConflictRow extends Component {
     return (
         <tr>
             <td>
-                <img src={this.state.photoUrl} className="avatar"/>
+                <img src={this.state.photoUrl} alt="profile" className="avatar"/>
             </td>
             <td className="dancerAssignedNumber">
                 {dancer.regNum}

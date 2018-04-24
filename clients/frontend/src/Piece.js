@@ -32,7 +32,9 @@ let events = [
 class Piece extends Component {
   constructor(props) {
     super(props);
-    
+    this.state = {
+      toEdit: true
+    }
   };
 
   render() {
