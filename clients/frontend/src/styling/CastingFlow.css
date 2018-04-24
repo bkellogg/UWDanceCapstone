@@ -4,19 +4,21 @@
     margin-bottom: 3%;
 }
 
-.back-button-styles-css {
+.back-button-styles-css, .next-button-styles-css {
     margin: 12 auto !important;
     float: left;
-
+    fill: white !important;
+    background-color: #708090 !important;
+    padding: 5px;
+    border-radius: 50%;
 }
 
-.back-button-styles-css:hover{
-    background-color: transparent;
-}
-
-.next-button-styles-css {
-    margin: 12 auto !important;
+.next-button-styles-css{
     float: right;
+}
+
+.back-button-styles-css:hover, .next-button-styles-css:hover{
+    background-color: #22A7E0 !important;
 }
 
 .steps{
@@ -90,6 +92,7 @@ tr{
 /*inside of small card with cast filter*/
 .dancersList-filter{
     padding: 25px;
+
 }
 
 

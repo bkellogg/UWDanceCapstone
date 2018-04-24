@@ -1,57 +1,80 @@
+body,html {
+  height: 100%;
+  font-weight: 400;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-/* 
-.content {
-    margin-left:100px;
-    margin-top:25%;
-    width: 320px;
-  }
-  
-  .title {
-    color:grey;
-  }
-  
-  Button {
-    margin: 10px;
-  } */
-/* 
-  .Functionality {
-    display: inline-block;
-    float:right;
-    min-height: 100%;
-    width:50%;
-    vertical-align: top;
-  } */
-/* 
-  LogInPhoto {
-    height: 100%;
-    display: inline-block;
-    width: 50%;
-    background-image: url('../imgs/tresmaines.jpg');
-    background-repeat: no-repeat;
-    background-size: cover
-  } */
-  
-  /* .LogInPhoto > img{
-    width: 100%;
-    min-height: 100%;
-  } */
+}
 
-  /* .signUp, .signUpExtra {
-    background-image: url('../imgs/bg-100.jpg');
+.LogInLanding {
+  background-image: url('../imgs/test.jpg');
+  background-position: center;
   background-repeat: no-repeat;
-  background-size: 100%;
-  } */
+  background-size: cover;
 
-  @media only screen and (max-width : 992px) {
-    .LogInLanding {
-      background-image: url('../imgs/test.jpg');
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-    
-    }
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+}
+
+.Functionality{
+  width: 100%;
+  padding: 30px;
+  text-align: center;
+}
+
+.content {
+  background-color: white;
+  width: auto;
+  display: inline-block;
+  padding: 50px;
+  margin: 8%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.authenticate {
+  text-align: left;
+}
+
+.title {
+  text-align: center;
+  padding-bottom: 10%;
+  font-weight: 400;
+}
+
+Button {
+  margin: 10px;
+}
+
+.Link{
+  padding-top: 25px;
+}
+
+.signlink {
+  color: #22A7E0;
+}
+
+.signlink:hover{
+  text-decoration: underline;
+}
+
+.character-counter {
+  visibility: hidden
+}
+
+@media only screen and (max-width : 992px) {
+  .LogInLanding {
+    background-image: url('../imgs/test.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  
   }
+}

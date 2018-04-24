@@ -16,6 +16,10 @@ import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
 
+//icons
+import ArrowBackIcon from 'mdi-react/ArrowBackIcon';
+import ArrowForwardIcon from 'mdi-react/ArrowForwardIcon';
+
 
 class Casting extends Component {
   constructor(props) {
@@ -187,23 +191,36 @@ class Casting extends Component {
                 {/*BUTTONS*/}
                 <div style={contentStyle}>
                   <div style={{ marginTop: 12 }}>
-                    <FlatButton
-                      label="Back"
-                      backgroundColor="transparent"
-                      style={{ color: '#333333' }}
+                    <ArrowBackIcon 
+                      size={26} 
                       disabled={stepIndex === 0}
                       onClick={this.handlePrev}
                       className="back-button-styles-css"
                     />
-                    <RaisedButton
-                      label="Next"
-                      backgroundColor="transparent"
-                      style={{ color: '#ffffff' }}
+                    <ArrowForwardIcon 
+                      size={26} 
                       disabled={stepIndex === 3}
                       primary={true}
                       onClick={this.handleNext}
                       className="next-button-styles-css"
                     />
+                    {/* <FlatButton
+                      label="Back"
+                      // backgroundColor="transparent"
+                      // style={{ color: '#333333' }}
+                      disabled={stepIndex === 0}
+                      onClick={this.handlePrev}
+                      className="back-button-styles-css"
+                    /> */}
+                    {/* <FlatButton
+                      label="Next"
+                      // backgroundColor="transparent"
+                      // style={{ color: '#333333' }}
+                      disabled={stepIndex === 3}
+                      // primary={true}
+                      onClick={this.handleNext}
+                      className="next-button-styles-css"
+                    /> */}
                   </div>
                 </div>
               </div>

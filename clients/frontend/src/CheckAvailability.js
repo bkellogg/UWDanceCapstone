@@ -32,7 +32,7 @@ class CheckAvailability extends Component {
           <div className="transparentCard">
             <div className="wrap">
               <div className="castList">
-
+              
                 <div className="dancersList-filter">
                   <h2 className="smallHeading"> Filter by dancer </h2>
                   <table>
