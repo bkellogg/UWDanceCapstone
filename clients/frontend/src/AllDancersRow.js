@@ -184,6 +184,15 @@ class AllDancersRow extends Component {
   render() {
     let p = this.state.person
     let hasComments = this.props.comments != null
+    let choreographers = this.props.choreographers
+    let choreos = []
+    if (choreographers) {
+        choreos = choreographers.map(choreo => {
+            return (
+                <p className="choreos">{ choreo.firstName + " " + choreo.lastName }  </p>
+            )
+        })
+    }
     return (
       <tr>
           {
@@ -211,6 +220,26 @@ class AllDancersRow extends Component {
                 </td>
         }
         {
+            this.props.resolveConflict &&
+                <td>
+                    {this.props.numPieces}
+                </td>
+                
+        }
+        {
+            this.props.resolveConflict &&
+                <td className="dancerRank">
+                    {this.props.rank}
+                </td>
+                
+        }
+        {
+            this.props.resolveConflict &&
+                <td>
+                    {choreos}
+                </td>
+        }
+        {
             this.props.checkAvailability && hasComments && 
                 <td>
                     <div class="tooltip">
@@ -218,7 +247,7 @@ class AllDancersRow extends Component {
                         <span class="tooltiptext">{this.props.comments[0].comment}</span>
                     </div>
                 </td>
-            }
+        }
         <td>
             {
                 this.props.selectCast && 
@@ -260,6 +289,14 @@ class AllDancersRow extends Component {
             }
             {
                 this.props.resolveYourCast &&
+                    <Button 
+                    backgroundColor="#708090"
+                    style={{color: '#ffffff', float: 'right'}}
+                    onClick={() => this.dropFromCast()}> 
+                    DROP </Button>
+            }
+            {
+                this.props.resolveConflict &&
                     <Button 
                     backgroundColor="#708090"
                     style={{color: '#ffffff', float: 'right'}}

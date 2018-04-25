@@ -35,8 +35,9 @@ class ResolveConflict extends Component {
     const conflicts = this.props.contested
     if(conflicts) {
       conflictsRow = conflicts.map(conflict => {
+        console.log(conflict.rankedDancer)
         return (
-          <ConflictRow choreographers = {conflict.choreographers} dancer = {conflict.rankedDancer.dancer} rank={conflict.rankedDancer.rank}/>
+          <AllDancersRow choreographers={conflict.choreographers} key={conflict.rankedDancer.dancer.id} person={conflict.rankedDancer.dancer.user} numPieces={conflict.rankedDancer.dancer.numShows} rank={conflict.rankedDancer.rank} audition={this.props.audition} resolveConflict={true}/>
         )
       })
     }
