@@ -19,54 +19,68 @@ class AllDancersRow extends Component {
             three: false
         },
         person: this.props.person,
-        photoUrl : img
+        photoUrl : img,
+        filterChecked : true
     }
   };
   
 
   componentDidMount(){
-    let rank = this.props.rank
-    if (rank === "1") {
-        this.setState({
-            checked:{
-                one: true,
-                two: false,
-                three: false
-            }
-        })
-    } else if (rank === "2") {
-        this.setState({
-            checked:{
-                one: false,
-                two: true,
-                three: false
-            }
-        })
-    } else if (rank === "3") {
-        this.setState({
-            checked:{
-                one: false,
-                two: false,
-                three: true
-            }
-        })
-    } else if (rank === "") {
-        this.setState({
-            checked:{
-                one: false,
-                two: false,
-                three: false
-            }
-        })
+
+    //just do this for selectCast
+      if(this.props.selectCast){
+        let rank = this.props.rank
+        if (rank === 1) {
+            this.setState({
+                checked:{
+                    one: true,
+                    two: false,
+                    three: false
+                }
+            })
+        } else if (rank === 2) {
+            this.setState({
+                checked:{
+                    one: false,
+                    two: true,
+                    three: false
+                }
+            })
+        } else if (rank === 3) {
+            this.setState({
+                checked:{
+                    one: false,
+                    two: false,
+                    three: true
+                }
+            })
+        } else {
+            this.setState({
+                checked:{
+                    one: false,
+                    two: false,
+                    three: false
+                }
+            })
+        }
     }
+
+    //do this for all row types
     this.getPhoto()
   }
 
+  //only called for select cast
+  //this happens when a user clicks a check box - if they are adding a user to the cast it adds them here, same for removing
   updateCheck = (event) => {
     let val = event.target.value
 
     //handling only allowing one to be checked at a time
     if (val === "1") {
+        if(this.state.checked.one){
+            this.dropFromCast()
+        } else {
+            this.addToCast(1)
+        }
         this.setState({
             checked:{
                 one: !this.state.checked.one,
@@ -76,6 +90,11 @@ class AllDancersRow extends Component {
             
         })
     } else if (val === "2") {
+        if(this.state.checked.two){
+            this.dropFromCast()
+        } else {
+            this.addToCast(2)
+        }
         this.setState({
             checked:{
                 one: false,
@@ -84,6 +103,11 @@ class AllDancersRow extends Component {
             }
         })
     } else if (val === "3") {
+        if(this.state.checked.three){
+            this.dropFromCast()
+        } else {
+            this.addToCast(3)
+        }
         this.setState({
             checked:{
                 one: false,
@@ -92,65 +116,49 @@ class AllDancersRow extends Component {
             }
         })
     }
-
-    //handling the removal of a user from the cast by setting their rank to "" if they are removed
-    let person = this.state.person
-    if (val === person.rank) {
-        person.rank = ""
-    } else {
-        person.rank = val
-    }
-
-    //update the rank of the user in the allUsers
-    let allUsers = JSON.parse(localStorage.getItem("allUsers"))
-    allUsers.forEach(user => {
-        if (user.id === person.id) {
-            user.rank = person.rank;
-            return
-        }
-    })
-    localStorage.setItem("allUsers", JSON.stringify(allUsers))
-
-    //update the selected cast
-    let cast = JSON.parse((localStorage).getItem("cast"))
-
-    //remove from cast ALWAYS, add them back with their new rank if they have one
-    cast = cast.filter(castMember => castMember.id !== person.id)
-
-    if(person.rank !== ""){
-        cast.push(person)
-    }
-
-    localStorage.setItem("cast", JSON.stringify(cast))
-
-    this.setState({
-        person : person
-    })
   }
 
-  addToCast = () => {
-
-    //this handles adding them to the cast, but we also need to update their rank in the allUsers (I'm gonna go with a 1?)
-    let cast = JSON.parse((localStorage).getItem("cast"))
-    let person = this.state.person
-
-    cast = cast.filter(castMember => castMember.id !== person.id)
-    cast.push(person)
-    localStorage.setItem("cast", JSON.stringify(cast))
-    
-    //update all users
-    let allUsers = JSON.parse(localStorage.getItem("allUsers"))
-    allUsers.forEach(user => {
-        if (user.id === person.id) {
-            user.rank = "1"
-            return
-        }
+  //only called on Check Availability
+  onCheck = () => {
+    this.setState({
+        filterChecked : !this.state.filterChecked
     })
-    localStorage.setItem("allUsers", JSON.stringify(allUsers))
+}
 
-    //done to rerender the component
-    //doesn't work
-    this.props.updateCast()
+  dropFromCast = () => {
+    let castBody = {
+        "action": "remove",
+        "drops" : [this.state.person.id]
+    }
+
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", castBody, "PATCH", true)
+      .then(res => {
+        if (res.ok) {
+          return res.text()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+  }
+
+  addToCast = (rank) => {
+    let castBody = {
+        "action":"add"
+    }
+    if (rank === 1) {
+        castBody.rank1 = [this.state.person.id]
+    } else if (rank === 2) {
+        castBody.rank2 = [this.state.person.id]
+    } else if (rank === 3) {
+        castBody.rank3 = [this.state.person.id]
+    }
+
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", castBody, "PATCH", true)
+      .then(res => {
+        if (res.ok) {
+          return res.text()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
   }
 
   getPhoto = () => {
@@ -175,58 +183,88 @@ class AllDancersRow extends Component {
 
   render() {
     let p = this.state.person
+    let hasComments = this.props.comments != null
     return (
       <tr>
+          {
+            this.props.checkAvailability &&
+                <td>
+                    <Checkbox
+                        onCheck = {this.onCheck}
+                        checked = {this.state.filterChecked}
+                    />
+                </td>
+            }
         <td>
-        <img src={this.state.photoUrl} alt="profile" className="avatar"/>
+            <img src={this.state.photoUrl} alt="profile" className="avatar"/>
         </td>
         <td className="dancerAssignedNumber">
-            regNum
+            {this.props.regNum}
         </td>
         <td>
           {p.firstName + " " + p.lastName}
         </td>
-        {this.props.selectCast &&
-            <td>
-            numPieces
-            </td>
+        {
+            this.props.selectCast &&
+                <td>
+                    {this.props.numPieces}
+                </td>
         }
-        <td>
-            {this.props.selectCast && 
-                <section className="personRankBoxes">
-                    <div className="check">
-                        <Checkbox
-                        inputStyle={{backgroundColor: 'red'}}
-                        iconStyle={{fill:'black'}}
-                            value="1"
-                            checked={this.state.checked.one}
-                            onCheck={this.updateCheck}
-                        />
+        {
+            this.props.checkAvailability && hasComments && 
+                <td>
+                    <div class="tooltip">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span class="tooltiptext">{this.props.comments[0].comment}</span>
                     </div>
-                    <div className="check">
-                        <Checkbox 
-                        iconStyle={{fill:'black'}}
-                            value="2"
-                            checked={this.state.checked.two}
-                            onCheck={this.updateCheck}
-                        />
-                    </div>
-                    <div className="check">
-                        <Checkbox
-                        iconStyle={{fill:'black'}}
-                            value="3"
-                            checked={this.state.checked.three}
-                            onCheck={this.updateCheck}
-                        />
-                    </div>
-                </section>
+                </td>
             }
-            {!this.props.selectCast &&
-                <Button 
-                backgroundColor="#708090"
-                style={{color: '#ffffff', float: 'right'}}
-                onClick={this.addToCast}
-                > ADD </Button>
+        <td>
+            {
+                this.props.selectCast && 
+                    <section className="personRankBoxes">
+                        <div className="check">
+                            <Checkbox
+                            inputStyle={{backgroundColor: 'red'}}
+                            iconStyle={{fill:'black'}}
+                                value="1"
+                                checked={this.state.checked.one}
+                                onCheck={this.updateCheck}
+                            />
+                        </div>
+                        <div className="check">
+                            <Checkbox 
+                            iconStyle={{fill:'black'}}
+                                value="2"
+                                checked={this.state.checked.two}
+                                onCheck={this.updateCheck}
+                            />
+                        </div>
+                        <div className="check">
+                            <Checkbox
+                            iconStyle={{fill:'black'}}
+                                value="3"
+                                checked={this.state.checked.three}
+                                onCheck={this.updateCheck}
+                            />
+                        </div>
+                    </section>
+            }
+            {
+                this.props.resolveNotYourCast &&
+                    <Button 
+                    backgroundColor="#708090"
+                    style={{color: '#ffffff', float: 'right'}}
+                    onClick={() => this.addToCast(1)}> 
+                    ADD </Button>
+            }
+            {
+                this.props.resolveYourCast &&
+                    <Button 
+                    backgroundColor="#708090"
+                    style={{color: '#ffffff', float: 'right'}}
+                    onClick={() => this.dropFromCast()}> 
+                    DROP </Button>
             }
         </td>
       </tr>

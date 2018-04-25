@@ -90,22 +90,22 @@ class CastDancersRow extends Component {
   render() {
     let person = this.props.person
     let hasComments = this.props.comments != null
-    console.log(hasComments)
     return (
         <tr>
-            {this.props.filter &&
-                <td>
-                    <Checkbox
-                        onCheck = {this.onCheck}
-                        checked = {this.state.checked}
-                    />
-                </td>
+            {
+                this.props.checkAvailability &&
+                    <td>
+                        <Checkbox
+                            onCheck = {this.onCheck}
+                            checked = {this.state.checked}
+                        />
+                    </td>
             }
             <td>
                 <img src={this.state.photoUrl} alt="profile" className="avatar"/>
             </td>
             <td className="dancerAssignedNumber">
-                regNum
+                {this.props.regNum}
             </td>
             <td>
                 {person.firstName + " " + person.lastName}

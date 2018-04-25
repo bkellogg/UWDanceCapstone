@@ -5,7 +5,6 @@ import {
   Stepper,
   StepButton,
 } from 'material-ui/Stepper';
-import LinearProgress from 'material-ui/LinearProgress';
 import SelectCast from './SelectCast';
 import CheckAvailability from './CheckAvailability';
 import ResolveConflict from './ResolveConflict';
@@ -26,29 +25,26 @@ class Casting extends Component {
       finished: false,
       stepIndex: 0,
       user: JSON.parse(localStorage.getItem("user")),
-      loading: false
+      cast: [],
+      uncast: [],
+      contested: [],
     }
   };
 
   componentDidMount() {
-    localStorage.setItem("socketCast", JSON.stringify([]))
-    localStorage.setItem("contested", JSON.stringify([]))
-    localStorage.setItem("uncasted", JSON.stringify([]))
-    //this will take the message returned from the socket and do something with it
-    this.props.websocket.addEventListener("message", function (event) {
 
-      //if(event.data.eventType === "casting"){
+    //this will take the message returned from the socket and store it in state
+    this.props.websocket.addEventListener("message", (event) => {
+      //TODO only do this for casting socket updates
       let update = JSON.parse(event.data)
 
-      let cast = JSON.stringify(update.data.cast)
-      let uncast = JSON.stringify(update.data.uncasted)
-      let contested = JSON.stringify(update.data.contested)
+      this.setState({
+        cast: update.data.cast,
+        uncast : update.data.uncasted,
+        contested : update.data.contested
+      })
 
-      localStorage.socketCast = cast
-      localStorage.contested = contested
-      localStorage.uncasted = uncast
-      //}
-    })
+  })
 
     //add user to casting session
     Util.makeRequest("auditions/" + this.props.audition + "/casting", "", "POST", true)
@@ -66,14 +62,6 @@ class Casting extends Component {
   //handles a next click
   handleNext = () => {
     const stepIndex = this.state.stepIndex;
-    this.setState({
-      loading: true
-    })
-    setTimeout(() => { this.setState({ loading: false}) }, 1500);
-    //direct traffic
-    if (stepIndex === 0) {
-      this.setCast()
-    }
 
     if (stepIndex < 3) {
       this.setState({ stepIndex: stepIndex + 1 });
@@ -94,66 +82,20 @@ class Casting extends Component {
     
     switch (stepIndex) {
       case 0:
-        return <SelectCast auditionID={this.props.audition} />
+        return <SelectCast auditionID={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>
       case 1:
-        return <CheckAvailability />;
+        return <CheckAvailability cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>;
       case 2:
-        return <ResolveConflict />;
+        return <ResolveConflict audition={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>;
       case 3:
-        return <SetRehearsals />
+        return <SetRehearsals cast={this.state.cast}/>
       default:
         return 'Someone is off the counts - stop the music, and refresh the page!';
     }
   }
 
-  setCast = () => {
-    //format casting into the proper body
-    let castBody = {
-      "action": "add",
-      "rank1": [],
-      "rank2": [],
-      "rank3": []
-    }
-
-    let rank1 = castBody.rank1
-    let rank2 = castBody.rank2
-    let rank3 = castBody.rank3
-
-    let cast = JSON.parse(localStorage.getItem("cast"))
-    cast.forEach(dancer => {
-      let id = dancer.id
-      let rank = dancer.rank
-      if (rank === "1") {
-        rank1.push(id)
-        return rank1
-      } else if (rank === "2") {
-        rank2.push(id)
-        return rank2
-      } else if (rank === "3") {
-        rank3.push(id)
-        return rank3
-      }
-      return
-    })
-
-    castBody.rank1 = rank1
-    castBody.rank2 = rank2
-    castBody.rank3 = rank3
-
-
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", castBody, "PATCH", true)
-      .then(res => {
-        if (res.ok) {
-          return res.text()
-        }
-        return res.text().then((t) => Promise.reject(t));
-      })
-
-
-    this.setState({ stepIndex: 0 })
-  }
-
   render() {
+
     const { stepIndex } = this.state;
     const contentStyle = { margin: '0 16px' };
     return (
@@ -214,12 +156,6 @@ class Casting extends Component {
         </div>
 
         {
-          this.state.loading &&
-          <LinearProgress mode="indeterminate" />
-        }
-
-        {
-          !this.state.loading &&
           this.getStepContent(stepIndex)
         }
 

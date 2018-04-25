@@ -1,32 +1,22 @@
 import React, { Component } from 'react';
-import CastDancersRow from './CastDancersRow'
+import AllDancersRow from './AllDancersRow'
 import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
 
 
 class CheckAvailability extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      cast: JSON.parse(localStorage.getItem("cast"))
-    }
-  };
-
-
 
   render() {
-    let cast = JSON.parse(localStorage.getItem("cast"))
-    if (JSON.parse(localStorage.getItem("socketCast")).length !== 0){
-        cast = JSON.parse(localStorage.getItem("socketCast"))
-    }
-    let rows = cast.map(dancer => {
-      console.log(dancer)
-      return (
-        <CastDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} filter={true} comments={dancer.dancer.comments}/>
-      )
-    })
+    let rows = []
 
+    if (this.props.cast) {
+      rows = this.props.cast.map(dancer => {
+        return (
+          <AllDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} comments={dancer.dancer.comments} regNum={dancer.dancer.regNum} checkAvailability={true}/>
+        )
+      })
+    }
     return (
       <section>
         <div className="mainView">
