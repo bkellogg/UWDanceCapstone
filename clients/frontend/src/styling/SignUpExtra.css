@@ -36,3 +36,7 @@
   .signUpExtra {
     background-color: lavender;
   }
+
+  #bioWarning {
+    color: red;
+  }

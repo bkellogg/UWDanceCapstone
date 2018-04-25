@@ -89,16 +89,13 @@ class Dashboard extends Component {
     return (
       <section className='main' >
         <div className="mainView">
+        <div className="transparentCard">
           <div className='dashboard'>
             <div id='welcome'> 
             <h1> Welcome, {this.state.user.firstName}!</h1>
             </div>
             <div id='announcements'>
-              {this.state.user.bio === "" &&    
-               /*this.state.user.resume &&
-                  this.state.user.photo DON'T exist
-                  idea: have a boolean indicating if they've uploaded one that get's set
-                  during the upload process in SignUpExtra*/
+              {this.state.user.bio === "" &&
                     <Card>
                     <div className="warning">
                       <CardText> 
@@ -111,13 +108,18 @@ class Dashboard extends Component {
                 return (
                   <div key={index} className="announcement">
                     {
-                      <Card>
-                        <div className="cardBody">
-                          <CardText>
-                            <p> {anncouncement.message} </p>
-                          </CardText>
-                        </div>
-                      </Card>
+                      <div className="cardBody">
+                        <p className="announcementMessage"> {anncouncement.message} </p>
+                      </div>
+
+                      // <Card>
+                      //   <div className="cardBody">
+                      //     <CardText style={{padding: '0'}}>
+                            
+                      //       <p className="announcementMessage"> {anncouncement.message} </p>
+                      //     </CardText>
+                      //   </div>
+                      // </Card>
                     }
                   </div>
                 )
@@ -130,26 +132,42 @@ class Dashboard extends Component {
                 var auditionLink = anncouncement.name.split(' ').join('');
                 return (
                   <div key={index} className="announcement">
+                  <div className="cardBody">
                     {
-                      <Card>
-                        <div className="title">
-                          <CardTitle title="Audition"/>
+
+                      <div className="auditionAnnouncementCard">
+                        <div className="showTitle">
+                          <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
                         </div>
-                        <CardText>
-                          <p> {anncouncement.name} </p>
-                          <p> {auditionDay} </p>
-                          <p> {auditionTime} </p>
-                          <p> {anncouncement.audition.location} </p>
+                        <div className="showInformation">
+                          <p> <b>Date:</b> {auditionDay} </p>
+                          <p> <b>Time:</b> {auditionTime} </p>
+                          <p> <b>Location:</b> {anncouncement.audition.location} </p>
                           <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
-                        </CardText>
-                      </Card>
+                        </div>
+                      </div>
+                      // <Card>
+                      //   <div className="showTitle">
+                      //     <CardTitle 
+                      //       title="Audition"/>
+                      //   </div>
+                      //   <CardText>
+                      //     <p> {anncouncement.name} </p>
+                      //     <p> {auditionDay} </p>
+                      //     <p> {auditionTime} </p>
+                      //     <p> {anncouncement.audition.location} </p>
+                      //     <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
+                      //   </CardText>
+                      // </Card>
                     }
+                  </div>
                   </div>
                 )
               })}
 
             </div>
           </div>
+        </div>
         </div>
       </section>
     )

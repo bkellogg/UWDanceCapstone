@@ -36,7 +36,7 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 
 	// if the file size is greater than 5MB, reject it
 	if fileheader.Size > appvars.ProfileUploadMaxFileSize {
-		return HTTPError("filesize too large", http.StatusBadRequest)
+		return HTTPError("file size is too large", http.StatusBadRequest)
 	}
 
 	// write the image bytes into a buffer

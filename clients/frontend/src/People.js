@@ -3,7 +3,9 @@ import * as Util from './util';
 import './styling/General.css';
 import './styling/People.css';
 
-import Avatar from 'material-ui/Avatar';
+import PersonRow from './PersonRow'
+
+
 
 class People extends Component {
   constructor(props) {
@@ -22,7 +24,7 @@ class People extends Component {
     //that route is down, so for now we are just getting the first 100 active people in the data
     //TODO deal with pages
     //STYLING NOTE: if you want to show dummy data change this.props.show to 1
-    Util.makeRequest("shows/"+this.props.show+"/users", "", "GET", true)
+    Util.makeRequest("shows/"+"1"+"/users", "", "GET", true)
     .then( res => {
       if (res.ok) {
         return res.json()
@@ -50,43 +52,27 @@ class People extends Component {
 
         <h1>People</h1>
         <div className="card1">
+        <div className="wrap">
+        <div className="peopleList">
         <table>
           <tbody>
             <tr className="categories">
-              <th>Photo</th>
+              <th className="avatar2">Photo</th>
               <th>Name</th>
-              <th>Role</th>
+              <th className="userRoleDisp">Role</th>
               <th>Email</th>
             </tr>
             {rows}
           </tbody>
         </table>
         </div>
+        </div>
+        </div>
       </div>
       </section>
   );
 };
 
-}
-
-const PersonRow = (props) => {
-  let p = props.p
-  return (
-    <tr>
-      <td>
-        <Avatar>:D</Avatar>
-      </td>
-      <td>
-        {p.firstName + " " + p.lastName}
-      </td>
-      <td>
-        {p.role.displayName}
-      </td>
-      <td>
-        {p.email}
-      </td>
-    </tr>
-  );
 }
 
 export default People;

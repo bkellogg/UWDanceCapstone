@@ -39,7 +39,7 @@ class Audition extends Component {
       })
     })
     .catch(err => {
-      console.log(err)
+      console.error(err)
       Util.handleError(err)
     })
   }
@@ -48,19 +48,25 @@ class Audition extends Component {
     this.checkRegistration()
   }
 
+  unregister = () => {
+    this.setState({
+      registered: false
+    })
+  }
+
   render() {
       return(
         <section className="main">
         <div className="mainView">
           <div className="audition">
-            <h1 id="auditionTitle">{this.props.name} Confirmation</h1>
+            <h1 id="auditionTitle">{this.props.name} Audition Form</h1>
             {
               this.state.registered === false &&
                 <Registration audition={this.props.audition} registered={() => this.checkRegistration()} />
             }
             {
               this.state.registered === true &&
-              <RegistrationConf audition={this.state.audition} regNum={this.state.regNum}/>
+              <RegistrationConf audition={this.state.audition} regNum={this.state.regNum} unregister={this.unregister}/>
             }
           </div>
           </div>

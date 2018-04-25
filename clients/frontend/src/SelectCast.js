@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
 
-import './styling/selectCast.css';
+import './styling/General.css';
+import './styling/CastingFlow.css';
+import './styling/CastingFlowMobile.css';
 
-import CastingPersonRow from './CastingPersonRow';
+
+import AllDancersRow from './AllDancersRow';
 
 class SelectCast extends Component {
   constructor(props) {
@@ -23,7 +26,8 @@ class SelectCast extends Component {
     //API route to get people in an audition will go here
     //TODO deal with pages
     //TODO get this to be just the people in a show
-    if (localStorage.getItem("allUsers") === null){
+    //I don't think this works if they sign out and then come back to this page directly?
+    if (JSON.parse(localStorage.getItem("allUsers")) === null){
       Util.makeRequest("auditions/" + this.props.auditionID + "/users", "", "GET", true)
       .then( res => {
         if (res.ok) {
@@ -32,10 +36,20 @@ class SelectCast extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .then(data => {
+        let users = data.users
+        users.forEach(user => {
+          user.rank = ""
+        });
+        return users
+      })
+      .then(users => {
         this.setState({
-            users: data.users
+            users: users
         })
-        localStorage.setItem('allUsers', JSON.stringify(data.users));
+        return users
+      })
+      .then( users => {
+        localStorage.setItem('allUsers', JSON.stringify(users));
         localStorage.setItem('cast', JSON.stringify([]));
       })
       .catch(err => {
@@ -44,28 +58,30 @@ class SelectCast extends Component {
       })
     } else {
       this.setState({
-        users: JSON.parse(localStorage.getItem("allUsers"))
-      })
-    }
+      users: JSON.parse(localStorage.getItem("allUsers"))
+    })
+   }
   }
 
-  
   render() {
-    let rows = this.state.users.map((person, i) => {
+    let rows = this.state.users.map((person) => {
         return(
-          <CastingPersonRow person={person}  key={person.id}/>
+          <AllDancersRow person={person}  key={person.id} rank={person.rank} selectCast={true}/>
         )
     })
     return (
+      
         <section>
-            <table>
+          <div className="mainView">
+          <div className="card1">
+            <table className="table">
             <tbody>
-                <tr>
+                <tr className="categories">
                 <th></th>
                 <th>#</th>
                 <th>Name</th>
                 <th>Pieces</th>
-                <th>
+                <th className="centerText">
                     Rank
                     <br/>
                     <div className="check rank">1</div>
@@ -76,6 +92,8 @@ class SelectCast extends Component {
                 {rows}
             </tbody>
             </table>
+            </div>
+            </div>
         </section>
   );
 };
