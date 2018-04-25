@@ -66,7 +66,7 @@ class RehearsalRow extends Component {
       times.forEach((time, index) => {
         return (
             timePicker.push(
-                <MenuItem value={time} primaryText={formattedTimes[index]} />
+                <MenuItem key={index} value={time} primaryText={formattedTimes[index]} />
             ) 
         )
       })

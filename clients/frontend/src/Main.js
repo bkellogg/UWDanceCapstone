@@ -276,6 +276,7 @@ class Main extends Component {
                 routes.push(route2)
               } else {
                 let route1 = <Route
+                  key = {i}
                   exact
                   path={path + "/casting"}
                   render={props => <Casting
@@ -284,6 +285,7 @@ class Main extends Component {
                   audition={show.auditionID}
                   websocket={websocket}/>}/>
                 let route2 = <Route
+                  key = {i*10}
                   exact
                   path={path + "/people"}
                   render={props => <People
@@ -292,6 +294,7 @@ class Main extends Component {
                   audition={show.auditionID}
                   show={show.show}/>}/>
                 let route3 = <Route
+                  key = {i*100}
                   exact
                   path={path + "/audition"}
                   render={props => <Audition {...props} name={show.name} audition={show.auditionID}/>}/>

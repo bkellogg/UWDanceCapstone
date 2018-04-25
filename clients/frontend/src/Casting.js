@@ -5,6 +5,7 @@ import {
   Stepper,
   StepButton,
 } from 'material-ui/Stepper';
+import LinearProgress from 'material-ui/LinearProgress';
 import SelectCast from './SelectCast';
 import CheckAvailability from './CheckAvailability';
 import ResolveConflict from './ResolveConflict';
@@ -24,7 +25,8 @@ class Casting extends Component {
     this.state = {
       finished: false,
       stepIndex: 0,
-      user: JSON.parse(localStorage.getItem("user"))
+      user: JSON.parse(localStorage.getItem("user")),
+      loading: false
     }
   };
 
@@ -64,12 +66,13 @@ class Casting extends Component {
   //handles a next click
   handleNext = () => {
     const stepIndex = this.state.stepIndex;
-
+    this.setState({
+      loading: true
+    })
+    setTimeout(() => { this.setState({ loading: false}) }, 1500);
     //direct traffic
     if (stepIndex === 0) {
       this.setCast()
-    } else if (stepIndex === 2) {
-      console.log('sending cast updates')
     }
 
     if (stepIndex < 3) {
@@ -88,6 +91,7 @@ class Casting extends Component {
 
   //This takes the stepIndex and returns the component that should be rendered
   getStepContent(stepIndex) {
+    
     switch (stepIndex) {
       case 0:
         return <SelectCast auditionID={this.props.audition} />
@@ -200,23 +204,6 @@ class Casting extends Component {
                       onClick={this.handleNext}
                       className="next-button-styles-css"
                     />
-                    {/* <FlatButton
-                      label="Back"
-                      // backgroundColor="transparent"
-                      // style={{ color: '#333333' }}
-                      disabled={stepIndex === 0}
-                      onClick={this.handlePrev}
-                      className="back-button-styles-css"
-                    /> */}
-                    {/* <FlatButton
-                      label="Next"
-                      // backgroundColor="transparent"
-                      // style={{ color: '#333333' }}
-                      disabled={stepIndex === 3}
-                      // primary={true}
-                      onClick={this.handleNext}
-                      className="next-button-styles-css"
-                    /> */}
                   </div>
                 </div>
               </div>
@@ -226,7 +213,15 @@ class Casting extends Component {
 
         </div>
 
-        {this.getStepContent(stepIndex)}
+        {
+          this.state.loading &&
+          <LinearProgress mode="indeterminate" />
+        }
+
+        {
+          !this.state.loading &&
+          this.getStepContent(stepIndex)
+        }
 
       </section>
 

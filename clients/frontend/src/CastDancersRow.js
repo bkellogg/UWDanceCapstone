@@ -89,6 +89,8 @@ class CastDancersRow extends Component {
 
   render() {
     let person = this.props.person
+    let hasComments = this.props.comments != null
+    console.log(hasComments)
     return (
         <tr>
             {this.props.filter &&
@@ -108,9 +110,12 @@ class CastDancersRow extends Component {
             <td>
                 {person.firstName + " " + person.lastName}
             </td>
-            {this.props.filter && //TODO make it so it only shows this if they have a comment
+            {this.props.filter && hasComments && 
                 <td>
-                    !
+                    <div class="tooltip">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span class="tooltiptext">{this.props.comments[0].comment}</span>
+                    </div>
                 </td>
             }
             {!this.props.filter && !this.props.uncast &&

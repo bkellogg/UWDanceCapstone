@@ -14,15 +14,16 @@ class CheckAvailability extends Component {
   };
 
 
+
   render() {
-    //setTimeout(()=> { this.setState({cast: JSON.parse(localStorage.getItem("socketCast"))})}, 50);
-
-
-    //let cast = JSON.parse(localStorage.socketCast)
-    //console.log(cast)
-    let rows = this.state.cast.map(dancer => {
+    let cast = JSON.parse(localStorage.getItem("cast"))
+    if (JSON.parse(localStorage.getItem("socketCast")).length !== 0){
+        cast = JSON.parse(localStorage.getItem("socketCast"))
+    }
+    let rows = cast.map(dancer => {
+      console.log(dancer)
       return (
-        <CastDancersRow key={dancer.id} person={dancer} filter={true}/>
+        <CastDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} filter={true} comments={dancer.dancer.comments}/>
       )
     })
 
