@@ -142,7 +142,7 @@ class SignUp extends Component {
                         </div>
                         <div className="input-field col s12">
                           <input type="password" name="passwordConf" id="passwordConf" onChange={this.inputChange} onKeyPress={this.inputChange} />
-                          <label htmlF or="passwordConf">Confirm Password</label>
+                          <label htmlFor="passwordConf">Confirm Password</label>
                         </div>
                       </div>
                     </form>

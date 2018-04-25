@@ -108,7 +108,7 @@ class CastDancersRow extends Component {
             <td>
                 {person.firstName + " " + person.lastName}
             </td>
-            {this.props.filter && this.props.comments[0].comment !== "" &&
+            {this.props.filter && //TODO make it so it only shows this if they have a comment
                 <td>
                     !
                 </td>

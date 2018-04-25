@@ -61,7 +61,6 @@ class ConflictRow extends Component {
     let dancer = this.props.dancer
     console.log(dancer)
     let choreos = choreographers.map(choreo => {
-        console.log(choreo)
         return (
             <p className="choreos">{ choreo.firstName + " " + choreo.lastName }  </p>
         )

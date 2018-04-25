@@ -53,20 +53,19 @@ class SelectCast extends Component {
         localStorage.setItem('cast', JSON.stringify([]));
       })
       .catch(err => {
-        console.error(err)
         Util.handleError(err)
       })
     } else {
+
+      //TODO use the info from the websocket
       this.setState({
-      users: JSON.parse(localStorage.getItem("allUsers"))
+        users: JSON.parse(localStorage.getItem("allUsers"))
       })
     }
   }
 
   render() {
-    console.log(this.state)
     let rows = this.state.users.map((person) => {
-      console.log(person)
         return(
           <AllDancersRow person={person}  key={person.id} rank={person.rank} selectCast={true}/>
         )

@@ -5,9 +5,6 @@ import {
   Stepper,
   StepButton,
 } from 'material-ui/Stepper';
-import RaisedButton from 'material-ui/RaisedButton';
-import FlatButton from 'material-ui/FlatButton';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
 import SelectCast from './SelectCast';
 import CheckAvailability from './CheckAvailability';
 import ResolveConflict from './ResolveConflict';
@@ -51,7 +48,6 @@ class Casting extends Component {
       //}
     })
 
-    console.log(this.props.audition)
     //add user to casting session
     Util.makeRequest("auditions/" + this.props.audition + "/casting", "", "POST", true)
       .then((res) => {
@@ -61,7 +57,7 @@ class Casting extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .catch(err => {
-        //console.error(err)
+        console.error(err)
       })
   }
 
