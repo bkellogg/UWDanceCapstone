@@ -48,12 +48,13 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, *DBError) {
 		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
 	}
 	show := &Show{
-		ID:        int(showID),
-		TypeID:    st.ID,
-		EndDate:   newShow.EndDate,
-		CreatedAt: createTime,
-		CreatedBy: newShow.CreatedBy,
-		IsDeleted: false,
+		ID:         int(showID),
+		AuditionID: newShow.AuditionID,
+		TypeID:     st.ID,
+		EndDate:    newShow.EndDate,
+		CreatedAt:  createTime,
+		CreatedBy:  newShow.CreatedBy,
+		IsDeleted:  false,
 	}
 	return show, nil
 }
