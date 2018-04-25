@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 //components
+import Landing from './Landing';
 import SignUp from './SignUp.js';
 import SignIn from './SignIn.js';
 import Main from './Main.js'
@@ -14,7 +15,8 @@ class App extends Component {
     this.state = {
       user: null,
       signUp: false,
-      authorized: false
+      authorized: false,
+      landing: true
     };
   };
 
@@ -43,6 +45,19 @@ class App extends Component {
     })
   }
 
+  showSignIn = () => {
+    this.setState({
+      landing: false
+    })
+  }
+
+  showSignUp = () => {
+    this.setState({
+      landing: false,
+      signUp: true
+    })
+  }
+
   componentWillMount(){
     if(localStorage.getItem("user")){
       this.setState({
@@ -64,13 +79,20 @@ class App extends Component {
   render() {
     return (  
       <section>
-        {this.state.authorized === false && this.state.signUp === false &&
+        {
+          this.state.landing &&
+          <Landing logIn={this.showSignIn} signUp={this.showSignUp} />
+        }
+        {
+          !this.state.landing && !this.state.authorized && !this.state.signUp &&
           <SignIn onSignIn={this.registerUser} onSignUp={this.handleSignUp}/>
         }
-        {this.state.authorized === false && this.state.signUp === true &&
+        {
+          !this.state.landing && !this.state.authorized && this.state.signUp &&
           <SignUp onSignUp={this.registerUser} goBack={this.goBack}/>
         }
-        {this.state.authorized === true &&
+        {
+          this.state.authorized &&
           <Main auth={this.signOut}/>
         }
       </section>

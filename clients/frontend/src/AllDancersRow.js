@@ -242,9 +242,9 @@ class AllDancersRow extends Component {
         {
             this.props.checkAvailability && hasComments && 
                 <td>
-                    <div class="tooltip">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <span class="tooltiptext">{this.props.comments[0].comment}</span>
+                    <div className="tooltip">
+                        <i className="fas fa-exclamation-circle"></i>
+                        <span className="tooltiptext">{this.props.comments[0].comment}</span>
                     </div>
                 </td>
         }

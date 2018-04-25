@@ -96,8 +96,6 @@ class Casting extends Component {
 
   render() {
 
-    console.log(this.state)
-
     const { stepIndex } = this.state;
     const contentStyle = { margin: '0 16px' };
     return (
