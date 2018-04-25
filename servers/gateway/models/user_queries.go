@@ -381,7 +381,7 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 
 	offset := getSQLPageOffset(page)
 	result, err := tx.Query(`
-		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.RoleID, U.RoleID, U.Active, U.CreatedAt FROM Users U
+		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
 		JOIN UserAudition UA ON U.UserID = UA.UserID
 		WHERE UA.AuditionID = ? AND UA.IsDeleted = false
 		LIMIT 25 OFFSET ?`, id, offset)
@@ -406,7 +406,7 @@ func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*U
 
 	offset := getSQLPageOffset(page)
 	result, err := tx.Query(`
-		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.PassHash, U.RoleID, U.RoleID, U.Active, U.CreatedAt FROM Users U
+		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
 		JOIN UserPiece UP ON U.UserID = UP.UserID
 		JOIN Pieces P ON UP.PieceID = P.PieceID
 		WHERE P.ShowID = ? AND UP.IsDeleted = false

@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/startup"
-	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/handlers"
@@ -89,7 +88,7 @@ func main() {
 	announcementContext := handlers.NewAnnouncementContext(db, notifier, permChecker)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
 
-	baseRouter := mux.NewRouter()
+	baseRouter := middleware.NewAuthenticatedRouter(sessionKey, redis)
 	baseRouter.Handle(appvars.MailPath, authorizer.Authorize(mailContext.MailHandler))
 	baseRouter.HandleFunc(appvars.SessionsPath, authContext.UserSignInHandler)
 	baseRouter.HandleFunc(appvars.PasswordResetPath, authContext.PasswordResetHandler)

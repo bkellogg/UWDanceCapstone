@@ -64,6 +64,12 @@ func (ctx *CastingContext) BeginCastingHandler(w http.ResponseWriter, r *http.Re
 				fmt.Sprintf("error loading users from audition into casting session: %s", err.Message),
 				err.Status)
 		}
+	} else {
+		if ctx.Session.Audition != audID {
+			return HTTPError(
+				fmt.Sprintf("casting session is already casting audition id %d"),
+				ctx.Session.Audition)
+		}
 	}
 
 	// add the current user as a choreographer to the current casting session

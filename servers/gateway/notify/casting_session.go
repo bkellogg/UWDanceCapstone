@@ -18,15 +18,16 @@ const (
 // CastingSession is a controller for a specific
 // session of casting.
 type CastingSession struct {
-	HasBegun       bool                                `json:"hasBegun"`       // whether or not the session has begun or not
-	Store          *models.Database                    `json:"-"`              // Database that stores all information in the app
-	Dancers        map[DancerID]*Dancer                `json:"dancers"`        // all Dancers in the audition
-	Choreographers map[Choreographer]*models.User      `json:"choreographers"` // all choreographers who are casting
-	ChorCast       map[Choreographer]map[DancerID]Rank `json:"chorCast"`       // all choreographers and who they have casted
-	Uncasted       map[DancerID]bool                   `json:"uncasted"`       // all Dancers that have no been cast
-	Casted         map[DancerID]map[Choreographer]bool `json:"casted"`         // all dancers that have been casted and who they're casted by
-	mx             sync.RWMutex                        `json:"-"`              // mutex to hold locks while modifying the session
-	notifier       *Notifier                           `json:"-"`              // notifier to use to send updates
+	HasBegun       bool                                `json:"hasBegun"`           // whether or not the session has begun or not
+	Audition       int                                 `json:"audition,omitempty"` // the id of the audition that is currently being casted
+	Store          *models.Database                    `json:"-"`                  // Database that stores all information in the app
+	Dancers        map[DancerID]*Dancer                `json:"dancers"`            // all Dancers in the audition
+	Choreographers map[Choreographer]*models.User      `json:"choreographers"`     // all choreographers who are casting
+	ChorCast       map[Choreographer]map[DancerID]Rank `json:"chorCast"`           // all choreographers and who they have casted
+	Uncasted       map[DancerID]bool                   `json:"uncasted"`           // all Dancers that have no been cast
+	Casted         map[DancerID]map[Choreographer]bool `json:"casted"`             // all dancers that have been casted and who they're casted by
+	mx             sync.RWMutex                        `json:"-"`                  // mutex to hold locks while modifying the session
+	notifier       *Notifier                           `json:"-"`                  // notifier to use to send updates
 }
 
 // NewCastingSession returns a casting session hooked up
@@ -52,6 +53,7 @@ func (c *CastingSession) LoadFromAudition(id int) *middleware.HTTPError {
 		return middleware.NewHTTPError("cannot load from audition into a casting session that has already begun",
 			http.StatusInternalServerError)
 	}
+	c.Audition = id
 	c.mx.Lock()
 	defer c.mx.Unlock()
 
@@ -83,6 +85,7 @@ func (c *CastingSession) GetClient(id int64) (*WebSocketClient, bool) {
 func (c *CastingSession) Flush() {
 	c.mx.Lock()
 	c.HasBegun = false
+	c.Audition = 0
 	c.Dancers = make(map[DancerID]*Dancer)
 	c.Choreographers = make(map[Choreographer]*models.User)
 	c.ChorCast = make(map[Choreographer]map[DancerID]Rank)
@@ -270,18 +273,23 @@ func (c *CastingSession) ToCastingUpdate(chorID int64) (*CastingUpdate, error) {
 	castingUpdate := &CastingUpdate{}
 
 	// build list of uncasted dancers
-	uncasted := make([]*Dancer, 0, len(c.Uncasted))
-	for dID, _ := range c.Uncasted {
-		dancer, _ := c.dancer(int64(dID))
-		uncasted = append(uncasted, dancer)
+	otherDancers := make(map[DancerID]*Dancer)
+	for k, v := range c.Dancers {
+		otherDancers[k] = v
 	}
-	castingUpdate.Uncasted = uncasted
 
 	// build list of un/contested dancers
 	castingUpdate.Contested = make([]*ContestedDancer, 0)
 	castingUpdate.Cast = make([]*RankedDancer, 0)
 	chorDancers := c.ChorCast[Choreographer(chorID)]
 	for dancerID, rank := range chorDancers {
+		// drop the dancer from the list of all dancers
+		// since they are already in a category
+		delete(otherDancers, dancerID)
+
+		// determine if the dancer should be reported
+		// as a confirmed dancer, or as one that is
+		// contested.
 		chorsContesting, isContested := c.dancerIsContested(dancerID)
 		if isContested {
 			castingUpdate.Contested = append(castingUpdate.Contested, c.makeContestedDancer(dancerID, int(rank), chorsContesting))
@@ -290,6 +298,16 @@ func (c *CastingSession) ToCastingUpdate(chorID int64) (*CastingUpdate, error) {
 			castingUpdate.Cast = append(castingUpdate.Cast, dancer.Rank(int(rank)))
 		}
 	}
+
+	// convert the map of allDancers into a slice
+	// of Dancers. i.e. drop the userIDs out of the
+	// returned result.
+	odSlice := make([]*Dancer, 0, len(otherDancers))
+	for _, v := range otherDancers {
+		odSlice = append(odSlice, v)
+	}
+
+	castingUpdate.Uncasted = odSlice
 
 	return castingUpdate, nil
 }
