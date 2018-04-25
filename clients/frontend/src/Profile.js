@@ -14,6 +14,7 @@ class Profile extends Component {
     this.resumeChange = this.resumeChange.bind(this);
     this.photoChange = this.photoChange.bind(this);
     this.formatHistory = this.formatHistory.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
@@ -30,6 +31,8 @@ class Profile extends Component {
       photoUpload: "",
       bioUpload: "",
       resumeUpload: "",
+      // User bio word count
+      wordCount: "",
     }
   };
 
@@ -181,7 +184,6 @@ class Profile extends Component {
     xhr.send(data);
   }
 
-
   onClick() {
     if (this.state.edit) {
       if (this.state.firstName !== "") {
@@ -197,11 +199,10 @@ class Profile extends Component {
       }
       if (this.state.bioUpload !== "") {
         Util.uploadBio(this.state.bioUpload)
-        this.setState({ bio: this.state.bioUpload })
+        this.setState({ bio: this.state.bioUpload, wordCount: 0 })
       }
       if (this.state.resumeUpload !== "") {
         this.uploadResume(this.state.resumeUpload)
-        //this.setState({ resume: this.state.resumeUpload })
       }
       this.setState({
         firstName: "",
@@ -234,6 +235,21 @@ class Profile extends Component {
     this.setState({
       photoUpload: val.target,
     })
+  }
+
+  onKeyDown = event => {
+    let len = event.target.value.split(/[\s]+/);
+    this.setState({
+      bioUpload: event.target.value,
+      wordCount: len.length,
+    });
+    if (len.length > 60) {
+      if (event.keyCode == 46 || event.keyCode == 8 || (event.keyCode >= 37 && event.keyCode <= 40)) {
+
+      } else if (event.keyCode < 48 || event.keyCode > 57) {
+        event.preventDefault();
+      }
+    }
   }
 
   render() {
@@ -292,8 +308,13 @@ class Profile extends Component {
                             <form className="col s12">
                               <div className="row">
                                 <div className="input-field col s12">
-                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
-                                  <label htmlFor="textarea1">Bios should be 60 words or less</label>
+                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onKeyDown={this.onKeyDown} defaultValue={this.state.bio}></textarea>
+                                  {this.state.wordCount > 60 && (
+                                    <div id="bioWarning">You have reached the max word limit</div>
+                                  )}
+                                  {this.state.bio == null && (
+                                    <label htmlFor="textarea1">Bios should be 60 words or less</label>
+                                  )}
                                 </div>
                               </div>
                             </form>
