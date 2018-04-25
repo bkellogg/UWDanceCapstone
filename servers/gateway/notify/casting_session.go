@@ -15,19 +15,21 @@ const (
 	actionAdd    = "add"
 )
 
+var exists struct{} // var for saying amp entry exists
+
 // CastingSession is a controller for a specific
 // session of casting.
 type CastingSession struct {
-	HasBegun       bool                                `json:"hasBegun"`           // whether or not the session has begun or not
-	Audition       int                                 `json:"audition,omitempty"` // the id of the audition that is currently being casted
-	Store          *models.Database                    `json:"-"`                  // Database that stores all information in the app
-	Dancers        map[DancerID]*Dancer                `json:"dancers"`            // all Dancers in the audition
-	Choreographers map[Choreographer]*models.User      `json:"choreographers"`     // all choreographers who are casting
-	ChorCast       map[Choreographer]map[DancerID]Rank `json:"chorCast"`           // all choreographers and who they have casted
-	Uncasted       map[DancerID]bool                   `json:"uncasted"`           // all Dancers that have no been cast
-	Casted         map[DancerID]map[Choreographer]bool `json:"casted"`             // all dancers that have been casted and who they're casted by
-	mx             sync.RWMutex                        `json:"-"`                  // mutex to hold locks while modifying the session
-	notifier       *Notifier                           `json:"-"`                  // notifier to use to send updates
+	HasBegun       bool                                    `json:"hasBegun"`           // whether or not the session has begun or not
+	Audition       int                                     `json:"audition,omitempty"` // the id of the audition that is currently being casted
+	Store          *models.Database                        `json:"-"`                  // Database that stores all information in the app
+	Dancers        map[DancerID]*Dancer                    `json:"dancers"`            // all Dancers in the audition
+	Choreographers map[Choreographer]*models.User          `json:"choreographers"`     // all choreographers who are casting
+	ChorCast       map[Choreographer]map[DancerID]Rank     `json:"chorCast"`           // all choreographers and who they have casted
+	Uncasted       map[DancerID]struct{}                   `json:"uncasted"`           // all Dancers that have no been cast
+	Casted         map[DancerID]map[Choreographer]struct{} `json:"casted"`             // all dancers that have been casted and who they're casted by
+	mx             sync.RWMutex                            `json:"-"`                  // mutex to hold locks while modifying the session
+	notifier       *Notifier                               `json:"-"`                  // notifier to use to send updates
 }
 
 // NewCastingSession returns a casting session hooked up
@@ -39,8 +41,8 @@ func NewCastingSession(db *models.Database, notifer *Notifier) *CastingSession {
 		Dancers:        make(map[DancerID]*Dancer),
 		ChorCast:       make(map[Choreographer]map[DancerID]Rank),
 		Choreographers: make(map[Choreographer]*models.User),
-		Uncasted:       make(map[DancerID]bool),
-		Casted:         make(map[DancerID]map[Choreographer]bool),
+		Uncasted:       make(map[DancerID]struct{}),
+		Casted:         make(map[DancerID]map[Choreographer]struct{}),
 		notifier:       notifer,
 	}
 }
@@ -65,7 +67,7 @@ func (c *CastingSession) LoadFromAudition(id int) *middleware.HTTPError {
 	for _, ualr := range ualrs {
 		dancer := Dancer(*ualr)
 		c.Dancers[DancerID(ualr.User.ID)] = &dancer
-		c.Uncasted[DancerID(ualr.User.ID)] = true
+		c.Uncasted[DancerID(ualr.User.ID)] = exists
 	}
 
 	c.HasBegun = true
@@ -89,8 +91,8 @@ func (c *CastingSession) Flush() {
 	c.Dancers = make(map[DancerID]*Dancer)
 	c.Choreographers = make(map[Choreographer]*models.User)
 	c.ChorCast = make(map[Choreographer]map[DancerID]Rank)
-	c.Uncasted = make(map[DancerID]bool)
-	c.Casted = make(map[DancerID]map[Choreographer]bool)
+	c.Uncasted = make(map[DancerID]struct{})
+	c.Casted = make(map[DancerID]map[Choreographer]struct{})
 	c.mx.Unlock()
 }
 
@@ -102,12 +104,16 @@ func (c *CastingSession) AddChoreographer(chor *models.User) error {
 	if !c.HasBegun {
 		return errors.New("casting session has not begun")
 	}
-	if _, found := c.ChorCast[Choreographer(chor.ID)]; found {
-		return errors.New("choreographer is already in this casting session")
+	if _, found := c.ChorCast[Choreographer(chor.ID)]; !found {
+		dancerSlice := make(map[DancerID]Rank)
+		c.ChorCast[Choreographer(chor.ID)] = dancerSlice
+		c.Choreographers[Choreographer(chor.ID)] = chor
 	}
-	dancerSlice := make(map[DancerID]Rank)
-	c.ChorCast[Choreographer(chor.ID)] = dancerSlice
-	c.Choreographers[Choreographer(chor.ID)] = chor
+	castingUpdate, err := c.ToCastingUpdate(chor.ID)
+	if err != nil {
+		return fmt.Errorf("error dispatching current choreographer state: %v", err)
+	}
+	c.notifier.Notify(NewWebSocketEvent(chor.ID, EventTypeCasting, castingUpdate))
 	return nil
 }
 
@@ -118,7 +124,7 @@ func (c *CastingSession) Handle(chorID int64, cu *ChoreographerUpdate) error {
 	defer c.mx.Unlock()
 
 	if !c.choreographerExists(chorID) {
-		return errors.New("choreographer does not exist. did you forget to begin casting? ")
+		return errors.New("choreographer does not exist. did you forget to begin casting?")
 	}
 
 	if err := c.handle(chorID, cu); err != nil {
@@ -188,7 +194,7 @@ func (c *CastingSession) dropAll(chorID int64, cu *ChoreographerUpdate) error {
 
 		_, isCasted := c.dancerIsCasted(id)
 		if !isCasted {
-			c.Uncasted[DancerID(id)] = true
+			c.Uncasted[DancerID(id)] = exists
 		}
 	}
 	return nil
@@ -233,10 +239,10 @@ func (c *CastingSession) rankAll(chorID int64, cu *ChoreographerUpdate) error {
 			}
 
 			if c.Casted[DancerID(id)] == nil {
-				c.Casted[DancerID(id)] = make(map[Choreographer]bool)
+				c.Casted[DancerID(id)] = make(map[Choreographer]struct{})
 			}
 			// update the casted list
-			c.Casted[DancerID(id)][Choreographer(chorID)] = true
+			c.Casted[DancerID(id)][Choreographer(chorID)] = exists
 
 			// update the choreographer list
 			c.ChorCast[Choreographer(chorID)][DancerID(id)] = Rank(i + 1)
