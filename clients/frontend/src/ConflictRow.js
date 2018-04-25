@@ -12,7 +12,7 @@ class ConflictRow extends Component {
   };
 
   componentDidMount(){
-      this.getPhoto
+      this.getPhoto()
   }
 
   getPhoto = () => {
@@ -61,15 +61,14 @@ class ConflictRow extends Component {
     let dancer = this.props.dancer
     console.log(dancer)
     let choreos = choreographers.map(choreo => {
-        console.log(choreo)
         return (
-            <p className="choreos">{ choreo.firstName + " " + choreo.lastName }  </p>
+            <p className="choreos">{ choreo.firstName + " " + choreo.lastName} &nbsp; </p>
         )
     })
     return (
         <tr>
             <td>
-                <img src={this.state.photoUrl} className="avatar"/>
+                <img src={this.state.photoUrl} alt="profile" className="avatar"/>
             </td>
             <td className="dancerAssignedNumber">
                 {dancer.regNum}

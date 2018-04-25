@@ -27,7 +27,11 @@ export function clearAuthAndUser() {
     localStorage.removeItem("auth");
     localStorage.removeItem("user");
     localStorage.removeItem("allUsers");
-    localStorage.removeItem("firstLoad")
+    localStorage.removeItem("firstLoad");
+    localStorage.removeItem("cast");
+    localStorage.removeItem("socketCast");
+    localStorage.removeItem("contested");
+    localStorage.removeItem("uncasted")
 };
 
 export function makeRequest(resource, payload = "", method = "GET", useAuth = false) {
@@ -68,6 +72,7 @@ export function refreshLocalUser() {
 export function signOut() {
     clearAuthAndUser();
     window.location.reload()
+    window.location = "/"
 }
 
 export function uploadPhoto(val){

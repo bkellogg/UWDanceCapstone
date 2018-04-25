@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import TimePicker from 'material-ui/TimePicker';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import './styling/General.css';
@@ -64,13 +63,14 @@ class RehearsalRow extends Component {
   }
 
   render() {
-    let timePicker = []
-    times.forEach((time, index) => {
-      return (
-        timePicker.push(
-          <MenuItem value={time} primaryText={formattedTimes[index]} />
+      let timePicker = []
+      times.forEach((time, index) => {
+        return (
+            timePicker.push(
+                <MenuItem key={index} value={time} primaryText={formattedTimes[index]} />
+            ) 
         )
-      )
+      
     })
     let finished = this.props.finished
     return (

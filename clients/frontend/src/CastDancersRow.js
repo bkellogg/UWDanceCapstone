@@ -4,7 +4,6 @@ import * as Util from './util.js';
 import Checkbox from 'material-ui/Checkbox';
 import Button from 'material-ui/RaisedButton';
 import img from './imgs/defaultProfile.jpg';
-import Avatar from 'material-ui/Avatar';
 
 class CastDancersRow extends Component {
   constructor(props) {
@@ -90,28 +89,33 @@ class CastDancersRow extends Component {
 
   render() {
     let person = this.props.person
+    let hasComments = this.props.comments != null
     return (
         <tr>
-            {this.props.filter &&
-                <td>
-                    <Checkbox
-                        onCheck = {this.onCheck}
-                        checked = {this.state.checked}
-                    />
-                </td>
+            {
+                this.props.checkAvailability &&
+                    <td>
+                        <Checkbox
+                            onCheck = {this.onCheck}
+                            checked = {this.state.checked}
+                        />
+                    </td>
             }
             <td>
-                <img src={this.state.photoUrl} className="avatar"/>
+                <img src={this.state.photoUrl} alt="profile" className="avatar"/>
             </td>
             <td className="dancerAssignedNumber">
-                regNum
+                {this.props.regNum}
             </td>
             <td>
                 {person.firstName + " " + person.lastName}
             </td>
-            {this.props.filter &&
+            {this.props.filter && hasComments && 
                 <td>
-                    !
+                    <div class="tooltip">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span class="tooltiptext">{this.props.comments[0].comment}</span>
+                    </div>
                 </td>
             }
             {!this.props.filter && !this.props.uncast &&
