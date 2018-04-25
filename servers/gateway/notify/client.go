@@ -10,18 +10,16 @@ import (
 // WebSocketClient represents how a websocket client
 // is stored on the server,
 type WebSocketClient struct {
-	conns     []*websocket.Conn
-	user      *models.User
-	isCasting bool
-	mx        sync.RWMutex // necessary for safely removing specific connections
+	conns []*websocket.Conn
+	user  *models.User
+	mx    sync.RWMutex // necessary for safely removing specific connections
 }
 
 // newWebSocketClient creates a new websocket client from the
 // given information.
 func newWebSocketClient(u *models.User, c *websocket.Conn, isCasting bool) *WebSocketClient {
 	wsc := &WebSocketClient{
-		user:      u,
-		isCasting: isCasting,
+		user: u,
 	}
 	if c != nil {
 		wsc.mx.Lock()
@@ -29,18 +27,6 @@ func newWebSocketClient(u *models.User, c *websocket.Conn, isCasting bool) *WebS
 		wsc.mx.Unlock()
 	}
 	return wsc
-}
-
-// addCasting makes the current WebSocketClient a WSC that
-// can receive casting updates.
-func (c *WebSocketClient) AddCasting() {
-	c.isCasting = true
-}
-
-// removeCasting makes the current WebSocketClient a WSC that
-// cannot receive casting updates.
-func (c *WebSocketClient) RemoveCasting() {
-	c.isCasting = false
 }
 
 // addConnection adds the given connections to this WebSocketClient.
