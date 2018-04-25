@@ -187,9 +187,9 @@ class AllDancersRow extends Component {
     let choreographers = this.props.choreographers
     let choreos = []
     if (choreographers) {
-        choreos = choreographers.map(choreo => {
+        choreos = choreographers.map((choreo, i) => {
             return (
-                <p className="choreos">{ choreo.firstName + " " + choreo.lastName }  </p>
+                <p className="choreos" key={i}>{ choreo.firstName + " " + choreo.lastName }  </p>
             )
         })
     }

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import AllDancersRow from './AllDancersRow';
-import ConflictRow from './ConflictRow';
 import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
@@ -33,11 +32,11 @@ class ResolveConflict extends Component {
 
     let conflictsRow = []
     const conflicts = this.props.contested
+    console.log(this.props.contested)
     if(conflicts) {
       conflictsRow = conflicts.map(conflict => {
-        console.log(conflict.rankedDancer)
         return (
-          <AllDancersRow choreographers={conflict.choreographers} key={conflict.rankedDancer.dancer.id} person={conflict.rankedDancer.dancer.user} numPieces={conflict.rankedDancer.dancer.numShows} rank={conflict.rankedDancer.rank} audition={this.props.audition} resolveConflict={true}/>
+          <AllDancersRow choreographers={conflict.choreographers} key={conflict.rankedDancer.dancer.userid} person={conflict.rankedDancer.dancer.user} numPieces={conflict.rankedDancer.dancer.numShows} rank={conflict.rankedDancer.rank} audition={this.props.audition} resolveConflict={true}/>
         )
       })
     }
