@@ -31,3 +31,17 @@ type Piece struct {
 	CreatedBy       int       `json:"createdBy"`
 	IsDeleted       bool      `json:"isDeleted"`
 }
+
+// PieceUsersResponse represents how the server will
+// report all users in a piece.
+type PieceUsersResponse struct {
+	Page          int             `json:"page"`
+	Choreographer *UserResponse   `json:"choreographer"`
+	Dancers       []*UserResponse `json:"dancers"`
+}
+
+// NewPieceUsersResponse returns a new pointer to a PieceUsersResponse from the
+// given information.
+func NewPieceUsersResponse(page int, chor *UserResponse, dancers []*UserResponse) *PieceUsersResponse {
+	return &PieceUsersResponse{Page: page, Choreographer: chor, Dancers: dancers}
+}

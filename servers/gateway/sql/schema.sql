@@ -65,12 +65,10 @@ CREATE TABLE UserPiece (
     UserPieceID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT NOT NULL,
     PieceID INT NOT NULL,
-    RoleID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID),
-    FOREIGN KEY (RoleID) REFERENCES Role(RoleID)
+    FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID)
 );
 
 CREATE TABLE UserAuditionAvailability (
