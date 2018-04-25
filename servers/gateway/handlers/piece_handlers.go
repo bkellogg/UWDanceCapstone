@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -76,15 +77,8 @@ func (ctx *AuthContext) SpecificPieceHandler(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-// PieceChoreographerHandler handles requests for choreographers
-// on a specific piece
-func (ctx *AuthContext) PieceChoreographerHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	if !ctx.permChecker.UserCan(u, permissions.AddStaffToPiece) {
-		return permissionDenied()
-	}
-	if r.Method != "PUT" {
-		return methodNotAllowed()
-	}
+// PieceObjectIDHandler handles requests for api/v1/pieces/{id}/{object}/{id}
+func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	vars := mux.Vars(r)
 	pieceIDString := vars["id"]
 	pieceID, err := strconv.Atoi(pieceIDString)
@@ -92,29 +86,78 @@ func (ctx *AuthContext) PieceChoreographerHandler(w http.ResponseWriter, r *http
 		return HTTPError("unparsable user ID given: "+err.Error(), http.StatusBadRequest)
 	}
 	object := vars["object"]
-	if object != "choreographer" {
+	switch object {
+	case "choreographer":
+		if r.Method != "PUT" {
+			return methodNotAllowed()
+		}
+		if !ctx.permChecker.UserCan(u, permissions.AddStaffToPiece) {
+			return permissionDenied()
+		}
+		choreographerIDString := vars["objectID"]
+		choreographerID, err := strconv.Atoi(choreographerIDString)
+		if err != nil {
+			return HTTPError("unparsable piece ID given: "+err.Error(), http.StatusBadRequest)
+		}
+
+		user, dberr := ctx.store.GetUserByID(choreographerID, false)
+		if err != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
+		}
+		if user == nil {
+			return HTTPError("no user exists with the given id", http.StatusNotFound)
+		}
+		if !ctx.permChecker.UserIsAtLeast(user, appvars.PermChoreographer) {
+			return HTTPError("cannot add non choreographers as choreographers to pieces", http.StatusBadRequest)
+		}
+
+		dberr = ctx.store.AssignChoreographerToPiece(choreographerID, pieceID)
+		if dberr != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
+		}
+		return respondWithString(w, "choreographer added", http.StatusOK)
+	default:
 		return objectTypeNotSupported()
 	}
-	choreographerIDString := vars["objectID"]
-	choreographerID, err := strconv.Atoi(choreographerIDString)
-	if err != nil {
-		return HTTPError("unparsable piece ID given: "+err.Error(), http.StatusBadRequest)
-	}
+}
 
-	user, dberr := ctx.store.GetUserByID(choreographerID, false)
+// PieceObjectHandler handles requests for api/v1/pieces/{id}/{object}
+func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	vars := mux.Vars(r)
+	pieceIDString := vars["id"]
+	pieceID, err := strconv.Atoi(pieceIDString)
 	if err != nil {
-		return HTTPError(dberr.Message, dberr.HTTPStatus)
+		return HTTPError("unparsable user ID given: "+err.Error(), http.StatusBadRequest)
 	}
-	if user == nil {
-		return HTTPError("no user exists with the given id", http.StatusNotFound)
-	}
-	if !ctx.permChecker.UserIsAtLeast(user, appvars.PermChoreographer) {
-		return HTTPError("cannot add non choreographers as choreographers to pieces", http.StatusBadRequest)
-	}
+	object := vars["object"]
+	switch object {
+	case "users":
+		if r.Method != "GET" {
+			return methodNotAllowed()
+		}
+		if !ctx.permChecker.UserCanSeeUsersInPiece(u, pieceID) {
+			return permissionDenied()
+		}
+		page, httperr := getPageParam(r)
+		if httperr != nil {
+			return httperr
+		}
 
-	dberr = ctx.store.AssignChoreographerToPiece(choreographerID, pieceID)
-	if dberr != nil {
-		return HTTPError(dberr.Message, dberr.HTTPStatus)
+		users, chor, dberr := ctx.store.GetUsersByPieceID(pieceID, page, getIncludeDeletedParam(r))
+		if dberr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting users by piece id")
+		}
+
+		chorRes, err := ctx.permChecker.ConvertUserToUserResponse(chor)
+		if err != nil {
+			return HTTPError(fmt.Sprintf("error converting users to user responses: %v", err), http.StatusInternalServerError)
+		}
+		userRes, err := ctx.permChecker.ConvertUserSliceToUserResponseSlice(users)
+		if err != nil {
+			return HTTPError(fmt.Sprintf("error converting users to user responses: %v", err), http.StatusInternalServerError)
+		}
+		return respond(w, models.NewPieceUsersResponse(page, chorRes, userRes), http.StatusOK)
+	default:
+		return objectTypeNotSupported()
 	}
-	return respondWithString(w, "choreographer added", http.StatusOK)
 }

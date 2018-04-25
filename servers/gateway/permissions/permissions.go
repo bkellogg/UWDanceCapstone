@@ -22,6 +22,7 @@ const (
 	SeeAuditions    = 10
 	CreateAuditions = 70
 	DeleteAuditions = 70
+	ModifyAuditions = 70
 
 	SeeShows    = 10
 	CreateShows = 70

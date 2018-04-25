@@ -12,11 +12,11 @@ import (
 )
 
 // HTTPError defines a package wrapper for middleware's NewHTTPError
-// This is done to prevent needing to specifiy package when creating
+// This is done to prevent needing to specify a package when creating
 // a new error
 var HTTPError = middleware.NewHTTPError
 
-// permissionDenied returns a permission deined HTTPError.
+// permissionDenied returns a permission defined HTTPError.
 func permissionDenied() *middleware.HTTPError {
 	return &middleware.HTTPError{
 		Message: appvars.ErrPermissionDenied,

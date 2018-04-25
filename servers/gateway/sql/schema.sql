@@ -23,10 +23,8 @@ CREATE TABLE Users (
 
 CREATE TABLE Auditions (
     AuditionID INT AUTO_INCREMENT PRIMARY KEY,
-    Name VARCHAR (50) NOT NULL UNIQUE KEY,
     Time DATETIME NOT NULL,
     Location VARCHAR(100) NOT NULL,
-    Quarter VARCHAR(10) NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL
@@ -67,12 +65,10 @@ CREATE TABLE UserPiece (
     UserPieceID INT AUTO_INCREMENT PRIMARY KEY,
     UserID INT NOT NULL,
     PieceID INT NOT NULL,
-    RoleID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID),
-    FOREIGN KEY (RoleID) REFERENCES Role(RoleID)
+    FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID)
 );
 
 CREATE TABLE UserAuditionAvailability (
@@ -93,8 +89,10 @@ CREATE TABLE UserAudition (
     AuditionID INT NOT NULL,
     UserID INT NOT NULL,
     AvailabilityID INT NOT NULL,
-    CreatedBy INT NOT NULL,
+    RegNum INT NOT NULL,
+    NumShows INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID),

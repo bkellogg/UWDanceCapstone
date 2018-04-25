@@ -14,6 +14,13 @@ type NewAudition struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
+// AuditionUpdate represents the body of a request to update
+// an audition
+type AuditionUpdate struct {
+	Time     time.Time `json:"time"`
+	Location string    `json:"location"`
+}
+
 // Validate validates the new audition and returns an error
 // if one occurred.
 func (na *NewAudition) Validate() error {

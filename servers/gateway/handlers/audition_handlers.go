@@ -70,6 +70,19 @@ func (ctx *AuthContext) SpecificAuditionHandler(w http.ResponseWriter, r *http.R
 			return objectNotFound("audition")
 		}
 		return HTTPError("error deleting audition: "+err.Error(), http.StatusInternalServerError)
+	case "PATCH":
+		if !ctx.permChecker.UserCan(u, permissions.ModifyAuditions) {
+			return permissionDenied()
+		}
+		updates := &models.AuditionUpdate{}
+		if httperr := receive(r, updates); err != nil {
+			return httperr
+		}
+		dberr := ctx.store.UpdateAuditionByID(audID, updates)
+		if dberr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dberr, "error updating audition")
+		}
+		return respondWithString(w, "audition updated", http.StatusOK)
 	default:
 		return methodNotAllowed()
 	}

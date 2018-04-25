@@ -39,6 +39,46 @@ func (store *Database) InsertNewAudition(newAud *NewAudition) (*Audition, *DBErr
 	return audition, nil
 }
 
+// UpdateAuditionByID updates the given audition to have the new values
+// in the updates parameter. If any value is unset, the value that is
+// currently in the database will be used.
+func (store *Database) UpdateAuditionByID(id int, updates *AuditionUpdate) *DBError {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	// store a new variable for this
+	// so we don't modify the updates
+	// that were passed to us
+	timeToUse := &updates.Time
+	if updates.Time.IsZero() {
+		timeToUse = nil
+	}
+
+	res, err := tx.Exec(
+		`UPDATE Auditions A SET
+		A.Time = COALESCE(NULLIF(?, ''), Time),
+		A.Location = COALESCE(NULLIF(?, ''), Location)
+		WHERE A.AuditionID = ? AND A.IsDeleted = FALSE`,
+		timeToUse, updates.Location, id)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error applying audition updates: %v", err), http.StatusInternalServerError)
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if rowsAffected == 0 {
+		return NewDBError("no audition found", http.StatusNotFound)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
 // GetAuditionByID returns the audition with the given ID.
 func (store *Database) GetAuditionByID(id int, includeDeleted bool) (*Audition, *DBError) {
 	query := `SELECT * FROM Auditions A WHERE A.AuditionID = ?`

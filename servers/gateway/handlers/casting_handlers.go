@@ -49,12 +49,11 @@ func (ctx *CastingContext) BeginCastingHandler(w http.ResponseWriter, r *http.Re
 		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
 
-	// TODO: re-add this when ready for production
-	client, found := ctx.Session.GetClient(u.ID)
+	// Make sure that the client already has a websocket connection
+	_, found := ctx.Session.GetClient(u.ID)
 	if !found {
 		return HTTPError("user must have at least one websocket connection to begin casting", http.StatusBadRequest)
 	}
-	client.AddCasting()
 
 	// if the session hasn't yet started, start it by loading users from the audition
 	// into it.
@@ -63,6 +62,12 @@ func (ctx *CastingContext) BeginCastingHandler(w http.ResponseWriter, r *http.Re
 			return HTTPError(
 				fmt.Sprintf("error loading users from audition into casting session: %s", err.Message),
 				err.Status)
+		}
+	} else {
+		if ctx.Session.Audition != audID {
+			return HTTPError(
+				fmt.Sprintf("casting session is already casting audition id %d",
+					ctx.Session.Audition), http.StatusBadRequest)
 		}
 	}
 
