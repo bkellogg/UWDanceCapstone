@@ -13,7 +13,7 @@ body,html {
 
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
 
@@ -72,7 +72,7 @@ Button {
     background-repeat: no-repeat;
     background-size: cover;
     height: 100%;
-    position: absolute;
+    position: relative;
     top: 0;
     left: 0;
   
