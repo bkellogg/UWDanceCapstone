@@ -56,55 +56,61 @@ class App extends Component {
                   <div className="userSectionsBrokenDown">
                     <p className="capstoneInfoContent"><b><u>Dancers</u></b></p>
                     {/* DANCERS */}
-                    <div id="dancers">
-                      
-                        <p className="capstoneInfoContent userRoleHeader">&#10003; Create a consistent online profile:</p>
-                   
-                      
-                        <p className="capstoneInfoContent indentContentDouble">&#183; Headshots</p>
-                      
-                      
-                        <p className="capstoneInfoContent indentContentDouble">&#183; Bios</p>
-                      
-                      
-                        <p className="capstoneInfoContent indentContentDouble">&#183; Resumes</p>
-                      
-                      
-                        <p className="capstoneInfoContent userRoleHeader">&#10003; Easily register for auditions</p>
-                      
-                    </div>
+                    <table id="dancers">
+                    <tbody>
+                      <tr>
+                        <th className="capstoneInfoContent userRoleHeader">&#10003; Create a consistent online profile:</th>
+                      </tr>
+                      <tr>
+                        <td className="capstoneInfoContent indentContentDouble">&#183; Headshots</td>
+                      </tr>
+                      <tr>
+                        <td className="capstoneInfoContent indentContentDouble">&#183; Bios</td>
+                      </tr>
+                      <tr>
+                        <td className="capstoneInfoContent indentContentDouble">&#183; Resumes</td>
+                      </tr>
+                      <tr>
+                        <th className="capstoneInfoContent userRoleHeader">&#10003; Easily register for auditions</th>
+                      </tr>
+                      </tbody>
+                    </table>
                   </div>
 
                   {/* CHOREOGRAPHERS */}
                   <div className="userSectionsBrokenDown">
                     <p className="capstoneInfoContent"><b><u>Choreographers</u></b></p>
-                    <div id="choreographers">
-                      
-                        <p className="capstoneInfoContent userRoleHeader">&#10003; View dancer information </p>
-                      
-                      
-                        <p className="capstoneInfoContent userRoleHeader">&#10003; Resolve casting conflicts</p>
-                      
-                      
-                        <p className="capstoneInfoContent userRoleHeader">&#10003; Set rehearsal schedules</p>
-                      
-                      
-                        <p className="capstoneInfoContent userRoleHeader">&#10003; Send casting immediately</p>
-                      
-                    </div>
+                    <table id="choreographers">
+                    <tbody>
+                      <tr>
+                        <th className="capstoneInfoContent userRoleHeader">&#10003; View dancer information </th>
+                      </tr>
+                      <tr>
+                        <th className="capstoneInfoContent userRoleHeader">&#10003; Resolve casting conflicts</th>
+                      </tr>
+                      <tr>
+                        <th className="capstoneInfoContent userRoleHeader">&#10003; Set rehearsal schedules</th>
+                      </tr>
+                      <tr>
+                        <th className="capstoneInfoContent userRoleHeader">&#10003; Send casting immediately</th>
+                      </tr>
+                      </tbody>
+                    </table>
                   </div>
 
                   {/* DIRECTORS */}
                   <div className="userSectionsBrokenDown">
                     <p className="capstoneInfoContent" ><b><u>Directors</u></b></p>
-                    <div id="directors">
-                      
-                        <p className="capstoneInfoContent userRoleHeader">&#10003; View all casts</p>
-                      
-                      
-                        <p className="capstoneInfoContent userRoleHeader">&#10003; Manage auditions and choreographers</p>
-                      
-                    </div>
+                    <table id="directors">
+                    <tbody>
+                      <tr>
+                        <th className="capstoneInfoContent userRoleHeader">&#10003; View all casts</th>
+                      </tr>
+                      <tr>
+                        <th className="capstoneInfoContent userRoleHeader">&#10003; Manage auditions and choreographers</th>
+                      </tr>
+                      </tbody>
+                    </table>
                   </div>
                   <p className="capstoneInfoContent"> The Artistic Director will be able to manage auditions and choreographers, view everyone involved in the show,
                   and gather contact information for various production staff.</p>
