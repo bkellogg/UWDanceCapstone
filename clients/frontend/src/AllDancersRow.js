@@ -211,7 +211,7 @@ class AllDancersRow extends Component {
     if (choreographers) {
         choreos = choreographers.map((choreo, i) => {
             return (
-                <p className="choreos" key={i}>{ choreo.firstName + " " + choreo.lastName }  </p>
+                <p className="choreos" key={i}>{ choreo.firstName + " " + choreo.lastName.charAt(0) + "." }  </p>
             )
         })
     }
