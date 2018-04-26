@@ -12,6 +12,7 @@ import SetRehearsals from './SetRehearsals';
 import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
+import './styling/CastingFlowTablet.css';
 
 //icons
 import ArrowBackIcon from 'mdi-react/ArrowBackIcon';

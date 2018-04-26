@@ -6,17 +6,24 @@ import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
 
 
+const dateStyle = {
+  customDateStyle: {
+    width: 128,
+    fontSize: 14
+  },
+};
+
 const styles = {
-  customWidth: {
-    width: 130,
-    fontSize: 9
+  customTimeStyle: {
+    width: 105,
+    fontSize: 13
   },
 };
 
 const times = ["1000", "1030", "1100", "1130", "1200", "1230", "1300", "1330", "1400", "1430",
   "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100"]
 
-const formattedTimes = ["10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM",
+const formattedTimes = ["10:00am", "10:30am", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM",
   "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM"]
 
 class RehearsalRow extends Component {
@@ -80,7 +87,7 @@ class RehearsalRow extends Component {
             <SelectField
               floatingLabelText="Day"
               value={this.state.rehearsal.day}
-              style={styles.customWidth}
+              style={dateStyle.customDateStyle}
               onChange={this.updateDay}
               autoWidth={true}
               disabled={finished}
@@ -101,7 +108,7 @@ class RehearsalRow extends Component {
             <SelectField
               className="selectField"
               maxHeight={300}
-              style={styles.customWidth}
+              style={styles.customTimeStyle}
               floatingLabelText="Start Time"
               value={this.state.rehearsal.startTime}
               onChange={this.updateStartTime}
@@ -117,7 +124,7 @@ class RehearsalRow extends Component {
             <SelectField
               className="selectField"
               maxHeight={300}
-              style={styles.customWidth}
+              style={styles.customTimeStyle}
               floatingLabelText="End Time"
               value={this.state.rehearsal.endTime}
               onChange={this.updateEndTime}

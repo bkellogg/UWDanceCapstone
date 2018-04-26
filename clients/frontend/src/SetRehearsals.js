@@ -91,25 +91,24 @@ class SetRehearsals extends Component {
                     {rehearsals}
 
                     <div className="buttonsWrap">
-                      <Button
+                        <Button
+                        backgroundColor="#708090"
+                        style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
+                        onClick={this.removeRehearsal} disabled={finished}>
+                        REMOVE</Button>
+                        <Button
                         backgroundColor="#708090"
                         style={{ color: '#ffffff', float: 'right' }}
                         onClick={this.addRehearsal}
                         disabled={finished}>
                         ADD</Button>
-
-                      <Button
-                        backgroundColor="#708090"
-                        style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
-                        onClick={this.removeRehearsal} disabled={finished}>
-                        REMOVE</Button>
                     </div>
                   </div>
                   <div className="postCastingWrap">
                     <div className="postCasting">
                       <Button
                         backgroundColor="#22A7E0"
-                        style={{ color: '#ffffff', width: '100%' }}
+                        style={{ color: '#ffffff', width: '100%', height:'50' }}
                         onClick={this.handleOpen}
                         disabled={finished}>
                         POST CASTING</Button>

@@ -98,6 +98,7 @@ tr{
 
 
 .dancersList-filter, .extraClass {
+    height: 100%;
     width: 37%;
     position: relative;
     display: inline-block;
@@ -144,17 +145,13 @@ tr{
 .setTimes{
     width: 100%;
     padding: 25px;
-    background-color: white;
-}
-
-.pickDateTime{
-    color: lightblue;
 }
 
 .chooseRehearsalTimes{
     position: relative;
     display: block;
     border: 1px solid lightgray;
+    background-color: #fff;
     margin-right: 20px;
     margin-bottom: 10px;
     padding-left: 5px;
@@ -163,8 +160,8 @@ tr{
 }
 
 .singleRehearsal{
+    padding: 0;
     position: relative;
-
     width: 100%;
     display: flex;
 }
@@ -173,13 +170,14 @@ tr{
     position: relative;
     display: inline-block;
     width: 100%;
-    float: left;
+
 }
 
 .buttonsWrap{
     margin-top: 20px;
     height: 100%;
     position: relative;
+    display: flex;
 }
 
 .postCastingWrap{
@@ -248,3 +246,6 @@ tr{
     visibility: visible;
     opacity: 1;
 }
+
+
+/*ADD REMOVE BUTTON STYLES*/
