@@ -15,7 +15,7 @@ import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
 import * as Util from './util';
 import 'materialize-css';
-import logo from './imgs/logo2.png'
+import logo from './imgs/logoex.png'
 import './styling/Main.css';
 import './styling/Navigation.css';
 import './styling/MobileNavigation.css';

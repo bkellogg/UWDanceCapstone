@@ -28,8 +28,15 @@ class App extends Component {
               </div>
               {/* <h1>you've landed on an alien planet</h1> */}
               <div className="logInSignUpButtonWrap">
-                <Button className="logInRedirectButton" onClick={this.props.logIn}>Log In</Button>
-                <Button className="signUpRedirectButton" onClick={this.props.signUp}>Sign Up</Button>
+                <Button 
+                  className="logInRedirectButton" 
+                  onClick={this.props.logIn}
+                  buttonStyle={{borderRadius: '5'}}>
+                  Log In</Button>
+                <Button 
+                  className="signUpRedirectButton" 
+                  onClick={this.props.signUp}>
+                  Sign Up</Button>
               </div>
             </div>
             <div className="landingContent">
