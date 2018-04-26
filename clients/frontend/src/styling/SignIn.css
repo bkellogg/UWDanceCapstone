@@ -10,13 +10,11 @@ body,html {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-
   width: 100%;
   height: 100%;
   position: relative;
   top: 0;
   left: 0;
-
 }
 
 .Functionality{
@@ -25,12 +23,21 @@ body,html {
   text-align: center;
 }
 
+.signInUplogoWrap{
+  padding-top: 30px;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
 .content {
+  opacity: 0.95;
   background-color: white;
   width: auto;
   display: inline-block;
   padding: 50px;
-  margin: 8%;
+  margin: 2%;
+  margin-bottom: 8%;
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
@@ -63,18 +70,4 @@ Button {
 
 .character-counter {
   visibility: hidden
-}
-
-@media only screen and (max-width : 992px) {
-  .LogInLanding {
-    background-image: url('../imgs/test.jpg');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100%;
-    position: relative;
-    top: 0;
-    left: 0;
-  
-  }
 }

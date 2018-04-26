@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from 'react-materialize';
 import * as Util from './util.js';
+import logo from './imgs/logoex.png'
 import SignUpExtra from './SignUpExtra.js'
 import './styling/SignIn.css';
 import './styling/SignUp.css';
@@ -109,7 +110,9 @@ class SignUp extends Component {
       <section className="signUp">
         <div className="LogInLanding">
           <div className="Functionality">
-            <div className="Logo"></div>
+            <div className="signInUplogoWrap">
+              <img className="officialLogoLandingPage" alt="logo" src={logo} />
+            </div>
             <div className='content'>
               <h5 className='title'> Sign up </h5>
               <div className="error">

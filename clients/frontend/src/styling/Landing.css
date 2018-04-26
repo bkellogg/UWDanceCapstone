@@ -20,6 +20,7 @@
       padding-top: 20px;
       position: relative;
       width: 100%;
+      z-index: 1;
   }
 
 
@@ -52,6 +53,7 @@
       width: 100%;
       height: auto;
       margin-bottom: 200px;
+      z-index: 2;
   }
 
   .capstoneInfo{
@@ -91,6 +93,11 @@
     font-size: 13px;
   }
 
+  /*HEADER AND CONTENT SHARED*/
+  .landingHeading, .landingContent, .landingView{
+    display: block;
+  }
+
   /*TABLE WITH DANCER, CHOREOGRAPHER, DIRECTOR*/
 
   .userSectionsBrokenDown{
@@ -121,4 +128,15 @@
       color: #22A7E0;
       font-weight: 400;
       letter-spacing: 0.5px;
+  }
+
+  @media only screen and (max-width : 992px) {
+    .landingHeading{
+        display: block;
+        height: 100%;
+
+    }
+    .landingContent{
+        display: block;
+    }
   }
