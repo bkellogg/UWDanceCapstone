@@ -22,13 +22,15 @@ class App extends Component {
 
   registerUser = (userVal) => {
     this.setState({
-      user: userVal
+      user: userVal,
+      landing: false,
     })
   };
 
   handleSignUp = () => {
     this.setState({
-      signUp: true
+      signUp: true,
+      landing: false,
     })
   }
 
@@ -41,7 +43,8 @@ class App extends Component {
   signOut = () => {
     this.setState({
       authorized: false,
-      user: null
+      user: null,
+      landing: true,
     })
   }
 
@@ -70,6 +73,7 @@ class App extends Component {
     if(this.state.authorized === false){
       if(this.state.user !== null){
         this.setState({
+          landing: false,
           authorized: true
         })
       }
@@ -80,7 +84,7 @@ class App extends Component {
     return (  
       <section>
         {
-          this.state.landing &&
+          this.state.landing && !this.state.authorized && !this.state.signUp &&
           <Landing logIn={this.showSignIn} signUp={this.showSignUp} />
         }
         {
