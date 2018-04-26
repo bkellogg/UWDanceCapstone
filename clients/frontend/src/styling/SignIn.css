@@ -34,6 +34,7 @@ body,html {
   opacity: 0.95;
   background-color: white;
   width: auto;
+  max-width: 500px;
   display: inline-block;
   padding: 50px;
   margin: 2%;
