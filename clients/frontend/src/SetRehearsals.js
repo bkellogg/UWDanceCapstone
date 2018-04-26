@@ -127,7 +127,7 @@ class SetRehearsals extends Component {
                 actions={[
                   <FlatButton
                     label="Cancel"
-                    style={{ backgroundColor: '#708090', color: '#ffffff', marginRight: '20px' }}
+                    style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
                     primary={false}
                     onClick={this.handleClose}
                   />,
