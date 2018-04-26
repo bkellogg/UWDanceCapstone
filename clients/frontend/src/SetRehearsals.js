@@ -3,6 +3,7 @@ import Button from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RehearsalRow from './RehearsalRow';
+import AvailabilityOverlap from './AvailabilityOverlap';
 
 import './styling/General.css';
 import './styling/CastingFlow.css';
@@ -84,7 +85,7 @@ class SetRehearsals extends Component {
           <div className="transparentCard">
             <div className="wrap">
               <div className="castList setTimesWrap">
-                <div class="extraClass">
+                <div className="extraClass">
                   <div className="setTimes">
 
                     <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
@@ -117,9 +118,9 @@ class SetRehearsals extends Component {
 
                 </div>
 
-                <div className="overlapAvailability"> Cast availability goes here
-                {/*This is where the overlapping availability will be displayed, same style as the one on the availability page, but we're not going to have that up for this*/}
-                </div>
+                <div className="overlapAvailability">
+                  <AvailabilityOverlap />
+               </div>
               </div>
               {/* AFTER CHOSING TIMES */}
               <Dialog
