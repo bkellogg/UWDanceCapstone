@@ -18,7 +18,6 @@ class SelectCast extends Component {
     //check - does the prop exist. if yes, proceed
     if(cast) {
       castRows = cast.map((dancer) => {
-        console.log(dancer)
         return(
           <AllDancersRow person={dancer.dancer.user}  key={dancer.dancer.user.id} regNum={dancer.dancer.regNum} numPieces={dancer.dancer.numShows} rank={dancer.rank} selectCast={true} audition={this.props.auditionID}/>
         )
