@@ -205,7 +205,12 @@ class AllDancersRow extends Component {
 
   render() {
     let p = this.state.person
-    let hasComments = this.props.comments != null
+    let hasComments = true
+    if (this.props.comments === undefined) {
+        hasComments = false
+    } else if (this.props.comments.length === 0){
+        hasComments = false
+    }
     let choreographers = this.props.choreographers
     let choreos = []
     if (choreographers) {

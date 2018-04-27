@@ -37,7 +37,6 @@ class CheckAvailability extends Component {
 
   render() {
     let rows = []
-
     if (this.props.cast) {
       rows = this.props.cast.map(dancer => {
         return (
@@ -68,7 +67,7 @@ class CheckAvailability extends Component {
                   </table>
                 </div>
                 <div className="overlapAvailability">
-                  <AvailabilityOverlap />
+                  <AvailabilityOverlap cast={this.props.cast}/>
                 </div>
               </div>
             </div>

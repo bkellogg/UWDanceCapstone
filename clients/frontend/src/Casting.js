@@ -50,7 +50,7 @@ class Casting extends Component {
   })
 
     //add user to casting session
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", "", "POST", true)
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", "", "PUT", true)
       .then((res) => {
         if (res.ok) {
           return res.text()
