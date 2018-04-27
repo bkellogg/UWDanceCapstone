@@ -15,7 +15,7 @@ class CheckAvailability extends Component {
   };
 
   componentDidMount(){
-    setTimeout(() => {this.orderTable("checkAvailabilityTable")}, 200)
+    //setTimeout(() => {this.orderTable("checkAvailabilityTable")}, 200)
     let filteredCast = this.state.filteredCast
     this.props.cast.map((dancer, i) => {
       filteredCast.push(dancer.dancer.user.id)
