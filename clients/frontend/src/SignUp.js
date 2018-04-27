@@ -108,7 +108,7 @@ class SignUp extends Component {
     return (
 
       <section className="signUp">
-        <div className="LogInLanding">
+        <div className="SignUpLanding">
           <div className="Functionality">
             <div className="signInUplogoWrap">
               <img className="officialLogoLandingPage" alt="logo" src={logo} />
