@@ -78,6 +78,9 @@ img#photo {
   margin-right: 10px
 }
 
+#bioWarning {
+  color: red;
+}
 
 @media only screen and (max-width : 992px) {
 
