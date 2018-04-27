@@ -138,6 +138,7 @@ class AllDancersRow extends Component {
         this.setState({
             filterChecked : !this.state.filterChecked
         })
+        this.props.filterCast(this.state.person.id)
     }  
 
     updateCast = (rank) => {

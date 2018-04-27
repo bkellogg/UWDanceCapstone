@@ -7,9 +7,23 @@ import './styling/CastingFlowMobile.css';
 
 
 class CheckAvailability extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+        filteredCast: []
+    }
+  };
 
   componentDidMount(){
     setTimeout(() => {this.orderTable("checkAvailabilityTable")}, 200)
+    let filteredCast = this.state.filteredCast
+    this.props.cast.map((dancer, i) => {
+      filteredCast.push(dancer.dancer.user.id)
+    })
+    this.setState({
+      filteredCast : filteredCast
+    })
+    console.log(filteredCast)
   }
 
   orderTable = (tableID) => {
@@ -35,12 +49,27 @@ class CheckAvailability extends Component {
     }
   }
 
+  filterCast = (id) => {
+
+    let filteredCast = this.state.filteredCast //this will initially have all the ids of all the cast members, because they are all selected
+    //we are going to take the id from a check, and if the id is in the list already, we'll remove it, and if it isn't then we'll add it
+    let index = filteredCast.indexOf(id)
+    if (index !== -1) { //if the id is already in the cast
+      filteredCast = filteredCast.filter(i => i !== id) //remove them
+    } else { //the id is not in the cast
+      filteredCast.push(id)
+    } 
+    this.setState({
+      filteredCast : filteredCast
+    })
+  }
+
   render() {
     let rows = []
     if (this.props.cast) {
       rows = this.props.cast.map(dancer => {
         return (
-          <AllDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} comments={dancer.dancer.comments} regNum={dancer.dancer.regNum} checkAvailability={true}/>
+          <AllDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} comments={dancer.dancer.comments} regNum={dancer.dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)}/>
         )
       })
     }
@@ -67,7 +96,7 @@ class CheckAvailability extends Component {
                   </table>
                 </div>
                 <div className="overlapAvailability">
-                  <AvailabilityOverlap cast={this.props.cast}/>
+                  <AvailabilityOverlap cast={this.props.cast} filteredCast={this.state.filteredCast}/>
                 </div>
               </div>
             </div>

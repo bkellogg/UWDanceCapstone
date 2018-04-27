@@ -29,8 +29,12 @@ class Casting extends Component {
       cast: [],
       uncast: [],
       contested: [],
-      addToCast: {},
-      dropFromCast: {}
+      addToCast: {
+        "action":"add"
+      },
+      dropFromCast: {
+        "action":"remove"
+      }
     }
   };
 
