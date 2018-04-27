@@ -6,13 +6,12 @@
 }
 */
 .SignUpLanding {
-  background-image: url('../imgs/test.jpg');
+  background-image: url('../imgs/dance-bw.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
 
   width: 100%;
-  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
@@ -70,7 +69,7 @@ Button {
 
 @media only screen and (max-width : 992px) {
   .SignUpLanding {
-    background-image: url('../imgs/test.jpg');
+    background-image: url('../imgs/dance-bw.jpg');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
