@@ -8,8 +8,42 @@ import './styling/CastingFlowMobile.css';
 
 class ResolveConflict extends Component {
 
+  componentDidMount(){
+    setTimeout(() => {this.orderTable("conflictsTable")}, 300)
+    setTimeout(() => {this.orderTable("yourCast")}, 300)
+    setTimeout(() => {this.orderTable("allDancersTable")}, 300)
+  }
+
+  orderTable = (tableID) => {
+    let table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById(tableID);
+    switching = true;
+    while (switching) {
+      switching = false;
+      rows = table.getElementsByTagName("tr");
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName("td")[1];
+        y = rows[i + 1].getElementsByTagName("td")[1];
+        if (x.innerHTML > y.innerHTML) {
+          shouldSwitch= true;
+          break;
+        }
+      }
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+
+  componentDidUpdate(){
+    this.orderTable("conflictsTable")
+    this.orderTable("yourCast")
+    this.orderTable("allDancersTable")
+  }
+
   render() {
-    console.log(this.props)
     let yourCast = []
     const cast = this.props.cast
     if(cast){
@@ -32,7 +66,7 @@ class ResolveConflict extends Component {
 
     let conflictsRow = []
     const conflicts = this.props.contested
-    console.log(this.props.contested)
+
     if(conflicts) {
       conflictsRow = conflicts.map(conflict => {
         return (
@@ -47,8 +81,8 @@ class ResolveConflict extends Component {
           <div className="card1">
             <div className="wrap">
               <div className="conflictsCard">
-                <h2 className="conflictMessage">Conflicts of interest between you and other choreographers.</h2> 
-              <table>
+                <h2 className="conflictMessage">Conflicts between you and other choreographers.</h2> 
+              <table id="conflictsTable">
                   <tbody>
                     <tr className="categories">
                       <th></th>
@@ -71,7 +105,7 @@ class ResolveConflict extends Component {
             <div className="castList-v2 cardAddMargin">
               <div className="choreographersSelecteCast">
                 <h2 className="smallHeading"> Your cast </h2>
-                <table>
+                <table id="yourCast">
                   <tbody>
                     <tr className="categories">
                       <th></th>
@@ -87,7 +121,7 @@ class ResolveConflict extends Component {
               <div className="castList-v2">
               <div className="restOfCast">
                 <h2 className="smallHeading"> All dancers </h2>
-                <table>
+                <table id="allDancersTable">
                   <tbody>
                     <tr className="categories">
                       <th></th>

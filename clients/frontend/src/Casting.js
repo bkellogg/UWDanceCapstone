@@ -29,6 +29,8 @@ class Casting extends Component {
       cast: [],
       uncast: [],
       contested: [],
+      addToCast: {},
+      dropFromCast: {}
     }
   };
 
@@ -64,6 +66,10 @@ class Casting extends Component {
   handleNext = () => {
     const stepIndex = this.state.stepIndex;
 
+    if (stepIndex === 0){
+      this.updateCast()
+    }
+
     if (stepIndex < 3) {
       this.setState({ stepIndex: stepIndex + 1 });
     }
@@ -78,12 +84,31 @@ class Casting extends Component {
     }
   };
 
+  updateCast = () => {
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.addToCast, "PATCH", true)
+      .then(res => {
+        if (res.ok) {
+          return res.text()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.dropFromCast, "PATCH", true)
+      .then(res => {
+        if (res.ok) {
+          return res.text()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+  }
+
   //This takes the stepIndex and returns the component that should be rendered
   getStepContent(stepIndex) {
     
     switch (stepIndex) {
       case 0:
-        return <SelectCast auditionID={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>
+        return <SelectCast auditionID={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested} 
+                           addToCast={add => {this.setState({addToCast:add})}} dropFromCast={drop => {this.setState({dropFromCast:drop})}}/>
       case 1:
         return <CheckAvailability cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>;
       case 2:
@@ -96,7 +121,6 @@ class Casting extends Component {
   }
 
   render() {
-
     const { stepIndex } = this.state;
     const contentStyle = { margin: '0 16px' };
     return (

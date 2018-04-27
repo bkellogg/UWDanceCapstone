@@ -20,7 +20,18 @@ class AllDancersRow extends Component {
         },
         person: this.props.person,
         photoUrl : img,
-        filterChecked : true
+        filterChecked : true,
+        toAddToCast: {
+            "action": "add", 
+            "rank1": [], 
+            "rank2": [], 
+            "rank3": []
+        },
+        toDropFromCast: {
+            "action": "remove",
+            "drops" : []
+        },
+        add : 0
     }
   };
   
@@ -36,7 +47,8 @@ class AllDancersRow extends Component {
                     one: true,
                     two: false,
                     three: false
-                }
+                },
+                add : 1
             })
         } else if (rank === 2) {
             this.setState({
@@ -44,7 +56,8 @@ class AllDancersRow extends Component {
                     one: false,
                     two: true,
                     three: false
-                }
+                },
+                add : 2
             })
         } else if (rank === 3) {
             this.setState({
@@ -52,7 +65,8 @@ class AllDancersRow extends Component {
                     one: false,
                     two: false,
                     three: true
-                }
+                },
+                add : 3
             })
         } else {
             this.setState({
@@ -60,7 +74,8 @@ class AllDancersRow extends Component {
                     one: false,
                     two: false,
                     three: false
-                }
+                },
+                add : 0
             })
         }
     }
@@ -77,9 +92,9 @@ class AllDancersRow extends Component {
     //handling only allowing one to be checked at a time
     if (val === "1") {
         if(this.state.checked.one){
-            this.dropFromCast()
+            this.updateCast(0)
         } else {
-            this.addToCast(1)
+            this.updateCast(1)
         }
         this.setState({
             checked:{
@@ -91,9 +106,9 @@ class AllDancersRow extends Component {
         })
     } else if (val === "2") {
         if(this.state.checked.two){
-            this.dropFromCast()
+            this.updateCast(0)
         } else {
-            this.addToCast(2)
+            this.updateCast(2)
         }
         this.setState({
             checked:{
@@ -104,9 +119,9 @@ class AllDancersRow extends Component {
         })
     } else if (val === "3") {
         if(this.state.checked.three){
-            this.dropFromCast()
+            this.updateCast(0)
         } else {
-            this.addToCast(3)
+            this.updateCast(3)
         }
         this.setState({
             checked:{
@@ -118,12 +133,19 @@ class AllDancersRow extends Component {
     }
   }
 
-  //only called on Check Availability
-  onCheck = () => {
-    this.setState({
-        filterChecked : !this.state.filterChecked
-    })
-}
+    //only called on Check Availability
+    onCheck = () => {
+        this.setState({
+            filterChecked : !this.state.filterChecked
+        })
+    }  
+
+    updateCast = (rank) => {
+        this.props.updateCast(this.state.person.id, rank)
+        this.setState({
+            add : rank
+        })
+    }
 
   dropFromCast = () => {
     let castBody = {
@@ -189,10 +211,11 @@ class AllDancersRow extends Component {
     if (choreographers) {
         choreos = choreographers.map((choreo, i) => {
             return (
-                <p className="choreos" key={i}>{ choreo.firstName + " " + choreo.lastName }  </p>
+                <p className="choreos" key={i}>{ choreo.firstName + " " + choreo.lastName.charAt(0) + "." }  </p>
             )
         })
     }
+
     return (
       <tr>
           {
