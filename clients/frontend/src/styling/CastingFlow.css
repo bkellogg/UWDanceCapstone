@@ -62,8 +62,7 @@ th{
 /* AVAILABILITY CALENDAR */
 .overlapAvailability{
     width: 60%;
-    background-color: lightgray;
-    height: 100%;
+    background-color: #F6F8FC;
     position: absolute;
     display: inline-block;
     padding: 20px;
