@@ -9,7 +9,6 @@
 </head>
 
 <body>
-    <a href="console.html">Console Home</a>
     <h1>Create New User</h1>
     <form class="signup-form">
         <div class="fname">
@@ -32,12 +31,16 @@
             <label for="passwordconf-input">Confirm Password</label>
             <input id="passwordconf-input" type="password">
         </div>
-        <button type="submit">Create</button>
+        <div class="role">
+            <select id="roleName">
+                <option id="role-input" value=''><strong>User Role</strong></option>
+            </select>
+        </div>
+        <button type="submit" isabled="disabled">Create User</button>
     </form>
     <div class="js-error"></div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="js/common.js"></script>
-<script src="js/signup.js"></script>
-
+<script src="js/createNewUser.js"></script>
 </html>
