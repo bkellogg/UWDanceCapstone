@@ -1,23 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $("#email-input").bind("change keyup",
+                function () {
+                    if ($("#email-input").val() != "")
+                        $(this).closest("form").find(":submit").removeAttr("disabled");
+                    else
+                        $(this).closest("form").find(":submit").attr("disabled", "disabled");
+                });
+        });
+    </script>
 </head>
+
 <body>
-<h1>UW Stage Admin Console Forgot Password</h1>
-<a href="./index.html"><< Home</a>
-<form class="reset-form">
-    <div class="email">
-        <label for="email-input">Email</label>
-        <input id="email-input" type="text">
+    <h1>UW Stage Admin Console Forgot Password</h1>
+    <p>If you have forgotten your password you can establish a new one online</p>
+    <p>A unique email with instructions will be sent to you in order to complete the process. Please complete this request only
+        once and wait for the email to be sent to you.</p>
+    <form class="reset-form">
+        <div class="email">
+            <h2>Email:</h2>
+            <input id="email-input" type="text" placeholder="Enter Email">
+        </div>
+        <input type="submit" id="passwordemail" value="Send Password Reset Email" disabled="disabled" />
+    </form>
+    <div class="js-error"></div>
+    <div class="signin-return">
+        <a href="./index.html">Return to sign in</a>
     </div>
-    <button type="submit">Send Password Reset Email</button>
-</form>
-<div class="js-error"></div>
 </body>
 <script src="js/common.js"></script>
 <script src="js/reset.js"></script>
+
 </html>

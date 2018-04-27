@@ -49,20 +49,20 @@ function makeRequest(resource, payload = "", method = "GET", useAuth = false) {
 
 function refreshLocalUser() {
     return makeRequest("users/me", {}, "GET", true)
-    .then((res) => {
-        if (res.ok) {
-            return res.json();
-        }
-        return res.text().then((t) => Promise.reject(t));
-    })
-    .then((data) => {
-        setLocalUser(JSON.stringify(data));
-    })
-    .catch((err) => {
-        console.error(err);
-        alert("Your session has expired. Please sign in again.");
-        signout();
-    })
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+            return res.text().then((t) => Promise.reject(t));
+        })
+        .then((data) => {
+            setLocalUser(JSON.stringify(data));
+        })
+        .catch((err) => {
+            console.error(err);
+            alert("Your session has expired. Please sign in again.");
+            signout();
+        })
 }
 
 function signout() {
