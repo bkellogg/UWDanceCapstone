@@ -9,9 +9,9 @@ import './styling/CastingFlowMobile.css';
 class ResolveConflict extends Component {
 
   componentDidMount(){
-    setTimeout(() => {this.orderTable("conflictsTable")}, 300)
-    setTimeout(() => {this.orderTable("yourCast")}, 300)
-    setTimeout(() => {this.orderTable("allDancersTable")}, 300)
+    //setTimeout(() => {this.orderTable("conflictsTable")}, 300)
+    //setTimeout(() => {this.orderTable("yourCast")}, 300)
+    //setTimeout(() => {this.orderTable("allDancersTable")}, 300)
   }
 
   orderTable = (tableID) => {

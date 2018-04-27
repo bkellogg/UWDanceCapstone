@@ -78,7 +78,7 @@ class CheckAvailability extends Component {
       conflictRows = this.props.contested.map(conflict => {
         let dancer = conflict.rankedDancer.dancer
         return(
-          <AllDancersRow updateCast={this.updateCast} person={dancer.user} key={dancer.user.id} regNum={dancer.regNum} numPieces={dancer.numShows} rank={conflict.rankedDancer.rank} selectCast={true} audition={this.props.auditionID}/>
+          <AllDancersRow key={dancer.user.id} person={dancer.user} comments={dancer.comments} regNum={dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)} />
         )
       })
     }
