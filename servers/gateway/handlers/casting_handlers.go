@@ -25,18 +25,44 @@ func (ctx *CastingContext) DebugCastingStateHandler(w http.ResponseWriter, r *ht
 	return respond(w, ctx.Session, http.StatusOK)
 }
 
-// BeginCastingHandler handles requests to begin casting.
-func (ctx *CastingContext) BeginCastingHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	// make sure the user is requesting the casting resource
+// FlushCastingHandler handles requests to flush the casting session
+func (ctx *CastingContext) FlushCastingHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	if !ctx.permChecker.UserIsAtLeast(u, appvars.PermAdmin) {
+		return permissionDenied()
+	}
+	ctx.Session.Flush()
+	return respondWithString(w, "casting session flushed", http.StatusOK)
+}
+
+// CastingHandlerDispatcher dispatches requests for the auditions/id/casting resource.
+func (ctx *CastingContext) CastingHandlerDispatcher(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	vars := mux.Vars(r)
+	// ensure the intended object is casting
 	if vars["object"] != "casting" {
 		return objectTypeNotSupported()
 	}
+
 	// make sure the user that is trying to be casting is at least a choreographer
 	if !ctx.permChecker.UserIsAtLeast(u, appvars.PermChoreographer) {
 		return permissionDenied()
 	}
 
+	switch r.Method {
+	case http.MethodPut:
+		return ctx.handleBeginCasting(w, r, u)
+	case http.MethodPatch:
+		return ctx.handleCastingUpdate(w, r, u)
+	case http.MethodPost:
+		return ctx.handlePostCasting(w, r, u)
+	default:
+		return methodNotAllowed()
+	}
+}
+
+// handleBeginCasting handles requests to begin casting.
+func (ctx *CastingContext) handleBeginCasting(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+
+	vars := mux.Vars(r)
 	// get the audition id
 	audID, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -84,17 +110,9 @@ func (ctx *CastingContext) BeginCastingHandler(w http.ResponseWriter, r *http.Re
 		http.StatusOK)
 }
 
-// CastingUpdateHandler handles update requests to the current casting session.
-func (ctx *CastingContext) CastingUpdateHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	// make sure the user is requesting the casting resource
+// handleCastingUpdate handles update requests to the current casting session.
+func (ctx *CastingContext) handleCastingUpdate(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	vars := mux.Vars(r)
-	if vars["object"] != "casting" {
-		return objectTypeNotSupported()
-	}
-	// make sure the user that is trying to be casting is at least a choreographer
-	if !ctx.permChecker.UserIsAtLeast(u, appvars.PermChoreographer) {
-		return permissionDenied()
-	}
 
 	if !ctx.Session.HasBegun {
 		return HTTPError("casting session has not begun", http.StatusBadRequest)
@@ -123,11 +141,11 @@ func (ctx *CastingContext) CastingUpdateHandler(w http.ResponseWriter, r *http.R
 	return respondWithString(w, "updates received", http.StatusOK)
 }
 
-// FlushCastingHandler handles requests to flush the casting session
-func (ctx *CastingContext) FlushCastingHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	if !ctx.permChecker.UserIsAtLeast(u, appvars.PermAdmin) {
-		return permissionDenied()
+// handlePostCasting handles requests to post casting
+func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	dancers, err := ctx.Session.ConfirmCast(u.ID)
+	if err != nil {
+		return HTTPError(fmt.Sprintf("error posting casting: %v", err), http.StatusBadRequest)
 	}
-	ctx.Session.Flush()
-	return respondWithString(w, "casting session flushed", http.StatusOK)
+	return respond(w, dancers, http.StatusOK)
 }
