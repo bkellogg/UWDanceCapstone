@@ -16,6 +16,7 @@ class AvailabilityOverlap extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      cast: this.props.cast,
       dayTimes : [
         [
           [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
@@ -48,11 +49,14 @@ class AvailabilityOverlap extends Component {
 
   getAllDancerOverlap = () => {
     let cast = this.props.cast
+    let filteredList = this.props.filteredCast
+    console.log(filteredList)
     let dayTimes = this.state.dayTimes
     cast.map((dancer, i) => { //go through each dancer
       let days = dancer.dancer.availability.days
       let id = dancer.dancer.user.id
-
+      //we only want to add dancers that are in the selected cast list
+      
       days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
         let times = day.times 
 
@@ -83,31 +87,32 @@ class AvailabilityOverlap extends Component {
     this.setState({
       dayTimes:dayTimes
     })
+
   }
 
   render() {
     let dayTimes = this.state.dayTimes
 
+    //generate the overlap days from the state
     let overlapDays = dayTimes.map((days, i) => {
-      
-      
+            
       let overlapTimes = days.map((times, j) => {
         let color = colors[times.length]
-
+        //this is the div with the specific time block
         return (
           <div className="overlapTimes" style={{"backgroundColor":color}}>
             {timesRef[j]}
           </div>
         )
       })
-
+      //this is the div for the day, that contains all the time blocks
       return (
         <div className="overlapDays">
           {overlapTimes}
         </div>
       )
     })
-
+    //generates the days header
     let daysSimple = daysRef.map((day, i) => {
       return (
         <div className="daysSimple">
@@ -115,7 +120,7 @@ class AvailabilityOverlap extends Component {
         </div>
       )
     })
-
+    //generates the times displayed on the side
     let timesSimple = timesFormatted.map((time, i) => {
       return (
         <div className="timesSimple">

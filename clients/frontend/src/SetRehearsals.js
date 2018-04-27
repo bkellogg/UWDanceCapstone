@@ -119,7 +119,7 @@ class SetRehearsals extends Component {
                 </div>
 
                 <div className="overlapAvailability">
-                  <AvailabilityOverlap />
+                  
                </div>
               </div>
               {/* AFTER CHOSING TIMES */}
