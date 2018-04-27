@@ -22,7 +22,18 @@
         margin-bottom: 10px;
     }
 
-    .extraClass, .castList{
+    .extraClass, .overlapAvailability{
         width: 100%;
+    }
+
+    .extraClass, .overlapAvailability{
+        display: block;
+    }
+
+    .extraClass{
+        z-index: 1 !important;
+    }
+    .overlapAvailability{
+        z-index: 2 !important;
     }
 }

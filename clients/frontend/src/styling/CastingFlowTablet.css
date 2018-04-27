@@ -11,7 +11,7 @@ and (max-width : 1024px)  {
         position: absolute;
     } */
 
-    .check{
+    /* .check{
         width: 20px;
     }
 
@@ -23,10 +23,6 @@ and (max-width : 1024px)  {
         width: 100%;
         margin-top: 10px;
         margin-bottom: 10px;
-    }
-
-    .extraClass, .castList{
-        width: 100%;
-    }
+    } */
 
 }
