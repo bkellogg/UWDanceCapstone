@@ -169,13 +169,13 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		id := int(id64)
 		user, dberr := ctx.Session.Store.GetUserByID(id, false)
 		if dberr != nil {
-			log.Printf("error getting user by id: %s\n", dberr.Message)
+			log.Printf("error getting user with id %d: %s\n", id, dberr.Message)
 			continue
 		}
 		tplVars := &models.CastingConfVars{
 			Name:          user.FirstName,
 			Choreographer: u.FirstName,
-			URL:           appvars.StageURL + "/dashboard",
+			URL:           appvars.StageURL,
 		}
 
 		message, err := mail.NewMessageFromTemplate(ctx.MailCredentials,

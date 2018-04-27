@@ -53,7 +53,7 @@ CREATE TABLE Shows (
 CREATE TABLE Pieces (
     PieceID INT AUTO_INCREMENT PRIMARY KEY,
     ChoreographerID INT,
-    PieceName varchar(50) NOT NULL UNIQUE KEY,
+    PieceName varchar(50) NOT NULL,
     ShowID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
