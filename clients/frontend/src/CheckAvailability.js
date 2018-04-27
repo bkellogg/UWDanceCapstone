@@ -66,10 +66,19 @@ class CheckAvailability extends Component {
 
   render() {
     let rows = []
+    let conflictRows = []
     if (this.props.cast) {
       rows = this.props.cast.map(dancer => {
         return (
           <AllDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} comments={dancer.dancer.comments} regNum={dancer.dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)}/>
+        )
+      })
+    }
+    if(this.props.contested) {
+      conflictRows = this.props.contested.map(conflict => {
+        let dancer = conflict.rankedDancer.dancer
+        return(
+          <AllDancersRow updateCast={this.updateCast} person={dancer.user} key={dancer.user.id} regNum={dancer.regNum} numPieces={dancer.numShows} rank={conflict.rankedDancer.rank} selectCast={true} audition={this.props.auditionID}/>
         )
       })
     }
@@ -92,6 +101,7 @@ class CheckAvailability extends Component {
                         <th></th>
                       </tr>
                       {rows}
+                      {conflictRows}
                     </tbody>
                   </table>
                 </div>
