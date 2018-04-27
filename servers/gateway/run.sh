@@ -30,6 +30,7 @@ echo >&2 "starting dance gateway server..."
 docker run -d \
 --name gateway \
 --network dancenet \
+--restart unless-stopped \
 -p 443:443 \
 -p 80:80 \
 -v /root/:/certs/dance/:ro \

@@ -147,6 +147,12 @@ func (pc *PermissionChecker) UserCanSeeUsersInShow(u *User, show int) bool {
 	return pc.UserCan(u, permissions.SeeAllUsers)
 }
 
+// UserCanSeeUsersInPiece returns true if the given user can see users
+// inside of the given piece.
+func (pc *PermissionChecker) UserCanSeeUsersInPiece(u *User, piece int) bool {
+	return pc.UserCan(u, permissions.SeeAllUsers)
+}
+
 // UserCanSeeUsersInShow returns true if the given user can see users
 // inside of the given show.
 func (pc *PermissionChecker) UserCanSeeUsersInAudition(u *User, audition int) bool {

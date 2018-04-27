@@ -48,12 +48,13 @@ func (store *Database) InsertNewShow(newShow *NewShow) (*Show, *DBError) {
 		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
 	}
 	show := &Show{
-		ID:        int(showID),
-		TypeID:    st.ID,
-		EndDate:   newShow.EndDate,
-		CreatedAt: createTime,
-		CreatedBy: newShow.CreatedBy,
-		IsDeleted: false,
+		ID:         int(showID),
+		AuditionID: newShow.AuditionID,
+		TypeID:     st.ID,
+		EndDate:    newShow.EndDate,
+		CreatedAt:  createTime,
+		CreatedBy:  newShow.CreatedBy,
+		IsDeleted:  false,
 	}
 	return show, nil
 }
@@ -194,6 +195,26 @@ func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
 		err = nil
 	}
 	return show, err
+}
+
+// GetShowByAuditionID gets the show that the given audition is for.
+// Returns the show or an error if one occurred.
+func (store *Database) GetShowByAuditionID(id int, includeDeleted bool) (*Show, *DBError) {
+	query := `SELECT DISTINCT * FROM Shows S
+		WHERE S.AuditionID = ?`
+	if !includeDeleted {
+		query += ` AND S.IsDeleted = false`
+	}
+	show := &Show{}
+	err := store.db.QueryRow(query,
+		id).Scan(
+		&show.ID, &show.TypeID, &show.AuditionID,
+		&show.EndDate, &show.CreatedAt,
+		&show.CreatedBy, &show.IsDeleted)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error getting show: %v", err), http.StatusInternalServerError)
+	}
+	return show, nil
 }
 
 // DeleteShowByID marks the show with the given ID as deleted.
