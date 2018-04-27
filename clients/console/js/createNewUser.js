@@ -46,7 +46,7 @@ signupForm.addEventListener("submit", function (evt) {
                 })
         })
         .then((data) => {
-            var message = document.createElement('p');
+            var message = document.createElement("p");
             message.textContent = " User: " + fname.value + " " +
                 lname.value + " with the role of " + roleName + " successfully created.";
             document.body.appendChild(message);

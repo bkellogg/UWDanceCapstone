@@ -16,7 +16,6 @@ newAnnouncementTypeForm.addEventListener("submit", function (evt) {
         "name": announcementTypeName.value,
         "desc": description.value,
     };
-    console.log(payload)
     makeRequest("announcements/types", payload, "POST", true)
         .then((res) => {
             if (res.ok) {

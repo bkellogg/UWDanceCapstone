@@ -18,7 +18,6 @@ announcementForm.addEventListener("submit", function (evt) {
         "type": announcementType.value,
         "message": message.value,
     };
-    console.log(payload)
     makeRequest("announcements", payload, "POST", true)
         .then((res) => {
             if (res.ok) {
@@ -47,7 +46,6 @@ function populateAnnouncementTypeOptions() {
         .then((data) => {
             var options = '<option value=""><strong>Announcement Type</strong></option>';
             $(data).each(function (index, value) {
-                console.log(value)
                 options += '<option value="' + value.name + '">' + value.name + '</option>';
             });
             $('#announcementType').html(options);
