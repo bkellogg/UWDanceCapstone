@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import img from './imgs/defaultProfile.jpg';
-import Avatar from 'material-ui/Avatar';
 import * as Util from './util.js';
 
 class PersonRow extends Component {
@@ -40,7 +39,7 @@ class PersonRow extends Component {
     return (
         <tr>
           <td>
-            <img src={this.state.photoUrl} className="avatar"/>
+            <img src={this.state.photoUrl} alt="profile" className="avatar"/>
           </td>
           <td>
             {p.firstName + " " + p.lastName}
@@ -49,7 +48,7 @@ class PersonRow extends Component {
             {p.role.displayName}
           </td>
           <td>
-            {p.email}
+          {p.email}
           </td>
         </tr>
     )

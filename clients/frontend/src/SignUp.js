@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Button } from 'react-materialize';
 import * as Util from './util.js';
+import logo from './imgs/logoex.png'
 import SignUpExtra from './SignUpExtra.js'
 import './styling/SignIn.css';
+import './styling/SignUp.css';
 
 class SignUp extends Component {
   constructor(props) {
@@ -104,10 +106,13 @@ class SignUp extends Component {
 
   render() {
     return (
-      <div className="LogInLanding">
-        <section className="signUp">
+
+      <section className="signUp">
+        <div className="LogInLanding">
           <div className="Functionality">
-            <div className="Logo"></div>
+            <div className="signInUplogoWrap">
+              <img className="officialLogoLandingPage" alt="logo" src={logo} />
+            </div>
             <div className='content'>
               <h5 className='title'> Sign up </h5>
               <div className="error">
@@ -118,9 +123,9 @@ class SignUp extends Component {
               </div>
               {
                 this.state.signUpExtra === false &&
-                <div>
-                  <div>
-                    <form>
+                <div className="SignUp">
+                  <div className="Input">
+                    <form className="authenticate">
                       <div className="row">
                         <div className="input-field col s12">
                           <input type="text" name="firstname" id="firstname" onChange={this.inputChange} />
@@ -144,10 +149,13 @@ class SignUp extends Component {
                         </div>
                       </div>
                     </form>
-                    <Button onClick={this.onClick}> Sign Up </Button>
+                    <div className="Buttons">
+                      <Button onClick={this.onClick}> Sign Up </Button>
+                    </div>
                     <div className="Link">
                       <a className="signlink" onClick={this.goBack}> Sign In </a>
                     </div>
+
 
                   </div>
                 </div>
@@ -159,8 +167,9 @@ class SignUp extends Component {
               }
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
     )
   };
 }

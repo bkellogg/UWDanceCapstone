@@ -1,11 +1,14 @@
 .announcement {
-  padding-top: 20px;
+  margin-top: 20px;
+  border-left: 6px solid rgb(167, 167, 241);
+}
+
+.secondColor{
+  border-left: 6px solid rgb(149, 188, 248);
 }
 
 .cardBody{
   background-color: lavender;
-  border: 1px solid lavender;
-  border-radius: 3px;
 }
 
 .warning{
@@ -13,10 +16,8 @@
 }
 
 .announcementMessage{
-  padding: 1px 25px;
   font-weight: 400;
-  color: #333;
-  
+  padding: 15px 25px;
 }
 
 .showTitle2{

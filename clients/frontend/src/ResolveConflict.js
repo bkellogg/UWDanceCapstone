@@ -1,56 +1,88 @@
 import React, { Component } from 'react';
 
-import CastDancersRow from './CastDancersRow';
-import ConflictRow from './ConflictRow';
+import AllDancersRow from './AllDancersRow';
 import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
 
 
 class ResolveConflict extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      cast: JSON.parse(localStorage.getItem("cast")),
-      dancers: JSON.parse(localStorage.getItem("allUsers"))
-    }
-  };
 
+  componentDidMount(){
+    setTimeout(() => {this.orderTable("conflictsTable")}, 300)
+    setTimeout(() => {this.orderTable("yourCast")}, 300)
+    setTimeout(() => {this.orderTable("allDancersTable")}, 300)
+  }
+
+  orderTable = (tableID) => {
+    let table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById(tableID);
+    switching = true;
+    while (switching) {
+      switching = false;
+      rows = table.getElementsByTagName("tr");
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        x = rows[i].getElementsByTagName("td")[1];
+        y = rows[i + 1].getElementsByTagName("td")[1];
+        if (x.innerHTML > y.innerHTML) {
+          shouldSwitch= true;
+          break;
+        }
+      }
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+      }
+    }
+  }
+
+  componentDidUpdate(){
+    //this.orderTable("conflictsTable")
+    //this.orderTable("yourCast")
+    //this.orderTable("allDancersTable")
+  }
 
   render() {
-    //console.log(dancers)
-    //const cast = JSON.parse(localStorage.getItem("cast"))
-    const cast = JSON.parse(localStorage.socketCast)
-    let yourCast = cast.map(dancer => {
-      return (
-        <CastDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} filter={false} uncast={false} updateCast={() => { this.setState({ cast: JSON.parse(localStorage.getItem("cast")) }) }} />
-      )
-    })
+    let yourCast = []
+    const cast = this.props.cast
+    if(cast){
+      yourCast = cast.map(dancer => {
+        return (
+          <AllDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} regNum={dancer.dancer.regNum} resolveYourCast={true} audition={this.props.audition}/>
+        )
+      })
+    }
 
-    const dancers = JSON.parse(localStorage.uncasted)
-    let allDancers = dancers.map(person => {
-      return (
-        //only return a row for dancers that are not in the cast
-        <CastDancersRow key={person.user.id} person={person.user} filter={false} uncast={true} updateCast={() => { this.setState({ dancers: JSON.parse(localStorage.getItem("allUsers")) }) }} />
-      )
-    })
+    let allDancers = []
+    const uncast = this.props.uncast
+    if(uncast) {
+      allDancers = uncast.map(person => {
+        return (
+          <AllDancersRow key={person.user.id} person={person.user} regNum={person.regNum} resolveNotYourCast={true} audition={this.props.audition} />
+        )
+      })
+    }
 
-    const conflicts = JSON.parse(localStorage.contested)
-    let conflictsRow = conflicts.map(conflict => {
-      return (
-        <ConflictRow choreographers = {conflict.choreographers} dancer = {conflict.rankedDancer.dancer} rank={conflict.rankedDancer.rank} updateCast={() => { this.setState({ cast: JSON.parse(localStorage.getItem("cast")) }) }}/>
-      )
-    })
+    let conflictsRow = []
+    const conflicts = this.props.contested
+
+    if(conflicts) {
+      conflictsRow = conflicts.map(conflict => {
+        return (
+          <AllDancersRow choreographers={conflict.choreographers} key={conflict.rankedDancer.dancer.user.id} person={conflict.rankedDancer.dancer.user} regNum={conflict.rankedDancer.dancer.regNum} numPieces={conflict.rankedDancer.dancer.numShows} rank={conflict.rankedDancer.rank} audition={this.props.audition} resolveConflict={true}/>
+        )
+      })
+    }
 
     return (
       <section>
         <div className="mainView">
           <div className="card1">
             <div className="wrap">
-              {/*STYLING these h1s should definitely be h2s so we can have an accurate HTML tree, putting as h1 temporarily*/}
               <div className="conflictsCard">
-                <h2 className="conflictMessage">Conflicts of interest between you and other choreographers.</h2> 
-              <table>
+                <h2 className="conflictMessage">Conflicts between you and other choreographers.</h2> 
+              <table id="conflictsTable">
                   <tbody>
                     <tr className="categories">
                       <th></th>
@@ -70,10 +102,10 @@ class ResolveConflict extends Component {
           
           <div className="transparentCard">
           <div className="wrap">
-            <div className="castList-v2">
+            <div className="castList-v2 cardAddMargin">
               <div className="choreographersSelecteCast">
                 <h2 className="smallHeading"> Your cast </h2>
-                <table>
+                <table id="yourCast">
                   <tbody>
                     <tr className="categories">
                       <th></th>
@@ -86,10 +118,10 @@ class ResolveConflict extends Component {
                 </table>
               </div>
               </div>
-              <div className="castList-v2-1">
+              <div className="castList-v2">
               <div className="restOfCast">
                 <h2 className="smallHeading"> All dancers </h2>
-                <table>
+                <table id="allDancersTable">
                   <tbody>
                     <tr className="categories">
                       <th></th>

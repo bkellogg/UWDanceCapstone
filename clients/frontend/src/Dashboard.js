@@ -3,7 +3,7 @@ import * as Util from './util';
 import './styling/General.css';
 
 //styling
-import { Card, CardText, CardTitle } from 'material-ui/Card';
+import { Card, CardText } from 'material-ui/Card';
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';
 
@@ -111,15 +111,6 @@ class Dashboard extends Component {
                       <div className="cardBody">
                         <p className="announcementMessage"> {anncouncement.message} </p>
                       </div>
-
-                      // <Card>
-                      //   <div className="cardBody">
-                      //     <CardText style={{padding: '0'}}>
-                            
-                      //       <p className="announcementMessage"> {anncouncement.message} </p>
-                      //     </CardText>
-                      //   </div>
-                      // </Card>
                     }
                   </div>
                 )
@@ -131,7 +122,7 @@ class Dashboard extends Component {
                 var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
                 var auditionLink = anncouncement.name.split(' ').join('');
                 return (
-                  <div key={index} className="announcement">
+                  <div key={index} className="announcement secondColor">
                   <div className="cardBody">
                     {
 
@@ -146,19 +137,6 @@ class Dashboard extends Component {
                           <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
                         </div>
                       </div>
-                      // <Card>
-                      //   <div className="showTitle">
-                      //     <CardTitle 
-                      //       title="Audition"/>
-                      //   </div>
-                      //   <CardText>
-                      //     <p> {anncouncement.name} </p>
-                      //     <p> {auditionDay} </p>
-                      //     <p> {auditionTime} </p>
-                      //     <p> {anncouncement.audition.location} </p>
-                      //     <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
-                      //   </CardText>
-                      // </Card>
                     }
                   </div>
                   </div>

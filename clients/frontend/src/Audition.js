@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import * as Util from './util.js';
 
 //components
@@ -12,36 +12,35 @@ import './styling/General.css';
 class Audition extends Component {
   constructor(props) {
     super(props);
-    this.state ={
+    this.state = {
       registered: false,
       audition: null,
       regNum: 0
     }
   };
 
-  componentWillMount(){
+  componentWillMount() {
     this.checkRegistration()
   }
 
   checkRegistration = () => {
-    Util.makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
-    .then(res => {
-      if(res.ok) {
-        return res.json()
-      }
-      return res.text().then((t) => Promise.reject(t));
-    })
-    .then(audition => {
-      this.setState({
-        registered: true,
-        audition: audition.audition,
-        regNum: audition.regNum
+    Util
+      .makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+        return res
+          .text()
+          .then((t) => Promise.reject(t));
       })
-    })
-    .catch(err => {
-      console.error(err)
-      Util.handleError(err)
-    })
+      .then(audition => {
+        this.setState({registered: true, audition: audition.audition, regNum: audition.regNum})
+      })
+      .catch(err => {
+        console.error(err)
+        Util.handleError(err)
+      })
   }
 
   registerUser = () => {
@@ -49,32 +48,31 @@ class Audition extends Component {
   }
 
   unregister = () => {
-    this.setState({
-      registered: false
-    })
+    this.setState({registered: false})
   }
 
   render() {
-      return(
-        <section className="main">
+    return (
+      <section className="main">
         <div className="mainView">
           <div className="audition">
-            <h1 id="auditionTitle">{this.props.name} Audition Form</h1>
-            {
-              this.state.registered === false &&
-                <Registration audition={this.props.audition} registered={() => this.checkRegistration()} />
-            }
-            {
-              this.state.registered === true &&
-              <RegistrationConf audition={this.state.audition} regNum={this.state.regNum} unregister={this.unregister}/>
-            }
+            <h1 id="auditionTitle">{this.props.name}
+              Audition Form</h1>
+            {this.state.registered === false && <Registration
+              audition={this.props.audition}
+              registered={() => this.checkRegistration()}/>
+}
+            {this.state.registered === true && <RegistrationConf
+              audition={this.state.audition}
+              regNum={this.state.regNum}
+              unregister={this.unregister}/>
+}
           </div>
-          </div>
-        </section>
-      )
+        </div>
+      </section>
+    )
   }
 
 }
-
 
 export default Audition;

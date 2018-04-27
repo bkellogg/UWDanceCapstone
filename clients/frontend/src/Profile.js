@@ -176,7 +176,7 @@ class Profile extends Component {
         }
       }
     };
-
+    
     xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
     xhr.setRequestHeader("Authorization", Util.getAuth());
     xhr.setRequestHeader("ResumeFieldName", "resume");
@@ -379,7 +379,6 @@ class Profile extends Component {
                   </section>
                 }
               </div>
-
             </div>
           </div>
 
