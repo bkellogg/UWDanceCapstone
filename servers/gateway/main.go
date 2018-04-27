@@ -81,12 +81,15 @@ func main() {
 		log.Fatalf("error creating permission checker: %v", err)
 	}
 
-	castingContext := handlers.NewCastingContext(permChecker, castingSession)
-
 	mailContext := handlers.NewMailContext(mailUser, mailPass, permChecker)
 	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials(), permChecker)
 	announcementContext := handlers.NewAnnouncementContext(db, notifier, permChecker)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
+
+	castingContext := handlers.NewCastingContext(permChecker,
+		castingSession,
+		templatesPath+"confirmation_tpl.html",
+		mailContext.AsMailCredentials())
 
 	baseRouter := middleware.NewAuthenticatedRouter(sessionKey, redis)
 	baseRouter.Handle(appvars.MailPath, authorizer.Authorize(mailContext.MailHandler))

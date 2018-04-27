@@ -197,6 +197,26 @@ func (store *Database) GetShowByID(id int, includeDeleted bool) (*Show, error) {
 	return show, err
 }
 
+// GetShowByAuditionID gets the show that the given audition is for.
+// Returns the show or an error if one occurred.
+func (store *Database) GetShowByAuditionID(id int, includeDeleted bool) (*Show, *DBError) {
+	query := `SELECT DISTINCT * FROM Shows S
+		WHERE S.AuditionID = ?`
+	if !includeDeleted {
+		query += ` AND S.IsDeleted = false`
+	}
+	show := &Show{}
+	err := store.db.QueryRow(query,
+		id).Scan(
+		&show.ID, &show.TypeID, &show.AuditionID,
+		&show.EndDate, &show.CreatedAt,
+		&show.CreatedBy, &show.IsDeleted)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error getting show: %v", err), http.StatusInternalServerError)
+	}
+	return show, nil
+}
+
 // DeleteShowByID marks the show with the given ID as deleted.
 func (store *Database) DeleteShowByID(id int) error {
 	_, err := store.db.Exec(`UPDATE Shows SET IsDeleted = ? WHERE ShowID = ?`, true, id)

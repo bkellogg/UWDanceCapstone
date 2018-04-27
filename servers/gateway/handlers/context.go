@@ -14,13 +14,13 @@ type AuthContext struct {
 	SessionKey      string
 	SessionsStore   sessions.Store
 	store           *models.Database
-	MailCredentials *mail.MailCredentials
+	MailCredentials *mail.Credentials
 	permChecker     *models.PermissionChecker
 	TemplatePath    string
 }
 
 // NewAuthContext Creates a new auth context with the given information
-func NewAuthContext(sessionKey, tp string, sessionStore sessions.Store, database *models.Database, mc *mail.MailCredentials, pc *models.PermissionChecker) *AuthContext {
+func NewAuthContext(sessionKey, tp string, sessionStore sessions.Store, database *models.Database, mc *mail.Credentials, pc *models.PermissionChecker) *AuthContext {
 	return &AuthContext{
 		SessionKey:      sessionKey,
 		SessionsStore:   sessionStore,
@@ -52,17 +52,23 @@ func NewAnnouncementContext(store *models.Database, notifier *notify.Notifier, p
 // CastingContext defines information needed for
 // handlers that handle casting requests.
 type CastingContext struct {
-	permChecker *models.PermissionChecker
-	Session     *notify.CastingSession
+	permChecker     *models.PermissionChecker
+	Session         *notify.CastingSession
+	CastingTPLPath  string
+	MailCredentials *mail.Credentials
 }
 
 // NewCastingContext returns a new CastingContext
 // from the given inputs.
 func NewCastingContext(pc *models.PermissionChecker,
-	session *notify.CastingSession) *CastingContext {
+	session *notify.CastingSession,
+	tplPath string,
+	credentials *mail.Credentials) *CastingContext {
 	return &CastingContext{
-		permChecker: pc,
-		Session:     session,
+		permChecker:     pc,
+		Session:         session,
+		CastingTPLPath:  tplPath,
+		MailCredentials: credentials,
 	}
 }
 
@@ -80,7 +86,7 @@ func NewHandlerContext(store *models.Database) *HandlerContext {
 // MailContext is context used to invoke mail related handlers
 // This is defined so that handlers can be invoked on a set of
 // mail credentials
-type MailContext mail.MailCredentials
+type MailContext mail.Credentials
 
 // NewMailContext returns a new mail context from the given information
 func NewMailContext(user, password string, pc *models.PermissionChecker) *MailContext {
@@ -93,8 +99,8 @@ func NewMailContext(user, password string, pc *models.PermissionChecker) *MailCo
 
 // AsMailCredentials returns this mail context as mail credentials
 // as a full copy
-func (mc *MailContext) AsMailCredentials() *mail.MailCredentials {
-	return &mail.MailCredentials{
+func (mc *MailContext) AsMailCredentials() *mail.Credentials {
+	return &mail.Credentials{
 		User:     mc.User,
 		Password: mc.Password,
 	}
