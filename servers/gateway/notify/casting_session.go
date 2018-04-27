@@ -274,7 +274,11 @@ func (c *CastingSession) dancerIsCasted(id int64) (Choreographer, bool) {
 // the given dancer and bool representing if the dancer is contested
 func (c *CastingSession) dancerIsContested(dancerID DancerID) ([]Choreographer, bool) {
 	chors := c.Casted[dancerID]
-	if len(chors) <= 1 {
+	dancer, exists := c.dancer(dancerID.int())
+	if !exists {
+		return nil, false
+	}
+	if len(chors) <= 1 || len(chors) <= dancer.NumShows {
 		return nil, false
 	}
 	chorSlice := make([]Choreographer, 0, len(chors))
