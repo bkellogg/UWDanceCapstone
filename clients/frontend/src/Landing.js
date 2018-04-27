@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from 'material-ui/RaisedButton';
 import logo from './imgs/logoex.png'
-import brendanKellog from './imgs/brendan.jpg'
+import brendanKellog from './imgs/brendan.jpeg'
 import rosemaryAdams from './imgs/rosemary.png'
 import saniyaMazmanova from './imgs/saniya.jpg'
 import nathanSwanson from './imgs/nathan.png'

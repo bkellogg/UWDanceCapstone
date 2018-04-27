@@ -1,0 +1,29 @@
+.overlapDays{
+    display: inline-block;
+    width: 85px
+}
+
+.daysSimple {
+    display: inline-block;
+    width: 85px;
+    height: 25px;
+}
+
+.overlapTimes {
+    height: 25px
+}
+
+.timesRow{
+    display: inline-block;
+}
+
+.timeBlock{
+    display:inline-block
+}
+
+.timesSimple{
+    height: 25px
+}
+    
+
+
