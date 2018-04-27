@@ -1,49 +1,50 @@
 import React, { Component } from 'react';
 import './styling/AvailabilityOverlap.css';
+import './styling/CastingFlow.css';
 
 const daysRef = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] //TODO make audition match this CRYYYY
 
-const timesRef = ["1000", "1030","1100","1130","1200","1230","1300", "1330", "1400","1430", 
-"1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100"]
+const timesRef = ["1000", "1030", "1100", "1130", "1200", "1230", "1300", "1330", "1400", "1430",
+  "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100"]
 
-const timesFormatted = ["", "10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:00 PM", "", "2:00 PM", "","3:00 PM", "", "4:00 PM", "",
-"5:00 PM", "", "6:00 PM", "", "7:00 PM", "", "8:00 PM", "", "9:00 PM"]
+const timesFormatted = ["", "10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:00 PM", "", "2:00 PM", "", "3:00 PM", "", "4:00 PM", "",
+  "5:00 PM", "", "6:00 PM", "", "7:00 PM", "", "8:00 PM", "", "9:00 PM"]
 
 
-const colors = ["#fff","#9ABB3E","#CC66AD","#2B823D","#6640BF","#C8BA5B","#7A2932","#260D0D"]
+const colors = ["#fff", "#9ABB3E", "#CC66AD", "#2B823D", "#6640BF", "#C8BA5B", "#7A2932", "#260D0D"]
 
 class AvailabilityOverlap extends Component {
   constructor(props) {
     super(props);
     this.state = {
       cast: this.props.cast,
-      dayTimes : [
+      dayTimes: [
         [
-          [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ]
       ]
     };
   };
 
-  componentDidMount(){
+  componentDidMount() {
     this.getAllDancerOverlap()
   }
 
@@ -56,13 +57,13 @@ class AvailabilityOverlap extends Component {
       let days = dancer.dancer.availability.days
       let id = dancer.dancer.user.id
       //we only want to add dancers that are in the selected cast list
-      
+
       days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
-        let times = day.times 
+        let times = day.times
 
-        times.map((time, k)=> { //times is the array of times for that day
+        times.map((time, k) => { //times is the array of times for that day
 
-          let startIndex = timesRef.indexOf(time.start) 
+          let startIndex = timesRef.indexOf(time.start)
           let endIndex = timesRef.indexOf(time.end)
 
           //okay so for the times in timesRef it works,but brendan put times in that aren't in our calendar
@@ -74,7 +75,7 @@ class AvailabilityOverlap extends Component {
           //now we only have valid start/end times and their location 
           let incrementIndex = startIndex //increment index is the index of our this.state.dayTimes[j][incrementIndex]
 
-          while(incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
+          while (incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
             let currPlace = dayTimes[j][incrementIndex]
             currPlace.push(id)
             incrementIndex++
@@ -85,7 +86,7 @@ class AvailabilityOverlap extends Component {
     })
 
     this.setState({
-      dayTimes:dayTimes
+      dayTimes: dayTimes
     })
 
   }
@@ -95,12 +96,12 @@ class AvailabilityOverlap extends Component {
 
     //generate the overlap days from the state
     let overlapDays = dayTimes.map((days, i) => {
-            
+
       let overlapTimes = days.map((times, j) => {
         let color = colors[times.length]
         //this is the div with the specific time block
         return (
-          <div className="overlapTimes" style={{"backgroundColor":color}}>
+          <div className="overlapTimes" style={{ "backgroundColor": color }}>
             {timesRef[j]}
           </div>
         )
@@ -129,25 +130,27 @@ class AvailabilityOverlap extends Component {
       )
     })
 
-    return (  
+    return (
       <section>
-        <h1>Availability</h1>
+        <h2 className="smallHeading">Availability</h2>
         <div className="availabilityCalendar">
-          <div className="timesRow">
-            {timesSimple}
-          </div>
-          <div className="timeBlock">
-            <div className="daysHeader">
-            {daysSimple}
+          <div className="calendarWrap">
+            <div className="timesRow">
+              {timesSimple}
             </div>
-            <div className="times">
-            {overlapDays}
+            <div className="timeBlock">
+              <div className="daysHeader">
+                {daysSimple}
+              </div>
+              <div className="times">
+                {overlapDays}
+              </div>
             </div>
           </div>
         </div>
       </section>
-  );
-};
+    );
+  };
 
 }
 export default AvailabilityOverlap;

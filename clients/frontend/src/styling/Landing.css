@@ -1,5 +1,5 @@
 .landingBackground {
-    background-image: url('../imgs/test.jpg');
+    background-image: url('../imgs/dance-bw.jpg');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -70,7 +70,7 @@
       width: 100%;
       position: relative;
       display: inline-block;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
   }
 
   .capstoneInfoHeading{

@@ -84,7 +84,7 @@ class SetRehearsals extends Component {
         <div className="mainView">
           <div className="transparentCard">
             <div className="wrap">
-              <div className="castList setTimesWrap">
+              <div className="castList">
                 <div className="extraClass">
                   <div className="setTimes">
 

@@ -39,5 +39,9 @@
     .desktop {
         visibility: hidden
     }
+
+    .teamMember{
+        margin: 20px;
+    }
     
 }
