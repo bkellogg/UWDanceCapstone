@@ -81,12 +81,15 @@ func main() {
 		log.Fatalf("error creating permission checker: %v", err)
 	}
 
-	castingContext := handlers.NewCastingContext(permChecker, castingSession)
-
 	mailContext := handlers.NewMailContext(mailUser, mailPass, permChecker)
 	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials(), permChecker)
 	announcementContext := handlers.NewAnnouncementContext(db, notifier, permChecker)
 	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
+
+	castingContext := handlers.NewCastingContext(permChecker,
+		castingSession,
+		templatesPath+"confirmation_tpl.html",
+		mailContext.AsMailCredentials())
 
 	baseRouter := middleware.NewAuthenticatedRouter(sessionKey, redis)
 	baseRouter.Handle(appvars.MailPath, authorizer.Authorize(mailContext.MailHandler))
@@ -122,10 +125,8 @@ func main() {
 	auditionRouter := baseRouter.PathPrefix(appvars.AuditionsPath).Subrouter()
 	auditionRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
 	auditionRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificAuditionHandler))
-	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(castingContext.BeginCastingHandler)).
-		Methods(http.MethodPost)
-	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(castingContext.CastingUpdateHandler)).
-		Methods(http.MethodPatch)
+	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(castingContext.CastingHandlerDispatcher)).
+		Methods(http.MethodPut, http.MethodPatch, http.MethodPost)
 	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.AuditionObjectDispatcher))
 
 	showRouter := baseRouter.PathPrefix(appvars.ShowsPath).Subrouter()

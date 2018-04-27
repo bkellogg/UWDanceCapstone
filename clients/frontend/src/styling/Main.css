@@ -1,6 +1,6 @@
 #logo{
     text-align: center;
-    height: 70px;
+    width: 250px;
 }
 
 #signOut{
@@ -21,7 +21,9 @@
 }
 
 .officialLogoImage{
-    height: 100%;
+    height: 90%;
+    width: 90%;
+    
 }
 
 @media only screen and (max-width : 992px) {
@@ -36,6 +38,10 @@
 
     .desktop {
         visibility: hidden
+    }
+
+    .teamMember{
+        margin: 20px;
     }
     
 }

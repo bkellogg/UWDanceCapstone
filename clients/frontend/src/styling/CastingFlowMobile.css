@@ -1,4 +1,4 @@
-@media only screen and (max-width : 992px) {
+@media only screen and (max-width : 768px) {
     .categories{
         font-size: 12px;
     }
@@ -22,7 +22,18 @@
         margin-bottom: 10px;
     }
 
-    .extraClass, .castList{
+    .extraClass, .overlapAvailability{
         width: 100%;
+    }
+
+    .extraClass, .overlapAvailability{
+        display: block;
+    }
+
+    .extraClass{
+        z-index: 1 !important;
+    }
+    .overlapAvailability{
+        z-index: 2 !important;
     }
 }

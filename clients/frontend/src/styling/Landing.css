@@ -1,0 +1,142 @@
+.landingBackground {
+    background-image: url('../imgs/dance-bw.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  
+    width: 100%;
+    height: 100%;
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+
+  .landingView{
+      padding-left: 15%;
+      padding-right: 15%;
+  }
+  /*LANDING HEADING */
+  .landingHeading{
+      padding-top: 20px;
+      position: relative;
+      width: 100%;
+      z-index: 1;
+  }
+
+
+  .landingLogoWrap{
+      width: 200px;
+      height: auto;
+      position: relative;
+      display: inline-block
+  }
+
+  .officialLogoLandingPage{
+      width: 200px;
+  }
+
+  .logInSignUpButtonWrap{
+      padding-top: 20px;
+      display: inline-block;
+      float: right;
+      top: 0;
+      height: 100%;
+      position: relative;
+  }
+
+  .logInRedirectButton{
+        margin-right: 10px;
+  }
+
+  /*LANDING CONTENT */
+  .landingContent{
+      width: 100%;
+      height: auto;
+      margin-bottom: 200px;
+      z-index: 2;
+  }
+
+  .capstoneInfo{
+      opacity: 0.95;
+      border-radius: 10px;
+      width: 100%;
+      background-color: white;
+      padding: 35px;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+  }
+
+  .capstoneInfoSection{
+      width: 100%;
+      position: relative;
+      display: inline-block;
+      margin-bottom: 30px;
+  }
+
+  .capstoneInfoHeading{
+      font-size: 18px;
+      padding: 4px 0px 4px 0px;
+      font-weight: 500;
+  }
+
+  .capstoneInfoContent{
+      font-size: 14px;
+      font-weight: 400;
+  }
+
+  .userRoleHeader{
+    color: inherit;
+  }
+
+  .indentContentDouble{
+    text-indent: 20px;
+    font-size: 13px;
+  }
+
+  /*HEADER AND CONTENT SHARED*/
+  .landingHeading, .landingContent, .landingView{
+    display: block;
+  }
+
+  /*TABLE WITH DANCER, CHOREOGRAPHER, DIRECTOR*/
+
+  .userSectionsBrokenDown{
+      position: relative;
+      display: inline-block;
+  }
+
+  #dancers, #choreographers{
+      margin-right: 120px;
+  }
+
+  /*TEAM MEMBERS*/
+  .teamMember{
+      margin: 25px;
+      position: relative;
+      display: inline-block;
+      text-align: center;
+  }
+
+  .teamMemberImage{
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+
+  .teamMemberName{
+      color: #22A7E0;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+  }
+
+  @media only screen and (max-width : 992px) {
+    .landingHeading{
+        display: block;
+        height: 100%;
+
+    }
+    .landingContent{
+        display: block;
+    }
+  }

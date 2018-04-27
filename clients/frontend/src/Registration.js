@@ -23,16 +23,6 @@ const styles = {
   }
 };
 
-const buttonStyle = {
-  disabledBackgroundColor: '#000000',
-  borderRadius: 3,
-  border: 0,
-  color: 'white',
-  height: 48,
-  padding: '0 30px',
-  boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .30)',
-};
-
 class Registration extends Component {
   constructor(props) {
     super(props);
@@ -59,8 +49,8 @@ class Registration extends Component {
       }
     }
 
-    Util.makeRequest("users/me/auditions/" + this.props.audition, body, "LINK", true)
-      .then(res => {
+    Util.makeRequest("users/me/auditions/" + this.props.audition + "?shows=" + this.state.value, body, "LINK", true)
+    .then(res => {
         if (res.ok) {
           return res.text();
         }
@@ -70,7 +60,6 @@ class Registration extends Component {
         this.props.registered()
       })
       .catch(err => {
-        console.log(err)
         Util.handleError(err)
       })
   }
@@ -127,7 +116,10 @@ class Registration extends Component {
         </div>
         <RaisedButton 
         onClick={this.handleRegister} 
-        disabled={disabled} > 
+        disabled={disabled} 
+        backgroundColor="#22A7E0"
+        style={{color: '#ffffff'}}
+        > 
         Register </RaisedButton>
       </div>
 
