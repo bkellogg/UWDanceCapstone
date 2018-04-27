@@ -3,22 +3,21 @@
 refreshLocalUser();
 let auth = getAuth();
 
-var newRoleForm = document.querySelector(".newRole-form");
+var newAnnouncementTypeForm = document.querySelector(".newAnnouncementType-form");
 var errorBox = document.querySelector(".js-error");
-var roleName = document.getElementById("roleName-input");
-var displayName = document.getElementById("displayName-input");
-var level = document.getElementById("level-input");
+var announcementTypeName = document.getElementById("announcementTypeName-input");
+var description = document.getElementById("description-input");
 
-getRoles();
+getAnnouncementTypes()
 
-newRoleForm.addEventListener("submit", function (evt) {
+newAnnouncementTypeForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
     var payload = {
-        "name": roleName.value,
-        "displayName": displayName.value,
-        "level": Number(level.value),
+        "name": announcementTypeName.value,
+        "desc": description.value,
     };
-    makeRequest("roles", payload, "POST", true)
+    console.log(payload)
+    makeRequest("announcements/types", payload, "POST", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -34,9 +33,9 @@ newRoleForm.addEventListener("submit", function (evt) {
 })
 
 
-// get roles
-function getRoles() {
-    fetch(API_URL_BASE + "roles?auth=" + auth)
+// get announcement types
+function getAnnouncementTypes() {
+    fetch(API_URL_BASE + "announcements/types?includeDeleted=false&auth=" + auth)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -45,8 +44,8 @@ function getRoles() {
         })
         .then((data) => {
             $(data).each(function (index, value) {
-              $("ul").append("<li>"+ value.displayName+ "</li>")
+              $("ul").append("<li>"+ value.name + "</li>")
             });
         })
-}
 
+}

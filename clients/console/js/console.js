@@ -41,3 +41,14 @@ function load_profile() {
     document.getElementById("content").innerHTML = '<object type="text/html" data="account.html"></object>';
 }
 
+function load_announcements() {
+    document.getElementById("content").innerHTML = '<object type="text/html" data="announcements.html"></object>';
+}
+
+function load_createNewAnnouncement() {
+    document.getElementById("content").innerHTML = '<object type="text/html" data="createNewAnnouncement.html"></object>';
+}
+
+function load_createNewAnnouncementType() {
+    document.getElementById("content").innerHTML = '<object type="text/html" data="createNewAnnouncementType.html"></object>';
+}
