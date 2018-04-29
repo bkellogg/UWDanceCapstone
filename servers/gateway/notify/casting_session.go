@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 	"sync"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -322,6 +323,8 @@ func (c *CastingSession) makeContestedDancer(id DancerID, rank int, chors []Chor
 	for _, chor := range chors {
 		fullChorSlice = append(fullChorSlice, c.Choreographers[chor])
 	}
+	// sort the choreographers slice
+	sort.Slice(fullChorSlice, Choreographers(fullChorSlice).Less)
 	cd.Choreographers = fullChorSlice
 	return cd
 }
@@ -375,6 +378,11 @@ func (c *CastingSession) ToCastingUpdate(chorID int64) (*CastingUpdate, error) {
 	}
 
 	castingUpdate.Uncasted = odSlice
+
+	// sort the dancers before returning them
+	sort.Slice(castingUpdate.Contested, CDSlice(castingUpdate.Contested).Less)
+	sort.Slice(castingUpdate.Uncasted, DSlice(castingUpdate.Uncasted).Less)
+	sort.Slice(castingUpdate.Cast, RDSlice(castingUpdate.Cast).Less)
 
 	return castingUpdate, nil
 }
