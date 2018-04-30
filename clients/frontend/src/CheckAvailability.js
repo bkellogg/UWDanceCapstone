@@ -16,13 +16,14 @@ class CheckAvailability extends Component {
   };
 
   componentWillMount(){
-    console.log("updating filter")
     let filteredCast = []
     this.props.cast.map((dancer, i) => {
       filteredCast.push(dancer.dancer.user.id)
+      return filteredCast
     })
     this.props.contested.map(dancer => {
       filteredCast.push(dancer.rankedDancer.dancer.user.id)
+      return filteredCast
     })
     this.setState({
       filteredCast : filteredCast,
@@ -43,9 +44,11 @@ class CheckAvailability extends Component {
     let filteredCast = []
     cast.map((dancer, i) => {
       filteredCast.push(dancer.dancer.user.id)
+      return filteredCast
     })
     contested.map(dancer => {
       filteredCast.push(dancer.rankedDancer.dancer.user.id)
+      return filteredCast
     })
     return filteredCast
   }
