@@ -21,33 +21,6 @@ class SelectCast extends Component {
     };
   };
 
-  componentDidMount(){
-    setTimeout(() => {this.orderTable()}, 300)
-  }
-
-  orderTable = () => {
-    let table, rows, switching, i, x, y, shouldSwitch;
-    table = document.getElementById("selectCastTable");
-    switching = true;
-    while (switching) {
-      switching = false;
-      rows = table.getElementsByTagName("tr");
-      for (i = 1; i < (rows.length - 1); i++) {
-        shouldSwitch = false;
-        x = rows[i].getElementsByTagName("td")[1];
-        y = rows[i + 1].getElementsByTagName("td")[1];
-        if (x.innerHTML > y.innerHTML) {
-          shouldSwitch= true;
-          break;
-        }
-      }
-      if (shouldSwitch) {
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-        switching = true;
-      }
-    }
-  }
-
   updateCast = (id, rank) => {
     let add = this.state.toAddToCast
     let drop = this.state.toDropFromCast
@@ -88,21 +61,31 @@ class SelectCast extends Component {
   render() {
     let castRows=[]
     let uncastRows=[]
+    let conflictRows=[]
     
     const cast = this.props.cast
     const uncast = this.props.uncast
+    const conflict = this.props.contested
     //check - does the prop exist. if yes, proceed
     if(cast) {
       castRows = cast.map((dancer) => {
         return(
-          <AllDancersRow updateCast={this.updateCast} person={dancer.dancer.user}  key={dancer.dancer.user.id} regNum={dancer.dancer.regNum} numPieces={dancer.dancer.numShows} rank={dancer.rank} selectCast={true} audition={this.props.auditionID}/>
+          <AllDancersRow updateCast={this.updateCast} person={dancer.dancer.user} key={dancer.dancer.user.id} regNum={dancer.dancer.regNum} numPieces={dancer.dancer.numShows} rank={dancer.rank} selectCast={true} audition={this.props.auditionID}/>
         )
       })
     }
     if(uncast) {
       uncastRows = uncast.map((dancer) => {
         return(
-          <AllDancersRow updateCast={this.updateCast} person={dancer.user}  key={dancer.user.id} regNum={dancer.regNum} numPieces={dancer.numShows} rank={dancer.rank} selectCast={true} audition={this.props.auditionID}/>
+          <AllDancersRow updateCast={this.updateCast} person={dancer.user} key={dancer.user.id} regNum={dancer.regNum} numPieces={dancer.numShows} rank={dancer.rank} selectCast={true} audition={this.props.auditionID}/>
+        )
+      })
+    }
+    if(conflict) {
+      conflictRows = conflict.map(conflict => {
+        let dancer = conflict.rankedDancer.dancer
+        return(
+          <AllDancersRow updateCast={this.updateCast} person={dancer.user} key={dancer.user.id} regNum={dancer.regNum} numPieces={dancer.numShows} rank={conflict.rankedDancer.rank} selectCast={true} audition={this.props.auditionID}/>
         )
       })
     }
@@ -128,6 +111,7 @@ class SelectCast extends Component {
                 </th>
                 </tr>
                 {castRows}
+                {conflictRows}
                 {uncastRows}
             </tbody>
             </table>

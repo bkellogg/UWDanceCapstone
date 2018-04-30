@@ -325,7 +325,6 @@ class Profile extends Component {
               </div>
             </div>
             {/* </div>
-
         <div className="card2"> */}
 
             {/* SECOND CARD */}
@@ -371,7 +370,6 @@ class Profile extends Component {
                 <Button id="edit" className="btn-floating" onClick={() => this.onClick()}>
                   <i className="large material-icons"> mode_edit </i>
                 </Button>
-
               }
               {this.state.edit &&
                 <Button id="edit" className="btn-floating" onClick={() => this.onClick()}>

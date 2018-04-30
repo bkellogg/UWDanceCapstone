@@ -114,11 +114,11 @@ class Casting extends Component {
         return <SelectCast auditionID={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested} 
                            addToCast={add => {this.setState({addToCast:add})}} dropFromCast={drop => {this.setState({dropFromCast:drop})}}/>
       case 1:
-        return <CheckAvailability cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>;
+        return <CheckAvailability cast={this.state.cast} contested={this.state.contested}/>;
       case 2:
         return <ResolveConflict audition={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>;
       case 3:
-        return <SetRehearsals cast={this.state.cast}/>
+        return <SetRehearsals cast={this.state.cast} contested={this.state.contested}/>
       default:
         return 'Someone is off the counts - stop the music, and refresh the page!';
     }

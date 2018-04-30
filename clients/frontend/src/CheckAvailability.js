@@ -10,43 +10,47 @@ class CheckAvailability extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        filteredCast: []
+      cast : [],
+      contested: []
     }
   };
 
-  componentDidMount(){
-    setTimeout(() => {this.orderTable("checkAvailabilityTable")}, 200)
-    let filteredCast = this.state.filteredCast
+  componentWillMount(){
+    let filteredCast = []
     this.props.cast.map((dancer, i) => {
       filteredCast.push(dancer.dancer.user.id)
+      return filteredCast
+    })
+    this.props.contested.map(dancer => {
+      filteredCast.push(dancer.rankedDancer.dancer.user.id)
+      return filteredCast
     })
     this.setState({
-      filteredCast : filteredCast
+      filteredCast : filteredCast,
+      cast : this.props.cast,
+      contested : this.props.contested
     })
-    console.log(filteredCast)
   }
 
-  orderTable = (tableID) => {
-    let table, rows, switching, i, x, y, shouldSwitch;
-    table = document.getElementById(tableID);
-    switching = true;
-    while (switching) {
-      switching = false;
-      rows = table.getElementsByTagName("tr");
-      for (i = 1; i < (rows.length - 1); i++) {
-        shouldSwitch = false;
-        x = rows[i].getElementsByTagName("td")[2];
-        y = rows[i + 1].getElementsByTagName("td")[2];
-        if (x.innerHTML > y.innerHTML) {
-          shouldSwitch= true;
-          break;
-        }
-      }
-      if (shouldSwitch) {
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-        switching = true;
-      }
-    }
+  componentWillReceiveProps(props){
+    this.setState({
+      cast: props.cast,
+      contested: props.contested,
+      filteredCast: this.setFilteredCast(props.cast, props.contested)
+    })
+  }
+
+  setFilteredCast = (cast, contested) => {
+    let filteredCast = []
+    cast.map((dancer, i) => {
+      filteredCast.push(dancer.dancer.user.id)
+      return filteredCast
+    })
+    contested.map(dancer => {
+      filteredCast.push(dancer.rankedDancer.dancer.user.id)
+      return filteredCast
+    })
+    return filteredCast
   }
 
   filterCast = (id) => {
@@ -66,10 +70,20 @@ class CheckAvailability extends Component {
 
   render() {
     let rows = []
-    if (this.props.cast) {
-      rows = this.props.cast.map(dancer => {
+    let conflictRows = []
+
+    if (this.state.cast) {
+      rows = this.state.cast.map(dancer => {
         return (
           <AllDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} comments={dancer.dancer.comments} regNum={dancer.dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)}/>
+        )
+      })
+    }
+    if(this.state.contested) {
+      conflictRows = this.state.contested.map(conflict => {
+        let dancer = conflict.rankedDancer.dancer
+        return(
+          <AllDancersRow key={dancer.user.id} person={dancer.user} comments={dancer.comments} regNum={dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)} />
         )
       })
     }
@@ -92,11 +106,12 @@ class CheckAvailability extends Component {
                         <th></th>
                       </tr>
                       {rows}
+                      {conflictRows}
                     </tbody>
                   </table>
                 </div>
                 <div className="overlapAvailability">
-                  <AvailabilityOverlap cast={this.props.cast} filteredCast={this.state.filteredCast}/>
+                  <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast}/> 
                 </div>
               </div>
             </div>

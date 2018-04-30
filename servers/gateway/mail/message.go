@@ -19,7 +19,7 @@ type Message struct {
 }
 
 // NewMessage creates a new mail message from the given information
-func NewMessage(credentials *MailCredentials, sender, body, subject string, recipients []string) *Message {
+func NewMessage(credentials *Credentials, sender, body, subject string, recipients []string) *Message {
 	return &Message{
 		auth:       credentials.toSMTPAuth(),
 		sender:     sender,
@@ -30,7 +30,7 @@ func NewMessage(credentials *MailCredentials, sender, body, subject string, reci
 }
 
 // NewMessageFromTemplate creates a new
-func NewMessageFromTemplate(credentials *MailCredentials, tpl, subject string,
+func NewMessageFromTemplate(credentials *Credentials, tpl, subject string,
 	tplVars interface{}, recipients []string) (*Message, error) {
 	parsedTpl, err := parseTemplate(tpl, tplVars)
 	if err != nil {
@@ -47,7 +47,7 @@ func NewMessageFromTemplate(credentials *MailCredentials, tpl, subject string,
 
 // NewMessageFromRequest builds and returns a new message from the given credentials
 // and http.Request. Consumes the given requests's body.
-func NewMessageFromRequest(credentials *MailCredentials, r *http.Request) (*Message, error) {
+func NewMessageFromRequest(credentials *Credentials, r *http.Request) (*Message, error) {
 	msg := &Message{}
 	if err := json.NewDecoder(r.Body).Decode(msg); err != nil {
 		return nil, err

@@ -17,12 +17,31 @@ class SetRehearsals extends Component {
       numRehearsals: 2,
       open: false,
       finished: false,
-      rehearsalSchedule: []
+      rehearsalSchedule: [],
+      cast: [],
+      contested: [],
+      filteredCast: []
     }
   };
 
+  componentWillMount(){
+    let filteredCast = []
+    this.props.cast.map((dancer, i) => {
+      filteredCast.push(dancer.dancer.user.id)
+      return filteredCast
+    })
+    this.props.contested.map(dancer => {
+      filteredCast.push(dancer.rankedDancer.dancer.user.id)
+      return filteredCast
+    })
+    this.setState({
+      filteredCast : filteredCast,
+      cast : this.props.cast,
+      contested : this.props.contested
+    })
+  }
+
   postCasting = () => {
-    console.log("post")
     this.setState({
       open: false,
       finished: true
@@ -119,7 +138,7 @@ class SetRehearsals extends Component {
                 </div>
 
                 <div className="overlapAvailability">
-                  
+                <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast}/> 
                </div>
               </div>
               {/* AFTER CHOSING TIMES */}

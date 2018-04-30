@@ -10,6 +10,8 @@ const times = ["1000", "1030","1100","1130","1200","1230","1300", "1330", "1400"
 
 const days = ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"]
 
+const daysRef = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
 class Availability extends Component {
     constructor(props){
         super(props);
@@ -42,6 +44,10 @@ class Availability extends Component {
                 [false, false, false, false, false, false, false, false]
               ]
           };
+    }
+
+    componentWillMount(){
+      this.populateAvailability()
     }
 
     handleChange = cells => {
@@ -110,10 +116,12 @@ class Availability extends Component {
                 a[dayLocation].times[a[dayLocation].times.length - 1].end = endTime
               } else {
                 //this is where the bug is - cannot read property push of undefined
-                a[dayLocation].time.push({
-                  "start" : timeVal,
-                  "end" : endTime
-                })
+                if(a[dayLocation].time !== undefined) {
+                  a[dayLocation].time.push({
+                    "start" : timeVal,
+                    "end" : endTime
+                  })
+                }
               }
             } else {
               a.push({
@@ -126,6 +134,32 @@ class Availability extends Component {
       }
       this.setState({
         availability : a
+      })
+    }
+
+    populateAvailability = () => {
+      let cells = this.state.cells
+      if (this.props.currAvailability) {
+        if (this.props.currAvailability.days !== undefined) {//make sure they have an availability
+          this.props.currAvailability.days.map(day => {
+            let dayIndex = daysRef.indexOf(day.day)
+            day.times.map(time => {
+              let startIndex = times.indexOf(time.start)
+              let endIndex = times.indexOf(time.end)
+              if (startIndex > -1 && endIndex > -1) { //both times are within our timesRef
+                let index = startIndex
+                while (index <= endIndex) {
+                  //first row and first value in each row are labels - do not modify
+                  cells[index + 1][dayIndex + 1] = true
+                  index++
+                }
+              }
+            })
+          })
+        }
+      }
+      this.setState({
+        cells : cells
       })
     }
 

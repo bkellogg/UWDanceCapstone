@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import Moment from 'react-moment';
 import './styling/General.css';
 import './styling/RegistrationConf.css';
+import './styling/RegistrationConfMobile.css';
 import * as Util from './util.js';
 import Button from 'react-materialize/lib/Button';
 
@@ -12,8 +13,8 @@ class RegistrationConf extends Component {
     super(props);
     this.state = {
       registered: false,
-      auditionID: this.props.audition.id
-
+      auditionID: this.props.audition.id,
+      open: false
     }
   };
 
@@ -27,40 +28,61 @@ class RegistrationConf extends Component {
     })
   }
 
+  changeReg = () => {
+    this.props.changeReg()
+  }
+
+  updateAvailability = () => {
+    this.props.updateAvailability()
+  }
+
+  discardChanges = () => {
+    this.props.discardChanges()
+  }
+
   render() {
     return (
       <div className="cardsWrap">
-      <div className="card1">
+      <div className="card1 profileCard1">
       <div className="wrap">
         <div className="card101">
           <div className="numberDiv">
-            <p id="number">1</p>
+            <p id="number">{this.props.regNum}</p>
           </div>
           <div className="informationalDiv">
 
             <div className="successWrap">
               <div className="successfulRegistrationMessage">
-                <p id="successMessage">You have successfully registered for the show! Your assigned number is on the left.</p>
+                <p id="successMessage">You have successfully registered for the show! Your assigned number is {this.props.regNum}.</p>
                 <p>Location: {this.props.audition.location}</p>
                 {/*TODO format date time how you like*/}
 
                 <p>Audition starts at <Moment format="YYYY/MM/DD HH:mm">{this.props.audition.time}</Moment></p>
               </div>
             </div>
-
           </div>
-</div>
+        </div>
           </div>
       </div>
       <div className="card102">
+      {!this.props.showChangeReg &&
         <div className="editRegistration">
           <div className="unregister">
             <Button className="unregisterButton" onClick={this.unLink}>Unregister</Button>
           </div>
           <div className="changeAvailability">
-            <Button className="changeAvailabilityButton">Change Availability</Button>
+            <Button className="changeAvailabilityButton" onClick={this.changeReg}>Change Availability</Button>
           </div>
         </div>
+      }
+      {this.props.showChangeReg &&
+      <div className="editRegistration">
+        <div className="changeAvailability">
+            <Button className="unregisterButton" onClick={this.discardChanges}>Discard Changes</Button>
+            <Button className="changeAvailabilityButton" onClick={this.updateAvailability}>Confirm Availability</Button>
+          </div>
+      </div>
+      }
         </div>
       </div>
     )

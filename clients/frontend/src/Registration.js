@@ -50,7 +50,7 @@ class Registration extends Component {
     }
 
     Util.makeRequest("users/me/auditions/" + this.props.audition + "?shows=" + this.state.value, body, "LINK", true)
-      .then(res => {
+    .then(res => {
         if (res.ok) {
           return res.text();
         }

@@ -117,7 +117,7 @@ class SignUp extends Component {
               <h5 className='title'> Sign up </h5>
               <div className="error">
                 {
-                  this.state.error !== null &&
+                  this.state.error !== null && !this.state.signUpExtra &&
                   <p>{this.state.error}</p>
                 }
               </div>
