@@ -88,7 +88,6 @@ class SignIn extends Component {
           this.handleClose()
         )
         .catch(err => {
-          console.error(err)
           Util.handleError(err)
         })
     }

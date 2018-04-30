@@ -8,6 +8,7 @@ import RegistrationConf from './RegistrationConf';
 //styling
 import './styling/Audition.css';
 import './styling/General.css';
+import Snackbar from 'material-ui/Snackbar';
 
 class Audition extends Component {
   constructor(props) {
@@ -15,7 +16,8 @@ class Audition extends Component {
     this.state = {
       registered: false,
       audition: null,
-      regNum: 0
+      regNum: 0,
+      open: false
     }
   };
 
@@ -48,9 +50,17 @@ class Audition extends Component {
   }
 
   unregister = () => {
-    this.setState({registered: false})
+    this.setState({
+      registered: false,
+      open: true
+    })
   }
 
+  handleRequestClose = () => {
+      this.setState({
+        open: false,
+      });
+    };
   render() {
     return (
       <section className="main">
@@ -67,6 +77,12 @@ class Audition extends Component {
               regNum={this.state.regNum}
               unregister={this.unregister}/>
 }
+              <Snackbar
+                open={this.state.open}
+                message="Successfully Unregistered"
+                autoHideDuration={3000}
+                onRequestClose={this.handleRequestClose}
+              />
           </div>
         </div>
       </section>

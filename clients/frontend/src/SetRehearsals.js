@@ -42,7 +42,6 @@ class SetRehearsals extends Component {
   }
 
   postCasting = () => {
-    console.log("post")
     this.setState({
       open: false,
       finished: true

@@ -12,8 +12,8 @@ class RegistrationConf extends Component {
     super(props);
     this.state = {
       registered: false,
-      auditionID: this.props.audition.id
-
+      auditionID: this.props.audition.id,
+      open: false
     }
   };
 
@@ -49,7 +49,7 @@ class RegistrationConf extends Component {
             </div>
 
           </div>
-</div>
+        </div>
           </div>
       </div>
       <div className="card102">
