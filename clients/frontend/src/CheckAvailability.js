@@ -15,7 +15,7 @@ class CheckAvailability extends Component {
     }
   };
 
-  componentDidMount(){
+  componentWillMount(){
     console.log("updating filter")
     let filteredCast = []
     this.props.cast.map((dancer, i) => {
