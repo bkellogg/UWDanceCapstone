@@ -77,7 +77,7 @@ class AvailabilityOverlap extends Component {
 
       let days = dancer.dancer.availability.days
       let id = dancer.dancer.user.id
-      if(filteredCast.indexOf(id) >= 0) {
+      if(filteredCast.indexOf(id) >= 0 && days !== undefined) { //check to see that they are in the filtered cast and did have an availability
       
         days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
           let times = day.times

@@ -27,6 +27,18 @@ class RegistrationConf extends Component {
     })
   }
 
+  changeReg = () => {
+    this.props.changeReg()
+  }
+
+  updateAvailability = () => {
+    this.props.updateAvailability()
+  }
+
+  discardChanges = () => {
+    this.props.discardChanges()
+  }
+
   render() {
     return (
       <div className="cardsWrap">
@@ -34,7 +46,7 @@ class RegistrationConf extends Component {
       <div className="wrap">
         <div className="card101">
           <div className="numberDiv">
-            <p id="number">1</p>
+            <p id="number">{this.props.regNum}</p>
           </div>
           <div className="informationalDiv">
 
@@ -47,20 +59,29 @@ class RegistrationConf extends Component {
                 <p>Audition starts at <Moment format="YYYY/MM/DD HH:mm">{this.props.audition.time}</Moment></p>
               </div>
             </div>
-
           </div>
         </div>
           </div>
       </div>
       <div className="card102">
+      {!this.props.showChangeReg &&
         <div className="editRegistration">
           <div className="unregister">
             <Button className="unregisterButton" onClick={this.unLink}>Unregister</Button>
           </div>
           <div className="changeAvailability">
-            <Button className="changeAvailabilityButton">Change Availability</Button>
+            <Button className="changeAvailabilityButton" onClick={this.changeReg}>Change Availability</Button>
           </div>
         </div>
+      }
+      {this.props.showChangeReg &&
+      <div className="editRegistration">
+        <div className="changeAvailability">
+            <Button className="unregisterButton" onClick={this.discardChanges}>Discard Changes</Button>
+            <Button className="changeAvailabilityButton" onClick={this.updateAvailability}>Confirm Availability</Button>
+          </div>
+      </div>
+      }
         </div>
       </div>
     )
