@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
-import AvatarEditor from 'react-avatar-editor'
+import AvatarEditorConsole from './AvatarEditor';
 import './styling/Profile.css';
 import './styling/General.css';
 
@@ -254,22 +254,6 @@ class Profile extends Component {
     }
   }
 
-  rotateLeft = e => {
-    e.preventDefault()
-
-    this.setState({
-      rotate: this.state.rotate - 90,
-    })
-  }
-
-  rotateRight = e => {
-    e.preventDefault()
-    this.setState({
-      rotate: this.state.rotate + 90,
-    })
-  }
-
-
   render() {
     return (
       <section className="main">
@@ -289,15 +273,7 @@ class Profile extends Component {
                       <section>
                         <div> Upload a head shot as a jpg file. </div>
                         <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
-                        <AvatarEditor
-                          image={this.state.photoSrc}
-                          width={250}
-                          height={250}
-                          border={50}
-                          scale={1.2}
-                          rotate={parseFloat(this.state.rotate)}
-                          rotate={0}
-                        />
+                        <AvatarEditorConsole image={this.state.photoSrc}/>
                       </section>
                     }
                   </div>
