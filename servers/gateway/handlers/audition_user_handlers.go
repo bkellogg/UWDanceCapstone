@@ -56,7 +56,7 @@ func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *mod
 		}
 		return respond(w, avail, http.StatusOK)
 	case "PATCH":
-		if !!ctx.permChecker.UserCan(u, permissions.ChangeUserAvailability) {
+		if !ctx.permChecker.UserCan(u, permissions.ChangeUserAvailability) {
 			return permissionDenied()
 		}
 		wtb := &models.WeekTimeBlock{}
