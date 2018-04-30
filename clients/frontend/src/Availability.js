@@ -140,24 +140,23 @@ class Availability extends Component {
     populateAvailability = () => {
       let cells = this.state.cells
       if (this.props.currAvailability) {
-        console.log(this.props.currAvailability)
-        this.props.currAvailability.days.map(day => {
-          let dayIndex = daysRef.indexOf(day.day)
-          console.log(day)
-          day.times.map(time => {
-            console.log(time)
-            let startIndex = times.indexOf(time.start)
-            let endIndex = times.indexOf(time.end)
-            if (startIndex > -1 && endIndex > -1) { //both times are within our timesRef
-              let index = startIndex
-              while (index <= endIndex) {
-                //first row and first value in each row are labels - do not modify
-                cells[index + 1][dayIndex + 1] = true
-                index++
+        if (this.props.currAvailability.days !== undefined) {//make sure they have an availability
+          this.props.currAvailability.days.map(day => {
+            let dayIndex = daysRef.indexOf(day.day)
+            day.times.map(time => {
+              let startIndex = times.indexOf(time.start)
+              let endIndex = times.indexOf(time.end)
+              if (startIndex > -1 && endIndex > -1) { //both times are within our timesRef
+                let index = startIndex
+                while (index <= endIndex) {
+                  //first row and first value in each row are labels - do not modify
+                  cells[index + 1][dayIndex + 1] = true
+                  index++
+                }
               }
-            }
+            })
           })
-        })
+        }
       }
       this.setState({
         cells : cells

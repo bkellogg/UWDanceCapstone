@@ -19,6 +19,7 @@ class Audition extends Component {
       audition: null,
       regNum: 0,
       open: false,
+      openAvailability: false,
       changeRegistration: false
     }
   };
@@ -65,6 +66,8 @@ class Audition extends Component {
   }
 
   updateAvailability = () => {
+    //broken atm, server issue
+    console.log("updating availability")
     let body = this.state.availability
     Util.makeRequest("users/me/auditions/" + this.props.audition + "/availability", body, "PATCH", true)
     .then(res => {
@@ -75,7 +78,8 @@ class Audition extends Component {
     })
     .then(
       this.setState({
-        changeRegistration : false
+        changeRegistration : false,
+        openAvailability: true
       })
     )
     .catch(err => {
@@ -88,6 +92,7 @@ class Audition extends Component {
   handleRequestClose = () => {
       this.setState({
         open: false,
+        openAvailability: false
       });
     };
 
@@ -123,6 +128,12 @@ class Audition extends Component {
               <Snackbar
                 open={this.state.open}
                 message="Successfully Unregistered"
+                autoHideDuration={3000}
+                onRequestClose={this.handleRequestClose}
+              />
+              <Snackbar
+                open={this.state.openAvailability}
+                message="Successfully Updated Availability"
                 autoHideDuration={3000}
                 onRequestClose={this.handleRequestClose}
               />
