@@ -89,21 +89,25 @@ class Casting extends Component {
   };
 
   updateCast = () => {
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.addToCast, "PATCH", true)
+    if (this.state.addToCast.rank1.length > 0 || this.state.addToCast.rank2.length > 0 || this.state.addToCast.rank3.length > 0) {
+      Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.addToCast, "PATCH", true)
       .then(res => {
         if (res.ok) {
           return res.text()
         }
         return res.text().then((t) => Promise.reject(t));
       })
-
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.dropFromCast, "PATCH", true)
-      .then(res => {
-        if (res.ok) {
-          return res.text()
-        }
-        return res.text().then((t) => Promise.reject(t));
-      })
+    }
+    
+    if (this.state.dropFromCast.drops.length > 0) {
+      Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.dropFromCast, "PATCH", true)
+        .then(res => {
+          if (res.ok) {
+            return res.text()
+          }
+          return res.text().then((t) => Promise.reject(t));
+        })
+      }
   }
 
   //This takes the stepIndex and returns the component that should be rendered
