@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
+import AvatarEditor from 'react-avatar-editor'
 import './styling/Profile.css';
 import './styling/General.css';
 
@@ -25,6 +26,7 @@ class Profile extends Component {
       fname: JSON.parse(localStorage.getItem("user")).firstName,
       lname: JSON.parse(localStorage.getItem("user")).lastName,
       edit: false,
+      rotate: 0,
       //the following are used to update the profile
       firstName: "",
       lastName: "",
@@ -252,6 +254,22 @@ class Profile extends Component {
     }
   }
 
+  rotateLeft = e => {
+    e.preventDefault()
+
+    this.setState({
+      rotate: this.state.rotate - 90,
+    })
+  }
+
+  rotateRight = e => {
+    e.preventDefault()
+    this.setState({
+      rotate: this.state.rotate + 90,
+    })
+  }
+
+
   render() {
     return (
       <section className="main">
@@ -265,13 +283,21 @@ class Profile extends Component {
                 <div className="photoContainerWrap">
                   <div id="photoContainer" className="photoContainer">
                     {!this.state.edit &&
-
                       <img id="photo" alt="profile" src={this.state.photoSrc}></img>
                     }
                     {this.state.edit &&
                       <section>
                         <div> Upload a head shot as a jpg file. </div>
                         <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
+                        <AvatarEditor
+                          image={this.state.photoSrc}
+                          width={250}
+                          height={250}
+                          border={50}
+                          scale={1.2}
+                          rotate={parseFloat(this.state.rotate)}
+                          rotate={0}
+                        />
                       </section>
                     }
                   </div>
