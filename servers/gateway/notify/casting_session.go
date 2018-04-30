@@ -315,7 +315,8 @@ func (c *CastingSession) rankAll(chorID int64, cu *ChoreographerUpdate) error {
 
 // makeContestedDancer returns a ContestedDancer from the given
 // dancer and choreographers
-func (c *CastingSession) makeContestedDancer(id DancerID, rank int, chors []Choreographer) *ContestedDancer {
+func (c *CastingSession) makeContestedDancer(id DancerID, rank int,
+	chors []Choreographer, chor int64) *ContestedDancer {
 	cd := &ContestedDancer{}
 	dancer, _ := c.dancer(id.int())
 	cd.Dancer = dancer.Rank(rank)
@@ -324,7 +325,7 @@ func (c *CastingSession) makeContestedDancer(id DancerID, rank int, chors []Chor
 		fullChorSlice = append(fullChorSlice, c.Choreographers[chor])
 	}
 	// sort the choreographers slice
-	sort.Slice(fullChorSlice, Choreographers(fullChorSlice).Less)
+	sort.Slice(fullChorSlice, Choreographers(fullChorSlice).ByIDChorFirst(chor))
 	cd.Choreographers = fullChorSlice
 	return cd
 }
@@ -362,7 +363,8 @@ func (c *CastingSession) ToCastingUpdate(chorID int64) (*CastingUpdate, error) {
 		// contested.
 		chorsContesting, isContested := c.dancerIsContested(dancerID)
 		if isContested {
-			castingUpdate.Contested = append(castingUpdate.Contested, c.makeContestedDancer(dancerID, int(rank), chorsContesting))
+			castingUpdate.Contested = append(castingUpdate.Contested, c.makeContestedDancer(
+				dancerID, int(rank), chorsContesting, chorID))
 		} else {
 			dancer, _ := c.dancer(dancerID.int())
 			castingUpdate.Cast = append(castingUpdate.Cast, dancer.Rank(int(rank)))
