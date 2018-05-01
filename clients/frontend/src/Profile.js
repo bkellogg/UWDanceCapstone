@@ -290,8 +290,6 @@ class Profile extends Component {
                     }
                     {this.state.edit &&
                       <div id="editBio">
-
-
                         <div className="row">
                           <form className="col s12">
                             <div className="row">
@@ -305,9 +303,7 @@ class Profile extends Component {
                       </div>
 
                     }
-
-                    
-
+                
                   </div>
                   
                 </div>
@@ -324,10 +320,6 @@ class Profile extends Component {
                     }
               </div>
             </div>
-            {/* </div>
-        <div className="card2"> */}
-
-            {/* SECOND CARD */}
             <div className="mainContentBorder">
               <div id="history">
                 <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
@@ -365,17 +357,6 @@ class Profile extends Component {
 
 
           </div>
-
-          {/* {!this.state.edit &&
-                <Button id="edit" className="btn-floating" onClick={() => this.onClick()}>
-                  <i className="large material-icons"> mode_edit </i>
-                </Button>
-              }
-              {this.state.edit &&
-                <Button id="edit" className="btn-floating" onClick={() => this.onClick()}>
-                  <i className="large material-icons"> check </i>
-                </Button>
-              } */}
         </div>
       </section>
     );
