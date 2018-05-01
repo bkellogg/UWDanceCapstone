@@ -9,6 +9,7 @@ import Profile from './Profile';
 import Casting from './Casting';
 import MobileNavigationElement from './MobileNavigation';
 import NavigationElement from './NavigationElement';
+import DancerPiece from './DancerPiece';
 import {Button} from 'react-materialize';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -249,13 +250,22 @@ class Main extends Component {
                 .split(' ')
                 .join('')
               let routes = []
-              if (this.state.user.role.level === 10) {
-                let route = <Route
+              if (this.state.user.role.level === 10) { //dancer
+
+                let route1 = <Route
                   exact
                   path={path + "/audition"}
                   render={props => <Audition {...props} name={show.name} audition={show.auditionID}/>}/>
-                routes.push(route)
-              } else if (this.state.user.role.level === 70) {
+
+                let route2 = <Route
+                  exact
+                  path={path + "/piece"}
+                  render={props => <DancerPiece {...props} name={show.name} audition={show.auditionID}/>}/>
+
+                routes.push(route1)
+                routes.push(route2)
+              } else if (this.state.user.role.level === 70) { //choreographer
+
                 let route1 = <Route
                   exact
                   path={path + "/casting"}
@@ -264,6 +274,7 @@ class Main extends Component {
                   name={show.name}
                   audition={show.auditionID}
                   websocket={websocket}/>}/>
+
                 let route2 = <Route
                   exact
                   path={path + "/people"}
@@ -272,9 +283,21 @@ class Main extends Component {
                   name={show.name}
                   audition={show.auditionID}
                   show={show.show}/>}/>
+                
+                let route3 = <Route
+                  exact
+                  path={path + "/piece"}
+                  render={props => <Piece
+                  {...props}
+                  name={show.name}
+                  audition={show.auditionID}
+                  show={show.show}/>}/>
+
                 routes.push(route1)
                 routes.push(route2)
-              } else {
+                routes.push(route3)
+              } else { //admin
+
                 let route1 = <Route
                   key = {i}
                   exact
@@ -284,6 +307,7 @@ class Main extends Component {
                   name={show.name}
                   audition={show.auditionID}
                   websocket={websocket}/>}/>
+
                 let route2 = <Route
                   key = {i*10}
                   exact
@@ -293,22 +317,34 @@ class Main extends Component {
                   name={show.name}
                   audition={show.auditionID}
                   show={show.show}/>}/>
+
                 let route3 = <Route
                   key = {i*100}
                   exact
                   path={path + "/audition"}
                   render={props => <Audition {...props} name={show.name} audition={show.auditionID}/>}/>
+
+                let route4 = <Route
+                  exact
+                  path={path + "/piece"}
+                  render={props => <Piece
+                  {...props}
+                  name={show.name}
+                  audition={show.auditionID}
+                  show={show.show}/>}/>
+
                 routes.push(route1)
                 routes.push(route2)
                 routes.push(route3)
+                routes.push(route4)
               }
               return (
                 <Switch key={i}>
                   <Route exact path={path} render={props => <Show {...props} name={show.name}/>}/> {routes}
-                  <Route
+                  {/* <Route
                     exact
                     path={path + "/piece"}
-                    render={props => <Piece {...props} name={show.name} audition={show.auditionID}/>}/>
+                    render={props => <Piece {...props} name={show.name} audition={show.auditionID}/>}/> */}
                 </Switch>
               )
             })}

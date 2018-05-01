@@ -212,6 +212,7 @@ class AllDancersRow extends Component {
     } else if (this.props.comments.length === 0){
         hasComments = false
     }
+    console.log(hasComments, this.props.checkAvailability)
     let choreographers = this.props.choreographers
     let choreos = []
     if (choreographers) {
