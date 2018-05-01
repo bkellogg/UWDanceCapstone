@@ -358,7 +358,11 @@ class Profile extends Component {
                 {!this.state.edit &&
                   <section>
                     {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                    <a href={this.state.resume} target="_blank">View PDF Resume</a>
+                    {this.state.resume != null && (
+                      <div>
+                        <a href={Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                      </div>
+                    )}
 
                   </section>
                 }
