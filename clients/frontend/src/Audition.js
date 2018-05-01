@@ -28,11 +28,8 @@ class Audition extends Component {
     this.checkRegistration()
   }
 
-  componentDidUpdate() {
-    this.checkRegistration()
-  }
-
   checkRegistration = () => {
+    console.log("checking")
     Util
       .makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
       .then(res => {
@@ -44,7 +41,7 @@ class Audition extends Component {
           .then((t) => Promise.reject(t));
       })
       .then(audition => {
-        this.setState({registered: true, audition: audition.audition, regNum: audition.regNum, availability: audition.availability})
+        this.setState({registered: true, audition: audition.audition, regNum: audition.regNum, currAvailability: audition.availability})
       })
       .catch(err => {
         console.error(err)
@@ -71,7 +68,9 @@ class Audition extends Component {
 
   updateAvailability = () => {
     //broken atm, server issue
-    let body = this.state.availability
+    let body = {
+      "days" : this.state.availability
+    }
     Util.makeRequest("users/me/auditions/" + this.props.audition + "/availability", body, "PATCH", true)
     .then(res => {
       if (res.ok) {
@@ -82,8 +81,11 @@ class Audition extends Component {
     .then(
       this.setState({
         changeRegistration : false,
-        openAvailability: true
+        openAvailability: true,
       })
+    )
+    .then(
+      this.checkRegistration()
     )
     .catch(err => {
       console.error(err)
@@ -100,13 +102,13 @@ class Audition extends Component {
     };
 
   setAvailability = (availability) => {
-    console.log(availability)
     this.setState({
       availability : availability
     })
   }
 
   render() {
+    console.log(this.state.currAvailability)
     return (
       <section className="main">
         <div className="mainView">
@@ -126,8 +128,8 @@ class Audition extends Component {
               showChangeReg={this.state.changeRegistration}
               discardChanges={() => this.setState({changeRegistration : false})}/>
             }
-            {this.state.changeRegistration &&
-              <Availability availability={this.setAvailability} currAvailability={this.state.availability}/>
+            {this.state.changeRegistration &&  
+              <Availability availability={this.setAvailability} currAvailability={this.state.currAvailability} />
             }
               <Snackbar
                 open={this.state.open}
