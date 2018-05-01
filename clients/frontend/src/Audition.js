@@ -28,6 +28,10 @@ class Audition extends Component {
     this.checkRegistration()
   }
 
+  componentDidUpdate() {
+    this.checkRegistration()
+  }
+
   checkRegistration = () => {
     Util
       .makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
@@ -67,7 +71,6 @@ class Audition extends Component {
 
   updateAvailability = () => {
     //broken atm, server issue
-    console.log("updating availability")
     let body = this.state.availability
     Util.makeRequest("users/me/auditions/" + this.props.audition + "/availability", body, "PATCH", true)
     .then(res => {
@@ -97,6 +100,7 @@ class Audition extends Component {
     };
 
   setAvailability = (availability) => {
+    console.log(availability)
     this.setState({
       availability : availability
     })

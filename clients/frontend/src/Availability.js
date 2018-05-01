@@ -89,8 +89,6 @@ class Availability extends Component {
 
     calculateTimes(){ 
       //we can skip 0 because the first row is always going to be false
-      //lets do this
-      //buggy :( if you select too much at once
       let a = []
       for(let i = 1; i <= times.length; i++){
         for(let j = 1; j <= days.length; j++){
