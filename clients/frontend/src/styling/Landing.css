@@ -19,7 +19,8 @@
   .landingHeading{
       padding-top: 20px;
       position: relative;
-      width: 100%;
+      width: auto;
+      min-width: 100%;
       z-index: 1;
   }
 
@@ -50,7 +51,8 @@
 
   /*LANDING CONTENT */
   .landingContent{
-      width: 100%;
+      width: auto;
+      min-width: 100%;
       height: auto;
       margin-bottom: 200px;
       z-index: 2;
@@ -111,6 +113,7 @@
 
   /*TEAM MEMBERS*/
   .teamMember{
+      width: auto;
       margin: 25px;
       position: relative;
       display: inline-block;

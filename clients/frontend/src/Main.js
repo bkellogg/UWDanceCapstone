@@ -131,7 +131,7 @@ class Main extends Component {
     let auditionID = show.auditionID
     let currShows = this.state.currShows
 
-    Util.makeRequest("/auditions/" + auditionID, {}, "GET", true).then((res) => {
+    Util.makeRequest("auditions/" + auditionID, {}, "GET", true).then((res) => {
       if (res.ok) {
         return res.json();
       }

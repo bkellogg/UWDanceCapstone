@@ -1,6 +1,7 @@
 .overlapDays{
     display: inline-block;
     width: 75px;
+    
 }
 
 .daysSimple {
@@ -8,11 +9,14 @@
     width: 75px;
     height: 25px;
     font-size: 12px;
-    
+    text-align: center;
 }
 
+
+ 
 .overlapTimes {
     height: 25px;
+    border: 0.5px solid rgb(219, 219, 219);
 }
 
 .timesRow{

@@ -64,6 +64,7 @@ Button {
 
 .signlink {
   color: #22A7E0;
+  cursor: pointer;
 }
 
 .signlink:hover{
