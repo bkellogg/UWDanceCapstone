@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
-<<<<<<< HEAD
 import AvatarEditorConsole from './AvatarEditor';
-=======
->>>>>>> 5e24e099ab585a92f7d1d3ba0eeac8a0c2be1add
 import './styling/Profile.css';
 import './styling/General.css';
 
@@ -243,7 +240,6 @@ class Profile extends Component {
     })
   }
 
-<<<<<<< HEAD
   onKeyDown = event => {
     let len = event.target.value.split(/[\s]+/);
     this.setState({
@@ -259,8 +255,6 @@ class Profile extends Component {
     }
   }
 
-=======
->>>>>>> 5e24e099ab585a92f7d1d3ba0eeac8a0c2be1add
   render() {
     return (
       <section className="main">
@@ -281,10 +275,7 @@ class Profile extends Component {
                       <section>
                         <div> Upload a head shot as a jpg file. </div>
                         <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
-<<<<<<< HEAD
                         <AvatarEditorConsole image={this.state.photoSrc}/>
-=======
->>>>>>> 5e24e099ab585a92f7d1d3ba0eeac8a0c2be1add
                       </section>
                     }
                   </div>
