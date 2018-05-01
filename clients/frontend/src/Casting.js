@@ -89,7 +89,7 @@ class Casting extends Component {
   };
 
   updateCast = () => {
-    if (this.state.addToCast.rank1.length > 0 || this.state.addToCast.rank2.length > 0 || this.state.addToCast.rank3.length > 0) {
+    if (this.state.addToCast.rank1 || this.state.addToCast.rank2 || this.state.addToCast.rank3) {
       Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.addToCast, "PATCH", true)
       .then(res => {
         if (res.ok) {
@@ -99,7 +99,7 @@ class Casting extends Component {
       })
     }
     
-    if (this.state.dropFromCast.drops.length > 0) {
+    if (this.state.dropFromCast.drops) {
       Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.dropFromCast, "PATCH", true)
         .then(res => {
           if (res.ok) {
