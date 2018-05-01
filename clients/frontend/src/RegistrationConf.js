@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import Moment from 'react-moment';
 import './styling/General.css';
 import './styling/RegistrationConf.css';
+import './styling/RegistrationConfMobile.css';
 import * as Util from './util.js';
 import Button from 'react-materialize/lib/Button';
 
@@ -42,7 +43,7 @@ class RegistrationConf extends Component {
   render() {
     return (
       <div className="cardsWrap">
-      <div className="card1">
+      <div className="card1 profileCard1">
       <div className="wrap">
         <div className="card101">
           <div className="numberDiv">
@@ -52,7 +53,7 @@ class RegistrationConf extends Component {
 
             <div className="successWrap">
               <div className="successfulRegistrationMessage">
-                <p id="successMessage">You have successfully registered for the show! Your assigned number is on the left.</p>
+                <p id="successMessage">You have successfully registered for the show! Your assigned number is {this.props.regNum}.</p>
                 <p>Location: {this.props.audition.location}</p>
                 {/*TODO format date time how you like*/}
 

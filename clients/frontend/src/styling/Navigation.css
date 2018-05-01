@@ -8,7 +8,8 @@ body {
 
 #slide-out {
     background-color: #27384A;
-    width: 17%;
+    width: auto;
+    max-width: 250px;
 }
 
 .side-nav a, .collapsible-header{
