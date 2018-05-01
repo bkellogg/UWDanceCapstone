@@ -11,13 +11,14 @@ const timesFormatted = ["", "10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:0
   "5:00 PM", "", "6:00 PM", "", "7:00 PM", "", "8:00 PM", "", "9:00 PM"]
 
 
-const colors = ["#fff", "#9ABB3E", "#CC66AD", "#2B823D", "#6640BF", "#C8BA5B", "#7A2932", "#260D0D"]
+//const colors = ["#fff", "#9ABB3E", "#CC66AD", "#2B823D", "#6640BF", "#C8BA5B", "#7A2932", "#260D0D"] visually distinct, helpful for debugging
+const colors = ["#fff", "#D6E0F5", "#ADC2EB", "#85A3E0", "#5C85D6", "#3366CC", "#2952A3", "#1F3D7A", "#142952"]
 
 class AvailabilityOverlap extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cast: this.props.cast,
+      filteredCast: this.props.filteredCast,
       dayTimes: [
         [
           [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
@@ -45,64 +46,133 @@ class AvailabilityOverlap extends Component {
   };
 
   componentDidMount() {
-    this.getAllDancerOverlap()
+    this.setState({
+      dayTimes : this.getAllDancerOverlap(this.props.filteredCast)
+    })
   }
 
-  getAllDancerOverlap = () => {
-    let cast = this.props.cast
-    let filteredList = this.props.filteredCast
-    console.log(filteredList)
+  componentWillReceiveProps(props){
+    this.setState({
+      cast: props.cast,
+      filteredCast: props.filteredCast,
+      dayTimes : this.getAllDancerOverlap(props.filteredCast)
+    })
+  }
+
+  flushDayTimes = () => {
     let dayTimes = this.state.dayTimes
-    cast.map((dancer, i) => { //go through each dancer
+    let newWeek = []
+    dayTimes.map(days => { 
+      newWeek.push([[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []])
+      return newWeek
+    })
+    return newWeek
+  }
+
+  getAllDancerOverlap = (filteredCast) => {
+    
+    let dayTimes = this.flushDayTimes()
+
+    this.props.cast.map((dancer, i) => { //go through each dancer
+
       let days = dancer.dancer.availability.days
       let id = dancer.dancer.user.id
-      //we only want to add dancers that are in the selected cast list
+      if(filteredCast.indexOf(id) >= 0 && days !== undefined) { //check to see that they are in the filtered cast and did have an availability
+      
+        days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
+          let times = day.times
 
-      days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
-        let times = day.times
+          times.map((time, k) => { //times is the array of times for that day
 
-        times.map((time, k) => { //times is the array of times for that day
+            let startIndex = timesRef.indexOf(time.start)
+            let endIndex = timesRef.indexOf(time.end)
 
-          let startIndex = timesRef.indexOf(time.start)
-          let endIndex = timesRef.indexOf(time.end)
+            //okay so for the times in timesRef it works,but brendan put times in that aren't in our calendar
+            //which is fine, but it means I am going to ignore times that aren't in our window, so when index = -1
+            if (startIndex < 0 || endIndex < 0) {
+              return 
+            }
+            //moving on
+            //now we only have valid start/end times and their location 
+            let incrementIndex = startIndex //increment index is the index of our this.state.dayTimes[j][incrementIndex]
 
-          //okay so for the times in timesRef it works,but brendan put times in that aren't in our calendar
-          //which is fine, but it means I am going to ignore times that aren't in our window, so when index = -1
-          if (startIndex < 0 || endIndex < 0) {
-            return
-          }
-          //moving on
-          //now we only have valid start/end times and their location 
-          let incrementIndex = startIndex //increment index is the index of our this.state.dayTimes[j][incrementIndex]
-
-          while (incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
-            let currPlace = dayTimes[j][incrementIndex]
-            currPlace.push(id)
-            incrementIndex++
-          }
-
+            while (incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
+              let currPlace = dayTimes[j][incrementIndex]
+              currPlace.push(id)
+              incrementIndex++
+            }
+            return incrementIndex //arbitrary
+          })
+          return times //arbitrary
         })
-      })
+      }
+      return days //arbitrary
     })
+    //just going to go through contested dancers again because I am tired and lazy
+    if(this.props.contested) {
+      this.props.contested.map((dancer, i) => { //go through each dancer
+        let days = dancer.rankedDancer.dancer.availability.days
+        let id = dancer.rankedDancer.dancer.user.id
+        if(filteredCast.indexOf(id) >= 0) {
+        
+          days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
+            let times = day.times
+
+            times.map((time, k) => { //times is the array of times for that day
+
+              let startIndex = timesRef.indexOf(time.start)
+              let endIndex = timesRef.indexOf(time.end)
+
+              //okay so for the times in timesRef it works,but brendan put times in that aren't in our calendar
+              //which is fine, but it means I am going to ignore times that aren't in our window, so when index = -1
+              if (startIndex < 0 || endIndex < 0) {
+                return
+              }
+              //moving on
+              //now we only have valid start/end times and their location 
+              let incrementIndex = startIndex //increment index is the index of our this.state.dayTimes[j][incrementIndex]
+
+              while (incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
+                let currPlace = dayTimes[j][incrementIndex]
+                currPlace.push(id)
+                incrementIndex++
+              }
+              return incrementIndex //arbitrary return for linting
+            })
+            return times //arbitrary
+          })
+        }
+        return days //arbitrary
+      })
+    }
 
     this.setState({
-      dayTimes: dayTimes
+      dayTimes : dayTimes
     })
 
+    return dayTimes
   }
 
   render() {
-    let dayTimes = this.state.dayTimes
+    const dayTimes = this.state.dayTimes
 
     //generate the overlap days from the state
     let overlapDays = dayTimes.map((days, i) => {
 
       let overlapTimes = days.map((times, j) => {
         let color = colors[times.length]
+
+        //because I suck, we're going to reduce down to all the unique IDS in the array
+        let uniqueIDs = [...new Set(times)];
+        if(uniqueIDs.length < colors.length){ //if the number of unique IDs is equal to or less than the number of colors we have, it gets a unique color
+          color = colors[uniqueIDs.length]
+        } else { //otherwise it is getting the color at the end of the list
+          color = colors[colors.length - 1]
+        }
+         
         //this is the div with the specific time block
         return (
           <div className="overlapTimes" style={{ "backgroundColor": color }}>
-            {timesRef[j]}
           </div>
         )
       })

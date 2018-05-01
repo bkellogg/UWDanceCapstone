@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
+import AvatarEditorConsole from './AvatarEditor';
 import './styling/Profile.css';
 import './styling/General.css';
 
@@ -14,7 +15,6 @@ class Profile extends Component {
     this.resumeChange = this.resumeChange.bind(this);
     this.photoChange = this.photoChange.bind(this);
     this.formatHistory = this.formatHistory.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
@@ -30,9 +30,7 @@ class Profile extends Component {
       lastName: "",
       photoUpload: "",
       bioUpload: "",
-      resumeUpload: "",
-      // User bio word count
-      wordCount: "",
+      resumeUpload: ""
     }
   };
 
@@ -107,7 +105,7 @@ class Profile extends Component {
       })
       .then((data) => {
         this.setState({
-          photoSrc: URL.createObjectURL(data),
+          photoSrc: URL.createObjectURL(data)
         })
       })
       .catch((err) => {
@@ -140,6 +138,7 @@ class Profile extends Component {
     let data = new FormData();
     data.append("image", file.files[0]);
     let xhr = new XMLHttpRequest();
+
     xhr.addEventListener("readystatechange", () => {
       this.getPhoto()
     });
@@ -166,7 +165,9 @@ class Profile extends Component {
     let xhr = new XMLHttpRequest();
 
     xhr.addEventListener("readystatechange", () => {
-      this.getResume()
+      if (this.readyState === 4) {
+        this.getResume()
+      }
     });
 
     xhr.onreadystatechange = function () {
@@ -176,13 +177,14 @@ class Profile extends Component {
         }
       }
     };
-    
+
     xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
     xhr.setRequestHeader("Authorization", Util.getAuth());
     xhr.setRequestHeader("ResumeFieldName", "resume");
 
     xhr.send(data);
   }
+
 
   onClick() {
     if (this.state.edit) {
@@ -199,10 +201,11 @@ class Profile extends Component {
       }
       if (this.state.bioUpload !== "") {
         Util.uploadBio(this.state.bioUpload)
-        this.setState({ bio: this.state.bioUpload, wordCount: 0 })
+        this.setState({ bio: this.state.bioUpload })
       }
       if (this.state.resumeUpload !== "") {
-        this.uploadResume(this.state.resumeUpload)
+        Util.uploadResume(this.state.resumeUpload)
+        this.setState({ resume: this.state.resumeUpload })
       }
       this.setState({
         firstName: "",
@@ -244,7 +247,7 @@ class Profile extends Component {
       wordCount: len.length,
     });
     if (len.length > 60) {
-      if (event.keyCode == 46 || event.keyCode == 8 || (event.keyCode >= 37 && event.keyCode <= 40)) {
+      if (event.keyCode === 46 || event.keyCode === 8 || (event.keyCode >= 37 && event.keyCode <= 40)) {
 
       } else if (event.keyCode < 48 || event.keyCode > 57) {
         event.preventDefault();
@@ -272,77 +275,68 @@ class Profile extends Component {
                       <section>
                         <div> Upload a head shot as a jpg file. </div>
                         <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
+                        <AvatarEditorConsole image={this.state.photoSrc}/>
                       </section>
                     }
                   </div>
-
-                  <div className="nameAndBioWrap">
-                    <div id="name" className="name">
-
-                      {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
-
-
-                      {this.state.edit &&
-                        <div id="editName">
-                          <Row>
-                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
-                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
-                          </Row>
-                        </div>
-                      }
-                    </div>
-
-                    <div id="bio" className="bio">
-                      <div className="subheader"><b>Dancer Bio:</b></div>
-                      {!this.state.edit &&
-                        <section>
-                          {this.state.bio !== "" && this.state.bio}
-                          {this.state.bio === "" && " Dancer has no bio"}
-                        </section>
-                      }
-                      {this.state.edit &&
-                        <div id="editBio">
-
-
-                          <div className="row">
-                            <form className="col s12">
-                              <div className="row">
-                                <div className="input-field col s12">
-                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onKeyDown={this.onKeyDown} defaultValue={this.state.bio}></textarea>
-                                  {this.state.wordCount > 60 && (
-                                    <div id="bioWarning">You have reached the max word limit</div>
-                                  )}
-                                  {this.state.bio == null && (
-                                    <label htmlFor="textarea1">Bios should be 60 words or less</label>
-                                  )}
-                                </div>
-                              </div>
-                            </form>
-                          </div>
-                        </div>
-
-                      }
-                    </div>
-                  </div>
-                  {!this.state.edit &&
-                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                      <i className="large material-icons"> mode_edit </i>
-                    </Button>
-
-                  }
-                  {this.state.edit &&
-                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                      <i className="large material-icons"> check </i>
-                    </Button>
-                  }
                 </div>
+
+                <div className="nameAndBioWrap">
+                  <div id="name" className="name">
+
+                    {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+
+
+                    {this.state.edit &&
+                      <div id="editName">
+                        <Row>
+                          <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
+                          <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
+                        </Row>
+                      </div>
+                    }
+                  </div>
+
+                  <div id="bio" className="bio">
+                    <div className="subheader"><b>Dancer Bio:</b></div>
+                    {!this.state.edit &&
+                      <section>
+                        {this.state.bio !== "" && this.state.bio}
+                        {this.state.bio === "" && " Dancer has no bio"}
+                      </section>
+                    }
+                    {this.state.edit &&
+                      <div id="editBio">
+                        <div className="row">
+                          <form className="col s12">
+                            <div className="row">
+                              <div className="input-field col s12">
+                                <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
+                                <label htmlFor="textarea1">Bios should be 60 words or less</label>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+
+                    }
+                
+                  </div>
+                  
+                </div>
+                {!this.state.edit &&
+                      <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                        <i className="large material-icons"> mode_edit </i>
+                      </Button>
+
+                    }
+                    {this.state.edit &&
+                      <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                        <i className="large material-icons"> check </i>
+                      </Button>
+                    }
               </div>
             </div>
-          </div>
-
-          <div className="card2">
-
-            {/* SECOND CARD */}
             <div className="mainContentBorder">
               <div id="history">
                 <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
@@ -379,20 +373,11 @@ class Profile extends Component {
                   </section>
                 }
               </div>
+
             </div>
+
+
           </div>
-
-          {!this.state.edit &&
-            <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Edit Profile
-                  {/* <i className="large material-icons"> mode_edit </i> */}
-            </Button>
-
-          }
-          {this.state.edit &&
-            <Button id="edit" className="btn-medium" onClick={() => this.onClick()}>Save Changes
-                  {/* <i className="large material-icons"> check </i> */}
-            </Button>
-          }
         </div>
       </section>
     );

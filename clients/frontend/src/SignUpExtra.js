@@ -63,7 +63,7 @@ class SignUpExtra extends Component {
       wordCount: len.length,
     });
     if (len.length > 60) {
-      if (event.keyCode == 46 || event.keyCode == 8 || (event.keyCode >= 37 && event.keyCode <= 40)) {
+      if (event.keyCode === 46 || event.keyCode === 8 || (event.keyCode >= 37 && event.keyCode <= 40)) {
 
       } else if (event.keyCode < 48 || event.keyCode > 57) {
         event.preventDefault();
