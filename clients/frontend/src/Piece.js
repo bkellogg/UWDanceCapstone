@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as Util from './util.js';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -7,6 +8,7 @@ import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import MusicianRow from './MusicianRow';
+import PersonRow from './PersonRow';
 import './styling/General.css';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
@@ -47,9 +49,36 @@ class Piece extends Component {
     super(props);
     this.state = {
       viewAvailability: false,
-      numMusicians: 0
+      numMusicians: 0,
+      choreographer: {},
+      dancers: []
     }
   };
+
+  componentWillMount(){
+    //get info about everyone in the piece
+    this.getPieceUsers()
+  }
+
+  getPieceUsers = () => {
+    //hardcoded piece id as "1", will eventually get piece ID from somewhere else
+    //TODO deal with pages
+    Util.makeRequest("pieces/1/users", "", "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      return res
+        .text()
+        .then((t) => Promise.reject(t));
+    })
+    .then(piece => {
+      this.setState({
+        choreographer : piece.choreographer,
+        dancers : piece.dancers
+      })
+    })
+  }
 
   viewAvailability = () => {
     let view = this.state.viewAvailability
@@ -75,6 +104,24 @@ class Piece extends Component {
     for(let i = 0; i < numMusicians; i++){
       musicianRow.push(<MusicianRow key={i}/>)
     }
+    
+    let castRows = this.state.dancers.map((dancer, i) => {
+      return (<PersonRow p={dancer} piece={true} key={i}/>)
+    })
+
+    let contactRows = this.state.dancers.map((dancer, i) => {
+      return (
+        <tr key={i}>
+          <td>
+            {dancer.firstName + " " + dancer.lastName}
+          </td>
+          <td>
+            {dancer.email}
+          </td>  
+        </tr>  
+      )
+    })
+
     return (
       <section className="main">
         <div className="mainView">
@@ -95,7 +142,17 @@ class Piece extends Component {
           />
           <div className="card1">
             <h2 className="smallHeading">My Cast</h2>
-            <p>list of dancers in my cast</p>
+            <table>
+              <tbody>
+                <tr className="categories">
+                  <th className="avatar2">Photo</th>
+                  <th>Name</th>
+                  <th className="userRoleDisp">Bio</th>
+                  <th>Email</th>
+                </tr>
+                {castRows}
+              </tbody>
+            </table>
             {
               !this.state.viewAvailability &&
               <Button onClick={this.viewAvailability}> View Cast Availability </Button>
@@ -111,7 +168,7 @@ class Piece extends Component {
           <div className="card1">
             <h2 className="smallHeading">Information Sheet</h2>
             <div className="choreoContact">
-              <p>Choreographer's Name: [display here]</p>
+              <p>Choreographer's Name: {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
               <p>Choreographer's Phone Number:</p>
                 <TextField 
                   id="phoneNumber"
@@ -119,11 +176,20 @@ class Piece extends Component {
                   style={STYLES}
                 />
               
-              <p>Choreographer's email: [display choreographers email here]</p>
+              <p>Choreographer's email: {this.state.choreographer.email}</p>
             </div>
             <div className="dancerInfo">
-              <p>Number of dancers: [display num dancers]</p>
-              <p>Dancer Contact Information: [list of dancers and emails]</p> 
+              <p>Number of dancers: {this.state.dancers.length}</p>
+              <p>Dancer Contact Information:</p> 
+              <table>
+                <tbody>
+                  <tr className="categories">
+                    <th>Name</th>
+                    <th>Email</th>
+                  </tr>
+                  {contactRows}
+                </tbody>
+              </table>
             </div>
             <div className="pieceInfo">
               <p>Dance Title: </p>
@@ -192,7 +258,12 @@ class Piece extends Component {
                   {musicianRow}
                 </div>
               }
-              <p>Rehearsal Schedule: [display rehearsal schedule]</p>
+              <p>Rehearsal Schedule:</p>
+              <TextField 
+                  id="rehearsalSchedule"
+                  onChange={this.handleChange('rehearsalSchedule')}
+                  style={STYLES}
+                />
             </div>
             <div className="notes">
               <p>Choreographers Notes: </p>
@@ -236,6 +307,7 @@ class Piece extends Component {
                 />
              
             </div>
+            <Button>Save Info Sheet</Button>
           </div>
         </div>
       </section>
