@@ -113,18 +113,19 @@
 
   /*TEAM MEMBERS*/
   .teamMember{
-      width: auto;
-      margin: 25px;
-      position: relative;
-      display: inline-block;
-      text-align: center;
+    width: calc(100% / 5);  
+    display: inline-block;
+    vertical-align: top;   
+    text-align:center;
+    margin:2%;    
+    padding:20px;
   }
 
   .teamMemberImage{
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    max-width: 100%;
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   }
 
   .teamMemberName{
@@ -142,4 +143,16 @@
     .landingContent{
         display: block;
     }
+
+    .teamMember{  
+        width: 100%;
+        margin: 0;
+        display: block;
+    
+      }
+      .teamMemberImage{
+          height: 100%;
+          width: 100%;
+      }
+    
   }

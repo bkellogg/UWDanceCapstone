@@ -127,28 +127,28 @@ class App extends Component {
                 <div className="capstoneInfoSection theTeamCard">
                   <h2 className="capstoneInfoHeading"> Meet The Team </h2>
                   <div className="teamMember">
-                    <img className="teamMemberImage" alt="teamMemberImage" src={brendanKellog} />
+                    <img className="teamMemberImage" alt="Brendan Kellog - Backend Developer" src={brendanKellog} />
                     <p className="teamMemberName"> Brendan Kellog</p>
                     <p className="capstoneInfoContent"> Backend Developer</p>
-                    <p className="capstoneInfoContent"> email@goeshere.com</p>
+                    
                   </div>
                   <div className="teamMember">
-                    <img className="teamMemberImage" alt="teamMemberImage" src={rosemaryAdams} />
+                    <img className="teamMemberImage" alt="Rosemary Adams - Frontend Developer" src={rosemaryAdams} />
                     <p className="teamMemberName"> Rosemary Adams</p>
                     <p className="capstoneInfoContent"> Frontend Developer</p>
-                    <p className="capstoneInfoContent"> email@goeshere.com</p>
+                    
                   </div>
                   <div className="teamMember">
-                    <img className="teamMemberImage" alt="teamMemberImage" src={saniyaMazmanova} />
+                    <img className="teamMemberImage" alt="Saniya Mazmanova - UX/UI Designer" src={saniyaMazmanova} />
                     <p className="teamMemberName"> Saniya Mazmanova</p>
                     <p className="capstoneInfoContent"> UX/UI Designer</p>
-                    <p className="capstoneInfoContent"> email@goeshere.com</p>
+                    
                   </div>
                   <div className="teamMember">
-                    <img className="teamMemberImage" alt="teamMemberImage" src={nathanSwanson} />
+                    <img className="teamMemberImage" alt="Nathan Swanson - Project Manager" src={nathanSwanson} />
                     <p className="teamMemberName"> Nathan Swanson</p>
                     <p className="capstoneInfoContent"> Project Manager</p>
-                    <p className="capstoneInfoContent"> email@goeshere.com</p>
+                    
                   </div>
                 </div>
               </div>
