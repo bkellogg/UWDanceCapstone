@@ -4,6 +4,8 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Button from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 import MusicianRow from './MusicianRow';
 import './styling/General.css';
 
@@ -45,7 +47,7 @@ class Piece extends Component {
     super(props);
     this.state = {
       viewAvailability: false,
-      numMusicians: 3
+      numMusicians: 0
     }
   };
 
@@ -62,12 +64,9 @@ class Piece extends Component {
     });
   };
 
-  addMusician = () => {
-    let num = this.state.numMusicians++
-    this.setState({
-      numMusicians : num
-    })
-  }
+  handleChangeMusician = (event, index, value) => {
+    this.setState({numMusicians : value})
+  };
 
 
   render() {
@@ -127,14 +126,12 @@ class Piece extends Component {
               <p>Dancer Contact Information: [list of dancers and emails]</p> 
             </div>
             <div className="pieceInfo">
-              <div>
               <p>Dance Title: </p>
                 <TextField 
                   id="danceTitle"
                   onChange={this.handleChange('danceTitle')}
                   style={STYLES}
                 />
-              </div>
               <p>Dance RunTime:</p>
                 <TextField 
                   id="runtime"
@@ -171,23 +168,37 @@ class Piece extends Component {
                 />
               
               <p>If music will be performed live, number of musicians:  </p> 
-              <TextField 
-                  id="numMusicians"
-                  onChange={this.handleChange('numMusicians')}
-                  style={STYLES}
-                />
+              <SelectField
+                value={this.state.numMusicians}
+                onChange={this.handleChangeMusician}
+              >
+                <MenuItem value={0} primaryText="0" />
+                <MenuItem value={1} primaryText="1" />
+                <MenuItem value={2} primaryText="2" />
+                <MenuItem value={3} primaryText="3" />
+                <MenuItem value={4} primaryText="4" />
+                <MenuItem value={5} primaryText="5" />
+                <MenuItem value={6} primaryText="6" />
+                <MenuItem value={7} primaryText="7" />
+                <MenuItem value={8} primaryText="8" />
+                <MenuItem value={9} primaryText="9" />
+                <MenuItem value={10} primaryText="10+" />
+              </SelectField>
               
-              <div className="musicianInfo">
-                <p>List of contact info for musicians: </p>
-                {musicianRow}
-                <Button>Add</Button>
-              </div>
+              {
+                this.state.numMusicians > 0 &&
+                <div className="musicianInfo">
+                  <p>List of contact info for musicians: </p>
+                  {musicianRow}
+                </div>
+              }
               <p>Rehearsal Schedule: [display rehearsal schedule]</p>
             </div>
             <div className="notes">
               <p>Choreographers Notes: </p>
                 <TextField 
                   id="choreoNotes"
+                  multiLine={true}
                   onChange={this.handleChange('choreoNotes')}
                   style={STYLES}
                 />
@@ -195,6 +206,7 @@ class Piece extends Component {
               <p>Costume Descriptions:  </p>
                 <TextField 
                   id="costumeDesc"
+                  multiLine={true}
                   onChange={this.handleChange('costumeDesc')}
                   style={STYLES}
                 />
@@ -202,6 +214,7 @@ class Piece extends Component {
               <p>Props/Scenic Items Descriptions: </p>
                 <TextField 
                   id="propsDesc"
+                  multiLine={true}
                   onChange={this.handleChange('propsDesc')}
                   style={STYLES}
                 />
@@ -209,6 +222,7 @@ class Piece extends Component {
               <p>Lighting Description: </p>
                 <TextField 
                   id="lightingDesc"
+                  multiLine={true}
                   onChange={this.handleChange('lightingDesc')}
                   style={STYLES}
                 />
@@ -216,6 +230,7 @@ class Piece extends Component {
               <p>Other special needs:  </p>
                 <TextField 
                   id="otherDesc"
+                  multiLine={true}
                   onChange={this.handleChange('otherDesc')}
                   style={STYLES}
                 />
