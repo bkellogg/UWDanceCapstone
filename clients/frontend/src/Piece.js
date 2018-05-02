@@ -2,10 +2,14 @@ import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Button, Input, Row } from 'react-materialize';
+import Button from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
+import MusicianRow from './MusicianRow';
+import './styling/General.css';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 let views = ['month', 'week','day']
+const STYLES = {width: "600px", paddingLeft: "15px"}
 
 let events = [
   {
@@ -40,7 +44,8 @@ class Piece extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      viewAvailability: false
+      viewAvailability: false,
+      numMusicians: 3
     }
   };
 
@@ -51,7 +56,26 @@ class Piece extends Component {
     })
   }
 
+  handleChange = name => event => {
+    this.setState({
+      [name]: event.target.value,
+    });
+  };
+
+  addMusician = () => {
+    let num = this.state.numMusicians++
+    this.setState({
+      numMusicians : num
+    })
+  }
+
+
   render() {
+    let musicianRow = []
+    let numMusicians = this.state.numMusicians
+    for(let i = 0; i < numMusicians; i++){
+      musicianRow.push(<MusicianRow key={i}/>)
+    }
     return (
       <section className="main">
         <div className="mainView">
@@ -70,8 +94,8 @@ class Piece extends Component {
               )
             }
           />
-          <div>
-            My Cast
+          <div className="card1">
+            <h2 className="smallHeading">My Cast</h2>
             <p>list of dancers in my cast</p>
             {
               !this.state.viewAvailability &&
@@ -85,37 +109,117 @@ class Piece extends Component {
               </div>
             }
           </div>
-          <div>
-            Information Sheet
+          <div className="card1">
+            <h2 className="smallHeading">Information Sheet</h2>
             <div className="choreoContact">
-              <p>display choreographers name here</p>
-              <p><strong>input for phone number here</strong></p>
-              <p>display choreographers email here</p>
+              <p>Choreographer's Name: [display here]</p>
+              <p>Choreographer's Phone Number:</p>
+                <TextField 
+                  id="phoneNumber"
+                  onChange={this.handleChange('phoneNumber')}
+                  style={STYLES}
+                />
+              
+              <p>Choreographer's email: [display choreographers email here]</p>
             </div>
             <div className="dancerInfo">
-              <p>display num dancers</p>
-              <p>list of dancers, phone numbers???, and email</p> 
+              <p>Number of dancers: [display num dancers]</p>
+              <p>Dancer Contact Information: [list of dancers and emails]</p> 
             </div>
             <div className="pieceInfo">
-              <p><strong>Dance Title</strong></p>
-              <p><strong>runtime</strong></p>
-              <p><strong>Composer(s)</strong></p>
-              <p><strong>Music title(s)</strong></p>
-              <p><strong>Performed By</strong></p>
-              <p><strong>Music source</strong></p>
-              <p><strong>If music will be performed live, number of musicians</strong></p>
-              <div className="musicianInfo">
-                <p><strong>List of contact info for musicians</strong></p>
-                <p><strong>Name, Phone Number, Email address</strong></p>
+              <div>
+              <p>Dance Title: </p>
+                <TextField 
+                  id="danceTitle"
+                  onChange={this.handleChange('danceTitle')}
+                  style={STYLES}
+                />
               </div>
-              <p>display rehearsal schedule</p>
+              <p>Dance RunTime:</p>
+                <TextField 
+                  id="runtime"
+                  onChange={this.handleChange('runtime')}
+                  style={STYLES}
+                />
+              
+              <p>Composer(s):</p>
+                <TextField 
+                  id="composer"
+                  onChange={this.handleChange('composer')}
+                  style={STYLES}
+                />
+              
+              <p>Music title(s): </p>
+                <TextField 
+                  id="musicTitle"
+                  onChange={this.handleChange('musicTitle')}
+                  style={STYLES}
+                />
+              
+              <p>Performed By:</p>
+                <TextField 
+                  id="musicPerformer"
+                  onChange={this.handleChange('musicPerformer')}
+                  style={STYLES}
+                />
+              
+              <p>Music Source:</p>
+                <TextField 
+                  id="musicSource"
+                  onChange={this.handleChange('musicSource')}
+                  style={STYLES}
+                />
+              
+              <p>If music will be performed live, number of musicians:  </p> 
+              <TextField 
+                  id="numMusicians"
+                  onChange={this.handleChange('numMusicians')}
+                  style={STYLES}
+                />
+              
+              <div className="musicianInfo">
+                <p>List of contact info for musicians: </p>
+                {musicianRow}
+                <Button>Add</Button>
+              </div>
+              <p>Rehearsal Schedule: [display rehearsal schedule]</p>
             </div>
             <div className="notes">
-              <p><strong>Choreographers Notes</strong></p>
-              <p><strong>Costume Descriptions</strong></p>
-              <p><strong>Props/Scenic Items Descriptions</strong></p>
-              <p><strong>Lighting Description</strong></p>
-              <p><strong>Other special needs</strong></p>
+              <p>Choreographers Notes: </p>
+                <TextField 
+                  id="choreoNotes"
+                  onChange={this.handleChange('choreoNotes')}
+                  style={STYLES}
+                />
+              
+              <p>Costume Descriptions:  </p>
+                <TextField 
+                  id="costumeDesc"
+                  onChange={this.handleChange('costumeDesc')}
+                  style={STYLES}
+                />
+             
+              <p>Props/Scenic Items Descriptions: </p>
+                <TextField 
+                  id="propsDesc"
+                  onChange={this.handleChange('propsDesc')}
+                  style={STYLES}
+                />
+              
+              <p>Lighting Description: </p>
+                <TextField 
+                  id="lightingDesc"
+                  onChange={this.handleChange('lightingDesc')}
+                  style={STYLES}
+                />
+              
+              <p>Other special needs:  </p>
+                <TextField 
+                  id="otherDesc"
+                  onChange={this.handleChange('otherDesc')}
+                  style={STYLES}
+                />
+             
             </div>
           </div>
         </div>
