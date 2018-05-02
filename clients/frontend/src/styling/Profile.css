@@ -1,11 +1,10 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #333;
 }
+
 
 .header, .mainContentBorder{
   width: 100%;
-  /* margin-bottom: 3%; */
   padding: 2%;
   position: relative;
 }
@@ -22,16 +21,16 @@ body {
   display: inline-block;
 }
 
-/* #edit {
+#edit {
   position: absolute;
   top: 0;
   right: 0;
-} */
+}
 
 img#photo {
-  width: 150px;
-  height: 150px;
-  
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
   
 }
 
@@ -71,10 +70,6 @@ img#photo {
 .subheader {
   font-size: 15px;
 
-}
-
-section{
-  font-size: 14px;
 }
 
 

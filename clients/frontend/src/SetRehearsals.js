@@ -3,6 +3,7 @@ import Button from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RehearsalRow from './RehearsalRow';
+import AvailabilityOverlap from './AvailabilityOverlap';
 
 import './styling/General.css';
 import './styling/CastingFlow.css';
@@ -16,12 +17,31 @@ class SetRehearsals extends Component {
       numRehearsals: 2,
       open: false,
       finished: false,
-      rehearsalSchedule: []
+      rehearsalSchedule: [],
+      cast: [],
+      contested: [],
+      filteredCast: []
     }
   };
 
+  componentWillMount(){
+    let filteredCast = []
+    this.props.cast.map((dancer, i) => {
+      filteredCast.push(dancer.dancer.user.id)
+      return filteredCast
+    })
+    this.props.contested.map(dancer => {
+      filteredCast.push(dancer.rankedDancer.dancer.user.id)
+      return filteredCast
+    })
+    this.setState({
+      filteredCast : filteredCast,
+      cast : this.props.cast,
+      contested : this.props.contested
+    })
+  }
+
   postCasting = () => {
-    console.log("post")
     this.setState({
       open: false,
       finished: true
@@ -75,7 +95,7 @@ class SetRehearsals extends Component {
     let rehearsalList = []
     this.state.rehearsalSchedule.forEach((rehearsal, i) => {
       rehearsalList.push(
-        <div key={i}> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime} </div>
+        <div key={i}> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime}. </div>
       )
     })
     return (
@@ -83,7 +103,7 @@ class SetRehearsals extends Component {
         <div className="mainView">
           <div className="transparentCard">
             <div className="wrap">
-              <div className="castList setTimesWrap">
+              <div className="castList">
                 <div className="extraClass">
                   <div className="setTimes">
 
@@ -91,25 +111,24 @@ class SetRehearsals extends Component {
                     {rehearsals}
 
                     <div className="buttonsWrap">
-                      <Button
+                        <Button
+                        backgroundColor="#708090"
+                        style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
+                        onClick={this.removeRehearsal} disabled={finished}>
+                        REMOVE</Button>
+                        <Button
                         backgroundColor="#708090"
                         style={{ color: '#ffffff', float: 'right' }}
                         onClick={this.addRehearsal}
                         disabled={finished}>
                         ADD</Button>
-
-                      <Button
-                        backgroundColor="#708090"
-                        style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
-                        onClick={this.removeRehearsal} disabled={finished}>
-                        REMOVE</Button>
                     </div>
                   </div>
                   <div className="postCastingWrap">
                     <div className="postCasting">
                       <Button
                         backgroundColor="#22A7E0"
-                        style={{ color: '#ffffff', width: '100%' }}
+                        style={{ color: '#ffffff', width: '100%', height:'50' }}
                         onClick={this.handleOpen}
                         disabled={finished}>
                         POST CASTING</Button>
@@ -118,9 +137,9 @@ class SetRehearsals extends Component {
 
                 </div>
 
-                <div className="overlapAvailability"> Cast availability goes here
-                {/*This is where the overlapping availability will be displayed, same style as the one on the availability page, but we're not going to have that up for this*/}
-                </div>
+                <div className="overlapAvailability">
+                <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast}/> 
+               </div>
               </div>
               {/* AFTER CHOSING TIMES */}
               <Dialog
@@ -128,7 +147,7 @@ class SetRehearsals extends Component {
                 actions={[
                   <FlatButton
                     label="Cancel"
-                    style={{ backgroundColor: '#708090', color: '#ffffff', marginRight: '20px' }}
+                    style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
                     primary={false}
                     onClick={this.handleClose}
                   />,
@@ -146,10 +165,7 @@ class SetRehearsals extends Component {
                 disabled={finished}
               >
                 <p className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong>, there are <strong className="importantText">no conflicts</strong> with other choreographers, and that your rehearsal times are :
-                <br />
-                <div style={{padding:"20px"}}>
-                 {rehearsalList}
-                 </div>
+            <br /> insert rehearsal times here <br />
                   <br /> </p>
                 <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting.</p>
               </Dialog>

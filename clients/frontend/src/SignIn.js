@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 //import { Link } from 'react-router-dom';
 import { Button } from 'react-materialize';
 import * as Util from './util.js';
-
+import logo from './imgs/logoex.png'
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
@@ -67,6 +67,9 @@ class SignIn extends Component {
         this.props.onSignIn(this.state.auth)
       })
       .catch((err) => {
+        this.setState({
+          error: true
+        })
         console.error(err)
         Util.handleError(err)
       })
@@ -88,7 +91,6 @@ class SignIn extends Component {
           this.handleClose()
         )
         .catch(err => {
-          console.error(err)
           Util.handleError(err)
         })
     }
@@ -122,7 +124,8 @@ class SignIn extends Component {
     return (
       <div className="LogInLanding">
         <div className="Functionality">
-          <div className="Logo">
+          <div className="signInUplogoWrap">
+            <img className="officialLogoLandingPage" alt="logo" src={logo} />
           </div>
           <div className="content">
             <h5 className="title">Sign in</h5>

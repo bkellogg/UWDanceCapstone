@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="css/announcements.css">
+</head>
+
+<body>
+    <h1>Create New Announcement Type</h1>
+    <p> Current Announcement Types:</p>
+    <ul></ul>
+    <form class="newAnnouncementType-form">
+        <div class="announcementTypeName">
+            <label for="announcementTypeName-input">Name of Announcement Type</label>
+            <input id="announcementTypeName-input" type="text">
+        </div>
+        <div class="description">
+            <label for="description-input">Description</label>
+            <textarea name="description-input" id="description-input"></textarea>
+        </div>
+        <button type="submit">Create Announcement Type</button>
+    </form>
+    <div class="js-error"></div>
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/createNewAnnouncementType.js"></script>
+
+</html>

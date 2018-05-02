@@ -8,25 +8,17 @@ body {
 
 #slide-out {
     background-color: #27384A;
-    width: 17%;
+    width: auto;
+    max-width: 250px;
 }
 
-.side-nav a{
+.side-nav a, .collapsible-header{
     color: white;
     font-weight: 200;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    letter-spacing: .5px;
+    letter-spacing: 1px;
     text-transform: capitalize;
-    font-size: 13px;
-}
-
-.collapsible-header {
-    color: white;
-    font-weight: 200;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    letter-spacing: .5px;
-    text-transform: capitalize;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .side-nav .collapsible-header, .side-nav.fixed .collapsible-header{

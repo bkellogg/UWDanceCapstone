@@ -1,0 +1,43 @@
+.overlapDays{
+    display: inline-block;
+    width: 75px;
+    
+}
+
+.daysSimple {
+    display: inline-block;
+    width: 75px;
+    height: 25px;
+    font-size: 12px;
+    text-align: center;
+}
+
+
+ 
+.overlapTimes {
+    height: 25px;
+    border: 0.5px solid rgb(219, 219, 219);
+}
+
+.timesRow{
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.timeBlock{
+    display:inline-block
+}
+
+.timesSimple{
+    height: 25px;
+    font-size: 12px;
+}
+
+.calendarWrap{
+    width: 600px;
+}
+
+.availabilityCalendar{
+    position: static;
+    overflow: hidden;
+}

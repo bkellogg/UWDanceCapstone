@@ -69,20 +69,3 @@
     text-align: center;
 }
 
-@media only screen and (max-width : 992px) {
-    .numberDiv, .informationalDiv{
-        width: 100%;
-        padding-right: 5%;
-        height: auto;
-        min-height: auto;
-    }
-    
-    .numberDiv{
-        z-index: 1;
-    }
-    
-    .informationalDiv{
-        z-index: 2;
-    }
-    
-}
