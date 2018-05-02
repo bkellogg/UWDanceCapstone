@@ -71,6 +71,15 @@ CREATE TABLE UserPiece (
     FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID)
 );
 
+CREATE TABLE UserPiecePending (
+    UserPiecePendingID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT NOT NULL,
+    PieceID INT NOT NULL,
+    ExpiresAt DATETIME NOT NULL,
+    Status VARCHAR(15) NOT NULL,
+    IsDeleted BOOLEAN NOT NULL
+);
+
 CREATE TABLE UserAuditionAvailability (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     Sunday VARCHAR(250) NOT NULL,

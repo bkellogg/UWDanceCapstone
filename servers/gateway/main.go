@@ -55,7 +55,7 @@ func main() {
 	frontEndPath := require("FRONTENDPATH", "")
 	assetsPath := require("ASSETSPATH", "")
 
-	// admin user info
+	// admin user infoca
 	adminFName := require("STAGE_ADMIN_FIRSTNAME", "")
 	adminLName := require("STAGE_ADMIN_LASTNAME", "")
 	adminEmail := require("STAGE_ADMIN_EMAIL", "")

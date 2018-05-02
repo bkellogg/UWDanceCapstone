@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/mail"
@@ -160,7 +161,7 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		ShowID:          show.ID,
 		CreatedBy:       int(u.ID),
 	}
-	_, dberr = ctx.Session.Store.InsertNewPiece(np)
+	piece, dberr := ctx.Session.Store.InsertNewPiece(np)
 	if dberr != nil {
 		return middleware.HTTPErrorFromDBErrorContext(dberr, "inserting new piece when posting casting")
 	}
@@ -171,6 +172,10 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		if dberr != nil {
 			log.Printf("error getting user with id %d: %s\n", id, dberr.Message)
 			continue
+		}
+		dberr = ctx.Session.Store.InsertNewUserPiecePending(int(user.ID), piece.ID, time.Now().Add(appvars.AcceptCastTime))
+		if dberr != nil {
+			log.Printf("error creating new user piece pending entry: %v", dberr.Message)
 		}
 		tplVars := &models.CastingConfVars{
 			Name:          user.FirstName,
