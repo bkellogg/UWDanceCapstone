@@ -166,7 +166,7 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		return middleware.HTTPErrorFromDBErrorContext(dberr, "inserting new piece when posting casting")
 	}
 
-	for id64 := range dancers {
+	for _, id64 := range dancers {
 		id := int(id64)
 		user, dberr := ctx.Session.Store.GetUserByID(id, false)
 		if dberr != nil {
@@ -178,9 +178,10 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 			log.Printf("error creating new user piece pending entry: %v", dberr.Message)
 		}
 		tplVars := &models.CastingConfVars{
-			Name:          user.FirstName,
-			Choreographer: u.FirstName,
-			URL:           appvars.StageURL,
+			Name:      user.FirstName,
+			ChorFName: u.FirstName,
+			ChorLName: u.LastName,
+			URL:       appvars.StageURL,
 		}
 
 		message, err := mail.NewMessageFromTemplate(ctx.MailCredentials,

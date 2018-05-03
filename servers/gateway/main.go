@@ -55,11 +55,16 @@ func main() {
 	frontEndPath := require("FRONTENDPATH", "")
 	assetsPath := require("ASSETSPATH", "")
 
-	// admin user infoca
+	// admin user info
 	adminFName := require("STAGE_ADMIN_FIRSTNAME", "")
 	adminLName := require("STAGE_ADMIN_LASTNAME", "")
 	adminEmail := require("STAGE_ADMIN_EMAIL", "")
 	adminPaswd := require("STAGE_ADMIN_PASSWORD", "")
+
+	// URL that the app is served from
+	// this will be used when generating links back to itself.
+	url := require("STAGE_HOST", "dasc.capstone.ischool.uw.edu")
+	appvars.StageURL = "https://" + url
 
 	// Open connections to the databases
 	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)

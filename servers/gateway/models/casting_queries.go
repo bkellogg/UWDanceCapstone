@@ -1,9 +1,12 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
 // InsertNewUserPiecePending inserts a new entry representing a pending acceptance
@@ -18,7 +21,7 @@ func (store *Database) InsertNewUserPiecePending(userID, pieceID int, expiry tim
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error querying for user: %v", err), http.StatusInternalServerError)
 	}
-	if !rows.Next() {
+	if !rows.Next() || err == sql.ErrNoRows {
 		return NewDBError("no user found", http.StatusNotFound)
 	}
 	rows.Close()
@@ -32,9 +35,38 @@ func (store *Database) InsertNewUserPiecePending(userID, pieceID int, expiry tim
 	}
 	rows.Close()
 
-	_, err = tx.Exec(`INSERT INTO UserPiecePending (UserID, PieceID, ExpiresAt, Status, IsDeleted) VALUES (?, ?, ?, ?, ?)`)
+	_, err = tx.Exec(`INSERT INTO UserPiecePending (UserID, PieceID, ExpiresAt, Status, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+		userID, pieceID, expiry, appvars.CastStatusPending, false)
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error inserting user piece pending: %v", err), http.StatusInternalServerError)
 	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
 	return nil
+}
+
+// ExpirePendingUserPieces changes the status of any expired
+// user piece addition to appvars.CastStatusExpired if the cast status
+// is pending when this function is executed. This does not control the
+// logic if a piece is expired or now. Returns the number of rows affected
+// and an error if one occurred.
+func (store *Database) ExpirePendingUserPieces() (int64, *DBError) {
+	res, err := store.db.Exec(
+		`UPDATE UserPiecePending SET Status = ? WHERE IsDeleted = FALSE AND Status = ? AND ExpiresAt > NOW()`,
+		appvars.CastStatusExpired, appvars.CastStatusPending)
+	if err != nil {
+		return 0, NewDBError(fmt.Sprintf("error marking pending user pieces as expired: %v", err), http.StatusInternalServerError)
+	}
+	numRows, err := res.RowsAffected()
+	if err != nil {
+		return 0, NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	return numRows, nil
+}
+
+// GetUserPiecePending returns a slice of pieces that the given user
+// has pending invites for.
+func (store *Database) GetUserPiecePending(id int) ([]*Piece, *DBError) {
+	return nil, nil
 }
