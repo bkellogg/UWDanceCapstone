@@ -144,6 +144,10 @@
         display: block;
     }
 
+    .teamMember{
+        margin: 0px;
+    }
+
     }
 
     @media only screen and (max-width : 414px) {
@@ -151,7 +155,7 @@
 
         .teamMember{  
             width: 100%;
-            margin: 0;
+            margin: 0px;
             display: block;
           }
           .teamMemberImage{

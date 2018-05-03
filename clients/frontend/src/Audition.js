@@ -108,7 +108,6 @@ class Audition extends Component {
   }
 
   render() {
-    console.log(this.state.currAvailability)
     return (
       <section className="main">
         <div className="mainView">

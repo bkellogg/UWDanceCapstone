@@ -44,9 +44,18 @@ class PersonRow extends Component {
           <td>
             {p.firstName + " " + p.lastName}
           </td>
-          <td className="userRoleDisp">
-            {p.role.displayName}
-          </td>
+          {
+            !this.props.piece &&
+            <td className="userRoleDisp">
+              {p.role.displayName}
+            </td>
+          }
+          {
+            this.props.piece &&
+            <td className="userBioDisp">
+              {p.bio}
+            </td>
+          }
           <td>
           {p.email}
           </td>
