@@ -83,7 +83,7 @@
 
   .capstoneInfoContent{
       font-size: 14px;
-      font-weight: 400;
+      font-weight: 500;
   }
 
   .userRoleHeader{
@@ -144,15 +144,18 @@
         display: block;
     }
 
-    .teamMember{  
-        width: 100%;
-        margin: 0;
-        display: block;
-    
-      }
-      .teamMemberImage{
-          height: 100%;
-          width: 100%;
-      }
-    
-  }
+    }
+
+    @media only screen and (max-width : 414px) {
+
+
+        .teamMember{  
+            width: 100%;
+            margin: 0;
+            display: block;
+          }
+          .teamMemberImage{
+              height: 100%;
+              width: 100%;
+          }
+    }
