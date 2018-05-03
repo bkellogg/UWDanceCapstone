@@ -27,17 +27,17 @@ class App extends Component {
                 <img className="officialLogoLandingPage" alt="logo" src={logo} />
               </div>
               <div className="logInSignUpButtonWrap">
-              <div className="logInSignUpButton">
-                <Button 
-                  className="logInRedirectButton" 
-                  onClick={this.props.logIn}
-                  buttonStyle={{borderRadius: '5'}}>
-                  Sign In</Button>
-                <Button 
-                  className="signUpRedirectButton" 
-                  onClick={this.props.signUp}>
-                  Sign Up</Button>
-              </div>
+                <div className="logInSignUpButton">
+                  <Button
+                    className="logInRedirectButton"
+                    onClick={this.props.logIn}
+                    buttonStyle={{ borderRadius: '5' }}>
+                    Sign In</Button>
+                  <Button
+                    className="signUpRedirectButton"
+                    onClick={this.props.signUp}>
+                    Sign Up</Button>
+                </div>
               </div>
             </div>
             <div className="landingContent">
@@ -65,22 +65,22 @@ class App extends Component {
                     <p className="capstoneInfoContent"><b><u>Dancers</u></b></p>
                     {/* DANCERS */}
                     <table id="dancers">
-                    <tbody>
-                      <tr>
-                        <th className="capstoneInfoContent userRoleHeader">&#10003; Create a consistent online profile:</th>
-                      </tr>
-                      <tr>
-                        <td className="capstoneInfoContent indentContentDouble">&#183; Headshots</td>
-                      </tr>
-                      <tr>
-                        <td className="capstoneInfoContent indentContentDouble">&#183; Bios</td>
-                      </tr>
-                      <tr>
-                        <td className="capstoneInfoContent indentContentDouble">&#183; Resumes</td>
-                      </tr>
-                      <tr>
-                        <th className="capstoneInfoContent userRoleHeader">&#10003; Easily register for auditions</th>
-                      </tr>
+                      <tbody>
+                        <tr>
+                          <th className="capstoneInfoContent userRoleHeader">&#10003; Create a consistent online profile:</th>
+                        </tr>
+                        <tr>
+                          <td className="capstoneInfoContent indentContentDouble">&#183; Headshots</td>
+                        </tr>
+                        <tr>
+                          <td className="capstoneInfoContent indentContentDouble">&#183; Bios</td>
+                        </tr>
+                        <tr>
+                          <td className="capstoneInfoContent indentContentDouble">&#183; Resumes</td>
+                        </tr>
+                        <tr>
+                          <th className="capstoneInfoContent userRoleHeader">&#10003; Easily register for auditions</th>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -89,19 +89,19 @@ class App extends Component {
                   <div className="userSectionsBrokenDown">
                     <p className="capstoneInfoContent"><b><u>Choreographers</u></b></p>
                     <table id="choreographers">
-                    <tbody>
-                      <tr>
-                        <th className="capstoneInfoContent userRoleHeader">&#10003; View dancer information </th>
-                      </tr>
-                      <tr>
-                        <th className="capstoneInfoContent userRoleHeader">&#10003; Resolve casting conflicts</th>
-                      </tr>
-                      <tr>
-                        <th className="capstoneInfoContent userRoleHeader">&#10003; Set rehearsal schedules</th>
-                      </tr>
-                      <tr>
-                        <th className="capstoneInfoContent userRoleHeader">&#10003; Send casting immediately</th>
-                      </tr>
+                      <tbody>
+                        <tr>
+                          <th className="capstoneInfoContent userRoleHeader">&#10003; View dancer information </th>
+                        </tr>
+                        <tr>
+                          <th className="capstoneInfoContent userRoleHeader">&#10003; Resolve casting conflicts</th>
+                        </tr>
+                        <tr>
+                          <th className="capstoneInfoContent userRoleHeader">&#10003; Set rehearsal schedules</th>
+                        </tr>
+                        <tr>
+                          <th className="capstoneInfoContent userRoleHeader">&#10003; Send casting immediately</th>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -110,13 +110,13 @@ class App extends Component {
                   <div className="userSectionsBrokenDown">
                     <p className="capstoneInfoContent" ><b><u>Directors</u></b></p>
                     <table id="directors">
-                    <tbody>
-                      <tr>
-                        <th className="capstoneInfoContent userRoleHeader">&#10003; View all casts</th>
-                      </tr>
-                      <tr>
-                        <th className="capstoneInfoContent userRoleHeader">&#10003; Manage auditions and choreographers</th>
-                      </tr>
+                      <tbody>
+                        <tr>
+                          <th className="capstoneInfoContent userRoleHeader">&#10003; View all casts</th>
+                        </tr>
+                        <tr>
+                          <th className="capstoneInfoContent userRoleHeader">&#10003; Manage auditions and choreographers</th>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -132,25 +132,25 @@ class App extends Component {
                     <img className="teamMemberImage" alt="Brendan Kellog - Backend Developer" src={brendanKellog} />
                     <p className="teamMemberName"> Brendan Kellog</p>
                     <p className="capstoneInfoContent"> Backend Developer</p>
-                    
+
                   </div>
                   <div className="teamMember">
                     <img className="teamMemberImage" alt="Rosemary Adams - Frontend Developer" src={rosemaryAdams} />
                     <p className="teamMemberName"> Rosemary Adams</p>
                     <p className="capstoneInfoContent"> Frontend Developer</p>
-                    
+
                   </div>
                   <div className="teamMember">
                     <img className="teamMemberImage" alt="Saniya Mazmanova - UX/UI Designer" src={saniyaMazmanova} />
                     <p className="teamMemberName"> Saniya Mazmanova</p>
                     <p className="capstoneInfoContent"> UX/UI Designer</p>
-                    
+
                   </div>
                   <div className="teamMember">
                     <img className="teamMemberImage" alt="Nathan Swanson - Project Manager" src={nathanSwanson} />
                     <p className="teamMemberName"> Nathan Swanson</p>
                     <p className="capstoneInfoContent"> Project Manager</p>
-                    
+
                   </div>
                 </div>
               </div>

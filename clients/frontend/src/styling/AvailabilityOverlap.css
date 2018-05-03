@@ -1,7 +1,6 @@
 .overlapDays{
     display: inline-block;
-    width: 75px;
-    
+    width: 75px;  
 }
 
 .daysSimple {
@@ -12,8 +11,6 @@
     text-align: center;
 }
 
-
- 
 .overlapTimes {
     height: 25px;
     border: 0.5px solid rgb(219, 219, 219);
@@ -32,7 +29,7 @@
 .timesSimple{
     height: 25px;
     font-size: 12px;
-    border: 0.5px solid rgb(219, 219, 219);
+    /* border-bottom: 0.5px solid rgb(219, 219, 219); */
 }
 
 .calendarWrap{
@@ -42,4 +39,49 @@
 .availabilityCalendar{
     position: static;
     overflow: hidden;
+}
+
+.cardTitleWrap{
+    display: inline-block;
+    width: 100%;
+}
+
+/*LEGEND*/
+.legend{
+    width: auto;
+    display: inline-flex;
+    position: relative;
+    float: right;
+}
+
+.colorsWrap{
+    width: 99px;
+    height: 20px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.colorOne, .colorTwo, .colorThree{
+    width: 33px;
+    height: 15px;
+    display: inline-block;
+}
+
+.colorOne{
+    background-color: red;
+}
+
+.colorTwo{
+    background-color: blue;
+}
+
+.colorThree{
+    background-color: black;
+}
+
+.colorIndicator{
+    display: inline-block;
+    margin: 0;
+    color: hsl(0, 0%, 45%);
+    font-size: 12px;
 }
