@@ -31,6 +31,10 @@ class StaticProfile extends Component {
         if (res.ok) {
           return res.json()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then((res) => {
         this.setState({
@@ -39,7 +43,7 @@ class StaticProfile extends Component {
         this.formatHistory(res.shows)
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         Util.handleError(err)
       })
   }
@@ -52,6 +56,10 @@ class StaticProfile extends Component {
         if (res.ok) {
           return res.json()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
         data.map(function (show) {
@@ -76,7 +84,7 @@ class StaticProfile extends Component {
         })
       })
       .catch(err => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       })
   }
@@ -87,6 +95,9 @@ class StaticProfile extends Component {
         if (res.ok) {
           return res.blob();
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
         return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
@@ -95,7 +106,7 @@ class StaticProfile extends Component {
         })
       })
       .catch((err) => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       });
   }
@@ -106,6 +117,9 @@ class StaticProfile extends Component {
         if (res.ok) {
           return res.blob();
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
         return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
@@ -114,7 +128,7 @@ class StaticProfile extends Component {
         })
       })
       .catch((err) => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       });
   }
@@ -125,6 +139,9 @@ class StaticProfile extends Component {
         if (res.ok) {
           return res.json();
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
         return res.text().then((t) => Promise.reject(t));
     })
     .then(user => {
@@ -133,13 +150,12 @@ class StaticProfile extends Component {
         })
     })
     .catch((err) => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
     });
   }
 
   render() {
-      console.log(this.state.user)
     return (
       <section className="main">
         <div className="mainView">

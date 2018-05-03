@@ -30,6 +30,9 @@ class Dashboard extends Component {
         if (res.ok) {
           return res.json();
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
         return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
@@ -52,6 +55,9 @@ class Dashboard extends Component {
       .then((res) => {
         if (res.ok) {
           return res.json();
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
       })

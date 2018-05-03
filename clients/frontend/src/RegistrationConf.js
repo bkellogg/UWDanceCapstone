@@ -20,6 +20,15 @@ class RegistrationConf extends Component {
 
   unLink = () => {
     Util.makeRequest("users/me/auditions/" + this.state.auditionID, "", "UNLINK", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
     .then( () => {
       this.props.unregister()
     })

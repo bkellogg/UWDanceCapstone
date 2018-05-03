@@ -102,6 +102,9 @@ class Main extends Component {
       if (res.ok) {
         return res.json()
       }
+      if (res.status === 401) {
+        Util.signOut()
+      }
       return res
         .text()
         .then((t) => Promise.reject(t));
@@ -136,6 +139,9 @@ class Main extends Component {
     Util.makeRequest("auditions/" + auditionID, {}, "GET", true).then((res) => {
       if (res.ok) {
         return res.json();
+      }
+      if (res.status === 401) {
+        Util.signOut()
       }
       return res
         .text()

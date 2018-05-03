@@ -3,6 +3,7 @@ import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
 import AvatarEditorConsole from './AvatarEditor';
+import Test from './Test';
 import './styling/Profile.css';
 import './styling/General.css';
 
@@ -45,6 +46,10 @@ class Profile extends Component {
         if (res.ok) {
           return res.json()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then((res) => {
         this.setState({
@@ -53,7 +58,7 @@ class Profile extends Component {
         this.formatHistory(res.shows)
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         Util.handleError(err)
       })
   }
@@ -66,6 +71,10 @@ class Profile extends Component {
         if (res.ok) {
           return res.json()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
         data.map(function (show) {
@@ -90,7 +99,7 @@ class Profile extends Component {
         })
       })
       .catch(err => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       })
   }
@@ -101,6 +110,9 @@ class Profile extends Component {
         if (res.ok) {
           return res.blob();
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
         return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
@@ -109,7 +121,7 @@ class Profile extends Component {
         })
       })
       .catch((err) => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       });
   }
@@ -120,6 +132,9 @@ class Profile extends Component {
         if (res.ok) {
           return res.blob();
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
         return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
@@ -128,7 +143,7 @@ class Profile extends Component {
         })
       })
       .catch((err) => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       });
   }
@@ -275,7 +290,8 @@ class Profile extends Component {
                       <section>
                         <div> Upload a head shot as a jpg file. </div>
                         <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
-                        <AvatarEditorConsole image={this.state.photoSrc}/>
+                        {/* <AvatarEditorConsole image={this.state.photoSrc}/> */}
+                        <Test img = {this.state.photoSrc}/>
                       </section>
                     }
                   </div>

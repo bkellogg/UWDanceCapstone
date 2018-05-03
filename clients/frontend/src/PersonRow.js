@@ -21,6 +21,9 @@ class PersonRow extends Component {
       if (res.ok) {
         return res.blob();
       }
+      if (res.status === 401) {
+        Util.signOut()
+      }
       return res.text().then((t) => Promise.reject(t));
     })
     .then((data) => {
