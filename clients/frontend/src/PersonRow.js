@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import img from './imgs/defaultProfile.jpg';
 import * as Util from './util.js';
 
@@ -42,7 +43,7 @@ class PersonRow extends Component {
             <img src={this.state.photoUrl} alt="profile" className="avatar"/>
           </td>
           <td>
-            {p.firstName + " " + p.lastName}
+            <Link to={{pathname: "/users/" + this.props.p.id}} target="_blank">{p.firstName + " " + p.lastName}</Link>
           </td>
           {
             !this.props.piece &&

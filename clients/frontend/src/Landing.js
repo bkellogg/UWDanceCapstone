@@ -27,6 +27,7 @@ class App extends Component {
                 <img className="officialLogoLandingPage" alt="logo" src={logo} />
               </div>
               <div className="logInSignUpButtonWrap">
+              <div className="logInSignUpButton">
                 <Button 
                   className="logInRedirectButton" 
                   onClick={this.props.logIn}
@@ -36,6 +37,7 @@ class App extends Component {
                   className="signUpRedirectButton" 
                   onClick={this.props.signUp}>
                   Sign Up</Button>
+              </div>
               </div>
             </div>
             <div className="landingContent">

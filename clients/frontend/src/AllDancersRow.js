@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
+import { Link } from 'react-router-dom';
 import './styling/CastingFlow.css';
 import './styling/General.css';
 import img from './imgs/defaultProfile.jpg';
@@ -212,7 +213,6 @@ class AllDancersRow extends Component {
     } else if (this.props.comments.length === 0){
         hasComments = false
     }
-    console.log(hasComments, this.props.checkAvailability)
     let choreographers = this.props.choreographers
     let choreos = []
     if (choreographers) {
@@ -241,7 +241,7 @@ class AllDancersRow extends Component {
             {this.props.regNum}
         </td>
         <td>
-          {p.firstName + " " + p.lastName}
+            <Link to={{pathname: "/users/" + p.id}} target="_blank">{p.firstName + " " + p.lastName}</Link>
         </td>
         {
             this.props.selectCast &&
