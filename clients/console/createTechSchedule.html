@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="css/createTechSchedule.css">
+</head>
+
+<body>
+    <h1>Create New Tech Schedule</h1>
+    <form class="techRehersal-form">
+        <div class="heading">
+            <label for="concert-name-input">Concert Name:</label>
+            <select id="concert-name-input">
+                <option id="concert-name-input" value=''></option>
+            </select>
+            <select id="quarter-name-input">
+                <option value=''>Quarter</option>
+                <option value='Autumn'>Autumn</option>
+                <option value='Winter'>Winter</option>
+                <option value='Spring'>Spring</option>
+                <option value='Summer'>Summer</option>
+            </select>
+            <input type="text" id="today" value="" size="6" />
+        </div>
+        <div class="showing">
+            <p>Showing:</p>
+            <input type="text" id="showing-date-input" size="8" placeholder="Date" />&nbsp;
+            <input type="text" id="showing-day-input" size="6" placeholder="Day" />
+            <select class="startTime-input">
+                <option id="showing-startTime-input" value=''></option>
+            </select>
+            <select class="endTime-input">
+                <option id="showing-endTime-input" value=''></option>
+            </select>
+            <input type="text" id="showing-desc-input" placeholder="Description" />
+            <input type="text" id="showing-crew-input" placeholder="Crew" />
+        </div>
+        <div class="spacing">
+            <p>Spacing:</p>
+            <input type="text" id="spacing-date-input" size="8" placeholder="Date" />&nbsp;
+            <input type="text" id="spacing-day-input" size="6" placeholder="Day" />
+            <select class="startTime-input">
+                <option id="spacing-startTime-input" value=''></option>
+            </select>
+            <select class="endTime-input">
+                <option id="spacing-endTime-input" value=''></option>
+            </select>
+            <input type="text" id="spacing-desc-input" placeholder="Description" />
+            <input type="text" id="spacing-crew-input" placeholder="Crew" />
+            <div class="spacing-slot"></div>
+            <button class="spacing-add-form-field">Add New Slot</button>
+        </div>
+
+        <div class="tech-rehersal">
+            <p>Tech Rehersal:</p>
+            <input type="text" id="tech-rehersal-date-input" size="8" placeholder="Date" />&nbsp;
+            <input type="text" id="tech-rehersal-day-input" size="6" placeholder="Day" />
+            <select class="startTime-input">
+                <option id="tech-rehersal-startTime-input" value=''></option>
+            </select>
+            <select class="endTime-input">
+                <option id="tech-rehersal-endTime-input" value=''></option>
+            </select>
+            <input type="text" id="tech-rehersal-desc-input" placeholder="Description" />
+            <input type="text" id="tech-rehersal-crew-input" placeholder="Crew" />
+            <div class="tech-rehersal-slot"></div>
+            <button class="tech-rehersal-add-form-field">Add New Slot</button>
+        </div>
+        <button type="submit">Create Schedule</button>
+    </form>
+    <div class="js-error"></div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/createTechSchedule.js"></script>
+
+</html>
