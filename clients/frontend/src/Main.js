@@ -10,6 +10,7 @@ import Casting from './Casting';
 import MobileNavigationElement from './MobileNavigation';
 import NavigationElement from './NavigationElement';
 import DancerPiece from './DancerPiece';
+import StaticProfile from './StaticProfile';
 import {Button} from 'react-materialize';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -240,6 +241,7 @@ class Main extends Component {
               path='/'
               render={props => <Dashboard {...props} shows={this.state.currShows}/>}/>
             <Route exact path='/profile' component={Profile}/>
+            <Route path='/users/:userID' component={StaticProfile}/>
           </Switch>
           {this
             .state

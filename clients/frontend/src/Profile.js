@@ -40,7 +40,7 @@ class Profile extends Component {
     this.getResume();
 
     //TODO deal with the fact that there are going to be pages
-    Util.makeRequest("users/1/shows?history=all", {}, "GET", true)
+    Util.makeRequest("users/" + this.state.user.id + "/shows?history=all", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json()
