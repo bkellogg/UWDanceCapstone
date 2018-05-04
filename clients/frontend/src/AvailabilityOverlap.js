@@ -45,7 +45,7 @@ class AvailabilityOverlap extends Component {
     };
   };
 
-  componentDidMount() {
+  componentWillMount() {
     this.setState({
       dayTimes : this.getAllDancerOverlap(this.props.filteredCast)
     })
@@ -172,7 +172,10 @@ class AvailabilityOverlap extends Component {
          
         //this is the div with the specific time block
         return (
-          <div className="overlapTimes" style={{ "backgroundColor": color }}>
+          <div className="tooltip">
+            <div className="overlapTimes" style={{ "backgroundColor": color }}>
+            <span className="tooltiptext">There are {uniqueIDs.length} dancers available at this time</span>
+            </div>
           </div>
         )
       })
@@ -199,6 +202,8 @@ class AvailabilityOverlap extends Component {
         </div>
       )
     })
+
+
 
     return (
       <section>

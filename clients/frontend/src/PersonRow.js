@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import img from './imgs/defaultProfile.jpg';
 import * as Util from './util.js';
 
@@ -19,6 +20,9 @@ class PersonRow extends Component {
     .then((res) => {
       if (res.ok) {
         return res.blob();
+      }
+      if (res.status === 401) {
+        Util.signOut()
       }
       return res.text().then((t) => Promise.reject(t));
     })
@@ -42,11 +46,20 @@ class PersonRow extends Component {
             <img src={this.state.photoUrl} alt="profile" className="avatar"/>
           </td>
           <td>
-            {p.firstName + " " + p.lastName}
+            <Link to={{pathname: "/users/" + this.props.p.id}} target="_blank">{p.firstName + " " + p.lastName}</Link>
           </td>
-          <td className="userRoleDisp">
-            {p.role.displayName}
-          </td>
+          {
+            !this.props.piece &&
+            <td className="userRoleDisp">
+              {p.role.displayName}
+            </td>
+          }
+          {
+            this.props.piece &&
+            <td className="userBioDisp">
+              {p.bio}
+            </td>
+          }
           <td>
           {p.email}
           </td>

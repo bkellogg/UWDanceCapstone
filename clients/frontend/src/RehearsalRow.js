@@ -100,7 +100,6 @@ class RehearsalRow extends Component {
               <MenuItem value={"fri"} primaryText="Friday" />
               <MenuItem value={"sat"} primaryText="Saturday" />
               <MenuItem value={"sun"} primaryText="Sunday" />
-
             </SelectField>
           </div>
           <br />
