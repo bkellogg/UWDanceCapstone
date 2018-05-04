@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
-import AvatarEditorConsole from './AvatarEditor';
-import Test from './Test';
+import AvatarEditorConsole from './AvatarEditorConsole';
 import './styling/Profile.css';
 import './styling/General.css';
 
@@ -257,7 +256,6 @@ class Profile extends Component {
   }
 
   updateImage = (img) => {
-    console.log("image updated")
     this.setState({
       photoUpload : img
     })
@@ -282,8 +280,7 @@ class Profile extends Component {
                     {this.state.edit &&
                       <section>
                         <div> Upload a head shot as a jpg file. </div>
-                        {/* <AvatarEditorConsole image={this.state.photoSrc}/> */}
-                        <Test img = {this.state.photoSrc} changeImg={this.updateImage}/>
+                        <AvatarEditorConsole img = {this.state.photoSrc} changeImg={this.updateImage}/>
                       </section>
                     }
                   </div>

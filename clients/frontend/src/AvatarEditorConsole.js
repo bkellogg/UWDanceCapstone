@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
-import * as Util from './util';
-
-import ReactDOM from 'react-dom'
 import ReactAvatarEditor from 'react-avatar-editor'
 import Dropzone from 'react-dropzone'
 import "./styling/General.css"
 
-class Test extends Component {
+class AvatarEditorConsole extends Component {
   state = {
     image: this.props.img,
     allowZoomOut: false,
@@ -140,6 +137,7 @@ class Test extends Component {
         <br />
         {!!this.state.preview && (
           <img
+            alt="preview"
             src={this.state.preview.img}
             style={{
               borderRadius: `${(Math.min(
@@ -156,4 +154,4 @@ class Test extends Component {
   }
 }
 
-export default Test;
+export default AvatarEditorConsole;
