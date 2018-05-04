@@ -62,5 +62,5 @@ function load_createNewShowType() {
 }
 
 function load_createTechSchedule() {
-    document.getElementById("content").innerHTML = '<object type="text/html" data="createTechSchedule.1.html"></object>';
+    document.getElementById("content").innerHTML = '<object type="text/html" data="createTechSchedule.html"></object>';
 }
