@@ -34,7 +34,8 @@
 }
 
 .calendarWrap{
-    width: 600px;
+    width: auto;
+    min-width: 1000px;
 }
 
 .availabilityCalendar{

@@ -1,6 +1,6 @@
 .mainView{
     padding-left: 5%;
-    margin-bottom: 7%;
+    margin-bottom: 50px;
 }
 
 .mainContentView{
@@ -85,4 +85,12 @@ h2{
 }
 span.thumb.active{
     background-color: transparent
+ }
+
+
+ @media only screen and (min-width : 1920px) {
+    .mainView{
+        width: 1500px;
+    }
+
  }
