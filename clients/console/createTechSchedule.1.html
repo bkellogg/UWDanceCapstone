@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.3/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <link rel="stylesheet" href="css/createTechSchedule.css">
+</head>
+
+<body>
+    <h1>Create New Tech Schedule</h1>
+    <form id="techRehearsal-form">
+        <div class="heading">
+            <select id="concert-name-input">
+                <option id="concert-name-input" value=''></option>
+            </select>
+            <select id="quarter-name-input">
+                <option value=''>Quarter</option>
+                <option value='Autumn'>Autumn</option>
+                <option value='Winter'>Winter</option>
+                <option value='Spring'>Spring</option>
+                <option value='Summer'>Summer</option>
+            </select>
+            <input type="text" id="today" value="" size="6" />
+        </div>
+        <div class="date-range">
+            <input id="start" placeholder="Begin Date" />
+            <input id="end" placeholder="End Date" />
+            <button id="get-date-range">Set Days</button>
+        </div>
+        <div id="tech-rehearsal-form-body"></div>
+        <input type="button" onclick="reset_form()" value="Reset" />
+        <button type="submit">Create Schedule</button>
+    </form>
+    <div class="js-error"></div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.3/jquery.timepicker.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/createTechSchedule.js"></script>
+
+</html>

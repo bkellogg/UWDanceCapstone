@@ -54,5 +54,5 @@ function load_createNewAnnouncementType() {
 }
 
 function load_createTechSchedule() {
-    document.getElementById("content").innerHTML = '<object type="text/html" data="createTechSchedule.html"></object>';
+    document.getElementById("content").innerHTML = '<object type="text/html" data="createTechSchedule.1.html"></object>';
 }
