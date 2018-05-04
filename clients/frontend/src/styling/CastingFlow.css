@@ -248,12 +248,3 @@ tr{
 
 
 /*ADD REMOVE BUTTON STYLES*/
-
-
-.personNameLink{
-    color: inherit;
-}
-
-.personNameLink:hover{
-    text-decoration: underline;
-}

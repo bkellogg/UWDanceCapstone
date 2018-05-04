@@ -93,7 +93,7 @@ class SelectCast extends Component {
     return (
       
         <section>
-          <div className="mainView">
+          <div className="mainView mainContentView">
           <div className="card1">
             <table className="table" id="selectCastTable">
             <tbody>

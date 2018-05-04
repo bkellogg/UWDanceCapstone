@@ -100,7 +100,7 @@ class SetRehearsals extends Component {
     })
     return (
       <section >
-        <div className="mainView">
+        <div className="mainView mainContentView">
           <div className="transparentCard">
             <div className="wrap">
               <div className="castList">

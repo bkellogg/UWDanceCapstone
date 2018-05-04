@@ -3,6 +3,10 @@
     margin-bottom: 7%;
 }
 
+.mainContentView{
+    margin-top: 5%;
+}
+
 .wrap{
     display: flex;
     position: relative;
@@ -69,4 +73,13 @@ h2{
 
 .toggleHeader i {
     display: inline-block;
+}
+
+/*PEOPLE NAME WITH A LINK TO THEIR PROFILE*/
+.personNameLink{
+    color: inherit;
+}
+
+.personNameLink:hover{
+    text-decoration: underline;
 }
