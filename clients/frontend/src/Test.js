@@ -19,31 +19,24 @@ class Test extends Component {
     height: 300,
   }
 
-  updateImage = (img) => {
-    let file = img
-    console.log(file)
-    let data = new FormData();
-    data.append("image", file);
-    let xhr = new XMLHttpRequest();
+  dataURLtoFile = (dataurl, filename) => {
+    let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, {type:mime});
+  }
 
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === XMLHttpRequest.DONE) {
-        if (xhr.status < 400) {
-          return xhr.responseText
-        }
-      }
-    };
-
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
-    xhr.setRequestHeader("Authorization", Util.getAuth());
-    xhr.setRequestHeader("ImageFieldName", "image");
-    xhr.setRequestHeader("Content-Type", "multipart/form-data");
-
-    xhr.send(file);
+  sendUpImage = () => {
+    let edit = this.editor.getImageScaledToCanvas().toDataURL()
+    let image = this.dataURLtoFile(edit, 'a.png');
+    this.props.changeImg(image)
   }
 
   handleNewImage = e => {
     this.setState({ image: e.target.files[0] })
+    this.sendUpImage()
   }
 
   handleSave = data => {
@@ -58,13 +51,13 @@ class Test extends Component {
       },
     })
 
-    this.updateImage(img)
+    this.sendUpImage()
   }
 
   handleScale = e => {
     const scale = parseFloat(e.target.value)
     this.setState({ scale })
-
+    this.sendUpImage()
   }
 
   rotateLeft = e => {
@@ -73,7 +66,7 @@ class Test extends Component {
     this.setState({
       rotate: this.state.rotate - 90,
     })
-
+    this.sendUpImage()
   }
 
   rotateRight = e => {
@@ -81,6 +74,7 @@ class Test extends Component {
     this.setState({
       rotate: this.state.rotate + 90,
     })
+    this.sendUpImage()
   }
 
   setEditorRef = editor => {
@@ -89,10 +83,12 @@ class Test extends Component {
 
   handlePositionChange = position => {
     this.setState({ position })
+    this.sendUpImage()
   }
 
   handleDrop = acceptedFiles => {
     this.setState({ image: acceptedFiles[0] })
+    this.sendUpImage()
   }
 
   render() {
