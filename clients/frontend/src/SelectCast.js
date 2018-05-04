@@ -110,8 +110,35 @@ class SelectCast extends Component {
                     <div className="check rank"> 3</div>
                 </th>
                 </tr>
+                {  castRows.length >0 && 
+                  <tr className="variableCastHeader">
+                    <td>Your Cast</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                }
                 {castRows}
+                { conflictRows.length > 0 &&
+                  <tr className="variableCastHeader">
+                    <td>Conflicts</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                }
                 {conflictRows}
+                { uncastRows.length > 0 &&
+                  <tr className="variableCastHeader">
+                    <td>Uncast Dancers</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                }
                 {uncastRows}
             </tbody>
             </table>

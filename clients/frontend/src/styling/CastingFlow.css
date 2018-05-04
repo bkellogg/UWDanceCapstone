@@ -246,5 +246,10 @@ tr{
     opacity: 1;
 }
 
+.variableCastHeader {
+    text-align: center;
+    border-bottom: solid
+}
+
 
 /*ADD REMOVE BUTTON STYLES*/

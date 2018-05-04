@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import * as Util from './util';
+
 import ReactDOM from 'react-dom'
 import ReactAvatarEditor from 'react-avatar-editor'
 import Dropzone from 'react-dropzone'
@@ -17,14 +19,35 @@ class Test extends Component {
     height: 300,
   }
 
+  updateImage = (img) => {
+    let file = img
+    console.log(file)
+    let data = new FormData();
+    data.append("image", file);
+    let xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status < 400) {
+          return xhr.responseText
+        }
+      }
+    };
+
+    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
+    xhr.setRequestHeader("Authorization", Util.getAuth());
+    xhr.setRequestHeader("ImageFieldName", "image");
+    xhr.setRequestHeader("Content-Type", "multipart/form-data");
+
+    xhr.send(file);
+  }
+
   handleNewImage = e => {
     this.setState({ image: e.target.files[0] })
-    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   handleSave = data => {
     const img = this.editor.getImageScaledToCanvas().toDataURL()
-    const rect = this.editor.getCroppingRect()
 
     this.setState({
       preview: {
@@ -34,13 +57,14 @@ class Test extends Component {
         borderRadius: this.state.borderRadius,
       },
     })
-    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
+
+    this.updateImage(img)
   }
 
   handleScale = e => {
     const scale = parseFloat(e.target.value)
     this.setState({ scale })
-    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
+
   }
 
   rotateLeft = e => {
@@ -49,7 +73,7 @@ class Test extends Component {
     this.setState({
       rotate: this.state.rotate - 90,
     })
-    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
+
   }
 
   rotateRight = e => {
@@ -57,7 +81,6 @@ class Test extends Component {
     this.setState({
       rotate: this.state.rotate + 90,
     })
-    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   setEditorRef = editor => {
@@ -66,12 +89,10 @@ class Test extends Component {
 
   handlePositionChange = position => {
     this.setState({ position })
-    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   handleDrop = acceptedFiles => {
     this.setState({ image: acceptedFiles[0] })
-    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   render() {
