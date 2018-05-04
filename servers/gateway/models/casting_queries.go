@@ -68,5 +68,14 @@ func (store *Database) ExpirePendingUserPieces() (int64, *DBError) {
 // GetUserPiecePending returns a slice of pieces that the given user
 // has pending invites for.
 func (store *Database) GetUserPiecePending(id int) ([]*Piece, *DBError) {
-	return nil, nil
+	rows, err := store.db.Query(`
+		SELECT P.PieceID, P.ChoreographerID, P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy, P.IsDeleted FROM Pieces P
+		JOIN UserPiecePending UPP ON UPP.PieceID = P.PieceID
+		WHERE UPP.UserID = ?
+		AND P.IsDeleted = FALSE
+		AND UPP.IsDeleted = FALSE
+		AND UPP.ExpiresAt > NOW()
+		AND UPP.Status = ?`,
+		id, appvars.CastStatusPending)
+	return handlePiecesFromDatabase(rows, err)
 }

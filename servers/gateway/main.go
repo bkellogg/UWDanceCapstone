@@ -124,7 +124,7 @@ func main() {
 	usersRouter.Handle(appvars.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
 	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler)).
 		Methods("LINK", "UNLINK")
-	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserAuditionHandler))
+	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserObjectDispatcher))
 	usersRouter.Handle(appvars.UserMembershipObjectPath, authorizer.Authorize(authContext.UserMembershipActionDispatcher))
 
 	auditionRouter := baseRouter.PathPrefix(appvars.AuditionsPath).Subrouter()
