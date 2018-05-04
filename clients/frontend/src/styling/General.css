@@ -1,6 +1,10 @@
 .mainView{
-    padding-left: 60px;
+    padding-left: 5%;
     margin-bottom: 7%;
+}
+
+.mainContentView{
+    margin-top: 5%;
 }
 
 .wrap{
@@ -71,6 +75,14 @@ h2{
     display: inline-block;
 }
 
+/*PEOPLE NAME WITH A LINK TO THEIR PROFILE*/
+.personNameLink{
+    color: inherit;
+}
+
+.personNameLink:hover{
+    text-decoration: underline;
+}
 span.thumb.active{
     background-color: transparent
  }

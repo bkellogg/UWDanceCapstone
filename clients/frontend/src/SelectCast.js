@@ -93,7 +93,7 @@ class SelectCast extends Component {
     return (
       
         <section>
-          <div className="mainView">
+          <div className="mainView mainContentView">
           <div className="card1">
             <table className="table" id="selectCastTable">
             <tbody>
@@ -112,7 +112,7 @@ class SelectCast extends Component {
                 </tr>
                 {  castRows.length >0 && 
                   <tr className="variableCastHeader">
-                    <td>Your Cast</td>
+                    <td className="selectedCastDividerText">Your Cast</td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -122,7 +122,7 @@ class SelectCast extends Component {
                 {castRows}
                 { conflictRows.length > 0 &&
                   <tr className="variableCastHeader">
-                    <td>Conflicts</td>
+                    <td className="selectedCastDividerText">Conflicts</td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -132,7 +132,7 @@ class SelectCast extends Component {
                 {conflictRows}
                 { uncastRows.length > 0 &&
                   <tr className="variableCastHeader">
-                    <td>Uncast Dancers</td>
+                    <td className="selectedCastDividerText">Uncast Dancers</td>
                     <td></td>
                     <td></td>
                     <td></td>
