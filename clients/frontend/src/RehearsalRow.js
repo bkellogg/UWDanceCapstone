@@ -8,14 +8,16 @@ import './styling/CastingFlowMobile.css';
 
 const dateStyle = {
   customDateStyle: {
-    width: 128,
+    width: 'auto',
+    minWidth: 125,
     fontSize: 14
   },
 };
 
 const styles = {
   customTimeStyle: {
-    width: 105,
+    width: 'auto',
+    minWidth: 110,
     fontSize: 13
   },
 };

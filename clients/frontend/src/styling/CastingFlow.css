@@ -61,7 +61,7 @@ th{
 
 /* AVAILABILITY CALENDAR */
 .overlapAvailability{
-    width: 60%;
+    width: 650px;
     background-color: #F6F8FC;
     position: absolute;
     display: inline-block;
@@ -99,6 +99,8 @@ tr{
 .dancersList-filter, .extraClass {
     height: 100%;
     width: 37%;
+    max-width: 450px;
+    min-width: 400px;
     position: relative;
     display: inline-block;
     margin-right: 3%;
