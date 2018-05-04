@@ -19,6 +19,7 @@ class Test extends Component {
 
   handleNewImage = e => {
     this.setState({ image: e.target.files[0] })
+    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   handleSave = data => {
@@ -28,18 +29,18 @@ class Test extends Component {
     this.setState({
       preview: {
         img,
-        rect,
-        scale: this.state.scale,
         width: this.state.width,
         height: this.state.height,
         borderRadius: this.state.borderRadius,
       },
     })
+    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   handleScale = e => {
     const scale = parseFloat(e.target.value)
     this.setState({ scale })
+    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   rotateLeft = e => {
@@ -48,6 +49,7 @@ class Test extends Component {
     this.setState({
       rotate: this.state.rotate - 90,
     })
+    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   rotateRight = e => {
@@ -55,11 +57,7 @@ class Test extends Component {
     this.setState({
       rotate: this.state.rotate + 90,
     })
-  }
-
-  logCallback(e) {
-    // eslint-disable-next-line
-    console.log('callback', e)
+    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   setEditorRef = editor => {
@@ -68,10 +66,12 @@ class Test extends Component {
 
   handlePositionChange = position => {
     this.setState({ position })
+    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   handleDrop = acceptedFiles => {
     this.setState({ image: acceptedFiles[0] })
+    this.props.changeImg(this.editor.getImageScaledToCanvas().toDataURL())
   }
 
   render() {
@@ -94,10 +94,6 @@ class Test extends Component {
               rotate={parseFloat(this.state.rotate)}
               borderRadius={this.state.borderRadius}
               onSave={this.handleSave}
-              onLoadFailure={this.logCallback.bind(this, 'onLoadFailed')}
-              onLoadSuccess={this.logCallback.bind(this, 'onLoadSuccess')}
-              onImageReady={this.logCallback.bind(this, 'onImageReady')}
-              onImageLoad={this.logCallback.bind(this, 'onImageLoad')}
               image={this.state.image}
             />
           </div>

@@ -270,6 +270,13 @@ class Profile extends Component {
     }
   }
 
+  updateImage = (img) => {
+    console.log("image updated")
+    this.setState({
+      photoUpload : img
+    })
+  }
+
   render() {
     return (
       <section className="main">
@@ -291,7 +298,7 @@ class Profile extends Component {
                         <div> Upload a head shot as a jpg file. </div>
                         <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
                         {/* <AvatarEditorConsole image={this.state.photoSrc}/> */}
-                        <Test img = {this.state.photoSrc}/>
+                        <Test img = {this.state.photoSrc} changeImg={this.updateImage}/>
                       </section>
                     }
                   </div>
