@@ -83,3 +83,6 @@ h2{
 .personNameLink:hover{
     text-decoration: underline;
 }
+span.thumb.active{
+    background-color: transparent
+ }

@@ -208,7 +208,9 @@ class AvailabilityOverlap extends Component {
     return (
       <section>
         <div className="cardTitleWrap">
+        <div className="headerWrap">
           <h2 className="smallHeading">Availability</h2>
+          </div>
           <div className="legend">
             <p className="colorIndicator">Least Available</p>
             <div className="colorsWrap">

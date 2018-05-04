@@ -59,6 +59,9 @@ class Casting extends Component {
         if (res.ok) {
           return res.text()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
         return res.text().then((t) => Promise.reject(t));
       })
       .catch(err => {
@@ -95,6 +98,9 @@ class Casting extends Component {
         if (res.ok) {
           return res.text()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
         return res.text().then((t) => Promise.reject(t));
       })
     }
@@ -104,6 +110,9 @@ class Casting extends Component {
         .then(res => {
           if (res.ok) {
             return res.text()
+          }
+          if (res.status === 401) {
+            Util.signOut()
           }
           return res.text().then((t) => Promise.reject(t));
         })
