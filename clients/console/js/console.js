@@ -53,6 +53,14 @@ function load_createNewAnnouncementType() {
     document.getElementById("content").innerHTML = '<object type="text/html" data="createNewAnnouncementType.html"></object>';
 }
 
+function load_createNewShow() {
+    document.getElementById("content").innerHTML = '<object type="text/html" data="createNewShow.html"></object>';
+}
+
+function load_createNewShowType() {
+    document.getElementById("content").innerHTML = '<object type="text/html" data="createNewShowType.html"></object>';
+}
+
 function load_createTechSchedule() {
     document.getElementById("content").innerHTML = '<object type="text/html" data="createTechSchedule.1.html"></object>';
 }

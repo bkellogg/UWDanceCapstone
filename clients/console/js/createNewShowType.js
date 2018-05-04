@@ -3,20 +3,21 @@
 refreshLocalUser();
 let auth = getAuth();
 
-var newAnnouncementTypeForm = document.querySelector(".newAnnouncementType-form");
+var newShowTypeForm = document.querySelector(".newShowType-form");
 var errorBox = document.querySelector(".js-error");
-var announcementTypeName = document.getElementById("announcementTypeName-input");
+var showTypeName = document.getElementById("showTypeName-input");
 var description = document.getElementById("description-input");
 
-getAnnouncementTypes()
+getShowTypes()
 
-newAnnouncementTypeForm.addEventListener("submit", function (evt) {
+newShowTypeForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
     var payload = {
-        "name": announcementTypeName.value,
+        "name": showTypeName.value,
         "desc": description.value,
     };
-    makeRequest("announcements/types", payload, "POST", true)
+    console.log(payload)
+    makeRequest("shows/types", payload, "POST", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -32,9 +33,9 @@ newAnnouncementTypeForm.addEventListener("submit", function (evt) {
 })
 
 
-// get announcement types
-function getAnnouncementTypes() {
-    fetch(API_URL_BASE + "announcements/types?includeDeleted=false&auth=" + auth)
+// get show types
+function getShowTypes() {
+    fetch(API_URL_BASE + "shows/types?includeDeleted=false&auth=" + auth)
         .then((res) => {
             if (res.ok) {
                 return res.json();
