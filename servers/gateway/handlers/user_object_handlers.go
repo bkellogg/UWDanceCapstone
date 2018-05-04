@@ -25,7 +25,7 @@ func (ctx *AuthContext) UserObjectDispatcher(w http.ResponseWriter, r *http.Requ
 		if httperr != nil {
 			return httperr
 		}
-		pieces, dberr := ctx.store.GetUserPiecePending(targetUser)
+		pieces, dberr := ctx.store.GetUserPieceInvites(targetUser)
 		if dberr != nil {
 			return middleware.HTTPErrorFromDBErrorContext(dberr, "getting pending user pieces")
 		}

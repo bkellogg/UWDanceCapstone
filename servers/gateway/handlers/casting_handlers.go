@@ -161,9 +161,16 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		ShowID:          show.ID,
 		CreatedBy:       int(u.ID),
 	}
-	piece, dberr := ctx.Session.Store.InsertNewPiece(np)
-	if dberr != nil {
-		return middleware.HTTPErrorFromDBErrorContext(dberr, "inserting new piece when posting casting")
+	var piece *models.Piece
+	piece, dberr = ctx.Session.Store.GetChoreographerShowPiece(show.ID, int(u.ID))
+	if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
+		return middleware.HTTPErrorFromDBErrorContext(dberr, "error looking up existing piece")
+	}
+	if piece == nil {
+		piece, dberr = ctx.Session.Store.InsertNewPiece(np)
+		if dberr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dberr, "inserting new piece when posting casting")
+		}
 	}
 
 	for _, id64 := range dancers {
@@ -173,7 +180,7 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 			log.Printf("error getting user with id %d: %s\n", id, dberr.Message)
 			continue
 		}
-		dberr = ctx.Session.Store.InsertNewUserPiecePending(int(user.ID), piece.ID, time.Now().Add(appvars.AcceptCastTime))
+		dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, time.Now().Add(appvars.AcceptCastTime))
 		if dberr != nil {
 			log.Printf("error creating new user piece pending entry: %v", dberr.Message)
 		}

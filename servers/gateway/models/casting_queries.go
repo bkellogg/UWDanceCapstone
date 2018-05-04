@@ -9,8 +9,8 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
-// InsertNewUserPiecePending inserts a new entry representing a pending acceptance
-func (store *Database) InsertNewUserPiecePending(userID, pieceID int, expiry time.Time) *DBError {
+// InsertNewUserPieceInvite inserts a new entry representing a pending acceptance
+func (store *Database) InsertNewUserPieceInvite(userID, pieceID int, expiry time.Time) *DBError {
 	tx, err := store.db.Begin()
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
@@ -26,7 +26,7 @@ func (store *Database) InsertNewUserPiecePending(userID, pieceID int, expiry tim
 	}
 	rows.Close()
 
-	rows, err = tx.Query(`SELECT * FROM Pieces P WHERE P.PieceID = ? AND P.IsDeleted = FALSE`, userID)
+	rows, err = tx.Query(`SELECT * FROM Pieces P WHERE P.PieceID = ? AND P.IsDeleted = FALSE`, pieceID)
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error querying for piece: %v", err), http.StatusInternalServerError)
 	}
@@ -46,12 +46,12 @@ func (store *Database) InsertNewUserPiecePending(userID, pieceID int, expiry tim
 	return nil
 }
 
-// ExpirePendingUserPieces changes the status of any expired
+// ExpirePendingPieceInvites changes the status of any expired
 // user piece addition to appvars.CastStatusExpired if the cast status
 // is pending when this function is executed. This does not control the
 // logic if a piece is expired or now. Returns the number of rows affected
 // and an error if one occurred.
-func (store *Database) ExpirePendingUserPieces() (int64, *DBError) {
+func (store *Database) ExpirePendingPieceInvites() (int64, *DBError) {
 	res, err := store.db.Exec(
 		`UPDATE UserPiecePending SET Status = ? WHERE IsDeleted = FALSE AND Status = ? AND ExpiresAt > NOW()`,
 		appvars.CastStatusExpired, appvars.CastStatusPending)
@@ -65,9 +65,9 @@ func (store *Database) ExpirePendingUserPieces() (int64, *DBError) {
 	return numRows, nil
 }
 
-// GetUserPiecePending returns a slice of pieces that the given user
+// GetUserPieceInvites returns a slice of pieces that the given user
 // has pending invites for.
-func (store *Database) GetUserPiecePending(id int) ([]*Piece, *DBError) {
+func (store *Database) GetUserPieceInvites(id int) ([]*Piece, *DBError) {
 	rows, err := store.db.Query(`
 		SELECT P.PieceID, P.ChoreographerID, P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy, P.IsDeleted FROM Pieces P
 		JOIN UserPiecePending UPP ON UPP.PieceID = P.PieceID
@@ -78,4 +78,53 @@ func (store *Database) GetUserPiecePending(id int) ([]*Piece, *DBError) {
 		AND UPP.Status = ?`,
 		id, appvars.CastStatusPending)
 	return handlePiecesFromDatabase(rows, err)
+}
+
+// UserHasInviteForPiece returns if the user has an invite for the given piece.
+// Returns an error if one occurred.
+func (store *Database) UserHasInviteForPiece(userID, pieceID int64) (bool, *DBError) {
+	rows, err := store.db.Query(`SELECT UPP.UserPiecePendingID FROM UserPiecePending UPP
+		WHERE UPP.UserID = ?
+		AND UPP.PieceID = ?
+		AND UPP.Status = ?
+		AND UPP.ExpiresAt > NOW()`, userID, pieceID, appvars.CastStatusPending)
+	if err != nil {
+		return false, NewDBError(fmt.Sprintf("error getting invite for user/piece: %v", err), http.StatusInternalServerError)
+	}
+	return rows.Next(), nil
+}
+
+// MakInvite marks the given invite between the user and piece as accepted or
+// declined depending on the given accepted param
+func (store *Database) MarkInvite(userID, pieceID int, accepted bool) *DBError {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	status := appvars.CastStatusAccepted
+	if !accepted {
+		status = appvars.CastStatusDeclined
+	}
+
+	res, err := tx.Exec(`UPDATE UserPiecePending UPP SET UPP.Status = ?
+		WHERE UPP.UserID = ?
+		AND UPP.PieceID = ?
+		AND UPP.IsDeleted = FALSE
+		AND UPP.Status = ?`, status, userID, pieceID, appvars.CastStatusPending)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error updating user piece invite: %v", err), http.StatusInternalServerError)
+	}
+	numRows, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numRows == 0 {
+		return NewDBError("invite between given user and given piece does not exist", http.StatusNotFound)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
 }
