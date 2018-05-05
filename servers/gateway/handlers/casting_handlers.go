@@ -180,6 +180,12 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 			log.Printf("error getting user with id %d: %s\n", id, dberr.Message)
 			continue
 		}
+
+		dberr = ctx.Session.Store.MarkInvite(id, piece.ID, appvars.CastStatusExpired)
+		if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
+			log.Printf("error marking old invite as expired: %s", dberr.Message)
+		}
+
 		dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, time.Now().Add(appvars.AcceptCastTime))
 		if dberr != nil {
 			log.Printf("error creating new user piece pending entry: %v", dberr.Message)

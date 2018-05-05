@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"sort"
+
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
 // txCleanup commits the given transaction if
@@ -220,4 +222,25 @@ func txGetNextAuditionRegNumber(tx *sql.Tx, audID int) (int, *DBError) {
 		}
 	}
 	return num, nil
+}
+
+// txMarkInvite marks the invite between the given user and piece
+// to the given status using the provided transaction
+func txMarkInvite(tx *sql.Tx, userID, pieceID int, status string) *DBError {
+	res, err := tx.Exec(`UPDATE UserPiecePending UPP SET UPP.Status = ?
+		WHERE UPP.UserID = ?
+		AND UPP.PieceID = ?
+		AND UPP.IsDeleted = FALSE
+		AND UPP.Status = ?`, status, userID, pieceID, appvars.CastStatusPending)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error updating user piece invite: %v", err), http.StatusInternalServerError)
+	}
+	numRows, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numRows == 0 {
+		return NewDBError("invite between given user and given piece does not exist", http.StatusNotFound)
+	}
+	return nil
 }
