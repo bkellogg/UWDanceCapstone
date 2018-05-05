@@ -167,7 +167,7 @@ class Availability extends Component {
     render() {
         return(
             <div>
-                <div className="table">
+                <div className="availabilityTableDragDown">
       <TableDragSelect value={this.state.cells} onChange={this.handleChange}>
         <tr>
           <td disabled />

@@ -5,7 +5,8 @@
 
 .daysSimple {
     display: inline-block;
-    width: 75px;
+    min-width: 75px;
+    width: auto;
     height: 25px;
     font-size: 12px;
     text-align: center;
@@ -30,6 +31,7 @@
 .timesSimple{
     height: 25px;
     font-size: 12px;
+    width: auto;
     /* border-bottom: 0.5px solid rgb(219, 219, 219); */
 }
 

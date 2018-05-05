@@ -85,6 +85,7 @@ class RegistrationConf extends Component {
         </div>
       }
       {this.props.showChangeReg &&
+      
       <div className="editRegistration">
         <div className="changeAvailability">
             <Button className="unregisterButton" onClick={this.discardChanges}>Discard Changes</Button>
