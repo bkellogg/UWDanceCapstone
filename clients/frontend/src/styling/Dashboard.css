@@ -8,11 +8,15 @@
 }
 
 .cardBody{
-  background-color: lavender;
+  background-color: rgb(230, 230, 250);
 }
 
 .warning{
-  background-color:#e65100;
+  background-color:rgb(249, 229, 229);
+}
+
+.completeProfile {
+  border-left: 6px solid rgb(236, 132, 132);
 }
 
 .announcementMessage{

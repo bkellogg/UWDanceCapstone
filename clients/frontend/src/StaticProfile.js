@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util';
-import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
-import AvatarEditorConsole from './AvatarEditor';
 import './styling/Profile.css';
 import './styling/General.css';
 

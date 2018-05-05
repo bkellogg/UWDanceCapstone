@@ -241,7 +241,8 @@ class AllDancersRow extends Component {
             {this.props.regNum}
         </td>
         <td>
-            <Link to={{pathname: "/users/" + p.id}} target="_blank">{p.firstName + " " + p.lastName}</Link>
+            {/* ADD CLASSNAME HERE TO STYLE LINK NAME */}
+            <Link className="personNameLink" to={{pathname: "/users/" + p.id}} target="_blank">{p.firstName + " " + p.lastName}</Link>
         </td>
         {
             this.props.selectCast &&

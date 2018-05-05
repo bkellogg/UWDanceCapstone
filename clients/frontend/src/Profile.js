@@ -2,20 +2,13 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
-import AvatarEditorConsole from './AvatarEditor';
-import Test from './Test';
+import AvatarEditorConsole from './AvatarEditorConsole';
 import './styling/Profile.css';
 import './styling/General.css';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
-    this.getPhoto = this.getPhoto.bind(this);
-    this.onClick = this.onClick.bind(this);
-    this.inputChange = this.inputChange.bind(this);
-    this.resumeChange = this.resumeChange.bind(this);
-    this.photoChange = this.photoChange.bind(this);
-    this.formatHistory = this.formatHistory.bind(this);
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
@@ -63,7 +56,7 @@ class Profile extends Component {
       })
   }
 
-  formatHistory(shows) {
+  formatHistory = (shows) => {
     let showTypes = {};
 
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
@@ -104,7 +97,7 @@ class Profile extends Component {
       })
   }
 
-  getPhoto() {
+  getPhoto = () => {
     fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
       .then((res) => {
         if (res.ok) {
@@ -126,7 +119,7 @@ class Profile extends Component {
       });
   }
 
-  getResume() {
+  getResume = () => {
     fetch(Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth)
       .then((res) => {
         if (res.ok) {
@@ -148,12 +141,10 @@ class Profile extends Component {
       });
   }
 
-  uploadPhoto = (val) => {
-    let file = val;
+  uploadPhoto = (img) => {
     let data = new FormData();
-    data.append("image", file.files[0]);
+    data.append("image", img);
     let xhr = new XMLHttpRequest();
-
     xhr.addEventListener("readystatechange", () => {
       this.getPhoto()
     });
@@ -201,7 +192,7 @@ class Profile extends Component {
   }
 
 
-  onClick() {
+  onClick = () => {
     if (this.state.edit) {
       if (this.state.firstName !== "") {
         Util.uploadFName(this.state.firstName);
@@ -236,22 +227,16 @@ class Profile extends Component {
     })
   }
 
-  inputChange(val) {
+  inputChange = (val) => {
     const name = val.target.name
     this.setState({
       [name]: val.target.value
     })
   }
 
-  resumeChange(val) {
+  resumeChange = (val) => {
     this.setState({
       resumeUpload: val.target
-    })
-  }
-
-  photoChange(val) {
-    this.setState({
-      photoUpload: val.target,
     })
   }
 
@@ -271,7 +256,6 @@ class Profile extends Component {
   }
 
   updateImage = (img) => {
-    console.log("image updated")
     this.setState({
       photoUpload : img
     })
@@ -296,9 +280,7 @@ class Profile extends Component {
                     {this.state.edit &&
                       <section>
                         <div> Upload a head shot as a jpg file. </div>
-                        <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
-                        {/* <AvatarEditorConsole image={this.state.photoSrc}/> */}
-                        <Test img = {this.state.photoSrc} changeImg={this.updateImage}/>
+                        <AvatarEditorConsole img = {this.state.photoSrc} changeImg={this.updateImage}/>
                       </section>
                     }
                   </div>

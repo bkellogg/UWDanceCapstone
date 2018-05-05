@@ -16,10 +16,16 @@
         display: block;
     }
 
-    .dancersList-filter, .overlapAvailability, .castList-v2, .castList-v2-1{
-        width: 100%;
+    .dancersList-filter, .overlapAvailability, .castList-v2, .extraClass{
+        width: 100% !important;
         margin-top: 10px;
         margin-bottom: 10px;
+        display: block !important;
+    }
+
+    .overlapAvailability{
+        width: auto !important;
+        display: block !important;
     }
 
     .extraClass, .overlapAvailability{

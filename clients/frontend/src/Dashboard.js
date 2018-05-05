@@ -44,7 +44,7 @@ class Dashboard extends Component {
       .then(announcements => {
         this.getAnnouncementTypes(announcements)
       })
-      .catch((err) => { 
+      .catch((err) => {
         Util.handleError(err)
       });
   }
@@ -95,63 +95,63 @@ class Dashboard extends Component {
     return (
       <section className='main' >
         <div className="mainView">
-        <div className="transparentCard">
-          <div className='dashboard'>
-            <div id='welcome'> 
-            <h1> Welcome, {this.state.user.firstName}!</h1>
-            </div>
-            <div id='announcements'>
-              {this.state.user.bio === "" &&
-                    <Card>
-                    <div className="warning">
-                      <CardText> 
-                        Please complete your profile.
-                      </CardText>
+          <div className="transparentCard">
+            <div className='dashboard'>
+              <div id='welcome'>
+                <h1> Welcome, {this.state.user.firstName}!</h1>
+              </div>
+              <div id='announcements'>
+                {this.state.user.bio === "" &&
+                  <div className="announcement completeProfile">
+                    <div className="warning cardBody">
+
+                      <p className="announcementMessage"> Please complete your profile. </p>
+                </div>
                   </div>
-                </Card>
-              }
-              {this.state.currAnnouncements.map((anncouncement, index) => {
-                return (
-                  <div key={index} className="announcement">
-                    {
+
+                }
+                {this.state.currAnnouncements.map((anncouncement, index) => {
+                  return (
+                    <div key={index} className="announcement">
+                      {
+                        <div className="cardBody">
+                          <p className="announcementMessage"> {anncouncement.message} </p>
+                        </div>
+                      }
+                    </div>
+                  )
+                })}
+
+                {this.props.shows.map((anncouncement, index) => {
+                  var moment = require('moment');
+                  var auditionDay = moment(anncouncement.audition.time).format('MMM. d, YYYY');
+                  var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
+                  var auditionLink = anncouncement.name.split(' ').join('');
+                  return (
+                    <div key={index} className="announcement secondColor">
                       <div className="cardBody">
-                        <p className="announcementMessage"> {anncouncement.message} </p>
+                        {
+
+                          <div className="auditionAnnouncementCard">
+                            <div className="showTitle">
+                              <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
+                            </div>
+                            <div className="showInformation">
+                              <p> <b>Date:</b> {auditionDay} </p>
+                              <p> <b>Time:</b> {auditionTime} </p>
+                              <p> <b>Location:</b> {anncouncement.audition.location} </p>
+                              <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
+                            </div>
+                          </div>
+                        }
                       </div>
-                    }
-                  </div>
-                )
-              })}
+                    </div>
+                  )
+                })}
 
-              {this.props.shows.map((anncouncement, index) => {
-                var moment = require('moment');
-                var auditionDay = moment(anncouncement.audition.time).format('MMM. d, YYYY');
-                var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
-                var auditionLink = anncouncement.name.split(' ').join('');
-                return (
-                  <div key={index} className="announcement secondColor">
-                  <div className="cardBody">
-                    {
-
-                      <div className="auditionAnnouncementCard">
-                        <div className="showTitle">
-                          <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
-                        </div>
-                        <div className="showInformation">
-                          <p> <b>Date:</b> {auditionDay} </p>
-                          <p> <b>Time:</b> {auditionTime} </p>
-                          <p> <b>Location:</b> {anncouncement.audition.location} </p>
-                          <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                  </div>
-                )
-              })}
-
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </section>
     )

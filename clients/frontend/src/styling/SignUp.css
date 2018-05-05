@@ -25,6 +25,20 @@
   overflow: scroll;
 }
 
+.signUpSkipButton{
+  background-color: transparent;
+  box-shadow: none;
+  color: #22A7E0;
+}
+
+.bioTextbox{
+  display: block;
+}
+
+.extra-signup-input-field{
+  margin-bottom: 30px;
+}
+
 /*
 
 .content {
