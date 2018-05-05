@@ -153,6 +153,7 @@ class Piece extends Component {
     return (
       <section className="main">
         <div className="mainView">
+        <div className="pageContentWrap">
           <h1>My Piece</h1>
           <div className="card1">
             {
@@ -386,6 +387,7 @@ class Piece extends Component {
                 <Button>Save Info Sheet</Button>
               </section>
             }
+          </div>
           </div>
         </div>
       </section>

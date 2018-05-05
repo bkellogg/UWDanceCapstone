@@ -14,6 +14,7 @@
 
 .overlapTimes {
     height: 25px;
+    width: auto;
     border: 0.5px solid rgb(219, 219, 219);
 }
 

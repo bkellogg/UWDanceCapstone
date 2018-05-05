@@ -265,6 +265,7 @@ class Profile extends Component {
     return (
       <section className="main">
         <div className="mainView">
+        <div className="pageContentWrap">
           <h1 className="pagetitle">Your Profile </h1>
 
           <div className="card1">
@@ -380,7 +381,7 @@ class Profile extends Component {
               </div>
 
             </div>
-
+</div>
 
           </div>
         </div>

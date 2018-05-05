@@ -53,7 +53,7 @@ class People extends Component {
     return (
       <section className="main">
       <div className="mainView">
-
+      <div className="pageContentWrap">
         <h1>People</h1>
         <div className="card1">
         <div className="wrap">
@@ -69,6 +69,7 @@ class People extends Component {
             {rows}
           </tbody>
         </table>
+        </div>
         </div>
         </div>
         </div>

@@ -95,7 +95,7 @@ class Dashboard extends Component {
     return (
       <section className='main' >
         <div className="mainView">
-          <div className="transparentCard">
+        <div className="pageContentWrap">
             <div className='dashboard'>
               <div id='welcome'>
                 <h1> Welcome, {this.state.user.firstName}!</h1>
