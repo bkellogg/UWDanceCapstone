@@ -101,7 +101,7 @@ class SetRehearsals extends Component {
     return (
       <section >
         <div className="mainView mainContentView">
-          <div className="transparentCard">
+        <div className="pageContentWrap">
             <div className="wrap">
               <div className="castList">
                 <div className="extraClass">
@@ -137,7 +137,7 @@ class SetRehearsals extends Component {
 
                 </div>
 
-                <div className="overlapAvailability">
+                <div className="overlapAvailabilityWrap">
                 <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast}/> 
                </div>
               </div>

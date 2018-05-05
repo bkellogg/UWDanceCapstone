@@ -43,6 +43,7 @@ class ResolveConflict extends Component {
     return (
       <section>
         <div className="mainView mainContentView">
+        <div className="pageContentWrap">
           <div className="card1">
             <div className="wrap">
               <div className="conflictsCard">
@@ -99,6 +100,7 @@ class ResolveConflict extends Component {
                 </table>
               </div>
             </div>
+        </div>
         </div>
         </div>
         </div>

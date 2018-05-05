@@ -94,6 +94,7 @@ class SelectCast extends Component {
       
         <section>
           <div className="mainView mainContentView">
+          <div className="pageContentWrap">
           <div className="card1">
             <table className="table" id="selectCastTable">
             <tbody>
@@ -142,6 +143,7 @@ class SelectCast extends Component {
                 {uncastRows}
             </tbody>
             </table>
+            </div>
             </div>
             </div>
         </section>

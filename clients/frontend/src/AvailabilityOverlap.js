@@ -207,6 +207,7 @@ class AvailabilityOverlap extends Component {
 
     return (
       <section>
+        <div className="overlapAvailability">
         <div className="cardTitleWrap">
         <div className="headerWrap">
           <h2 className="smallHeading">Availability</h2>
@@ -222,7 +223,7 @@ class AvailabilityOverlap extends Component {
           </div>
         </div>
         <div className="availabilityCalendar">
-          <div className="calendarWrap">
+          {/* <div className="calendarWrap"> */}
             <div className="timesRow">
               {timesSimple}
             </div>
@@ -230,11 +231,12 @@ class AvailabilityOverlap extends Component {
               <div className="daysHeader">
                 {daysSimple}
               </div>
-              <div className="times">
+              <div className="overlapTimes">
                 {overlapDays}
               </div>
             </div>
-          </div>
+          {/* </div> */}
+        </div>
         </div>
       </section>
     );

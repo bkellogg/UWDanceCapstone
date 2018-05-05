@@ -60,11 +60,19 @@ th{
 
 
 /* AVAILABILITY CALENDAR */
-.overlapAvailability{
+.overlapAvailabilityWrap{
     width: 60%;
-    background-color: #F6F8FC;
-    position: absolute;
+    vertical-align: top;
     display: inline-block;
+    float: right;
+    
+}
+
+
+.overlapAvailability{
+    width: 100%;
+    background-color: #F6F8FC;
+    float: right;
     padding: 20px;
 }
 
@@ -250,7 +258,7 @@ tr{
 
 .variableCastHeader {
     text-align: center;
-    border-bottom: 2px solid hsl(0, 0%, 45%);
+    border-bottom: 3px solid hsl(0, 0%, 45%);
 }
 
 

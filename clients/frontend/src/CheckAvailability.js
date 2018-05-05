@@ -90,8 +90,7 @@ class CheckAvailability extends Component {
     return (
       <section>
         <div className="mainView mainContentView">
-          <div className="transparentCard">
-            <div className="wrap">
+        <div className="pageContentWrap">
               <div className="castList">
               
                 <div className="dancersList-filter">
@@ -110,14 +109,12 @@ class CheckAvailability extends Component {
                     </tbody>
                   </table>
                 </div>
-                <div className="overlapAvailability">
+                <div className="overlapAvailabilityWrap">
                   <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast}/> 
                 </div>
               </div>
             </div>
           </div>
-
-        </div>
       </section>
     );
   };
