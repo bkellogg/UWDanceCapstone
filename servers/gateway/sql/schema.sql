@@ -53,7 +53,7 @@ CREATE TABLE Shows (
 CREATE TABLE Pieces (
     PieceID INT AUTO_INCREMENT PRIMARY KEY,
     ChoreographerID INT,
-    PieceName varchar(50) NOT NULL UNIQUE KEY,
+    PieceName varchar(50) NOT NULL,
     ShowID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
@@ -69,6 +69,15 @@ CREATE TABLE UserPiece (
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID)
+);
+
+CREATE TABLE UserPiecePending (
+    UserPiecePendingID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT NOT NULL,
+    PieceID INT NOT NULL,
+    ExpiresAt DATETIME NOT NULL,
+    Status VARCHAR(15) NOT NULL,
+    IsDeleted BOOLEAN NOT NULL
 );
 
 CREATE TABLE UserAuditionAvailability (

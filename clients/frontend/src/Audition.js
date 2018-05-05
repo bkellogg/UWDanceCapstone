@@ -29,12 +29,14 @@ class Audition extends Component {
   }
 
   checkRegistration = () => {
-    console.log("checking")
     Util
       .makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
       .then(res => {
         if (res.ok) {
           return res.json()
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res
           .text()
@@ -67,7 +69,6 @@ class Audition extends Component {
   }
 
   updateAvailability = () => {
-    //broken atm, server issue
     let body = {
       "days" : this.state.availability
     }
@@ -75,6 +76,9 @@ class Audition extends Component {
     .then(res => {
       if (res.ok) {
         return res.json()
+      }
+      if (res.status === 401) {
+        Util.signOut()
       }
       return res.text().then((t) => Promise.reject(t));
     })
@@ -108,7 +112,6 @@ class Audition extends Component {
   }
 
   render() {
-    console.log(this.state.currAvailability)
     return (
       <section className="main">
         <div className="mainView">

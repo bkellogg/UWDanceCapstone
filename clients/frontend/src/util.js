@@ -1,6 +1,7 @@
 export const headerAuthorization = "Authorization";
 
-export const API_URL_BASE = "https://dasc.capstone.ischool.uw.edu/api/v1/";
+export const HOST = "dasc.capstone.ischool.uw.edu";
+export const API_URL_BASE = "https://"+ HOST +"/api/v1/";
 
 
 export function saveAuth(auth) {

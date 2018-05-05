@@ -42,7 +42,7 @@ class ResolveConflict extends Component {
 
     return (
       <section>
-        <div className="mainView">
+        <div className="mainView mainContentView">
           <div className="card1">
             <div className="wrap">
               <div className="conflictsCard">

@@ -2,19 +2,13 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
-import AvatarEditorConsole from './AvatarEditor';
+import AvatarEditorConsole from './AvatarEditorConsole';
 import './styling/Profile.css';
 import './styling/General.css';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
-    this.getPhoto = this.getPhoto.bind(this);
-    this.onClick = this.onClick.bind(this);
-    this.inputChange = this.inputChange.bind(this);
-    this.resumeChange = this.resumeChange.bind(this);
-    this.photoChange = this.photoChange.bind(this);
-    this.formatHistory = this.formatHistory.bind(this);
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
@@ -40,11 +34,15 @@ class Profile extends Component {
     this.getResume();
 
     //TODO deal with the fact that there are going to be pages
-    Util.makeRequest("users/1/shows?history=all", {}, "GET", true)
+    Util.makeRequest("users/" + this.state.user.id + "/shows?history=all", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then((res) => {
         this.setState({
@@ -53,12 +51,12 @@ class Profile extends Component {
         this.formatHistory(res.shows)
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         Util.handleError(err)
       })
   }
 
-  formatHistory(shows) {
+  formatHistory = (shows) => {
     let showTypes = {};
 
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
@@ -66,6 +64,10 @@ class Profile extends Component {
         if (res.ok) {
           return res.json()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
         data.map(function (show) {
@@ -90,16 +92,19 @@ class Profile extends Component {
         })
       })
       .catch(err => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       })
   }
 
-  getPhoto() {
+  getPhoto = () => {
     fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
       .then((res) => {
         if (res.ok) {
           return res.blob();
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -109,16 +114,19 @@ class Profile extends Component {
         })
       })
       .catch((err) => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       });
   }
 
-  getResume() {
+  getResume = () => {
     fetch(Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth)
       .then((res) => {
         if (res.ok) {
           return res.blob();
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -128,17 +136,15 @@ class Profile extends Component {
         })
       })
       .catch((err) => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       });
   }
 
-  uploadPhoto = (val) => {
-    let file = val;
+  uploadPhoto = (img) => {
     let data = new FormData();
-    data.append("image", file.files[0]);
+    data.append("image", img);
     let xhr = new XMLHttpRequest();
-
     xhr.addEventListener("readystatechange", () => {
       this.getPhoto()
     });
@@ -186,7 +192,7 @@ class Profile extends Component {
   }
 
 
-  onClick() {
+  onClick = () => {
     if (this.state.edit) {
       if (this.state.firstName !== "") {
         Util.uploadFName(this.state.firstName);
@@ -221,22 +227,16 @@ class Profile extends Component {
     })
   }
 
-  inputChange(val) {
+  inputChange = (val) => {
     const name = val.target.name
     this.setState({
       [name]: val.target.value
     })
   }
 
-  resumeChange(val) {
+  resumeChange = (val) => {
     this.setState({
       resumeUpload: val.target
-    })
-  }
-
-  photoChange(val) {
-    this.setState({
-      photoUpload: val.target,
     })
   }
 
@@ -253,6 +253,12 @@ class Profile extends Component {
         event.preventDefault();
       }
     }
+  }
+
+  updateImage = (img) => {
+    this.setState({
+      photoUpload : img
+    })
   }
 
   render() {
@@ -274,8 +280,7 @@ class Profile extends Component {
                     {this.state.edit &&
                       <section>
                         <div> Upload a head shot as a jpg file. </div>
-                        <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
-                        <AvatarEditorConsole image={this.state.photoSrc}/>
+                        <AvatarEditorConsole img = {this.state.photoSrc} changeImg={this.updateImage}/>
                       </section>
                     }
                   </div>

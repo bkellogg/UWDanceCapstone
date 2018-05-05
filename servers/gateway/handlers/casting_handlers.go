@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/mail"
@@ -160,22 +161,34 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		ShowID:          show.ID,
 		CreatedBy:       int(u.ID),
 	}
-	_, dberr = ctx.Session.Store.InsertNewPiece(np)
-	if dberr != nil {
-		return middleware.HTTPErrorFromDBErrorContext(dberr, "inserting new piece when posting casting")
+	var piece *models.Piece
+	piece, dberr = ctx.Session.Store.GetChoreographerShowPiece(show.ID, int(u.ID))
+	if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
+		return middleware.HTTPErrorFromDBErrorContext(dberr, "error looking up existing piece")
+	}
+	if piece == nil {
+		piece, dberr = ctx.Session.Store.InsertNewPiece(np)
+		if dberr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dberr, "inserting new piece when posting casting")
+		}
 	}
 
-	for id64 := range dancers {
+	for _, id64 := range dancers {
 		id := int(id64)
 		user, dberr := ctx.Session.Store.GetUserByID(id, false)
 		if dberr != nil {
-			log.Printf("error getting user by id: %s\n", dberr.Message)
+			log.Printf("error getting user with id %d: %s\n", id, dberr.Message)
 			continue
 		}
+		dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, time.Now().Add(appvars.AcceptCastTime))
+		if dberr != nil {
+			log.Printf("error creating new user piece pending entry: %v", dberr.Message)
+		}
 		tplVars := &models.CastingConfVars{
-			Name:          user.FirstName,
-			Choreographer: u.FirstName,
-			URL:           appvars.StageURL + "/dashboard",
+			Name:      user.FirstName,
+			ChorFName: u.FirstName,
+			ChorLName: u.LastName,
+			URL:       appvars.StageURL,
 		}
 
 		message, err := mail.NewMessageFromTemplate(ctx.MailCredentials,

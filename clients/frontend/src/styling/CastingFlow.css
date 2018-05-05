@@ -61,7 +61,7 @@ th{
 
 /* AVAILABILITY CALENDAR */
 .overlapAvailability{
-    width: 60%;
+    width: 650px;
     background-color: #F6F8FC;
     position: absolute;
     display: inline-block;
@@ -99,6 +99,8 @@ tr{
 .dancersList-filter, .extraClass {
     height: 100%;
     width: 37%;
+    max-width: 450px;
+    min-width: 400px;
     position: relative;
     display: inline-block;
     margin-right: 3%;
@@ -211,7 +213,6 @@ tr{
 
 .tooltip {
     position: relative;
-    display: inline-block;
 }
 
 .tooltip .tooltiptext {
@@ -247,5 +248,14 @@ tr{
     opacity: 1;
 }
 
+.variableCastHeader {
+    text-align: center;
+    border-bottom: 2px solid hsl(0, 0%, 45%);
+}
+
 
 /*ADD REMOVE BUTTON STYLES*/
+.selectedCastDividerText{
+    font-size: 13px;
+    color: hsl(0, 0%, 29%);
+}

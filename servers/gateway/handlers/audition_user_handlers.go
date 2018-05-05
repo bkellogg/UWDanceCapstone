@@ -12,9 +12,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// UserAuditionHandler handles getting the link (if it exists) between an audition and a
+// handleUserAudition handles getting the link (if it exists) between an audition and a
 // user.
-func (ctx *AuthContext) UserAuditionHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+func (ctx *AuthContext) handleUserAudition(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	targetUser, httperr := parseUserID(r, u)
 	if httperr != nil {
 		return httperr
@@ -23,10 +23,6 @@ func (ctx *AuthContext) UserAuditionHandler(w http.ResponseWriter, r *http.Reque
 		return permissionDenied()
 	}
 	vars := mux.Vars(r)
-	resource := vars["object"]
-	if resource != "auditions" {
-		return objectTypeNotSupported()
-	}
 	auditionID, err := strconv.Atoi(vars["objectID"])
 	if err != nil {
 		return unparsableIDGiven()
@@ -56,7 +52,7 @@ func (ctx *AuthContext) handleUserAuditionAvailability(userID, audID int, u *mod
 		}
 		return respond(w, avail, http.StatusOK)
 	case "PATCH":
-		if !!ctx.permChecker.UserCan(u, permissions.ChangeUserAvailability) {
+		if !ctx.permChecker.UserCan(u, permissions.ChangeUserAvailability) {
 			return permissionDenied()
 		}
 		wtb := &models.WeekTimeBlock{}
