@@ -22,15 +22,10 @@ class RegistrationConf extends Component {
     Util.makeRequest("users/me/auditions/" + this.state.auditionID, "", "UNLINK", true)
     .then(res => {
       if (res.ok) {
+        this.props.unregister()
         return res.json()
       }
-      if (res.status === 401) {
-        Util.signOut()
-      }
       return res.text().then((t) => Promise.reject(t));
-    })
-    .then( () => {
-      this.props.unregister()
     })
     .catch(err => {
       Util.handleError(err)
@@ -64,7 +59,6 @@ class RegistrationConf extends Component {
               <div className="successfulRegistrationMessage">
                 <p id="successMessage">You have successfully registered for the show! Your assigned number is {this.props.regNum}.</p>
                 <p>Location: {this.props.audition.location}</p>
-                {/*TODO format date time how you like*/}
 
                 <p>Audition starts at <Moment format="YYYY/MM/DD HH:mm">{this.props.audition.time}</Moment></p>
               </div>

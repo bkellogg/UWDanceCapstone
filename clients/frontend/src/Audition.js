@@ -56,6 +56,7 @@ class Audition extends Component {
   }
 
   unregister = () => {
+    console.log("unregistered")
     this.setState({
       registered: false,
       open: true
