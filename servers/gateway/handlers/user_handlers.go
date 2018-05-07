@@ -80,7 +80,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		}
 		return respondWithString(w, "user updated", http.StatusOK)
 	case "DELETE":
-		if !!ctx.permChecker.UserCanDeleteUser(u, int64(userID)) {
+		if !ctx.permChecker.UserCanDeleteUser(u, int64(userID)) {
 			return permissionDenied()
 		}
 		if dberr := ctx.store.DeactivateUserByID(userID); err != nil {
