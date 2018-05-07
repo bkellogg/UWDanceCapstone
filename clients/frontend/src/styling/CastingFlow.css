@@ -267,3 +267,58 @@ tr{
     font-size: 13px;
     color: hsl(0, 0%, 29%);
 }
+
+
+@media only screen and (max-width : 768px) {
+    .categories{
+        font-size: 12px;
+    }
+
+    .avatar, .dancerRank, .userRoleDisp, .avatar2{
+        visibility: hidden;
+        position: absolute;
+    }
+
+    .check{
+        width: 20px;
+    }
+
+    .castList, .dancersList-filter, .overlapAvailability, .castList-v2, .castList-v2-1, .wrap{
+        display: block;
+    }
+
+    .dancersList-filter, .overlapAvailability, .castList-v2, .extraClass{
+        width: 100% !important;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        display: block !important;
+    }
+
+    .overlapAvailability{
+        width: auto !important;
+        display: block !important;
+    }
+
+    .extraClass, .overlapAvailability{
+        width: 100%;
+    }
+
+    .extraClass, .overlapAvailability{
+        display: block;
+    }
+
+    .extraClass{
+        z-index: 1 !important;
+    }
+    .overlapAvailability{
+        z-index: 2 !important;
+    }
+}
+
+@media only screen and (max-width : 1445px) {
+
+    .dancersList-filter, .overlapAvailability{
+        display: block;
+    }
+
+}
