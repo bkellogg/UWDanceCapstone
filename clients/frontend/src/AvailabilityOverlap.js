@@ -172,7 +172,7 @@ class AvailabilityOverlap extends Component {
 
         //this is the div with the specific time block
         return (
-          <div className="tooltip">
+          <div className="tooltip" key={j}>
             <div className="overlapTimes" style={{ "backgroundColor": color }}>
               <span className="tooltiptext">There are {uniqueIDs.length} dancers available at this time</span>
             </div>

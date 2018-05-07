@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as Util from './util';
 import Button from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -42,10 +43,25 @@ class SetRehearsals extends Component {
   }
 
   postCasting = () => {
-    this.setState({
-      open: false,
-      finished: true
-    });
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", {}, "POST", true)
+    .then((res) => {
+      if (res.ok) {
+        return res.text()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(() => {
+      this.setState({
+        open: false,
+        finished: true
+      });
+    })
+    .catch(err => {
+      console.error(err)
+    })
   }
 
   handleOpen = () => {
@@ -73,7 +89,7 @@ class SetRehearsals extends Component {
   }
 
   setRehearsal = (rehearsal) => {
-    //TODO add handlers to deal with two rehearsals on the same day
+    //TODO add handlers to deal with two rehearsals on the same day and also everything every cri
     if (rehearsal.day !== "" && rehearsal.startTime !== "" && rehearsal.endTime !== "") {
       let rehearsals = this.state.rehearsalSchedule
       rehearsals.push(rehearsal)
@@ -98,6 +114,10 @@ class SetRehearsals extends Component {
         <div key={i}> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime}. </div>
       )
     })
+
+    let castList = []
+
+    
     return (
       <section >
         <div className="mainView mainContentView">
