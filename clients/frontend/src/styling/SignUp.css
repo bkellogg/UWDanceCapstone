@@ -1,10 +1,4 @@
-/* body,html {
-  height: 100%;
-  font-weight: 400;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-}
-*/
 .SignUpLanding {
   background-image: url('../imgs/dance-bw.jpg');
   background-position: center;
@@ -39,50 +33,9 @@
   margin-bottom: 30px;
 }
 
-/*
-
-.content {
-  opacity: 0.95;
-  background-color: white;
-  width: auto;
-  display: inline-block;
-  padding: 50px;
-  margin: 5%;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+.signUpSkipButton {
+  cursor: pointer;
 }
-
-.authenticate {
-  text-align: left;
-}
-
-.title {
-  text-align: center;
-  padding-bottom: 10%;
-  font-weight: 400;
-}
-
-Button {
-  margin: 10px;
-}
-
-.Link{
-  padding-top: 25px;
-}
-
-.signlink {
-  color: #22A7E0;
-}
-
-.signlink:hover{
-  text-decoration: underline;
-}
-
-.character-counter {
-  visibility: hidden
-}
-
-*/
 
 @media only screen and (max-width : 992px) {
   .SignUpLanding {

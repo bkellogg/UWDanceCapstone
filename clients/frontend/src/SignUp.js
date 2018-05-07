@@ -104,11 +104,16 @@ class SignUp extends Component {
     this.props.onSignUp(this.state.auth)
   }
 
+  toLanding = () => {
+    this.props.toLanding()
+  }
+
   render() {
     return (
 
       <section className="signUp">
         <div className="SignUpLanding">
+        <i className="fas fa-arrow-circle-left fa-2x" onClick={this.toLanding}></i>
           <div className="Functionality">
             <div className="signInUplogoWrap">
               <img className="officialLogoLandingPage" alt="logo" src={logo} />
