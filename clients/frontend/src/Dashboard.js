@@ -3,7 +3,6 @@ import * as Util from './util';
 import './styling/General.css';
 
 //styling
-import { Card, CardText } from 'material-ui/Card';
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';
 

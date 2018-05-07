@@ -61,6 +61,14 @@ class App extends Component {
     })
   }
 
+  toLanding = () => {
+    this.setState({
+      landing: true,
+      signUp: false,
+      signIn: false
+    })
+  }
+
   componentWillMount(){
     if(localStorage.getItem("user")){
       this.setState({
@@ -89,11 +97,11 @@ class App extends Component {
         }
         {
           !this.state.landing && !this.state.authorized && !this.state.signUp &&
-          <SignIn onSignIn={this.registerUser} onSignUp={this.handleSignUp}/>
+          <SignIn onSignIn={this.registerUser} onSignUp={this.handleSignUp} toLanding={this.toLanding}/>
         }
         {
           !this.state.landing && !this.state.authorized && this.state.signUp &&
-          <SignUp onSignUp={this.registerUser} goBack={this.goBack}/>
+          <SignUp onSignUp={this.registerUser} goBack={this.goBack} toLanding={this.toLanding}/>
         }
         {
           this.state.authorized &&

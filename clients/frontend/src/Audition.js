@@ -56,6 +56,7 @@ class Audition extends Component {
   }
 
   unregister = () => {
+    console.log("unregistered")
     this.setState({
       registered: false,
       open: true
@@ -115,9 +116,8 @@ class Audition extends Component {
     return (
       <section className="main">
         <div className="mainView">
-        <div className="pageContentWrap">
-            <h1 id="auditionTitle">{this.props.name}
-              Audition Form</h1>
+          <div className="pageContentWrap">
+            <h1 id="auditionTitle">{this.props.name + " Audition Form"}</h1>
             {!this.state.registered && <Registration
               audition={this.props.audition}
               registered={() => this.checkRegistration()} />

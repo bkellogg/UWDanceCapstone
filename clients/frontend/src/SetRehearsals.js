@@ -108,20 +108,23 @@ class SetRehearsals extends Component {
                   <div className="setTimes">
 
                     <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
+                    First Rehearsal Date
+                    <input type="date" name="rehearsalStartDate" id="rehearsalStartDate" />
+                    Weekly Rehearsal Times
                     {rehearsals}
-
                     <div className="buttonsWrap">
                         <Button
                         backgroundColor="#708090"
                         style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
-                        onClick={this.removeRehearsal} disabled={finished}>
-                        REMOVE</Button>
-                        <Button
-                        backgroundColor="#708090"
-                        style={{ color: '#ffffff', float: 'right' }}
                         onClick={this.addRehearsal}
                         disabled={finished}>
                         ADD</Button>
+
+                        <Button
+                        backgroundColor="#708090"
+                        style={{ color: '#ffffff', float: 'right' }}
+                        onClick={this.removeRehearsal} disabled={finished}>
+                        REMOVE</Button>
                     </div>
                   </div>
                   <div className="postCastingWrap">
@@ -141,7 +144,7 @@ class SetRehearsals extends Component {
                 <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast}/> 
                </div>
               </div>
-              {/* AFTER CHOSING TIMES */}
+
               <Dialog
                 title="Confirm Casting"
                 actions={[

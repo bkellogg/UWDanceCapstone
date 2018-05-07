@@ -108,6 +108,10 @@ class SignIn extends Component {
     this.setState({ forgotemail: event.target.value })
   }
 
+  toLanding = () => {
+    this.props.toLanding()
+  }
+
   render() {
     const actions = [
       <TextField
@@ -123,6 +127,7 @@ class SignIn extends Component {
 
     return (
       <div className="LogInLanding">
+        <i className="fas fa-arrow-circle-left fa-2x" onClick={this.toLanding}></i>
         <div className="Functionality">
           <div className="signInUplogoWrap">
             <img className="officialLogoLandingPage" alt="logo" src={logo} />
