@@ -35,24 +35,12 @@ const styleNav = {
   backgroundColor: 'red'
 };
 
-const host = "dasc.capstone.ischool.uw.edu";
-const websocket = new WebSocket("wss://" + host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
+// const host = "dasc.capstone.ischool.uw.edu";
+// const websocket = new WebSocket("wss://" + host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
 
 class Main extends Component {
   constructor(props) {
     super(props);
-    this.getNavigation = this
-      .getNavigation
-      .bind(this);
-    this.signOut = this
-      .signOut
-      .bind(this);
-    this.getCurrShows = this
-      .getCurrShows
-      .bind(this);
-    this.getShowTypes = this
-      .getShowTypes
-      .bind(this);
     this.state = {
       user: JSON.parse(localStorage.user),
       shows: null,
@@ -74,7 +62,7 @@ class Main extends Component {
     };
   }
 
-  getCurrShows() {
+  getCurrShows = () => {
     //TODO deal with the fact that there's going to be pages
     Util.makeRequest("shows?history=all&includeDeleted=false", {}, "GET", true).then(res => {
       if (res.ok) {
@@ -97,7 +85,7 @@ class Main extends Component {
     })
   }
 
-  getShowTypes(shows) {
+  getShowTypes = (shows) => {
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true).then((res) => {
       if (res.ok) {
         return res.json()
@@ -159,7 +147,7 @@ class Main extends Component {
     });
   }
 
-  getNavigation() {
+  getNavigation = () => {
     let showNav = this
       .state
       .currShows
@@ -185,7 +173,7 @@ class Main extends Component {
     return <ul className="collapsible collapsible-accordion">{mobileShowNav}</ul>
   }
 
-  signOut() {
+  signOut = () => {
     Util.signOut();
   }
 
@@ -280,8 +268,7 @@ class Main extends Component {
                   render={props => <Casting
                   {...props}
                   name={show.name}
-                  audition={show.auditionID}
-                  websocket={websocket}/>}/>
+                  audition={show.auditionID}/>}/>
 
                 let route2 = <Route
                   exact
@@ -314,7 +301,7 @@ class Main extends Component {
                   {...props}
                   name={show.name}
                   audition={show.auditionID}
-                  websocket={websocket}/>}/>
+                  />}/>
 
                 let route2 = <Route
                   key = {i*10}
