@@ -47,7 +47,7 @@ class RegistrationConf extends Component {
   render() {
     return (
       <div className="cardsWrap">
-      <div className="card1 profileCard1">
+      <div className="fullWidthCard profileCard1">
       <div className="wrap">
         <div className="card101">
           <div className="numberDiv">
