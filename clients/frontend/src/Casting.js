@@ -121,7 +121,7 @@ class Casting extends Component {
       case 2:
         return <ResolveConflict audition={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>;
       case 3:
-        return <SetRehearsals cast={this.state.cast} contested={this.state.contested}/>
+        return <SetRehearsals audition={this.props.audition} cast={this.state.cast} contested={this.state.contested}/>
       default:
         return 'Someone is off the counts - stop the music, and refresh the page!';
     }
@@ -154,8 +154,8 @@ class Casting extends Component {
   }
 
   cancelCast = () => {
-    //sends the user "back" one location in history
-    window.history.go(-1)
+    //sends the user  to the dashboard
+    window.location = "/"
   }
   
 
@@ -251,8 +251,9 @@ class Casting extends Component {
           modal={false}
           open={this.state.open}
         >
-          <div className="warningText"> By clicking Enter Casting you confirm that you are a choreograper for <p className="importantText warningText">{this.props.name}</p> AND that you are currently casting for the show.</div>
-          <p className="importantText warningText">If you are not a choreographer for this show and are not currently casting, please contact your admin for</p>
+          <div className="warningText"> By clicking Enter Casting you confirm that you are a choreograper for 
+          <strong className="importantText warningText">{" " + this.props.name + " "}</strong> 
+          and that you are currently casting for the show.</div>
         </Dialog>
 
       </section>

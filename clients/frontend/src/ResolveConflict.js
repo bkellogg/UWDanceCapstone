@@ -44,7 +44,7 @@ class ResolveConflict extends Component {
       <section>
         <div className="mainView mainContentView">
         <div className="pageContentWrap">
-          <div className="card1">
+          <div className="fullWidthCard">
             <div className="wrap">
               <div className="conflictsCard">
                 <h2 className="conflictMessage">Conflicts between you and other choreographers.</h2> 

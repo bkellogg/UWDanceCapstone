@@ -103,10 +103,10 @@ class SignUpExtra extends Component {
           </div>
         </form>
 
-        <div className="Buttons">
+        <div className="buttons">
           <Button onClick={this.signUp}> Finish Sign Up </Button>
         </div>
-        <div className="Link">
+        <div className="link">
           <a className="signUpSkipButton" onClick={this.skip}> Skip </a>
         </div>
 

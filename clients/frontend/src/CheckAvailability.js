@@ -10,12 +10,12 @@ class CheckAvailability extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cast : [],
+      cast: [],
       contested: []
     }
   };
 
-  componentWillMount(){
+  componentWillMount() {
     let filteredCast = []
     this.props.cast.map((dancer, i) => {
       filteredCast.push(dancer.dancer.user.id)
@@ -26,13 +26,13 @@ class CheckAvailability extends Component {
       return filteredCast
     })
     this.setState({
-      filteredCast : filteredCast,
-      cast : this.props.cast,
-      contested : this.props.contested
+      filteredCast: filteredCast,
+      cast: this.props.cast,
+      contested: this.props.contested
     })
   }
 
-  componentWillReceiveProps(props){
+  componentWillReceiveProps(props) {
     this.setState({
       cast: props.cast,
       contested: props.contested,
@@ -62,9 +62,9 @@ class CheckAvailability extends Component {
       filteredCast = filteredCast.filter(i => i !== id) //remove them
     } else { //the id is not in the cast
       filteredCast.push(id)
-    } 
+    }
     this.setState({
-      filteredCast : filteredCast
+      filteredCast: filteredCast
     })
   }
 
@@ -75,14 +75,14 @@ class CheckAvailability extends Component {
     if (this.state.cast) {
       rows = this.state.cast.map(dancer => {
         return (
-          <AllDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} comments={dancer.dancer.comments} regNum={dancer.dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)}/>
+          <AllDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} comments={dancer.dancer.comments} regNum={dancer.dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)} />
         )
       })
     }
-    if(this.state.contested) {
+    if (this.state.contested) {
       conflictRows = this.state.contested.map(conflict => {
         let dancer = conflict.rankedDancer.dancer
-        return(
+        return (
           <AllDancersRow key={dancer.user.id} person={dancer.user} comments={dancer.comments} regNum={dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)} />
         )
       })
@@ -90,31 +90,30 @@ class CheckAvailability extends Component {
     return (
       <section>
         <div className="mainView mainContentView">
-        <div className="pageContentWrap">
-              <div className="castList">
-              
-                <div className="dancersList-filter">
-                  <h2 className="smallHeading"> Filter by dancer </h2>
-                  <table id="checkAvailabilityTable">
-                    <tbody>
-                      <tr className="categories">
-                        <th></th>
-                        <th></th>
-                        <th>#</th>
-                        <th>Dancer</th>
-                        <th></th>
-                      </tr>
-                      {rows}
-                      {conflictRows}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="overlapAvailabilityWrap">
-                  <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast}/> 
-                </div>
+          <div className="pageContentWrap">
+            <div className="castList">
+              <div className="dancersList-filter">
+                <h2 className="smallHeading"> Filter by dancer </h2>
+                <table id="checkAvailabilityTable">
+                  <tbody>
+                    <tr className="categories">
+                      <th></th>
+                      <th></th>
+                      <th>#</th>
+                      <th>Dancer</th>
+                      <th></th>
+                    </tr>
+                    {rows}
+                    {conflictRows}
+                  </tbody>
+                </table>
+              </div>
+              <div className="overlapAvailabilityWrap">
+                <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast} />
               </div>
             </div>
           </div>
+        </div>
       </section>
     );
   };

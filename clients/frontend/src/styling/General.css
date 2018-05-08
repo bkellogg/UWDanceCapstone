@@ -19,14 +19,14 @@
     width: 95%;
 }
 
-.card1, .card2{
+.fullWidthCard, .card2{
     width: 100%;
     margin-bottom: 30px;
     margin-top: 30px;
     padding: 25px;
 }
 
-.card1, .card2, .setTimes, .dancersList-filter, .overlapAvailability, .choreographersSelecteCast, .restOfCast, .cardBody{
+.fullWidthCard, .card2, .setTimes, .dancersList-filter, .overlapAvailability, .choreographersSelecteCast, .restOfCast, .cardBody{
         border: 0;
     -webkit-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
     -moz-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
@@ -37,7 +37,7 @@
     padding: 0;
 }
 
-.card1, .card2, .choreographersSelecteCast, .restOfCast, .dancersList-filter, .setTimes{
+.fullWidthCard, .card2, .choreographersSelecteCast, .restOfCast, .dancersList-filter, .setTimes{
     background-color: #F6F8FC;
 }
 
@@ -68,12 +68,9 @@ h2{
     color: red
 }
 
-
-
 .toggleHeader h2 {
     display: inline-block;
-    width: 95%;
-    
+    width: 95%; 
 }
 
 .toggleHeader i {
@@ -82,7 +79,7 @@ h2{
 
 /*PEOPLE NAME WITH A LINK TO THEIR PROFILE*/
 .personNameLink{
-    color: inherit;
+    color: #22A7E0;
 }
 
 .personNameLink:hover{

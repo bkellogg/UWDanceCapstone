@@ -1,10 +1,9 @@
-
-.SignUpLanding {
+/*SIGN UP PAGE */
+.signUpLanding {
   background-image: url('../imgs/dance-bw.jpg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-
   position: absolute;
   top: 0;
   left: 0;
@@ -14,27 +13,26 @@
   width: 100vw;
 
 }
-.Functionality{
+.functionality{
   height: 100vh;
   overflow: scroll;
 }
 
+/*SKIP EXTRA SIGN UP INFO*/
 .signUpSkipButton{
   background-color: transparent;
   box-shadow: none;
   color: #22A7E0;
+  cursor: pointer;
 }
 
+/*BIO FORM*/
 .bioTextbox{
   display: block;
 }
 
 .extra-signup-input-field{
   margin-bottom: 30px;
-}
-
-.signUpSkipButton {
-  cursor: pointer;
 }
 
 @media only screen and (max-width : 992px) {
