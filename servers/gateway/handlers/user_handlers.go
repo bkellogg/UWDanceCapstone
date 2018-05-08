@@ -192,6 +192,8 @@ func (ctx *AuthContext) UserMembershipActionDispatcher(w http.ResponseWriter, r 
 		return ctx.handleUserAuditionComment(userID, objID, u, w, r)
 	case objType == "auditions" && subObject == "availability":
 		return ctx.handleUserAuditionAvailability(userID, objID, u, w, r)
+	case objType == "shows" && subObject == "choreographer":
+		return ctx.handleChoreographerShowPiece(userID, objID, w, u)
 	default:
 		return subObjectNotSupported()
 	}

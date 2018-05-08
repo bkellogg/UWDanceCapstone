@@ -186,10 +186,19 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 			log.Printf("error marking old invite as expired: %s", dberr.Message)
 		}
 
-		dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, time.Now().Add(appvars.AcceptCastTime))
+		inPiece, dberr := ctx.Session.Store.UserIsInPiece(id, piece.ID)
 		if dberr != nil {
-			log.Printf("error creating new user piece pending entry: %v", dberr.Message)
+			log.Printf("error determining if user is in piece: %s", dberr.Message)
 		}
+
+		// only create a new invite if the user is not already in the piece.
+		if !inPiece {
+			dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, time.Now().Add(appvars.AcceptCastTime))
+			if dberr != nil {
+				log.Printf("error creating new user piece pending entry: %v", dberr.Message)
+			}
+		}
+
 		tplVars := &models.CastingConfVars{
 			Name:      user.FirstName,
 			ChorFName: u.FirstName,

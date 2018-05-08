@@ -59,7 +59,7 @@ func (c *CastingSession) LoadFromAudition(id int) *middleware.HTTPError {
 	}
 	c.Audition = id
 	c.mx.Lock()
-	defer c.mx.Unlock()
+	defer unlockLog(&c.mx, fmt.Sprintf("loading from audition %d", id))
 	log.Printf("loading from audition id %d...\n", id)
 
 	ualrs, dberr := c.Store.GetUserAuditionLinksByAuditionID(id)
@@ -89,7 +89,7 @@ func (c *CastingSession) GetClient(id int64) (*WebSocketClient, bool) {
 // Waits until all routines interacting with the session finish before flushing.
 func (c *CastingSession) Flush() {
 	c.mx.Lock()
-	defer c.mx.Unlock()
+	defer unlockLog(&c.mx, "flushing current casting state")
 	log.Printf("flushing current casting state...\n")
 
 	c.HasBegun = false
@@ -105,7 +105,7 @@ func (c *CastingSession) Flush() {
 // to the casting session.
 func (c *CastingSession) AddChoreographer(chor *models.User) error {
 	c.mx.Lock()
-	defer c.mx.Unlock()
+	defer unlockLog(&c.mx, fmt.Sprintf("adding choreographer with id %d", chor.ID))
 	log.Printf("adding choreographer with id %d...\n", chor.ID)
 
 	if !c.HasBegun {
@@ -131,7 +131,7 @@ func (c *CastingSession) AddChoreographer(chor *models.User) error {
 // Returns an error if one occurred.
 func (c *CastingSession) Handle(chorID int64, cu *ChoreographerUpdate) error {
 	c.mx.Lock()
-	defer c.mx.Unlock()
+	defer unlockLog(&c.mx, fmt.Sprintf("handling update from choreographer: %d", chorID))
 	log.Printf("handling update from choreographer %d...\n", chorID)
 
 	if !c.choreographerExists(chorID) {
@@ -150,7 +150,7 @@ func (c *CastingSession) Handle(chorID int64, cu *ChoreographerUpdate) error {
 // been casted by the choreographer. Returns an error if one occurred.
 func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, error) {
 	c.mx.Lock()
-	defer c.mx.Unlock()
+	defer unlockLog(&c.mx, fmt.Sprintf("confirming cast for %d", chorID))
 
 	if !c.HasBegun {
 		return nil, errors.New("casting session has not begun")
@@ -470,4 +470,12 @@ type Dancer models.UserAuditionLinkResponse
 // RankedDancer or an error if one occurred.
 func (d *Dancer) Rank(rank int) *RankedDancer {
 	return &RankedDancer{Dancer: d, Rank: int64(rank)}
+}
+
+// DEBUG FUNCTION. unlocks the given mutex and logs to standard out
+// its progress in the given context
+func unlockLog(mx *sync.RWMutex, context string) {
+	log.Printf("unlocking in context: %s\n", context)
+	mx.Unlock()
+	log.Printf("unlocked in context: %s\n", context)
 }

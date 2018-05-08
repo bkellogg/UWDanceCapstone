@@ -29,11 +29,21 @@ func (ctx *AuthContext) UserObjectDispatcher(w http.ResponseWriter, r *http.Requ
 		if dberr != nil {
 			return middleware.HTTPErrorFromDBErrorContext(dberr, "getting pending user pieces")
 		}
-		if len(pieces) == 0 {
-			return HTTPError("user has no pending pieces", http.StatusNotFound)
-		}
 		return respond(w, pieces, http.StatusOK)
 	default:
 		return objectTypeNotSupported()
 	}
+}
+
+// hanldeChoreographerShowPiece handles requests for getting the given user's shows that
+// they are choreographing in the given show, if they exist.
+func (ctx *AuthContext) handleChoreographerShowPiece(userID, showID int, w http.ResponseWriter, u *models.User) *middleware.HTTPError {
+	if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
+		return permissionDenied()
+	}
+	piece, dberr := ctx.store.GetChoreographerShowPiece(showID, userID)
+	if dberr != nil {
+		return HTTPError(dberr.Message, dberr.HTTPStatus)
+	}
+	return respond(w, piece, http.StatusOK)
 }

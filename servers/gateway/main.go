@@ -113,8 +113,8 @@ func main() {
 	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
 	announcementsRouter := baseRouter.PathPrefix(appvars.AnnouncementsPath).Subrouter()
-	announcementsRouter.Handle(appvars.ResourceID, authorizer.Authorize(announcementContext.SpecificAnnouncementHandler))
 	announcementsRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.AnnouncementTypesHandler))
+	announcementsRouter.Handle(appvars.ResourceID, authorizer.Authorize(announcementContext.SpecificAnnouncementHandler))
 	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(announcementContext.AnnouncementsHandler))
 	announcementsRouter.Handle("/dummy", authorizer.Authorize(announcementContext.DummyAnnouncementHandler))
 

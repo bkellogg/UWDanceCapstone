@@ -6,8 +6,8 @@ const (
 	ProfilePicturePath       = "/static/images/users/"
 	ProfileResumePath        = "/static/resumes/"
 	ProfileUploadMaxFileSize = 5242880
-	ProfileBioMaxCharacters  = 750
-	ProfileBioMaxWords       = 60
+	ProfileBioMaxCharacters  = 1500
+	ProfileBioMaxWords       = 300
 
 	AvailMinBlockLength = 30
 
