@@ -256,7 +256,7 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 			function = ctx.store.RemoveUserFromPiece
 			message = "user removed from piece"
 		} else if objType == "auditions" {
-			if !ctx.permChecker.UserCan(u, permissions.RemoveUserFromAudition) {
+			if !ctx.permChecker.UserCanRemoveUserFromAudition(u, int64(userID)) {
 				return permissionDenied()
 			}
 			function = ctx.store.RemoveUserFromAudition

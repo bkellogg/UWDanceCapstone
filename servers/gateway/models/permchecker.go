@@ -180,6 +180,10 @@ func (pc *PermissionChecker) UserCanAddToPiece(u *User, pieceID int64) bool {
 	return ok
 }
 
+func (pc *PermissionChecker) UserCanRemoveUserFromAudition(u *User, target int64) bool {
+	return pc.userHasPermissionTo(u, target, permissions.RemoveUserFromAudition)
+}
+
 func (pc *PermissionChecker) UserCanAddToAudition(u *User, target int64) bool {
 	return pc.userHasPermissionTo(u, target, permissions.AddUserToAudition)
 }
