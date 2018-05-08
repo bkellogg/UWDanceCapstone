@@ -155,7 +155,7 @@ class Piece extends Component {
         <div className="mainView">
         <div className="pageContentWrap">
           <h1>My Piece</h1>
-          <div className="card1">
+          <div className="fullWidthCard">
             {
               !this.state.openCalendar &&
               // Styling for toggle header is in general
@@ -188,7 +188,7 @@ class Piece extends Component {
               </section>
             }
           </div>
-          <div className="card1">
+          <div className="fullWidthCard">
           {
             !this.state.openCast &&
             // Styling for toggle header is in general
@@ -229,7 +229,7 @@ class Piece extends Component {
             </section>
           } 
           </div>
-          <div className="card1">
+          <div className="fullWidthCard">
             {
               !this.state.openInfo &&
               <div className="toggleHeader">

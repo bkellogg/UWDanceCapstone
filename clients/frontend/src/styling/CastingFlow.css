@@ -144,8 +144,6 @@ th{
 }
 
 
-/* ADD DANCERS */
-
 /* STEP 4 */
 .setTimes{
     width: 100%;
@@ -175,8 +173,7 @@ th{
 .selectField{
     position: relative;
     display: inline-block;
-    width: 100%;
-
+    width: 100%; 
 }
 
 .buttonsWrap{
@@ -200,7 +197,6 @@ th{
 
 .choreos{
     display: inline-block;
-
 }
 
 .dancerAssignedNumber{
@@ -211,7 +207,6 @@ th{
 
 
 /**Hover over exclamation point**/
-
 .tooltip {
     position: relative;
 }
@@ -248,8 +243,6 @@ th{
     visibility: visible;
     opacity: 1;
 }
-
-
 
 /*SHARED*/
 .smallHeading{

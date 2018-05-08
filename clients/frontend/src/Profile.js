@@ -257,7 +257,7 @@ class Profile extends Component {
 
   updateImage = (img) => {
     this.setState({
-      photoUpload : img
+      photoUpload: img
     })
   }
 
@@ -265,123 +265,123 @@ class Profile extends Component {
     return (
       <section className="main">
         <div className="mainView">
-        <div className="pageContentWrap">
-          <h1 className="pagetitle">Your Profile </h1>
+          <div className="pageContentWrap">
+            <h1 className="pagetitle">Your Profile </h1>
 
-          <div className="card1">
-            {/* FIRST CARD */}
-            <div className="wrap">
-              <div className="header">
-                <div className="photoContainerWrap">
-                  <div id="photoContainer" className="photoContainer">
-                    {!this.state.edit &&
+            <div className="fullWidthCard">
+              {/* FIRST CARD */}
+              <div className="wrap">
+                <div className="header">
+                  <div className="photoContainerWrap">
+                    <div id="photoContainer" className="photoContainer">
+                      {!this.state.edit &&
 
-                      <img id="photo" alt="profile" src={this.state.photoSrc}></img>
-                    }
-                    {this.state.edit &&
-                      <section>
-                        <div> Upload a head shot as a jpg file. </div>
-                        <AvatarEditorConsole img = {this.state.photoSrc} changeImg={this.updateImage}/>
-                      </section>
-                    }
-                  </div>
-                </div>
-
-                <div className="nameAndBioWrap">
-                  <div id="name" className="name">
-
-                    {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
-
-
-                    {this.state.edit &&
-                      <div id="editName">
-                        <Row>
-                          <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
-                          <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
-                        </Row>
-                      </div>
-                    }
-                  </div>
-
-                  <div id="bio" className="bio">
-                    <div className="subheader"><b>Dancer Bio:</b></div>
-                    {!this.state.edit &&
-                      <section>
-                        {this.state.bio !== "" && this.state.bio}
-                        {this.state.bio === "" && " Dancer has no bio"}
-                      </section>
-                    }
-                    {this.state.edit &&
-                      <div id="editBio">
-                        <div className="row">
-                          <form className="col s12">
-                            <div className="row">
-                              <div className="input-field col s12">
-                                <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
-                                <label htmlFor="textarea1">Bios should be 60 words or less</label>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-
-                    }
-                
-                  </div>
-                  
-                </div>
-                {!this.state.edit &&
-                      <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                        <i className="large material-icons"> mode_edit </i>
-                      </Button>
-
-                    }
-                    {this.state.edit &&
-                      <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                        <i className="large material-icons"> check </i>
-                      </Button>
-                    }
-              </div>
-            </div>
-            <div className="mainContentBorder">
-              <div id="history">
-                <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-                {this.state.history.length > 0 && this.state.history.map((p, i) => {
-                  return (
-                    //TODO STYLE THESE
-                    <div className="showHistory" key={i}>
-                      <p>{p.name}</p>
-                      <p>{p.year}</p>
+                        <img id="photo" alt="profile" src={this.state.photoSrc}></img>
+                      }
+                      {this.state.edit &&
+                        <section>
+                          <div> Upload a head shot as a jpg file. </div>
+                          <AvatarEditorConsole img={this.state.photoSrc} changeImg={this.updateImage} />
+                        </section>
+                      }
                     </div>
-                  )
-                })}
-                {this.state.history.length === 0 &&
-                  <p> Dancer has no piece history </p>
-                }
-              </div>
+                  </div>
 
-              <div id="resume">
-                {!this.state.edit &&
-                  <section>
-                    {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                    {this.state.resume != null && (
-                      <div>
-                        <a href={Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                  <div className="nameAndBioWrap">
+                    <div id="name" className="name">
+
+                      {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+
+
+                      {this.state.edit &&
+                        <div id="editName">
+                          <Row>
+                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
+                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
+                          </Row>
+                        </div>
+                      }
+                    </div>
+
+                    <div id="bio" className="bio">
+                      <div className="subheader"><b>Dancer Bio:</b></div>
+                      {!this.state.edit &&
+                        <section>
+                          {this.state.bio !== "" && this.state.bio}
+                          {this.state.bio === "" && " Dancer has no bio"}
+                        </section>
+                      }
+                      {this.state.edit &&
+                        <div id="editBio">
+                          <div className="row">
+                            <form className="col s12">
+                              <div className="row">
+                                <div className="input-field col s12">
+                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
+                                  <label htmlFor="textarea1">Bios should be 60 words or less</label>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+
+                      }
+
+                    </div>
+
+                  </div>
+                  {!this.state.edit &&
+                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                      <i className="large material-icons"> mode_edit </i>
+                    </Button>
+
+                  }
+                  {this.state.edit &&
+                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                      <i className="large material-icons"> check </i>
+                    </Button>
+                  }
+                </div>
+              </div>
+              <div className="mainContentBorder">
+                <div id="history">
+                  <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+                  {this.state.history.length > 0 && this.state.history.map((p, i) => {
+                    return (
+                      //TODO STYLE THESE
+                      <div className="showHistory" key={i}>
+                        <p>{p.name}</p>
+                        <p>{p.year}</p>
                       </div>
-                    )}
+                    )
+                  })}
+                  {this.state.history.length === 0 &&
+                    <p> Dancer has no piece history </p>
+                  }
+                </div>
 
-                  </section>
-                }
-                {this.state.edit &&
-                  <section>
-                    <div> Upload your dance resume as a PDF. </div>
-                    <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
-                  </section>
-                }
+                <div id="resume">
+                  {!this.state.edit &&
+                    <section>
+                      {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                      {this.state.resume != null && (
+                        <div>
+                          <a href={Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                        </div>
+                      )}
+
+                    </section>
+                  }
+                  {this.state.edit &&
+                    <section>
+                      <div> Upload your dance resume as a PDF. </div>
+                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                    </section>
+                  }
+                </div>
+
               </div>
-
             </div>
-</div>
 
           </div>
         </div>
