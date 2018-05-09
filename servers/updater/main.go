@@ -5,8 +5,8 @@
 package main
 
 import (
-	"net/http"
 	"log"
+	"net/http"
 	"os/exec"
 )
 
@@ -14,8 +14,8 @@ func main() {
 	addr := ":4100"
 	http.HandleFunc("/update", UpdateHandler)
 	log.Println("update server is listenting on https://" + addr + "...")
-	log.Fatal(http.ListenAndServeTLS(addr, "/root/dasc.capstone.ischool.uw.edu-cert.pem",
-		"/root/dasc.capstone.ischool.uw.edu-key.pem", nil))
+	log.Fatal(http.ListenAndServeTLS(addr, "/root/fullchain.pem",
+		"/root/privkey.pem", nil))
 }
 
 func UpdateHandler(w http.ResponseWriter, r *http.Request) {
@@ -23,7 +23,7 @@ func UpdateHandler(w http.ResponseWriter, r *http.Request) {
 	cmd.Dir = "/static"
 	output, err := cmd.Output()
 	if err != nil {
-		http.Error(w, "error executing command: " + err.Error(), http.StatusInternalServerError)
+		http.Error(w, "error executing command: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)

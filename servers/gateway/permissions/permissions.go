@@ -35,6 +35,7 @@ const (
 	ModifyShowAuditionRelationship = 100
 
 	SendAnnouncements       = 70
+	DeleteAnnouncements     = 70
 	SeeAnnouncements        = 10
 	SeeAnnouncementTypes    = SeeAnnouncements
 	CreateAnnouncementTypes = 80

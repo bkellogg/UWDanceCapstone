@@ -148,8 +148,13 @@ CREATE TABLE Announcements (
     FOREIGN KEY (AnnouncementTypeID) REFERENCES AnnouncementType(AnnouncementTypeID)
 );
 
+
 -- CREATE DEFAULT NECESSARY VALUES
 INSERT INTO Role (RoleName, RoleDisplayName, RoleLevel, IsDeleted) VALUES
     ('admin', 'Administrator', 100, FALSE),
     ('chor', 'Choreographer', 70, FALSE),
     ('user', 'Dancer', 10, FALSE);
+
+INSERT INTO AnnouncementType
+    (AnnouncementTypeID, AnnouncementTypeName, AnnouncementTypeDesc, CreatedAt, CreatedBy, IsDeleted)
+    VALUES (1, 'admin', 'Announcement made by a UW STAGE Staff Admin', NOW(), 1, 0);
