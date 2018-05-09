@@ -36,7 +36,7 @@ type CastingSession struct {
 
 // NewCastingSession returns a casting session hooked up
 // to the given database.
-func NewCastingSession(db *models.Database, notifer *Notifier) *CastingSession {
+func NewCastingSession(db *models.Database, notifier *Notifier) *CastingSession {
 	return &CastingSession{
 		HasBegun:       false,
 		Store:          db,
@@ -45,7 +45,7 @@ func NewCastingSession(db *models.Database, notifer *Notifier) *CastingSession {
 		Choreographers: make(map[Choreographer]*models.User),
 		Uncasted:       make(map[DancerID]struct{}),
 		Casted:         make(map[DancerID]map[Choreographer]struct{}),
-		notifier:       notifer,
+		notifier:       notifier,
 	}
 }
 
@@ -57,9 +57,9 @@ func (c *CastingSession) LoadFromAudition(id int) *middleware.HTTPError {
 		return middleware.NewHTTPError("cannot load from audition into a casting session that has already begun",
 			http.StatusInternalServerError)
 	}
-	c.Audition = id
 	c.mx.Lock()
 	defer unlockLog(&c.mx, fmt.Sprintf("loading from audition %d", id))
+	c.Audition = id
 	log.Printf("loading from audition id %d...\n", id)
 
 	ualrs, dberr := c.Store.GetUserAuditionLinksByAuditionID(id)
@@ -119,7 +119,7 @@ func (c *CastingSession) AddChoreographer(chor *models.User) error {
 	} else {
 		log.Printf("%d is not a new choreographer\n", chor.ID)
 	}
-	castingUpdate, err := c.ToCastingUpdate(chor.ID)
+	castingUpdate, err := c.toCastingUpdate(chor.ID)
 	if err != nil {
 		return fmt.Errorf("error dispatching current choreographer state: %v", err)
 	}
@@ -160,7 +160,7 @@ func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, error) {
 
 	// confirm that the choreographer is in the current casting session
 	if _, exists := c.Choreographers[chor]; !exists {
-		return nil, errors.New("choreograper is not currently casting in this session")
+		return nil, errors.New("choreographer is not currently casting in this session")
 	}
 
 	// confirm that the choreographer does not have any dancer that
@@ -221,7 +221,7 @@ func (c *CastingSession) choreographerExists(id int64) bool {
 // in the current casting session
 func (c *CastingSession) sendUpdates() error {
 	for chor, _ := range c.Choreographers {
-		updateToSend, err := c.ToCastingUpdate(int64(chor))
+		updateToSend, err := c.toCastingUpdate(int64(chor))
 		if err != nil {
 			return fmt.Errorf("error generating casting update: %v", err)
 		}
@@ -330,9 +330,9 @@ func (c *CastingSession) makeContestedDancer(id DancerID, rank int,
 	return cd
 }
 
-// ToCastingUpdate returns the casting session as a CastingUpdate
+// toCastingUpdate returns the casting session as a CastingUpdate
 // for the specified choreographer. Unsafe for concurrent access
-func (c *CastingSession) ToCastingUpdate(chorID int64) (*CastingUpdate, error) {
+func (c *CastingSession) toCastingUpdate(chorID int64) (*CastingUpdate, error) {
 	if !c.HasBegun {
 		return nil, errors.New("casting session has not begun")
 	}
@@ -387,6 +387,15 @@ func (c *CastingSession) ToCastingUpdate(chorID int64) (*CastingUpdate, error) {
 	sort.Slice(castingUpdate.Cast, RDSlice(castingUpdate.Cast).Less)
 
 	return castingUpdate, nil
+}
+
+// ToCastingUpdate generates a casting update for the given choreographer.
+// Returns an error if one occurred. Safe for concurrent access.
+func (c *CastingSession) ToCastingUpdate(chor int64) (*CastingUpdate, error) {
+	c.mx.Lock()
+	cu, err := c.toCastingUpdate(chor)
+	unlockLog(&c.mx, fmt.Sprintf("public casting update generation for chor: %d", chor))
+	return cu, err
 }
 
 // ChoreographerUpdate defines how a single choreographer's

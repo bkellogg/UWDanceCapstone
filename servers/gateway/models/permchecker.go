@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"sync"
 
@@ -89,6 +90,12 @@ func (pc *PermissionChecker) ConvertUserSliceToUserResponseSlice(users []*User) 
 // correspond to a Role.
 // TODO: THIS FUNCTION SHOULD NOT BE IN THE PERMISSION CHECKER
 func (pc *PermissionChecker) ConvertUserToUserResponse(u *User) (*UserResponse, error) {
+	if pc.rc == nil {
+		pc.rc = newRoleCache()
+		if err := pc.buildRoleCache(); err != nil {
+			return nil, fmt.Errorf("error building role cache: %v", err)
+		}
+	}
 	role := pc.rc.getRole(int64(u.RoleID))
 	if role == nil {
 		return nil, errors.New("user's roleID does not correspond to a Role")
