@@ -1,6 +1,5 @@
 "use strict";
 refreshLocalUser();
-let auth = getAuth();
 
 var showForm = document.querySelector(".show-form");
 var errorBox = document.querySelector(".js-error");
@@ -8,22 +7,21 @@ var showType = document.getElementById("showType");
 var auditionName = document.getElementById("audition-name-input");
 var getLocation = document.getElementById("location-input");
 var quarter = document.getElementById("quarter-name-input");
- 
 
 populateShowTypeOptions();
 
 
 showForm.addEventListener("submit", function (evt) {
-    var auditionTime = $("#datetimepicker2").find("input").val();
+    var auditionTime = $("#datetimepicker2").data("DateTimePicker").viewDate();
+    var finalAuditionTime = moment(auditionTime).format();
     evt.preventDefault();
     var payload = {
         "name": auditionName.value,
         "location": getLocation.value,
-        "time": auditionTime,
+        "time": finalAuditionTime,
         "quarter": quarter.value
     }
-    console.log(payload);
-    makeRequest("//", payload, "POST", true)
+    makeRequest("auditions", payload, "POST", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -31,7 +29,26 @@ showForm.addEventListener("submit", function (evt) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            location.reload();
+            var showTime = $("#datetimepicker1").data("DateTimePicker").viewDate();
+            var finalShowTime = moment(showTime).format();
+            let createShow = {
+                "typeName": showType.value,
+                "endDate": finalShowTime,
+                "auditionID": data.id
+            };
+            makeRequest("shows", createShow, "POST", true)
+                .then((res) => {
+                    if (res.ok) {
+                        return res.json();
+                    };
+                    return res.text().then((t) => Promise.reject(t));
+                })
+        })
+        .then((data) => {
+            alert("Show Successfully Created" )
+            $('input').val('');
+            $('.show-form')[0].reset();
+            return data;
         })
         .catch((err) => {
             errorBox.textContent = err;
@@ -60,7 +77,9 @@ function populateShowTypeOptions() {
 // Add datetimepicker
 $(function () {
     $('#datetimepicker1').datetimepicker({
-        //format: 'DD-MM-YYYY HH:mm:ss'
+        sideBySide: true
     });
-    $('#datetimepicker2').datetimepicker();
+    $('#datetimepicker2').datetimepicker({
+        sideBySide: true
+    });
 });
