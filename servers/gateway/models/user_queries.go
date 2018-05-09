@@ -34,7 +34,7 @@ func (store *Database) UserIsInAudition(userID, audID int) (bool, *DBError) {
 }
 
 // AddUserToPiece adds the given user to the given piece.
-func (store *Database) AddUserToPiece(userID, pieceID int) *DBError {
+func (store *Database) AddUserToPiece(userID, pieceID int, markInvite bool, inviteStatus string) *DBError {
 	_, dberr := store.GetPieceByID(pieceID, false)
 	if dberr != nil {
 		return dberr
@@ -47,10 +47,34 @@ func (store *Database) AddUserToPiece(userID, pieceID int) *DBError {
 	if exists {
 		return NewDBError("user is already in this piece", http.StatusBadRequest)
 	}
-	_, err := store.db.Exec(`INSERT INTO UserPiece (UserID, PieceID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?)`,
+
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	_, err = tx.Exec(`INSERT INTO UserPiece (UserID, PieceID, CreatedAt, IsDeleted) VALUES (?, ?, ?, ?)`,
 		userID, pieceID, addTime, false)
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error isnerting user piece link: %v", err), http.StatusInternalServerError)
+	}
+
+	if markInvite {
+		if inviteStatus != appvars.CastStatusAccepted && inviteStatus != appvars.CastStatusDeclined {
+			return NewDBError("invalid invite status provided", http.StatusBadRequest)
+		}
+		_, err := tx.Exec(`UPDATE UserPiecePending UPP SET UPP.Status = ?
+				WHERE UPP.UserID = ?
+				AND UPP.PieceID = ?
+				AND UPP.IsDeleted = FALSE
+				AND UPP.Status = ?`, inviteStatus, userID, pieceID, appvars.CastStatusPending)
+		if err != nil {
+			return NewDBError(fmt.Sprintf("error updating user piece invite: %v", err), http.StatusInternalServerError)
+		}
+		if err = tx.Commit(); err != nil {
+			return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+		}
 	}
 	return nil
 }

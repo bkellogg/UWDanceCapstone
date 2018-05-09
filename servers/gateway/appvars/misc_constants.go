@@ -1,5 +1,14 @@
 package appvars
 
+import "time"
+
+var StageURL string
+
 const (
-	StageURL = "https://dasc.capstone.ischool.uw.edu/"
+	AcceptCastTime = time.Hour * 24 * 2
+
+	CastStatusPending  = "pending"
+	CastStatusDeclined = "declined"
+	CastStatusAccepted = "accepted"
+	CastStatusExpired  = "expired"
 )

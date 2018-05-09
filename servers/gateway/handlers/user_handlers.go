@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -236,10 +237,10 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 			}
 			return respondWithString(w, "user added to audition", http.StatusOK)
 		} else if objType == "pieces" {
-			if !ctx.permChecker.UserCan(u, permissions.AddUserToPiece) {
+			if !ctx.permChecker.UserCanAddToPiece(u, int64(objID)) {
 				return permissionDenied()
 			}
-			err := ctx.store.AddUserToPiece(userID, objID)
+			err := ctx.store.AddUserToPiece(userID, objID, true, appvars.CastStatusAccepted)
 			if err != nil {
 				return HTTPError(err.Message, err.HTTPStatus)
 			}

@@ -63,6 +63,31 @@ func (store *Database) InsertAnnouncement(na *NewAnnouncement) (*Announcement, *
 	}, nil
 }
 
+// DeleteAnnouncementByID deletes the announcement with the given
+// id.
+func (store *Database) DeleteAnnouncementByID(id int) *DBError {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+	res, err := tx.Exec(`UPDATE Announcements A SET A.IsDeleted = TRUE WHERE A.AnnouncementID = ?`, id)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error deleting announcement: %v", err), http.StatusInternalServerError)
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if rowsAffected != 1 {
+		return NewDBError("no announcement found", http.StatusNotFound)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
 // getAnnouncementTypeByName returns the announcementType that has that name or an error if one occurred.
 func (store *Database) getAnnouncementTypeByName(name string, includeDeleted bool) (*AnnouncementType, error) {
 	query := `SELECT * FROM AnnouncementType AT WHERE AT.AnnouncementTypeName = ?`

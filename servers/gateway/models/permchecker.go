@@ -169,6 +169,17 @@ func (pc *PermissionChecker) UserCanSeeAvailability(u *User, target int64) bool 
 	return pc.userHasPermissionTo(u, target, permissions.SeeUserAvailability)
 }
 
+func (pc *PermissionChecker) UserCanAddToPiece(u *User, pieceID int64) bool {
+	if pc.UserCan(u, permissions.AddUserToPiece) {
+		return true
+	}
+	ok, dberr := pc.db.UserHasInviteForPiece(u.ID, pieceID)
+	if dberr != nil {
+		log.Printf("error checking user invite for piece: %s", dberr.Message)
+	}
+	return ok
+}
+
 func (pc *PermissionChecker) UserCanAddToAudition(u *User, target int64) bool {
 	return pc.userHasPermissionTo(u, target, permissions.AddUserToAudition)
 }
