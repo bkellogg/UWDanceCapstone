@@ -1,43 +1,99 @@
-.overlapDays{
+/*HEADER AND LEGEND WRAP*/
+.cardTitleWrap{
     display: inline-block;
-    width: 75px;
-    
+    width: 100%;
+    padding-bottom: 20px;
 }
 
-.daysSimple {
+    /*HEADER*/
+.headerWrap{
     display: inline-block;
+}
+
+    /*LEGEND*/
+.legend{
+    width: auto;
+    display: inline-flex;
+    position: relative;
+    float: right;
+}
+
+.colorsWrap{
+    width: 99px;
+    height: 20px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.lightLegendColor, .mediumLegendColor, .darkLegendColor{
+    width: 33px;
+    height: 15px;
+    display: inline-block;
+}
+
+.lightLegendColor{
+    background-color: red;
+}
+
+.mediumLegendColor{
+    background-color: blue;
+}
+
+.darkLegendColor{
+    background-color: black;
+}
+
+.colorIndicator{
+    margin: 0;
+    color: hsl(0, 0%, 45%);
+    font-size: 12px;
+}
+
+/*OVERLAP CALENDAR CONTENT*/
+.availabilityCalendar{
+    position: static;
+    overflow: hidden;
+}
+
+.overlapDays, .daysSimple, .timesRow, .timeBlock, .colorIndicator{
+    display: inline-block;
+}
+
+    /*COLUMN WITH BLOCKS FOR EACH DAY MON-SUN*/
+.overlapDays{
+    width: 75px;  
+}
+
+    /*AM-PM TIMES ON LEFT SIDE*/
+.timesRow{
+    margin-right: 15px;
+    vertical-align: top;
+}
+    /*INDIVIDUAL TIME ON LEFT SIDE*/
+.timesSimple{
+    height: 25px;
+    font-size: 12px;
+    width: auto;
+    /* border-bottom: 0.5px solid rgb(219, 219, 219); */
+}
+
+    /*INDIVIDUAL DAYS MON-SUN ON TOP*/
+.daysSimple {
     width: 75px;
     height: 25px;
     font-size: 12px;
     text-align: center;
 }
 
-
- 
+    /*AVAILABILITY BLOCKS*/
 .overlapTimes {
     height: 25px;
+    width: auto;
     border: 0.5px solid rgb(219, 219, 219);
 }
 
-.timesRow{
-    display: inline-block;
-    margin-right: 15px;
-}
 
-.timeBlock{
-    display:inline-block
-}
 
-.timesSimple{
-    height: 25px;
-    font-size: 12px;
-}
 
-.calendarWrap{
-    width: 600px;
-}
 
-.availabilityCalendar{
-    position: static;
-    overflow: hidden;
-}
+

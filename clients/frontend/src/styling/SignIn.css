@@ -5,21 +5,22 @@ body,html {
 
 }
 
-.LogInLanding {
+.logInLanding {
   background-image: url('../imgs/dance-bw.jpg');
   background-position: center center;
   background-repeat: no-repeat;
   background-size: cover;
-
   position: relative;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
+  height: 100vh;
+  width: 100vw;
 }
 
-.Functionality{
-  width: 100%;
+.functionality{
+  height: 100vh;
   padding: 30px;
   text-align: center;
 }
@@ -31,7 +32,7 @@ body,html {
   z-index: 1;
 }
 
-.content {
+.signIn-SignUpContent {
   opacity: 0.95;
   background-color: white;
   width: auto;
@@ -46,6 +47,7 @@ body,html {
 
 .authenticate {
   text-align: left;
+  margin-bottom: 50px;
 }
 
 .title {
@@ -58,16 +60,16 @@ Button {
   margin: 10px;
 }
 
-.Link{
+.link{
   padding-top: 25px;
 }
 
-.signlink {
+.blueTextLink {
   color: #22A7E0;
   cursor: pointer;
 }
 
-.signlink:hover{
+.blueTextLink:hover{
   text-decoration: underline;
 }
 
@@ -75,9 +77,19 @@ Button {
   visibility: hidden
 }
 
+.fa-arrow-circle-left {
+  padding-top:20px;
+  padding-left:20px;
+  cursor: pointer
+}
+
+.fa-arrow-circle-left:hover {
+  color: lavender
+}
+
 
 @media only screen and (max-width : 992px) {
-  .LogInLanding {
+  .logInLanding {
     background-image: url('../imgs/dance-bw.jpg');
     background-position: center;
     background-repeat: no-repeat;
@@ -87,6 +99,5 @@ Button {
     left: 0;
     bottom: 0;
     right: 0;
-  
   }
 } 

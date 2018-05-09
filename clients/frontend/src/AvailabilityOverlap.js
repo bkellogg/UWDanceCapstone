@@ -45,24 +45,24 @@ class AvailabilityOverlap extends Component {
     };
   };
 
-  componentDidMount() {
+  componentWillMount() {
     this.setState({
-      dayTimes : this.getAllDancerOverlap(this.props.filteredCast)
+      dayTimes: this.getAllDancerOverlap(this.props.filteredCast)
     })
   }
 
-  componentWillReceiveProps(props){
+  componentWillReceiveProps(props) {
     this.setState({
       cast: props.cast,
       filteredCast: props.filteredCast,
-      dayTimes : this.getAllDancerOverlap(props.filteredCast)
+      dayTimes: this.getAllDancerOverlap(props.filteredCast)
     })
   }
 
   flushDayTimes = () => {
     let dayTimes = this.state.dayTimes
     let newWeek = []
-    dayTimes.map(days => { 
+    dayTimes.map(days => {
       newWeek.push([[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []])
       return newWeek
     })
@@ -70,15 +70,15 @@ class AvailabilityOverlap extends Component {
   }
 
   getAllDancerOverlap = (filteredCast) => {
-    
+
     let dayTimes = this.flushDayTimes()
 
     this.props.cast.map((dancer, i) => { //go through each dancer
 
       let days = dancer.dancer.availability.days
       let id = dancer.dancer.user.id
-      if(filteredCast.indexOf(id) >= 0 && days !== undefined) { //check to see that they are in the filtered cast and did have an availability
-      
+      if (filteredCast.indexOf(id) >= 0 && days !== undefined) { //check to see that they are in the filtered cast and did have an availability
+
         days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
           let times = day.times
 
@@ -90,7 +90,7 @@ class AvailabilityOverlap extends Component {
             //okay so for the times in timesRef it works,but brendan put times in that aren't in our calendar
             //which is fine, but it means I am going to ignore times that aren't in our window, so when index = -1
             if (startIndex < 0 || endIndex < 0) {
-              return 
+              return
             }
             //moving on
             //now we only have valid start/end times and their location 
@@ -109,12 +109,12 @@ class AvailabilityOverlap extends Component {
       return days //arbitrary
     })
     //just going to go through contested dancers again because I am tired and lazy
-    if(this.props.contested) {
+    if (this.props.contested) {
       this.props.contested.map((dancer, i) => { //go through each dancer
         let days = dancer.rankedDancer.dancer.availability.days
         let id = dancer.rankedDancer.dancer.user.id
-        if(filteredCast.indexOf(id) >= 0) {
-        
+        if (filteredCast.indexOf(id) >= 0) {
+
           days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
             let times = day.times
 
@@ -147,7 +147,7 @@ class AvailabilityOverlap extends Component {
     }
 
     this.setState({
-      dayTimes : dayTimes
+      dayTimes: dayTimes
     })
 
     return dayTimes
@@ -164,21 +164,24 @@ class AvailabilityOverlap extends Component {
 
         //because I suck, we're going to reduce down to all the unique IDS in the array
         let uniqueIDs = [...new Set(times)];
-        if(uniqueIDs.length < colors.length){ //if the number of unique IDs is equal to or less than the number of colors we have, it gets a unique color
+        if (uniqueIDs.length < colors.length) { //if the number of unique IDs is equal to or less than the number of colors we have, it gets a unique color
           color = colors[uniqueIDs.length]
         } else { //otherwise it is getting the color at the end of the list
           color = colors[colors.length - 1]
         }
-         
+
         //this is the div with the specific time block
         return (
-          <div className="overlapTimes" style={{ "backgroundColor": color }}>
+          <div className="tooltip" key={j}>
+            <div className="overlapTimes" style={{ "backgroundColor": color }}>
+              <span className="tooltiptext">There are {uniqueIDs.length} dancers available at this time</span>
+            </div>
           </div>
         )
       })
       //this is the div for the day, that contains all the time blocks
       return (
-        <div className="overlapDays">
+        <div key={i} className="overlapDays">
           {overlapTimes}
         </div>
       )
@@ -186,7 +189,7 @@ class AvailabilityOverlap extends Component {
     //generates the days header
     let daysSimple = daysRef.map((day, i) => {
       return (
-        <div className="daysSimple">
+        <div key={i} className="daysSimple">
           {day}
         </div>
       )
@@ -194,17 +197,32 @@ class AvailabilityOverlap extends Component {
     //generates the times displayed on the side
     let timesSimple = timesFormatted.map((time, i) => {
       return (
-        <div className="timesSimple">
+        <div key={i} className="timesSimple">
           {time}
         </div>
       )
     })
 
+
+
     return (
       <section>
-        <h2 className="smallHeading">Availability</h2>
-        <div className="availabilityCalendar">
-          <div className="calendarWrap">
+        <div className="overlapAvailability">
+          <div className="cardTitleWrap">
+            <div className="headerWrap">
+              <h2 className="smallHeading">Availability</h2>
+            </div>
+            <div className="legend">
+              <p className="colorIndicator">Least Available</p>
+              <div className="colorsWrap">
+                <div className="lightLegendColor" style={{ "backgroundColor": colors[1] }}> </div>
+                <div className="mediumLegendColor" style={{ "backgroundColor": colors[4] }}> </div>
+                <div className="darkLegendColor" style={{ "backgroundColor": colors[8] }}> </div>
+              </div>
+              <p className="colorIndicator">Most Available</p>
+            </div>
+          </div>
+          <div className="availabilityCalendar">
             <div className="timesRow">
               {timesSimple}
             </div>
@@ -212,7 +230,7 @@ class AvailabilityOverlap extends Component {
               <div className="daysHeader">
                 {daysSimple}
               </div>
-              <div className="times">
+              <div className="overlapTimes">
                 {overlapDays}
               </div>
             </div>

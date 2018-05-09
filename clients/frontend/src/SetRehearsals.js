@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import * as Util from './util';
 import Button from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RehearsalRow from './RehearsalRow';
 import AvailabilityOverlap from './AvailabilityOverlap';
+import PersonRow from './PersonRow';
 
 import './styling/General.css';
 import './styling/CastingFlow.css';
@@ -42,10 +44,25 @@ class SetRehearsals extends Component {
   }
 
   postCasting = () => {
-    this.setState({
-      open: false,
-      finished: true
-    });
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", {}, "POST", true)
+    .then((res) => {
+      if (res.ok) {
+        return res.text()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(() => {
+      this.setState({
+        open: false,
+        finished: true
+      });
+    })
+    .catch(err => {
+      console.error(err)
+    })
   }
 
   handleOpen = () => {
@@ -73,7 +90,7 @@ class SetRehearsals extends Component {
   }
 
   setRehearsal = (rehearsal) => {
-    //TODO add handlers to deal with two rehearsals on the same day
+    //TODO add handlers to deal with two rehearsals on the same day and also everything every cri
     if (rehearsal.day !== "" && rehearsal.startTime !== "" && rehearsal.endTime !== "") {
       let rehearsals = this.state.rehearsalSchedule
       rehearsals.push(rehearsal)
@@ -81,6 +98,13 @@ class SetRehearsals extends Component {
         rehearsalSchedule: rehearsals
       })
     }
+  }
+
+  setStartDate = (e) => {
+    let date = e.target.value
+    this.setState({
+      startDate : date
+    })
   }
 
 
@@ -98,31 +122,53 @@ class SetRehearsals extends Component {
         <div key={i}> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime}. </div>
       )
     })
+
+    let castList = this.props.cast.map((dancer, i) => {
+      return (
+        <PersonRow p={dancer.dancer.user} setRehearsals={true} key={i} />
+      )
+    })
+    
     return (
       <section >
-        <div className="mainView">
-          <div className="transparentCard">
+        <div className="mainView mainContentView">
+        <div className="pageContentWrap">
             <div className="wrap">
               <div className="castList">
                 <div className="extraClass">
                   <div className="setTimes">
 
                     <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
+                    First Rehearsal Date
+                    <input type="date" name="rehearsalStartDate" id="rehearsalStartDate" onChange={this.setStartDate}/>
+                    Weekly Rehearsal Times
                     {rehearsals}
-
                     <div className="buttonsWrap">
                         <Button
                         backgroundColor="#708090"
                         style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
-                        onClick={this.removeRehearsal} disabled={finished}>
-                        REMOVE</Button>
-                        <Button
-                        backgroundColor="#708090"
-                        style={{ color: '#ffffff', float: 'right' }}
                         onClick={this.addRehearsal}
                         disabled={finished}>
                         ADD</Button>
+
+                        <Button
+                        backgroundColor="#708090"
+                        style={{ color: '#ffffff', float: 'right' }}
+                        onClick={this.removeRehearsal} disabled={finished}>
+                        REMOVE</Button>
                     </div>
+                  </div>
+                  <div className="choreographersSelecteCast">
+                    <h2 className="smallHeading">Your Cast</h2>
+                    <table>
+                      <tbody>
+                        <tr className="categories">
+                          <th>Name</th>
+                          <th>Email</th>
+                        </tr>
+                        {castList}
+                      </tbody>
+                    </table>
                   </div>
                   <div className="postCastingWrap">
                     <div className="postCasting">
@@ -137,11 +183,11 @@ class SetRehearsals extends Component {
 
                 </div>
 
-                <div className="overlapAvailability">
+                <div className="overlapAvailabilityWrap">
                 <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast}/> 
                </div>
               </div>
-              {/* AFTER CHOSING TIMES */}
+
               <Dialog
                 title="Confirm Casting"
                 actions={[

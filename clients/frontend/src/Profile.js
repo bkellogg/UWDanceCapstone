@@ -2,19 +2,13 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
-import AvatarEditorConsole from './AvatarEditor';
+import AvatarEditorConsole from './AvatarEditorConsole';
 import './styling/Profile.css';
 import './styling/General.css';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
-    this.getPhoto = this.getPhoto.bind(this);
-    this.onClick = this.onClick.bind(this);
-    this.inputChange = this.inputChange.bind(this);
-    this.resumeChange = this.resumeChange.bind(this);
-    this.photoChange = this.photoChange.bind(this);
-    this.formatHistory = this.formatHistory.bind(this);
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
@@ -40,11 +34,15 @@ class Profile extends Component {
     this.getResume();
 
     //TODO deal with the fact that there are going to be pages
-    Util.makeRequest("users/1/shows?history=all", {}, "GET", true)
+    Util.makeRequest("users/" + this.state.user.id + "/shows?history=all", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then((res) => {
         this.setState({
@@ -53,12 +51,12 @@ class Profile extends Component {
         this.formatHistory(res.shows)
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         Util.handleError(err)
       })
   }
 
-  formatHistory(shows) {
+  formatHistory = (shows) => {
     let showTypes = {};
 
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
@@ -66,6 +64,10 @@ class Profile extends Component {
         if (res.ok) {
           return res.json()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
         data.map(function (show) {
@@ -90,16 +92,19 @@ class Profile extends Component {
         })
       })
       .catch(err => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       })
   }
 
-  getPhoto() {
+  getPhoto = () => {
     fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
       .then((res) => {
         if (res.ok) {
           return res.blob();
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -109,16 +114,19 @@ class Profile extends Component {
         })
       })
       .catch((err) => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       });
   }
 
-  getResume() {
+  getResume = () => {
     fetch(Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth)
       .then((res) => {
         if (res.ok) {
           return res.blob();
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -128,17 +136,15 @@ class Profile extends Component {
         })
       })
       .catch((err) => {
-        console.log(err)
+        console.error(err)
         Util.handleError(err)
       });
   }
 
-  uploadPhoto = (val) => {
-    let file = val;
+  uploadPhoto = (img) => {
     let data = new FormData();
-    data.append("image", file.files[0]);
+    data.append("image", img);
     let xhr = new XMLHttpRequest();
-
     xhr.addEventListener("readystatechange", () => {
       this.getPhoto()
     });
@@ -186,7 +192,7 @@ class Profile extends Component {
   }
 
 
-  onClick() {
+  onClick = () => {
     if (this.state.edit) {
       if (this.state.firstName !== "") {
         Util.uploadFName(this.state.firstName);
@@ -221,22 +227,16 @@ class Profile extends Component {
     })
   }
 
-  inputChange(val) {
+  inputChange = (val) => {
     const name = val.target.name
     this.setState({
       [name]: val.target.value
     })
   }
 
-  resumeChange(val) {
+  resumeChange = (val) => {
     this.setState({
       resumeUpload: val.target
-    })
-  }
-
-  photoChange(val) {
-    this.setState({
-      photoUpload: val.target,
     })
   }
 
@@ -255,127 +255,133 @@ class Profile extends Component {
     }
   }
 
+  updateImage = (img) => {
+    this.setState({
+      photoUpload: img
+    })
+  }
+
   render() {
     return (
       <section className="main">
         <div className="mainView">
-          <h1 className="pagetitle">Your Profile </h1>
+          <div className="pageContentWrap">
+            <h1 className="pagetitle">Your Profile </h1>
 
-          <div className="card1">
-            {/* FIRST CARD */}
-            <div className="wrap">
-              <div className="header">
-                <div className="photoContainerWrap">
-                  <div id="photoContainer" className="photoContainer">
-                    {!this.state.edit &&
+            <div className="fullWidthCard">
+              {/* FIRST CARD */}
+              <div className="wrap">
+                <div className="header">
+                  <div className="photoContainerWrap">
+                    <div id="photoContainer" className="photoContainer">
+                      {!this.state.edit &&
 
-                      <img id="photo" alt="profile" src={this.state.photoSrc}></img>
-                    }
-                    {this.state.edit &&
-                      <section>
-                        <div> Upload a head shot as a jpg file. </div>
-                        <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
-                        <AvatarEditorConsole image={this.state.photoSrc}/>
-                      </section>
-                    }
-                  </div>
-                </div>
-
-                <div className="nameAndBioWrap">
-                  <div id="name" className="name">
-
-                    {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
-
-
-                    {this.state.edit &&
-                      <div id="editName">
-                        <Row>
-                          <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
-                          <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
-                        </Row>
-                      </div>
-                    }
-                  </div>
-
-                  <div id="bio" className="bio">
-                    <div className="subheader"><b>Dancer Bio:</b></div>
-                    {!this.state.edit &&
-                      <section>
-                        {this.state.bio !== "" && this.state.bio}
-                        {this.state.bio === "" && " Dancer has no bio"}
-                      </section>
-                    }
-                    {this.state.edit &&
-                      <div id="editBio">
-                        <div className="row">
-                          <form className="col s12">
-                            <div className="row">
-                              <div className="input-field col s12">
-                                <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
-                                <label htmlFor="textarea1">Bios should be 60 words or less</label>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-                      </div>
-
-                    }
-                
-                  </div>
-                  
-                </div>
-                {!this.state.edit &&
-                      <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                        <i className="large material-icons"> mode_edit </i>
-                      </Button>
-
-                    }
-                    {this.state.edit &&
-                      <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                        <i className="large material-icons"> check </i>
-                      </Button>
-                    }
-              </div>
-            </div>
-            <div className="mainContentBorder">
-              <div id="history">
-                <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-                {this.state.history.length > 0 && this.state.history.map((p, i) => {
-                  return (
-                    //TODO STYLE THESE
-                    <div className="showHistory" key={i}>
-                      <p>{p.name}</p>
-                      <p>{p.year}</p>
+                        <img id="photo" alt="profile" src={this.state.photoSrc}></img>
+                      }
+                      {this.state.edit &&
+                        <section>
+                          <div> Upload a head shot as a jpg file. </div>
+                          <AvatarEditorConsole img={this.state.photoSrc} changeImg={this.updateImage} />
+                        </section>
+                      }
                     </div>
-                  )
-                })}
-                {this.state.history.length === 0 &&
-                  <p> Dancer has no piece history </p>
-                }
-              </div>
+                  </div>
 
-              <div id="resume">
-                {!this.state.edit &&
-                  <section>
-                    {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                    {this.state.resume != null && (
-                      <div>
-                        <a href={Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                  <div className="nameAndBioWrap">
+                    <div id="name" className="name">
+
+                      {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+
+
+                      {this.state.edit &&
+                        <div id="editName">
+                          <Row>
+                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
+                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
+                          </Row>
+                        </div>
+                      }
+                    </div>
+
+                    <div id="bio" className="bio">
+                      <div className="subheader"><b>Dancer Bio:</b></div>
+                      {!this.state.edit &&
+                        <section>
+                          {this.state.bio !== "" && this.state.bio}
+                          {this.state.bio === "" && " Dancer has no bio"}
+                        </section>
+                      }
+                      {this.state.edit &&
+                        <div id="editBio">
+                          <div className="row">
+                            <form className="col s12">
+                              <div className="row">
+                                <div className="input-field col s12">
+                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
+                                  <label htmlFor="textarea1">Bios should be 60 words or less</label>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+
+                      }
+
+                    </div>
+
+                  </div>
+                  {!this.state.edit &&
+                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                      <i className="large material-icons"> mode_edit </i>
+                    </Button>
+
+                  }
+                  {this.state.edit &&
+                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                      <i className="large material-icons"> check </i>
+                    </Button>
+                  }
+                </div>
+              </div>
+              <div className="mainContentBorder">
+                <div id="history">
+                  <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+                  {this.state.history.length > 0 && this.state.history.map((p, i) => {
+                    return (
+                      //TODO STYLE THESE
+                      <div className="showHistory" key={i}>
+                        <p>{p.name}</p>
+                        <p>{p.year}</p>
                       </div>
-                    )}
+                    )
+                  })}
+                  {this.state.history.length === 0 &&
+                    <p> Dancer has no piece history </p>
+                  }
+                </div>
 
-                  </section>
-                }
-                {this.state.edit &&
-                  <section>
-                    <div> Upload your dance resume as a PDF. </div>
-                    <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
-                  </section>
-                }
+                <div id="resume">
+                  {!this.state.edit &&
+                    <section>
+                      {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                      {this.state.resume != null && (
+                        <div>
+                          <a href={Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                        </div>
+                      )}
+
+                    </section>
+                  }
+                  {this.state.edit &&
+                    <section>
+                      <div> Upload your dance resume as a PDF. </div>
+                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                    </section>
+                  }
+                </div>
+
               </div>
-
             </div>
-
 
           </div>
         </div>

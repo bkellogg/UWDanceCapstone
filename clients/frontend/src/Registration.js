@@ -18,8 +18,8 @@ const styles = {
   customWidthText: {
     width: 500,
   },
-  customWidth:{
-    width:80,
+  customWidth: {
+    width: 80,
   }
 };
 
@@ -50,9 +50,12 @@ class Registration extends Component {
     }
 
     Util.makeRequest("users/me/auditions/" + this.props.audition + "?shows=" + this.state.value, body, "LINK", true)
-    .then(res => {
+      .then(res => {
         if (res.ok) {
           return res.text();
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -69,7 +72,7 @@ class Registration extends Component {
 
     return (
       <div className="auditionForm">
-        <div className="card1">
+        <div className="fullWidthCard">
           <div className="formWrap">
             <div className="row">
               <div className="">
@@ -86,11 +89,11 @@ class Registration extends Component {
             </div>
             <br />
             <div className="row">
-              <div>2. You must be enrolled in a class during the quarter the production is occurring.<br />
+              <div>2. You must be enrolled in a technique class during the quarter the production is occurring.<br />
               </div>
               <br />
               <Checkbox
-                iconStyle={{fill: '#22A7E0'}}
+                iconStyle={{ fill: '#22A7E0' }}
                 label="I confirm I am enrolled in a class for the quarter during which the show is occuring."
                 onClick={() => { this.setState({ clicked: !this.state.clicked }) }}
               />
@@ -111,16 +114,16 @@ class Registration extends Component {
                 rows={2}
               />
             </div>
-            
+
           </div>
         </div>
-        <RaisedButton 
-        onClick={this.handleRegister} 
-        disabled={disabled} 
-        backgroundColor="#22A7E0"
-        style={{color: '#ffffff'}}
-        > 
-        Register </RaisedButton>
+        <RaisedButton
+          onClick={this.handleRegister}
+          disabled={disabled}
+          backgroundColor="#22A7E0"
+          style={{ color: '#ffffff' }}
+        >
+          Register </RaisedButton>
       </div>
 
     )

@@ -3,6 +3,7 @@ import TextField from 'material-ui/TextField';
 import { Button, Input } from 'react-materialize';
 import * as Util from './util.js';
 
+import './styling/SignUp.css';
 
 class SignUpExtra extends Component {
   constructor(props) {
@@ -79,20 +80,36 @@ class SignUpExtra extends Component {
   render() {
     return (
       <section className="signUpExtra">
-        <form>
-          <p>Please upload the following information</p>
-          <p>Bio (60 words or less)</p>
-          <TextField name="bio" onKeyDown={this.onKeyDown}></TextField>
-          {this.state.wordCount > 60 && (
-            <div id="bioWarning">You have reached the max word limit</div>
-          )}
-          <p>Resume (PDF)</p>
-          <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
-          <p>Headshot</p>
-          <input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
+        <form className="authenticate">
+        <div className="extra-signup-input-field">
+            <p>Bio (60 words or less)</p>
+            <TextField
+              className="bioTextbox"
+              name="bio"
+              style = {{width: '100%'}}
+              onKeyDown={this.onKeyDown}>
+            </TextField>
+            {this.state.wordCount > 60 && (
+              <div id="bioWarning">You have reached the max word limit</div>
+            )}
+          </div>
+          <div className="extra-signup-input-field">
+            <p>Resume (PDF)</p>
+            <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+          </div>
+          <div className="extra-signup-input-field">
+            <p>Headshot</p>
+            <input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
+          </div>
         </form>
-        <Button onClick={this.signUp}> Finish Sign Up </Button>
-        <Button onClick={this.skip}> Skip </Button>
+
+        <div className="buttons">
+          <Button onClick={this.signUp}> Finish Sign Up </Button>
+        </div>
+        <div className="link">
+          <a className="signUpSkipButton" onClick={this.skip}> Skip </a>
+        </div>
+
       </section>
     )
   };

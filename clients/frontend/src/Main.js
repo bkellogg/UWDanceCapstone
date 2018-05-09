@@ -9,6 +9,8 @@ import Profile from './Profile';
 import Casting from './Casting';
 import MobileNavigationElement from './MobileNavigation';
 import NavigationElement from './NavigationElement';
+import DancerPiece from './DancerPiece';
+import StaticProfile from './StaticProfile';
 import {Button} from 'react-materialize';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -33,24 +35,9 @@ const styleNav = {
   backgroundColor: 'red'
 };
 
-const host = "dasc.capstone.ischool.uw.edu";
-const websocket = new WebSocket("wss://" + host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
-
 class Main extends Component {
   constructor(props) {
     super(props);
-    this.getNavigation = this
-      .getNavigation
-      .bind(this);
-    this.signOut = this
-      .signOut
-      .bind(this);
-    this.getCurrShows = this
-      .getCurrShows
-      .bind(this);
-    this.getShowTypes = this
-      .getShowTypes
-      .bind(this);
     this.state = {
       user: JSON.parse(localStorage.user),
       shows: null,
@@ -72,7 +59,7 @@ class Main extends Component {
     };
   }
 
-  getCurrShows() {
+  getCurrShows = () => {
     //TODO deal with the fact that there's going to be pages
     Util.makeRequest("shows?history=all&includeDeleted=false", {}, "GET", true).then(res => {
       if (res.ok) {
@@ -95,10 +82,13 @@ class Main extends Component {
     })
   }
 
-  getShowTypes(shows) {
+  getShowTypes = (shows) => {
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true).then((res) => {
       if (res.ok) {
         return res.json()
+      }
+      if (res.status === 401) {
+        Util.signOut()
       }
       return res
         .text()
@@ -135,6 +125,9 @@ class Main extends Component {
       if (res.ok) {
         return res.json();
       }
+      if (res.status === 401) {
+        Util.signOut()
+      }
       return res
         .text()
         .then((t) => Promise.reject(t));
@@ -151,7 +144,7 @@ class Main extends Component {
     });
   }
 
-  getNavigation() {
+  getNavigation = () => {
     let showNav = this
       .state
       .currShows
@@ -177,7 +170,7 @@ class Main extends Component {
     return <ul className="collapsible collapsible-accordion">{mobileShowNav}</ul>
   }
 
-  signOut() {
+  signOut = () => {
     Util.signOut();
   }
 
@@ -237,8 +230,9 @@ class Main extends Component {
             <Route
               exact
               path='/'
-              render={props => <Dashboard {...props} shows={this.state.currShows}/>}/>
+              render={props => <Dashboard {...props} shows={this.state.currShows} showTypes={this.state.showTypes}/>}/>
             <Route exact path='/profile' component={Profile}/>
+            <Route path='/users/:userID' component={StaticProfile}/>
           </Switch>
           {this
             .state
@@ -249,21 +243,30 @@ class Main extends Component {
                 .split(' ')
                 .join('')
               let routes = []
-              if (this.state.user.role.level === 10) {
-                let route = <Route
+              if (this.state.user.role.level === 10) { //dancer
+
+                let route1 = <Route
                   exact
                   path={path + "/audition"}
                   render={props => <Audition {...props} name={show.name} audition={show.auditionID}/>}/>
-                routes.push(route)
-              } else if (this.state.user.role.level === 70) {
+
+                let route2 = <Route
+                  exact
+                  path={path + "/piece"}
+                  render={props => <DancerPiece {...props} name={show.name} audition={show.auditionID}/>}/>
+
+                routes.push(route1)
+                routes.push(route2)
+              } else if (this.state.user.role.level === 70) { //choreographer
+
                 let route1 = <Route
                   exact
                   path={path + "/casting"}
                   render={props => <Casting
                   {...props}
                   name={show.name}
-                  audition={show.auditionID}
-                  websocket={websocket}/>}/>
+                  audition={show.auditionID}/>}/>
+
                 let route2 = <Route
                   exact
                   path={path + "/people"}
@@ -272,9 +275,21 @@ class Main extends Component {
                   name={show.name}
                   audition={show.auditionID}
                   show={show.show}/>}/>
+                
+                let route3 = <Route
+                  exact
+                  path={path + "/piece"}
+                  render={props => <Piece
+                  {...props}
+                  name={show.name}
+                  audition={show.auditionID}
+                  show={show.show}/>}/>
+
                 routes.push(route1)
                 routes.push(route2)
-              } else {
+                routes.push(route3)
+              } else { //admin
+
                 let route1 = <Route
                   key = {i}
                   exact
@@ -283,7 +298,8 @@ class Main extends Component {
                   {...props}
                   name={show.name}
                   audition={show.auditionID}
-                  websocket={websocket}/>}/>
+                  />}/>
+
                 let route2 = <Route
                   key = {i*10}
                   exact
@@ -293,22 +309,34 @@ class Main extends Component {
                   name={show.name}
                   audition={show.auditionID}
                   show={show.show}/>}/>
+
                 let route3 = <Route
                   key = {i*100}
                   exact
                   path={path + "/audition"}
                   render={props => <Audition {...props} name={show.name} audition={show.auditionID}/>}/>
+
+                let route4 = <Route
+                  exact
+                  path={path + "/piece"}
+                  render={props => <Piece
+                  {...props}
+                  name={show.name}
+                  audition={show.auditionID}
+                  show={show.show}/>}/>
+
                 routes.push(route1)
                 routes.push(route2)
                 routes.push(route3)
+                routes.push(route4)
               }
               return (
                 <Switch key={i}>
                   <Route exact path={path} render={props => <Show {...props} name={show.name}/>}/> {routes}
-                  <Route
+                  {/* <Route
                     exact
                     path={path + "/piece"}
-                    render={props => <Piece {...props} name={show.name} audition={show.auditionID}/>}/>
+                    render={props => <Piece {...props} name={show.name} audition={show.auditionID}/>}/> */}
                 </Switch>
               )
             })}

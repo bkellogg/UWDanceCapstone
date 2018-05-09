@@ -1,28 +1,25 @@
-@media only screen and (min-width : 768px) 
+@media only screen and (min-width : 769px) 
 and (max-width : 1024px)  {
-
     /* STYLES GO HERE */
     .categories{
         font-size: 12px;
     }
 
-    /* .avatar, .dancerRank, .userRoleDisp, .avatar2{
-        visibility: hidden;
-        position: absolute;
-    } */
-
-    /* .check{
-        width: 20px;
-    }
-
-    .castList, .dancersList-filter, .overlapAvailability, .castList-v2, .castList-v2-1, .wrap{
+    /*CHECK AVAILABILITY -- PUT DIVS IN BLOCK*/
+    .overlapAvailabilityWrap{
         display: block;
+        float: left;
+        width: 100%;
     }
 
-    .dancersList-filter, .overlapAvailability, .castList-v2, .castList-v2-1{
+    .dancersList-filter{
         width: 100%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    } */
+    }
 
+    .dancersList-filter, .overlapAvailability, .castList-v2, .extraClass{
+        width: 100% !important;
+        margin-top: 10px;
+        margin-bottom: 30px;
+        display: block !important;
+    }
 }

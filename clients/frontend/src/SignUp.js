@@ -104,17 +104,22 @@ class SignUp extends Component {
     this.props.onSignUp(this.state.auth)
   }
 
+  toLanding = () => {
+    this.props.toLanding()
+  }
+
   render() {
     return (
 
       <section className="signUp">
-        <div className="SignUpLanding">
-          <div className="Functionality">
+        <div className="signUpLanding">
+        <i className="fas fa-arrow-circle-left fa-2x" onClick={this.toLanding}></i>
+          <div className="functionality">
             <div className="signInUplogoWrap">
               <img className="officialLogoLandingPage" alt="logo" src={logo} />
             </div>
-            <div className='content'>
-              <h5 className='title'> Sign up </h5>
+            <div className='signIn-SignUpContent'>
+              <h1 className='title'> Sign up </h1>
               <div className="error">
                 {
                   this.state.error !== null && !this.state.signUpExtra &&
@@ -149,11 +154,11 @@ class SignUp extends Component {
                         </div>
                       </div>
                     </form>
-                    <div className="Buttons">
+                    <div className="buttons">
                       <Button onClick={this.onClick}> Sign Up </Button>
                     </div>
-                    <div className="Link">
-                      <a className="signlink" onClick={this.goBack}> Sign In </a>
+                    <div className="link">
+                      <a className="blueTextLink" onClick={this.goBack}> Sign In </a>
                     </div>
 
 

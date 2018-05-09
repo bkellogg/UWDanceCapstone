@@ -99,7 +99,7 @@ class Availability extends Component {
             let end = (parseInt(endTime.substring(0,2), 10) + 1).toString()
             endTime = end + "00"
           }
-          //another bug
+          //another bug?
           if(this.state.cells[i]){
             if(this.state.cells[i][j]){
               let dayExists = false;
@@ -167,7 +167,7 @@ class Availability extends Component {
     render() {
         return(
             <div>
-                <div className="table">
+                <div className="availabilityTableDragDown">
       <TableDragSelect value={this.state.cells} onChange={this.handleChange}>
         <tr>
           <td disabled />

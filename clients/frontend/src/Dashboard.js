@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import * as Util from './util';
+import RaisedButton from 'material-ui/RaisedButton';
 import './styling/General.css';
 
 //styling
-import { Card, CardText } from 'material-ui/Card';
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';
 
@@ -16,11 +16,13 @@ class Dashboard extends Component {
       announcements: [],
       announcementTypes: null,
       currAnnouncements: [],
+      pending: [],
     }
   };
 
   componentWillMount() {
     this.getAnnouncements();
+    this.getUserPieces()
   }
 
   //Getting all messages from announcements that have not been deleted
@@ -29,6 +31,9 @@ class Dashboard extends Component {
       .then((res) => {
         if (res.ok) {
           return res.json();
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -41,7 +46,7 @@ class Dashboard extends Component {
       .then(announcements => {
         this.getAnnouncementTypes(announcements)
       })
-      .catch((err) => { 
+      .catch((err) => {
         Util.handleError(err)
       });
   }
@@ -52,6 +57,9 @@ class Dashboard extends Component {
       .then((res) => {
         if (res.ok) {
           return res.json();
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -85,67 +93,123 @@ class Dashboard extends Component {
       .catch((err) => { });
   }
 
+  getUserPieces = () => {
+    Util.makeRequest("users/me/pieces/pending", "", "GET", true)
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(pieces => {
+      this.setState({
+        pending: pieces
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+    }); 
+  }
+
+  acceptCasting = (pieceID) => {
+    Util.makeRequest("users/me/pieces/" + pieceID, "", "LINK", true)
+    .then((res) => {
+      if (res.ok) {
+        return res.text();
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then( () => {
+      this.getUserPieces()
+    } 
+    )
+    .catch((err) => {
+      console.log(err)
+    }); 
+  }
+
   render() {
+    const pending = this.state.pending
+    let pendingCasting = pending.map((piece, i) => {
+      return (
+        <div key={i} className="announcement announcementMessage cardBody">
+          Congratulations! You have been cast in {piece.name}. Rehearsal times will be here as well.
+          <div>
+            <RaisedButton
+              label="Accept"
+              onClick={() => this.acceptCasting(piece.id)}
+            />
+          </div>
+        </div>
+      )
+    })
     return (
       <section className='main' >
         <div className="mainView">
-        <div className="transparentCard">
-          <div className='dashboard'>
-            <div id='welcome'> 
-            <h1> Welcome, {this.state.user.firstName}!</h1>
-            </div>
-            <div id='announcements'>
-              {this.state.user.bio === "" &&
-                    <Card>
-                    <div className="warning">
-                      <CardText> 
-                        Please complete your profile.
-                      </CardText>
+        <div className="pageContentWrap">
+            <div className='dashboard'>
+              <div id='welcome'>
+                <h1> Welcome, {this.state.user.firstName}!</h1>
+              </div>
+              <div id='announcements'>
+                {pendingCasting}
+                {this.state.user.bio === "" &&
+                  <div className="announcement completeProfile">
+                    <div className="warning cardBody">
+
+                      <p className="announcementMessage"> Please complete your profile. </p>
+                </div>
                   </div>
-                </Card>
-              }
-              {this.state.currAnnouncements.map((anncouncement, index) => {
-                return (
-                  <div key={index} className="announcement">
-                    {
+
+                }
+                {this.state.currAnnouncements.map((anncouncement, index) => {
+                  return (
+                    <div key={index} className="announcement">
+                      {
+                        <div className="cardBody">
+                          <p className="announcementMessage"> {anncouncement.message} </p>
+                        </div>
+                      }
+                    </div>
+                  )
+                })}
+
+                {this.props.shows.map((anncouncement, index) => {
+                  var moment = require('moment');
+                  var auditionDay = moment(anncouncement.audition.time).format('MMM. d, YYYY');
+                  var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
+                  var auditionLink = anncouncement.name.split(' ').join('');
+                  return (
+                    <div key={index} className="announcement secondColor">
                       <div className="cardBody">
-                        <p className="announcementMessage"> {anncouncement.message} </p>
+                        {
+
+                          <div className="auditionAnnouncementCard">
+                            <div className="showTitle">
+                              <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
+                            </div>
+                            <div className="showInformation">
+                              <p> <b>Date:</b> {auditionDay} </p>
+                              <p> <b>Time:</b> {auditionTime} </p>
+                              <p> <b>Location:</b> {anncouncement.audition.location} </p>
+                              <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
+                            </div>
+                          </div>
+                        }
                       </div>
-                    }
-                  </div>
-                )
-              })}
+                    </div>
+                  )
+                })}
 
-              {this.props.shows.map((anncouncement, index) => {
-                var moment = require('moment');
-                var auditionDay = moment(anncouncement.audition.time).format('MMM. d, YYYY');
-                var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
-                var auditionLink = anncouncement.name.split(' ').join('');
-                return (
-                  <div key={index} className="announcement secondColor">
-                  <div className="cardBody">
-                    {
-
-                      <div className="auditionAnnouncementCard">
-                        <div className="showTitle">
-                          <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
-                        </div>
-                        <div className="showInformation">
-                          <p> <b>Date:</b> {auditionDay} </p>
-                          <p> <b>Time:</b> {auditionTime} </p>
-                          <p> <b>Location:</b> {anncouncement.audition.location} </p>
-                          <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                  </div>
-                )
-              })}
-
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </section>
     )
