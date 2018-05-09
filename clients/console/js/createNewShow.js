@@ -38,9 +38,9 @@ showForm.addEventListener("submit", function (evt) {
         })
 })
 
-// get announcement types
+// get show types
 function populateShowTypeOptions() {
-    fetch(API_URL_BASE + "shows/types?includeDeleted=false&auth=" + auth)
+    makeRequest("shows/types?includeDeleted=false", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();

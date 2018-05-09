@@ -1,6 +1,5 @@
 "use strict";
 refreshLocalUser();
-let auth = getAuth();
 
 var signupForm = document.querySelector(".signup-form");
 var errorBox = document.querySelector(".js-error");
@@ -12,9 +11,7 @@ var passwordConf = document.getElementById("passwordconf-input");
 var role = document.getElementById("roleName");
 var roleName = "";
 
-
 populateRoleOptions();
-
 
 signupForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
@@ -34,10 +31,10 @@ signupForm.addEventListener("submit", function (evt) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            let payload2 = {
+            let setRole = {
                 "roleName": roleName
             }
-            makeRequest("users/" + data.id + "/role", payload2, "PATCH", true)
+            makeRequest("users/" + data.id + "/role", setRole, "PATCH", true)
                 .then((res) => {
                     if (res.ok) {
                         return res.json();
@@ -61,7 +58,7 @@ signupForm.addEventListener("submit", function (evt) {
 
 // get roles
 function populateRoleOptions() {
-    fetch(API_URL_BASE + "roles?auth=" + auth)
+    makeRequest("roles", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -69,7 +66,7 @@ function populateRoleOptions() {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            var options = '<option value=""><strong>Roles</strong></option>';
+            var options = '<option value=""><strong>User Role</strong></option>';
             $(data).each(function (index, value) {
                 options += '<option value="' + value.name + '">' + value.displayName + '</option>';
             });

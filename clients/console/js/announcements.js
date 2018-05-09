@@ -1,17 +1,14 @@
 "use strict";
+refreshLocalUser();
 
 const status = document.querySelector("#users")
-let auth = getAuth();
 let announcements = []
-
-refreshLocalUser();
 
 getAnnouncements();
 
-
 // get all active announcements
 function getAnnouncements() {
-    fetch(API_URL_BASE + "/announcements?includeDeleted=false&auth=" + auth)
+    makeRequest("announcements", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();

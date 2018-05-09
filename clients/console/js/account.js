@@ -3,7 +3,6 @@
 refreshLocalUser();
 
 let user = getLocalUser();
-let auth = getAuth();
 
 let content = document.querySelector(".content");
 let photoForm = document.querySelector(".change-photo-form");
@@ -158,7 +157,7 @@ function getImage() {
         image.classList.add("profile-picture");
         imgLoc.appendChild(image);
     }
-    fetch(API_URL_BASE + "users/me/photo?auth=" + auth)
+    makeRequest("users/me/photo", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.blob();
@@ -178,7 +177,7 @@ function getImage() {
 
 function getResume() {
     let resume = document.querySelector(".resume");
-    fetch(API_URL_BASE + "users/me/resume?auth=" + auth)
+    makeRequest("users/me/resume", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.blob();

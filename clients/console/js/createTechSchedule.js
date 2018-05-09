@@ -48,7 +48,7 @@ function createTimes() {
 
 // Get to show types
 function populateConcertNames() {
-    fetch(API_URL_BASE + "shows/types?includeDeleted=false&auth=" + auth)
+    makeRequest("shows/types?includeDeleted=false", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();

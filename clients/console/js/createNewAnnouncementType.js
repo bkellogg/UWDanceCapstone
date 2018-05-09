@@ -1,7 +1,6 @@
 "use strict";
 
 refreshLocalUser();
-let auth = getAuth();
 
 var newAnnouncementTypeForm = document.querySelector(".newAnnouncementType-form");
 var errorBox = document.querySelector(".js-error");
@@ -34,7 +33,7 @@ newAnnouncementTypeForm.addEventListener("submit", function (evt) {
 
 // get announcement types
 function getAnnouncementTypes() {
-    fetch(API_URL_BASE + "announcements/types?includeDeleted=false&auth=" + auth)
+    makeRequest("announcements/types?inclueDeleted=false", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();

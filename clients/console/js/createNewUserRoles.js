@@ -36,7 +36,7 @@ newRoleForm.addEventListener("submit", function (evt) {
 
 // get roles
 function getRoles() {
-    fetch(API_URL_BASE + "roles?auth=" + auth)
+    makeRequest("roles", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();

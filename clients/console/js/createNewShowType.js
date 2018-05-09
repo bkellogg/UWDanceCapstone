@@ -16,7 +16,6 @@ newShowTypeForm.addEventListener("submit", function (evt) {
         "name": showTypeName.value,
         "desc": description.value,
     };
-    console.log(payload)
     makeRequest("shows/types", payload, "POST", true)
         .then((res) => {
             if (res.ok) {
@@ -35,7 +34,7 @@ newShowTypeForm.addEventListener("submit", function (evt) {
 
 // get show types
 function getShowTypes() {
-    fetch(API_URL_BASE + "shows/types?includeDeleted=false&auth=" + auth)
+    makeRequest("shows/types?includeDeleted-false", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
