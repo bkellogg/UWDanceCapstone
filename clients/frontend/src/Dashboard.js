@@ -16,7 +16,7 @@ class Dashboard extends Component {
       announcements: [],
       announcementTypes: null,
       currAnnouncements: [],
-      pending: []
+      pending: [],
     }
   };
 

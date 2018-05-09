@@ -50,7 +50,7 @@ class PersonRow extends Component {
             <Link className="personNameLink" to={{pathname: "/users/" + this.props.p.id}} target="_blank">{p.firstName + " " + p.lastName}</Link>
           </td>
           {
-            !this.props.piece &&
+            !this.props.piece && !this.props.setRehearsals &&
             <td className="userRoleDisp">
               {p.role.displayName}
             </td>

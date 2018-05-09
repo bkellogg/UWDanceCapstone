@@ -230,7 +230,7 @@ class Main extends Component {
             <Route
               exact
               path='/'
-              render={props => <Dashboard {...props} shows={this.state.currShows}/>}/>
+              render={props => <Dashboard {...props} shows={this.state.currShows} showTypes={this.state.showTypes}/>}/>
             <Route exact path='/profile' component={Profile}/>
             <Route path='/users/:userID' component={StaticProfile}/>
           </Switch>

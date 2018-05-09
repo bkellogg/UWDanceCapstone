@@ -89,7 +89,7 @@ class Registration extends Component {
             </div>
             <br />
             <div className="row">
-              <div>2. You must be enrolled in a class during the quarter the production is occurring.<br />
+              <div>2. You must be enrolled in a technique class during the quarter the production is occurring.<br />
               </div>
               <br />
               <Checkbox
