@@ -23,7 +23,9 @@ newShowTypeForm.addEventListener("submit", function (evt) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            location.reload();
+            alert("New show type successfully created.");
+            $('input').val('');
+            $('.newShowType-form')[0].reset();
         })
         .catch((err) => {
             errorBox.textContent = err;
@@ -42,7 +44,7 @@ function getShowTypes() {
         })
         .then((data) => {
             $(data).each(function (index, value) {
-              $("ul").append("<li>"+ value.name + " - " + value.desc + "</li>")
+                $("ul").append("<li>" + value.name + " - " + value.desc + "</li>")
             });
         })
 

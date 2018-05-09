@@ -1,8 +1,7 @@
 "use strict";
 refreshLocalUser();
 
-const status = document.querySelector("#users")
-let announcements = []
+var announcements = [];
 
 getAnnouncements();
 
@@ -17,7 +16,16 @@ function getAnnouncements() {
         })
         .then((data) => {
             $(data.announcements).each(function (index, value) {
-                $('body').append("<div>" + value.message+ "</div>").addClass('announcements')
+                $(".active-announcements").append('<div class="announcements" id="message">' + value.message + '<button class="remove" id ="remove" onClick="deleteAnnouncement(this.id)">Remove</button></div>')
+                $("#message").attr("id", value.id)
+                $("#remove").attr("id", value.id)
             });
+        })
+}
+
+function deleteAnnouncement(event) {
+    makeRequest("announcements/" + event, {}, "DELETE", true)
+        .then(() =>{
+            location.reload();
         })
 }

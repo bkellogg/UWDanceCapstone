@@ -35,12 +35,6 @@ signupForm.addEventListener("submit", function (evt) {
                 "roleName": roleName
             }
             makeRequest("users/" + data.id + "/role", setRole, "PATCH", true)
-                .then((res) => {
-                    if (res.ok) {
-                        return res.json();
-                    }
-                    return res.text().then((t) => Promise.reject(t));
-                })
         })
         .then((data) => {
             alert(" User: " + fname.value + " " + lname.value + " with the role of " + roleName + " successfully created.");

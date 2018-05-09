@@ -8,3 +8,7 @@ label {
     width: 50%;
     height:25%;;
 }
+#datetimepicker1, #datetimepicker2 {
+    width: 50%;
+}
+

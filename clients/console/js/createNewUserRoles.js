@@ -25,6 +25,7 @@ newRoleForm.addEventListener("submit", function (evt) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
+            alert("New user role successfully created.");
             location.reload();
         })
         .catch((err) => {
@@ -44,7 +45,7 @@ function getRoles() {
         })
         .then((data) => {
             $(data).each(function (index, value) {
-              $("ul").append("<li>"+ value.displayName+ "</li>")
+                $("ul").append("<li>" + value.displayName + "</li>")
             });
         })
 }

@@ -23,6 +23,9 @@ newAnnouncementTypeForm.addEventListener("submit", function (evt) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
+            alert("New announcement type successfully created.");
+            $('input').val('');
+            $('.newAnnouncementType-form')[0].reset();
             location.reload();
         })
         .catch((err) => {
