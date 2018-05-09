@@ -23,7 +23,17 @@
 .officialLogoImage{
     height: 90%;
     width: 90%;
-    
+}
+
+.mobileNavLogoWrap{
+    display: inline-block;
+    width: 45%;
+}
+
+.mobileNavLogo{
+    bottom: 0;
+    height: 46px;
+    display: inline-block;
 }
 
 @media only screen and (max-width : 992px) {
