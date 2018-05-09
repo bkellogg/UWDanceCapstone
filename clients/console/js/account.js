@@ -3,6 +3,7 @@
 refreshLocalUser();
 
 let user = getLocalUser();
+let auth = getAuth();
 
 let content = document.querySelector(".content");
 let photoForm = document.querySelector(".change-photo-form");

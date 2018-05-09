@@ -1,7 +1,6 @@
 "use strict";
 
 refreshLocalUser();
-let auth = getAuth();
 
 var newShowTypeForm = document.querySelector(".newShowType-form");
 var errorBox = document.querySelector(".js-error");

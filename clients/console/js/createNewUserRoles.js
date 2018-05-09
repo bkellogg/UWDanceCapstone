@@ -1,7 +1,6 @@
 "use strict";
 
 refreshLocalUser();
-let auth = getAuth();
 
 var newRoleForm = document.querySelector(".newRole-form");
 var errorBox = document.querySelector(".js-error");
