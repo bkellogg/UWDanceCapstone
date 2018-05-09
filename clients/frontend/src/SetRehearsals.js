@@ -5,6 +5,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RehearsalRow from './RehearsalRow';
 import AvailabilityOverlap from './AvailabilityOverlap';
+import PersonRow from './PersonRow';
 
 import './styling/General.css';
 import './styling/CastingFlow.css';
@@ -99,6 +100,13 @@ class SetRehearsals extends Component {
     }
   }
 
+  setStartDate = (e) => {
+    let date = e.target.value
+    this.setState({
+      startDate : date
+    })
+  }
+
 
   render() {
     const finished = this.state.finished
@@ -115,8 +123,11 @@ class SetRehearsals extends Component {
       )
     })
 
-    let castList = []
-
+    let castList = this.props.cast.map((dancer, i) => {
+      return (
+        <PersonRow p={dancer.dancer.user} setRehearsals={true} key={i} />
+      )
+    })
     
     return (
       <section >
@@ -129,7 +140,7 @@ class SetRehearsals extends Component {
 
                     <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
                     First Rehearsal Date
-                    <input type="date" name="rehearsalStartDate" id="rehearsalStartDate" />
+                    <input type="date" name="rehearsalStartDate" id="rehearsalStartDate" onChange={this.setStartDate}/>
                     Weekly Rehearsal Times
                     {rehearsals}
                     <div className="buttonsWrap">
@@ -146,6 +157,18 @@ class SetRehearsals extends Component {
                         onClick={this.removeRehearsal} disabled={finished}>
                         REMOVE</Button>
                     </div>
+                  </div>
+                  <div className="choreographersSelecteCast">
+                    <h2 className="smallHeading">Your Cast</h2>
+                    <table>
+                      <tbody>
+                        <tr className="categories">
+                          <th>Name</th>
+                          <th>Email</th>
+                        </tr>
+                        {castList}
+                      </tbody>
+                    </table>
                   </div>
                   <div className="postCastingWrap">
                     <div className="postCasting">

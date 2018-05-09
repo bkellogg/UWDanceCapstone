@@ -56,7 +56,6 @@ class Audition extends Component {
   }
 
   unregister = () => {
-    console.log("unregistered")
     this.setState({
       registered: false,
       open: true
@@ -76,7 +75,7 @@ class Audition extends Component {
     Util.makeRequest("users/me/auditions/" + this.props.audition + "/availability", body, "PATCH", true)
       .then(res => {
         if (res.ok) {
-          return res.json()
+          return res.text()
         }
         if (res.status === 401) {
           Util.signOut()
