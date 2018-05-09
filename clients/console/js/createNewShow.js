@@ -6,7 +6,7 @@ var showForm = document.querySelector(".show-form");
 var errorBox = document.querySelector(".js-error");
 var showType = document.getElementById("showType");
 var auditionName = document.getElementById("audition-name-input");
-var location = document.getElementById("location-input");
+var getLocation = document.getElementById("location-input");
 var quarter = document.getElementById("quarter-name-input");
  
 
@@ -18,10 +18,11 @@ showForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
     var payload = {
         "name": auditionName.value,
-        "location": location.value,
+        "location": getLocation.value,
         "time": auditionTime,
         "quarter": quarter.value
     }
+    console.log(payload);
     makeRequest("//", payload, "POST", true)
         .then((res) => {
             if (res.ok) {
