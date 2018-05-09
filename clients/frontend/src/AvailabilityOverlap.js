@@ -215,9 +215,9 @@ class AvailabilityOverlap extends Component {
             <div className="legend">
               <p className="colorIndicator">Least Available</p>
               <div className="colorsWrap">
-                <div className="lightLegendColor"> </div>
-                <div className="mediumLegendColor"> </div>
-                <div className="darkLegendColor"> </div>
+                <div className="lightLegendColor" style={{ "backgroundColor": colors[1] }}> </div>
+                <div className="mediumLegendColor" style={{ "backgroundColor": colors[4] }}> </div>
+                <div className="darkLegendColor" style={{ "backgroundColor": colors[8] }}> </div>
               </div>
               <p className="colorIndicator">Most Available</p>
             </div>

@@ -158,16 +158,18 @@ class SetRehearsals extends Component {
                         REMOVE</Button>
                     </div>
                   </div>
-                  <table>
-                    <tbody>
-                      <tr className="categories">
-                        <th className="avatar2">Photo</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                      </tr>
-                      {castList}
-                    </tbody>
-                  </table>
+                  <div className="choreographersSelecteCast">
+                    <h2 className="smallHeading">Your Cast</h2>
+                    <table>
+                      <tbody>
+                        <tr className="categories">
+                          <th>Name</th>
+                          <th>Email</th>
+                        </tr>
+                        {castList}
+                      </tbody>
+                    </table>
+                  </div>
                   <div className="postCastingWrap">
                     <div className="postCasting">
                       <Button
