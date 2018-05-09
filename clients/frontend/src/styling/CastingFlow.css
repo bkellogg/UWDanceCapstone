@@ -94,14 +94,15 @@ th{
 
 .overlapAvailabilityWrap{
     width: 60%;
-    min-width: 650px;
+    /* min-width: 650px; */
     vertical-align: top;
+    background-color: #F6F8FC;
     display: inline-block;  
 }
 
 .overlapAvailability{
-    width: 100%;
-    background-color: #F6F8FC;
+    min-width: 650px;
+    max-width: 800px;
     padding: 20px;
 }
 

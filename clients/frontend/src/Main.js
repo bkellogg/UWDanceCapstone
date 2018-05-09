@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {Switch, Route, Link} from 'react-router-dom';
+import React, { Component } from 'react';
+import { Switch, Route, Link } from 'react-router-dom';
 import People from './People';
 import Piece from './Piece';
 import Audition from './Audition';
@@ -11,7 +11,7 @@ import MobileNavigationElement from './MobileNavigation';
 import NavigationElement from './NavigationElement';
 import DancerPiece from './DancerPiece';
 import StaticProfile from './StaticProfile';
-import {Button} from 'react-materialize';
+import { Button } from 'react-materialize';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -22,6 +22,7 @@ import './styling/Main.css';
 import './styling/Navigation.css';
 import './styling/MobileNavigation.css';
 import './styling/General.css';
+
 
 const style = {
   textColor: 'white',
@@ -72,7 +73,7 @@ class Main extends Component {
         .text()
         .then((t) => Promise.reject(t));
     }).then(data => {
-      this.setState({shows: data.shows})
+      this.setState({ shows: data.shows })
       return data.shows
     }).then(shows => {
       this.getShowTypes(shows)
@@ -104,7 +105,7 @@ class Main extends Component {
       })
       return showTypes
     }).then((showTypes) => {
-      this.setState({showTypes: showTypes})
+      this.setState({ showTypes: showTypes })
     }).then(() => {
       shows.map(show => {
         this.getAudition(show)
@@ -138,7 +139,7 @@ class Main extends Component {
         "show": show.id,
         "audition": data
       })
-      this.setState({currShows: currShows})
+      this.setState({ currShows: currShows })
     }).catch((err) => {
       Util.handleError(err)
     });
@@ -149,7 +150,7 @@ class Main extends Component {
       .state
       .currShows
       .map((show, index) => {
-        return <NavigationElement key={index} user={this.state.user} showTitle={show.name}/>
+        return <NavigationElement key={index} user={this.state.user} showTitle={show.name} />
       })
 
     return <ul className="collapsible collapsible-accordion">{showNav}</ul>
@@ -164,7 +165,7 @@ class Main extends Component {
           key={index}
           user={this.state.user}
           showTitle={show.name}
-          handleClose={this.handleClose}/>
+          handleClose={this.handleClose} />
       })
 
     return <ul className="collapsible collapsible-accordion">{mobileShowNav}</ul>
@@ -178,7 +179,7 @@ class Main extends Component {
     open: !this.state.open
   });
 
-  handleClose = () => this.setState({open: false});
+  handleClose = () => this.setState({ open: false });
 
   render() {
     return (
@@ -194,13 +195,16 @@ class Main extends Component {
                   onClick={this.handleToggle}>
                   <p className="hambMenu">MENU</p>
                 </RaisedButton>
+                <div className="mobileNavLogoWrap">
+                  <img className="mobileNavLogo" alt="logo" src={logo} />
+                </div>
               </div>
               <Drawer
                 style={styleNav}
                 docked={false}
                 width={250}
                 open={this.state.open}
-                onRequestChange={(open) => this.setState({open})}>
+                onRequestChange={(open) => this.setState({ open })}>
 
                 <div className="menuList">
                   <Link to="/">
@@ -248,12 +252,12 @@ class Main extends Component {
                 let route1 = <Route
                   exact
                   path={path + "/audition"}
-                  render={props => <Audition {...props} name={show.name} audition={show.auditionID}/>}/>
+                  render={props => <Audition {...props} name={show.name} audition={show.auditionID} />} />
 
                 let route2 = <Route
                   exact
                   path={path + "/piece"}
-                  render={props => <DancerPiece {...props} name={show.name} audition={show.auditionID}/>}/>
+                  render={props => <DancerPiece {...props} name={show.name} audition={show.auditionID} />} />
 
                 routes.push(route1)
                 routes.push(route2)
@@ -263,27 +267,27 @@ class Main extends Component {
                   exact
                   path={path + "/casting"}
                   render={props => <Casting
-                  {...props}
-                  name={show.name}
-                  audition={show.auditionID}/>}/>
+                    {...props}
+                    name={show.name}
+                    audition={show.auditionID} />} />
 
                 let route2 = <Route
                   exact
                   path={path + "/people"}
                   render={props => <People
-                  {...props}
-                  name={show.name}
-                  audition={show.auditionID}
-                  show={show.show}/>}/>
-                
+                    {...props}
+                    name={show.name}
+                    audition={show.auditionID}
+                    show={show.show} />} />
+
                 let route3 = <Route
                   exact
                   path={path + "/piece"}
                   render={props => <Piece
-                  {...props}
-                  name={show.name}
-                  audition={show.auditionID}
-                  show={show.show}/>}/>
+                    {...props}
+                    name={show.name}
+                    audition={show.auditionID}
+                    show={show.show} />} />
 
                 routes.push(route1)
                 routes.push(route2)
@@ -291,39 +295,39 @@ class Main extends Component {
               } else { //admin
 
                 let route1 = <Route
-                  key = {i}
+                  key={i}
                   exact
                   path={path + "/casting"}
                   render={props => <Casting
-                  {...props}
-                  name={show.name}
-                  audition={show.auditionID}
-                  />}/>
+                    {...props}
+                    name={show.name}
+                    audition={show.auditionID}
+                  />} />
 
                 let route2 = <Route
-                  key = {i*10}
+                  key={i * 10}
                   exact
                   path={path + "/people"}
                   render={props => <People
-                  {...props}
-                  name={show.name}
-                  audition={show.auditionID}
-                  show={show.show}/>}/>
+                    {...props}
+                    name={show.name}
+                    audition={show.auditionID}
+                    show={show.show} />} />
 
                 let route3 = <Route
-                  key = {i*100}
+                  key={i * 100}
                   exact
                   path={path + "/audition"}
-                  render={props => <Audition {...props} name={show.name} audition={show.auditionID}/>}/>
+                  render={props => <Audition {...props} name={show.name} audition={show.auditionID} />} />
 
                 let route4 = <Route
                   exact
                   path={path + "/piece"}
                   render={props => <Piece
-                  {...props}
-                  name={show.name}
-                  audition={show.auditionID}
-                  show={show.show}/>}/>
+                    {...props}
+                    name={show.name}
+                    audition={show.auditionID}
+                    show={show.show} />} />
 
                 routes.push(route1)
                 routes.push(route2)
@@ -332,7 +336,7 @@ class Main extends Component {
               }
               return (
                 <Switch key={i}>
-                  <Route exact path={path} render={props => <Show {...props} name={show.name}/>}/> {routes}
+                  <Route exact path={path} render={props => <Show {...props} name={show.name} />} /> {routes}
                   {/* <Route
                     exact
                     path={path + "/piece"}
@@ -349,7 +353,7 @@ class Main extends Component {
               <div className="navigationBg">
                 <li>
                   <div id="logo">
-                    <img className="officialLogoImage" alt="logo" src={logo}/>
+                    <img className="officialLogoImage" alt="logo" src={logo} />
                   </div>
                 </li>
                 <li className="dropDown">

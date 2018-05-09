@@ -3,6 +3,7 @@ import * as Util from './util.js';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import FlatButton from 'material-ui/FlatButton';
 import Button from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
@@ -10,6 +11,7 @@ import MenuItem from 'material-ui/MenuItem';
 import MusicianRow from './MusicianRow';
 import PersonRow from './PersonRow';
 import './styling/General.css';
+import Link from 'react-router-dom/Link';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 let views = ['month', 'week', 'day']
@@ -223,35 +225,44 @@ class Piece extends Component {
               {
                 this.state.openCast &&
                 <section>
-                  
+
                   <div className="toggleHeader">
                     <h2 className="smallHeading">My Cast</h2>
                     <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCast}></i>
                   </div>
                   <div className="peopleList">
-                  <table>
-                    <tbody>
-                      <tr className="categories">
-                        <th className="avatar2">Photo</th>
-                        <th>Name</th>
-                        <th className="userRoleDisp">Bio</th>
-                        <th>Email</th>
-                      </tr>
-                      {castRows}
-                    </tbody>
-                  </table>
+                    <table>
+                      <tbody>
+                        <tr className="categories">
+                          <th className="avatar2"></th>
+                          <th>Name</th>
+                          <th className="userRoleDisp">Bio</th>
+                          <th>Email</th>
+                        </tr>
+                        {castRows}
+                      </tbody>
+                    </table>
                   </div>
-                  {
-                    !this.state.viewAvailability &&
-                    <Button onClick={this.viewAvailability}> View Cast Availability </Button>
-                  }
-                  {
-                    this.state.viewAvailability &&
-                    <div>
-                      <Button onClick={this.viewAvailability}> Hide Cast Availabiltiy </Button>
-                      <p>View availability ay</p>
-                    </div>
-                  }
+                  <div className="buttons">
+                    {
+                      !this.state.viewAvailability &&
+                      <FlatButton
+                        style={{ color: '#333333', marginRight: '20px'}}
+                        onClick={this.viewAvailability}>
+                        View Cast Availability </FlatButton>
+                    }
+                    {
+                      this.state.viewAvailability &&
+                      <div>
+                        <FlatButton
+                          backgroundColor="#708090"
+                          style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
+                          onClick={this.viewAvailability}>
+                          Hide Cast Availabiltiy </FlatButton>
+                        <p>View availability ay</p>
+                      </div>
+                    }
+                  </div>
                 </section>
               }
             </div>
@@ -271,152 +282,152 @@ class Piece extends Component {
                     <i className="fas fa-chevron-up fa-lg" onClick={this.toggleInfo}></i>
                   </div>
                   <div className="peopleList">
-                  <div className="choreoContact">
-                    <p>Choreographer's Name: {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
-                    <p>Choreographer's Phone Number:</p>
-                    <TextField
-                      id="phoneNumber"
-                      onChange={this.handleChange('phoneNumber')}
-                      style={STYLES}
-                    />
+                    <div className="choreoContact">
+                      <p>Choreographer's Name: {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
+                      <p>Choreographer's Phone Number:</p>
+                      <TextField
+                        id="phoneNumber"
+                        onChange={this.handleChange('phoneNumber')}
+                        style={STYLES}
+                      />
 
-                    <p>Choreographer's email: {this.state.choreographer.email}</p>
-                  </div>
-                  <div className="dancerInfo">
-                    <p>Number of dancers: {this.state.dancers.length}</p>
-                    <p>Dancer Contact Information:</p>
-                    <table>
-                      <tbody>
-                        <tr className="categories">
-                          <th>Name</th>
-                          <th>Email</th>
-                        </tr>
-                        {contactRows}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="pieceInfo">
-                    <p>Dance Title: </p>
-                    <TextField
-                      id="danceTitle"
-                      onChange={this.handleChange('danceTitle')}
-                      style={STYLES}
-                    />
-                    <p>Dance RunTime:</p>
-                    <TextField
-                      id="runtime"
-                      onChange={this.handleChange('runtime')}
-                      style={STYLES}
-                    />
+                      <p>Choreographer's email: {this.state.choreographer.email}</p>
+                    </div>
+                    <div className="dancerInfo">
+                      <p>Number of dancers: {this.state.dancers.length}</p>
+                      <p>Dancer Contact Information:</p>
+                      <table>
+                        <tbody>
+                          <tr className="categories">
+                            <th>Name</th>
+                            <th>Email</th>
+                          </tr>
+                          {contactRows}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="pieceInfo">
+                      <p>Dance Title: </p>
+                      <TextField
+                        id="danceTitle"
+                        onChange={this.handleChange('danceTitle')}
+                        style={STYLES}
+                      />
+                      <p>Dance RunTime:</p>
+                      <TextField
+                        id="runtime"
+                        onChange={this.handleChange('runtime')}
+                        style={STYLES}
+                      />
 
-                    <p>Composer(s):</p>
-                    <TextField
-                      id="composer"
-                      onChange={this.handleChange('composer')}
-                      style={STYLES}
-                    />
+                      <p>Composer(s):</p>
+                      <TextField
+                        id="composer"
+                        onChange={this.handleChange('composer')}
+                        style={STYLES}
+                      />
 
-                    <p>Music title(s): </p>
-                    <TextField
-                      id="musicTitle"
-                      onChange={this.handleChange('musicTitle')}
-                      style={STYLES}
-                    />
+                      <p>Music title(s): </p>
+                      <TextField
+                        id="musicTitle"
+                        onChange={this.handleChange('musicTitle')}
+                        style={STYLES}
+                      />
 
-                    <p>Performed By:</p>
-                    <TextField
-                      id="musicPerformer"
-                      onChange={this.handleChange('musicPerformer')}
-                      style={STYLES}
-                    />
+                      <p>Performed By:</p>
+                      <TextField
+                        id="musicPerformer"
+                        onChange={this.handleChange('musicPerformer')}
+                        style={STYLES}
+                      />
 
-                    <p>Music Source:</p>
-                    <TextField
-                      id="musicSource"
-                      onChange={this.handleChange('musicSource')}
-                      style={STYLES}
-                    />
+                      <p>Music Source:</p>
+                      <TextField
+                        id="musicSource"
+                        onChange={this.handleChange('musicSource')}
+                        style={STYLES}
+                      />
 
-                    <p>If music will be performed live, number of musicians:  </p>
-                    <SelectField
-                      value={this.state.numMusicians}
-                      onChange={this.handleChangeMusician}
-                    >
-                      <MenuItem value={0} primaryText="0" />
-                      <MenuItem value={1} primaryText="1" />
-                      <MenuItem value={2} primaryText="2" />
-                      <MenuItem value={3} primaryText="3" />
-                      <MenuItem value={4} primaryText="4" />
-                      <MenuItem value={5} primaryText="5" />
-                      <MenuItem value={6} primaryText="6" />
-                      <MenuItem value={7} primaryText="7" />
-                      <MenuItem value={8} primaryText="8" />
-                      <MenuItem value={9} primaryText="9" />
-                      <MenuItem value={10} primaryText="10+" />
-                    </SelectField>
+                      <p>If music will be performed live, number of musicians:  </p>
+                      <SelectField
+                        value={this.state.numMusicians}
+                        onChange={this.handleChangeMusician}
+                      >
+                        <MenuItem value={0} primaryText="0" />
+                        <MenuItem value={1} primaryText="1" />
+                        <MenuItem value={2} primaryText="2" />
+                        <MenuItem value={3} primaryText="3" />
+                        <MenuItem value={4} primaryText="4" />
+                        <MenuItem value={5} primaryText="5" />
+                        <MenuItem value={6} primaryText="6" />
+                        <MenuItem value={7} primaryText="7" />
+                        <MenuItem value={8} primaryText="8" />
+                        <MenuItem value={9} primaryText="9" />
+                        <MenuItem value={10} primaryText="10+" />
+                      </SelectField>
 
-                    {
-                      this.state.numMusicians > 0 &&
-                      <div className="musicianInfo">
-                        <p>List of contact info for musicians: </p>
-                        {musicianRow}
-                      </div>
-                    }
-                    <p>Rehearsal Schedule:</p>
-                    <TextField
-                      id="rehearsalSchedule"
-                      onChange={this.handleChange('rehearsalSchedule')}
-                      style={STYLES}
-                    />
-                  </div>
-                  <div className="notes">
-                    <p>Choreographers Notes: </p>
-                    <TextField
-                      id="choreoNotes"
-                      multiLine={true}
-                      onChange={this.handleChange('choreoNotes')}
-                      style={STYLES}
-                    />
+                      {
+                        this.state.numMusicians > 0 &&
+                        <div className="musicianInfo">
+                          <p>List of contact info for musicians: </p>
+                          {musicianRow}
+                        </div>
+                      }
+                      <p>Rehearsal Schedule:</p>
+                      <TextField
+                        id="rehearsalSchedule"
+                        onChange={this.handleChange('rehearsalSchedule')}
+                        style={STYLES}
+                      />
+                    </div>
+                    <div className="notes">
+                      <p>Choreographers Notes: </p>
+                      <TextField
+                        id="choreoNotes"
+                        multiLine={true}
+                        onChange={this.handleChange('choreoNotes')}
+                        style={STYLES}
+                      />
 
-                    <p>Costume Descriptions:  </p>
-                    <TextField
-                      id="costumeDesc"
-                      multiLine={true}
-                      onChange={this.handleChange('costumeDesc')}
-                      style={STYLES}
-                    />
+                      <p>Costume Descriptions:  </p>
+                      <TextField
+                        id="costumeDesc"
+                        multiLine={true}
+                        onChange={this.handleChange('costumeDesc')}
+                        style={STYLES}
+                      />
 
-                    <p>Props/Scenic Items Descriptions: </p>
-                    <TextField
-                      id="propsDesc"
-                      multiLine={true}
-                      onChange={this.handleChange('propsDesc')}
-                      style={STYLES}
-                    />
+                      <p>Props/Scenic Items Descriptions: </p>
+                      <TextField
+                        id="propsDesc"
+                        multiLine={true}
+                        onChange={this.handleChange('propsDesc')}
+                        style={STYLES}
+                      />
 
-                    <p>Lighting Description: </p>
-                    <TextField
-                      id="lightingDesc"
-                      multiLine={true}
-                      onChange={this.handleChange('lightingDesc')}
-                      style={STYLES}
-                    />
+                      <p>Lighting Description: </p>
+                      <TextField
+                        id="lightingDesc"
+                        multiLine={true}
+                        onChange={this.handleChange('lightingDesc')}
+                        style={STYLES}
+                      />
 
-                    <p>Other special needs:  </p>
-                    <TextField
-                      id="otherDesc"
-                      multiLine={true}
-                      onChange={this.handleChange('otherDesc')}
-                      style={STYLES}
-                    />
+                      <p>Other special needs:  </p>
+                      <TextField
+                        id="otherDesc"
+                        multiLine={true}
+                        onChange={this.handleChange('otherDesc')}
+                        style={STYLES}
+                      />
 
-                  </div>
+                    </div>
                   </div>
                   <Button>Save Info Sheet</Button>
                 </section>
               }
             </div>
-           
+
           </div>
         </div>
       </section>

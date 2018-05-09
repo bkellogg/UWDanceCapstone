@@ -1,3 +1,4 @@
+/*PAGE LAYOUT STYLE*/
 .mainView{
     padding-left: 5%;
     margin-bottom: 50px;
@@ -26,7 +27,7 @@
     padding: 25px;
 }
 
-.fullWidthCard, .card2, .setTimes, .dancersList-filter, .overlapAvailability, .choreographersSelecteCast, .restOfCast, .cardBody{
+.fullWidthCard, .card2, .setTimes, .dancersList-filter, .overlapAvailabilityWrap, .choreographersSelecteCast, .restOfCast, .cardBody{
         border: 0;
     -webkit-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
     -moz-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
@@ -89,10 +90,9 @@ span.thumb.active{
     background-color: transparent
  }
 
-
+/*SUPER LARGE SCREEN SIZING*/
  @media only screen and (min-width : 1920px) {
     .mainView{
         width: 1500px;
     }
-
  }
