@@ -108,6 +108,10 @@ class SignIn extends Component {
     this.setState({ forgotemail: event.target.value })
   }
 
+  toLanding = () => {
+    this.props.toLanding()
+  }
+
   render() {
     const actions = [
       <TextField
@@ -122,13 +126,14 @@ class SignIn extends Component {
     ];
 
     return (
-      <div className="LogInLanding">
-        <div className="Functionality">
+      <div className="logInLanding">
+        <i className="fas fa-arrow-circle-left fa-2x" onClick={this.toLanding}></i>
+        <div className="functionality">
           <div className="signInUplogoWrap">
             <img className="officialLogoLandingPage" alt="logo" src={logo} />
           </div>
-          <div className="content">
-            <h5 className="title">Sign in</h5>
+          <div className="signIn-SignUpContent">
+            <h1 className="title">Sign in</h1>
             <div className='error'>
               {this.state.error === true &&
                 <p> Incorrect username or password </p>
@@ -148,12 +153,11 @@ class SignIn extends Component {
                     </div>
                   </div>
                 </form>
-                <div className="Buttons">
-
+                <div className="buttons">
                   <Button onClick={this.signIn}>Sign In</Button>
                 </div>
-                <div className="Link">
-                  <a className="signlink" onClick={this.handleOpen}> Forgot password? </a>
+                <div className="link">
+                  <a className="blueTextLink" onClick={this.handleOpen}> Forgot password? </a>
                   <div>
                     <Dialog
                       title="Password Reset"
@@ -165,7 +169,7 @@ class SignIn extends Component {
                       Enter the email address associated with your account. You will receive an email with instructions on how to reset your password.
                 </Dialog>
                   </div>
-                  <a className="signlink" onClick={this.signUp}> Sign Up </a>
+                  <a className="blueTextLink" onClick={this.signUp}> Sign Up </a>
                 </div>
 
               </div>

@@ -12,8 +12,8 @@ import PersonRow from './PersonRow';
 import './styling/General.css';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
-let views = ['month', 'week','day']
-const STYLES = {width: "600px", paddingLeft: "15px"}
+let views = ['month', 'week', 'day']
+const STYLES = { width: "600px", paddingLeft: "15px" }
 
 let events = [
   {
@@ -58,38 +58,61 @@ class Piece extends Component {
     }
   };
 
-  componentWillMount(){
+  componentWillMount() {
     //get info about everyone in the piece
-    this.getPieceUsers()
+    this.getPieceID()
   }
 
-  getPieceUsers = () => {
-    //hardcoded piece id as "1", will eventually get piece ID from somewhere else
-    //TODO deal with pages
-    Util.makeRequest("pieces/1/users", "", "GET", true)
-    .then(res => {
-      if (res.ok) {
-        return res.json()
-      }
-      if (res.status === 401) {
-        Util.signOut()
-      }
-      return res
-        .text()
-        .then((t) => Promise.reject(t));
-    })
-    .then(piece => {
-      this.setState({
-        choreographer : piece.choreographer,
-        dancers : piece.dancers
+  //TODO deal with the error that a user has no pieces
+  getPieceID = () => {
+    Util.makeRequest("users/me/shows/" + this.props.show + "/choreographer", "", "GET", true)
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res
+          .text()
+          .then((t) => Promise.reject(t));
       })
-    })
+      .then(piece => {
+        this.setState({
+          pieceID : piece.id
+        })
+        console.log(piece.id)
+        this.getPieceUsers(piece.id)
+      })
+
+  }
+
+  getPieceUsers = (pieceID) => {
+    //TODO deal with pages
+    Util.makeRequest("pieces/" + pieceID + "/users", "", "GET", true)
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res
+          .text()
+          .then((t) => Promise.reject(t));
+      })
+      .then(piece => {
+        this.setState({
+          choreographer: piece.choreographer,
+          dancers: piece.dancers
+        })
+      })
   }
 
   viewAvailability = () => {
     let view = this.state.viewAvailability
     this.setState({
-      viewAvailability : !view
+      viewAvailability: !view
     })
   }
 
@@ -100,7 +123,7 @@ class Piece extends Component {
   };
 
   handleChangeMusician = (event, index, value) => {
-    this.setState({numMusicians : value})
+    this.setState({ numMusicians: value })
   };
 
   toggleInfo = () => {
@@ -113,14 +136,14 @@ class Piece extends Component {
   toggleCast = () => {
     let opp = this.state.openCast
     this.setState({
-      openCast : !opp
+      openCast: !opp
     })
   }
 
   toggleCalendar = () => {
     let opp = this.state.openCalendar
     this.setState({
-      openCalendar : !opp
+      openCalendar: !opp
     })
   }
 
@@ -129,12 +152,12 @@ class Piece extends Component {
   render() {
     let musicianRow = []
     let numMusicians = this.state.numMusicians
-    for(let i = 0; i < numMusicians; i++){
-      musicianRow.push(<MusicianRow key={i}/>)
+    for (let i = 0; i < numMusicians; i++) {
+      musicianRow.push(<MusicianRow key={i} />)
     }
-    
+
     let castRows = this.state.dancers.map((dancer, i) => {
-      return (<PersonRow p={dancer} piece={true} key={i}/>)
+      return (<PersonRow p={dancer} piece={true} key={i} />)
     })
 
     let contactRows = this.state.dancers.map((dancer, i) => {
@@ -145,252 +168,260 @@ class Piece extends Component {
           </td>
           <td>
             {dancer.email}
-          </td>  
-        </tr>  
+          </td>
+        </tr>
       )
     })
 
     return (
       <section className="main">
         <div className="mainView">
-          <h1>My Piece</h1>
-          <div className="card1">
-            {
-              !this.state.openCalendar &&
-              // Styling for toggle header is in general
-              <div className="toggleHeader">
-                <h2 className="smallHeading">Calendar</h2>
-                <i className="fas fa-chevron-down fa-lg" onClick={this.toggleCalendar}></i>
-              </div>
-            } 
-            {
-              this.state.openCalendar &&
-              <section>
+          <div className="pageContentWrap">
+            <h1>My Piece</h1>
+            <div className="fullWidthCard">
+              {
+                !this.state.openCalendar &&
+                // Styling for toggle header is in general
                 <div className="toggleHeader">
                   <h2 className="smallHeading">Calendar</h2>
-                  <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCalendar}></i>
+                  <i className="fas fa-chevron-down fa-lg" onClick={this.toggleCalendar}></i>
                 </div>
-                <BigCalendar style={{height : "800px", width: "800px"}}
-                  selectable
-                  defaultView='week'
-                  events={events}
-                  views={views}
-                  step={60}
-                  onSelectEvent={event => alert(event.title)}
-                  onSelectSlot={slotInfo =>
-                    alert(
-                      `selected rehearsal time: \n\nstart ${slotInfo.start.toLocaleString()} ` +
+              }
+              {
+                this.state.openCalendar &&
+                <section>
+                  <div className="toggleHeader">
+                    <h2 className="smallHeading">Calendar</h2>
+                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCalendar}></i>
+                  </div>
+                  <BigCalendar style={{ height: "800px", width: "800px" }}
+                    selectable
+                    defaultView='week'
+                    events={events}
+                    views={views}
+                    step={60}
+                    onSelectEvent={event => alert(event.title)}
+                    onSelectSlot={slotInfo =>
+                      alert(
+                        `selected rehearsal time: \n\nstart ${slotInfo.start.toLocaleString()} ` +
                         `\nend: ${slotInfo.end.toLocaleString()}`
-                    )
-                  }
-                />
-              </section>
-            }
-          </div>
-          <div className="card1">
-          {
-            !this.state.openCast &&
-            // Styling for toggle header is in general
-            <div className="toggleHeader">
-              <h2 className="smallHeading">My Cast</h2>
-              <i className="fas fa-chevron-down fa-lg" onClick={this.toggleCast}></i>
+                      )
+                    }
+                  />
+                </section>
+              }
             </div>
-          }
-          {
-            this.state.openCast &&
-            <section>
-              <div className="toggleHeader">
-                <h2 className="smallHeading">My Cast</h2>
-                <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCast}></i>
-              </div>
-              <table>
-              <tbody>
-                <tr className="categories">
-                  <th className="avatar2">Photo</th>
-                  <th>Name</th>
-                  <th className="userRoleDisp">Bio</th>
-                  <th>Email</th>
-                </tr>
-                {castRows}
-              </tbody>
-            </table>
-            {
-              !this.state.viewAvailability &&
-              <Button onClick={this.viewAvailability}> View Cast Availability </Button>
-            }
-            {
-              this.state.viewAvailability &&
-              <div>
-                <Button onClick={this.viewAvailability}> Hide Cast Availabiltiy </Button>
-                <p>View availability ay</p>
-              </div>
-            }
-            </section>
-          } 
-          </div>
-          <div className="card1">
-            {
-              !this.state.openInfo &&
-              <div className="toggleHeader">
-                <h2 className="smallHeading">Information Sheet</h2>
-                <i className="fas fa-chevron-down fa-lg" onClick={this.toggleInfo}></i>
-              </div>
-            }
-            {
-              this.state.openInfo &&
-              <section>
+            <div className="fullWidthCard">
+              {
+                !this.state.openCast &&
+                // Styling for toggle header is in general
+                <div className="toggleHeader">
+                  <h2 className="smallHeading">My Cast</h2>
+                  <i className="fas fa-chevron-down fa-lg" onClick={this.toggleCast}></i>
+                </div>
+              }
+              {
+                this.state.openCast &&
+                <section>
+                  
+                  <div className="toggleHeader">
+                    <h2 className="smallHeading">My Cast</h2>
+                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCast}></i>
+                  </div>
+                  <div className="peopleList">
+                  <table>
+                    <tbody>
+                      <tr className="categories">
+                        <th className="avatar2">Photo</th>
+                        <th>Name</th>
+                        <th className="userRoleDisp">Bio</th>
+                        <th>Email</th>
+                      </tr>
+                      {castRows}
+                    </tbody>
+                  </table>
+                  </div>
+                  {
+                    !this.state.viewAvailability &&
+                    <Button onClick={this.viewAvailability}> View Cast Availability </Button>
+                  }
+                  {
+                    this.state.viewAvailability &&
+                    <div>
+                      <Button onClick={this.viewAvailability}> Hide Cast Availabiltiy </Button>
+                      <p>View availability ay</p>
+                    </div>
+                  }
+                </section>
+              }
+            </div>
+            <div className="fullWidthCard">
+              {
+                !this.state.openInfo &&
                 <div className="toggleHeader">
                   <h2 className="smallHeading">Information Sheet</h2>
-                  <i className="fas fa-chevron-up fa-lg" onClick={this.toggleInfo}></i>
+                  <i className="fas fa-chevron-down fa-lg" onClick={this.toggleInfo}></i>
                 </div>
-                <div className="choreoContact">
-                  <p>Choreographer's Name: {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
-                  <p>Choreographer's Phone Number:</p>
-                    <TextField 
+              }
+              {
+                this.state.openInfo &&
+                <section>
+                  <div className="toggleHeader">
+                    <h2 className="smallHeading">Information Sheet</h2>
+                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleInfo}></i>
+                  </div>
+                  <div className="peopleList">
+                  <div className="choreoContact">
+                    <p>Choreographer's Name: {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
+                    <p>Choreographer's Phone Number:</p>
+                    <TextField
                       id="phoneNumber"
                       onChange={this.handleChange('phoneNumber')}
                       style={STYLES}
                     />
-                  
-                  <p>Choreographer's email: {this.state.choreographer.email}</p>
-                </div>
-                <div className="dancerInfo">
-                  <p>Number of dancers: {this.state.dancers.length}</p>
-                  <p>Dancer Contact Information:</p> 
-                  <table>
-                    <tbody>
-                      <tr className="categories">
-                        <th>Name</th>
-                        <th>Email</th>
-                      </tr>
-                      {contactRows}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="pieceInfo">
-                  <p>Dance Title: </p>
-                    <TextField 
+
+                    <p>Choreographer's email: {this.state.choreographer.email}</p>
+                  </div>
+                  <div className="dancerInfo">
+                    <p>Number of dancers: {this.state.dancers.length}</p>
+                    <p>Dancer Contact Information:</p>
+                    <table>
+                      <tbody>
+                        <tr className="categories">
+                          <th>Name</th>
+                          <th>Email</th>
+                        </tr>
+                        {contactRows}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="pieceInfo">
+                    <p>Dance Title: </p>
+                    <TextField
                       id="danceTitle"
                       onChange={this.handleChange('danceTitle')}
                       style={STYLES}
                     />
-                  <p>Dance RunTime:</p>
-                    <TextField 
+                    <p>Dance RunTime:</p>
+                    <TextField
                       id="runtime"
                       onChange={this.handleChange('runtime')}
                       style={STYLES}
                     />
-                  
-                  <p>Composer(s):</p>
-                    <TextField 
+
+                    <p>Composer(s):</p>
+                    <TextField
                       id="composer"
                       onChange={this.handleChange('composer')}
                       style={STYLES}
                     />
-                  
-                  <p>Music title(s): </p>
-                    <TextField 
+
+                    <p>Music title(s): </p>
+                    <TextField
                       id="musicTitle"
                       onChange={this.handleChange('musicTitle')}
                       style={STYLES}
                     />
-                  
-                  <p>Performed By:</p>
-                    <TextField 
+
+                    <p>Performed By:</p>
+                    <TextField
                       id="musicPerformer"
                       onChange={this.handleChange('musicPerformer')}
                       style={STYLES}
                     />
-                  
-                  <p>Music Source:</p>
-                    <TextField 
+
+                    <p>Music Source:</p>
+                    <TextField
                       id="musicSource"
                       onChange={this.handleChange('musicSource')}
                       style={STYLES}
                     />
-                  
-                  <p>If music will be performed live, number of musicians:  </p> 
-                  <SelectField
-                    value={this.state.numMusicians}
-                    onChange={this.handleChangeMusician}
-                  >
-                    <MenuItem value={0} primaryText="0" />
-                    <MenuItem value={1} primaryText="1" />
-                    <MenuItem value={2} primaryText="2" />
-                    <MenuItem value={3} primaryText="3" />
-                    <MenuItem value={4} primaryText="4" />
-                    <MenuItem value={5} primaryText="5" />
-                    <MenuItem value={6} primaryText="6" />
-                    <MenuItem value={7} primaryText="7" />
-                    <MenuItem value={8} primaryText="8" />
-                    <MenuItem value={9} primaryText="9" />
-                    <MenuItem value={10} primaryText="10+" />
-                  </SelectField>
-                  
-                  {
-                    this.state.numMusicians > 0 &&
-                    <div className="musicianInfo">
-                      <p>List of contact info for musicians: </p>
-                      {musicianRow}
-                    </div>
-                  }
-                  <p>Rehearsal Schedule:</p>
-                  <TextField 
+
+                    <p>If music will be performed live, number of musicians:  </p>
+                    <SelectField
+                      value={this.state.numMusicians}
+                      onChange={this.handleChangeMusician}
+                    >
+                      <MenuItem value={0} primaryText="0" />
+                      <MenuItem value={1} primaryText="1" />
+                      <MenuItem value={2} primaryText="2" />
+                      <MenuItem value={3} primaryText="3" />
+                      <MenuItem value={4} primaryText="4" />
+                      <MenuItem value={5} primaryText="5" />
+                      <MenuItem value={6} primaryText="6" />
+                      <MenuItem value={7} primaryText="7" />
+                      <MenuItem value={8} primaryText="8" />
+                      <MenuItem value={9} primaryText="9" />
+                      <MenuItem value={10} primaryText="10+" />
+                    </SelectField>
+
+                    {
+                      this.state.numMusicians > 0 &&
+                      <div className="musicianInfo">
+                        <p>List of contact info for musicians: </p>
+                        {musicianRow}
+                      </div>
+                    }
+                    <p>Rehearsal Schedule:</p>
+                    <TextField
                       id="rehearsalSchedule"
                       onChange={this.handleChange('rehearsalSchedule')}
                       style={STYLES}
                     />
-                </div>
-                <div className="notes">
-                  <p>Choreographers Notes: </p>
-                    <TextField 
+                  </div>
+                  <div className="notes">
+                    <p>Choreographers Notes: </p>
+                    <TextField
                       id="choreoNotes"
                       multiLine={true}
                       onChange={this.handleChange('choreoNotes')}
                       style={STYLES}
                     />
-                  
-                  <p>Costume Descriptions:  </p>
-                    <TextField 
+
+                    <p>Costume Descriptions:  </p>
+                    <TextField
                       id="costumeDesc"
                       multiLine={true}
                       onChange={this.handleChange('costumeDesc')}
                       style={STYLES}
                     />
-                
-                  <p>Props/Scenic Items Descriptions: </p>
-                    <TextField 
+
+                    <p>Props/Scenic Items Descriptions: </p>
+                    <TextField
                       id="propsDesc"
                       multiLine={true}
                       onChange={this.handleChange('propsDesc')}
                       style={STYLES}
                     />
-                  
-                  <p>Lighting Description: </p>
-                    <TextField 
+
+                    <p>Lighting Description: </p>
+                    <TextField
                       id="lightingDesc"
                       multiLine={true}
                       onChange={this.handleChange('lightingDesc')}
                       style={STYLES}
                     />
-                  
-                  <p>Other special needs:  </p>
-                    <TextField 
+
+                    <p>Other special needs:  </p>
+                    <TextField
                       id="otherDesc"
                       multiLine={true}
                       onChange={this.handleChange('otherDesc')}
                       style={STYLES}
                     />
-                
-                </div>
-                <Button>Save Info Sheet</Button>
-              </section>
-            }
+
+                  </div>
+                  </div>
+                  <Button>Save Info Sheet</Button>
+                </section>
+              }
+            </div>
+           
           </div>
         </div>
       </section>
-  );
-};
+    );
+  };
 
 }
 export default Piece;

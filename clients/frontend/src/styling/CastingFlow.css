@@ -3,7 +3,6 @@
     width: 95%;
     margin-bottom: 3%;
 }
-
 .back-button-styles-css, .next-button-styles-css {
     margin: 12 auto !important;
     float: left;
@@ -12,22 +11,31 @@
     padding: 5px;
     border-radius: 50%;
 }
-
 .next-button-styles-css{
     float: right;
 }
-
 .back-button-styles-css:hover, .next-button-styles-css:hover{
     background-color: #22A7E0 !important;
 }
-
 .steps{
     background-color: transparent !important;
     color: red !important;
 }
 
+/*SELECT CAST*/
+td{
+    padding: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none;
+}
 
-/* HEADERS */
+    /* REMOVE HORIZONTAL LINES IN TABLE - THIS IS SHARED CODE*/
+tr{
+    border: none;
+}
+
+    /* TABLE HEADERS - THIS IS SHARED CODE*/
 th{
     color: #22A7E0;    
     padding:0;
@@ -36,10 +44,6 @@ th{
     font-weight: 500;
     font-size: 13px;
 }
-
-/* .centerText{
-    text-align: center;
-} */
 
 .check, .checkOne {
     display: inline-block;
@@ -58,54 +62,60 @@ th{
     text-align: center;
 }
 
-
-/* AVAILABILITY CALENDAR */
-.overlapAvailability{
-    width: 650px;
-    background-color: #F6F8FC;
-    position: absolute;
-    display: inline-block;
-    padding: 20px;
+.personRankBoxes{
+    text-align: center;
 }
 
-
-td{
-    padding: 0;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border: none;
+.variableCastHeader {
+    text-align: center;
+    border-bottom: 3px solid hsl(0, 0%, 45%);
 }
 
-/* REMOVE HORIZONTAL LINES IN TABLE */
-tr{
-    border: none;
+    /*YOUR CAST, CONFLICTS, UNCAST DANCERS DIVIDER*/
+.selectedCastDividerText{
+    font-size: 13px;
+    color: hsl(0, 0%, 29%);
+    width: 10%;
 }
 
-/* LAYOUT */
-/* small card with cast filter */
+/* CHECK AVAILABILITY */
+    /*LAYOUT*/
+    /* small card with cast filter */
 .castList{
     width: 100%;
     position: relative;
 }
 
-/* HALF CARDS */
-/*inside of small card with cast filter*/
+    /* HALF CARDS */
+    /*inside of small card with cast filter*/
 .dancersList-filter{
     padding: 25px;
-
 }
 
+.overlapAvailabilityWrap{
+    width: 60%;
+    min-width: 650px;
+    vertical-align: top;
+    display: inline-block;  
+}
+
+.overlapAvailability{
+    width: 100%;
+    background-color: #F6F8FC;
+    padding: 20px;
+}
 
 .dancersList-filter, .extraClass {
     height: 100%;
     width: 37%;
-    max-width: 450px;
-    min-width: 400px;
+    /* max-width: 440px; */
     position: relative;
     display: inline-block;
-    margin-right: 3%;
+    margin-right: 2%;
   }
 
+
+/*RESOLVE CONFLICTS*/  
 .castList-v2{
     width: 48%;
 }
@@ -114,7 +124,6 @@ tr{
     margin-right: 4%;
 }
 
-/* RESOLVE CONFLICTS */
 .conflictsCard{
     width: 100%;
     z-index: 1;
@@ -129,18 +138,11 @@ tr{
     padding-bottom: 30px;
 }
 
-.smallHeading{
-    font-size: 15px;
-    font-weight: 500;
-    padding-bottom: 20px;
-}
 
 .choreographersSelecteCast, .restOfCast{
     padding: 25px;
 }
 
-
-/* ADD DANCERS */
 
 /* STEP 4 */
 .setTimes{
@@ -171,8 +173,7 @@ tr{
 .selectField{
     position: relative;
     display: inline-block;
-    width: 100%;
-
+    width: 100%; 
 }
 
 .buttonsWrap{
@@ -196,7 +197,6 @@ tr{
 
 .choreos{
     display: inline-block;
-
 }
 
 .dancerAssignedNumber{
@@ -204,13 +204,9 @@ tr{
     padding-right: 5px;
 }
 
-.personRankBoxes{
-    text-align: center;
-}
 
 
 /**Hover over exclamation point**/
-
 .tooltip {
     position: relative;
 }
@@ -248,14 +244,10 @@ tr{
     opacity: 1;
 }
 
-.variableCastHeader {
-    text-align: center;
-    border-bottom: 2px solid hsl(0, 0%, 45%);
+/*SHARED*/
+.smallHeading{
+    font-size: 15px;
+    font-weight: 500;
+    padding-bottom: 20px;
 }
 
-
-/*ADD REMOVE BUTTON STYLES*/
-.selectedCastDividerText{
-    font-size: 13px;
-    color: hsl(0, 0%, 29%);
-}

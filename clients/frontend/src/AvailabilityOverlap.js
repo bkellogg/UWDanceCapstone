@@ -172,7 +172,7 @@ class AvailabilityOverlap extends Component {
 
         //this is the div with the specific time block
         return (
-          <div className="tooltip">
+          <div className="tooltip" key={j}>
             <div className="overlapTimes" style={{ "backgroundColor": color }}>
               <span className="tooltiptext">There are {uniqueIDs.length} dancers available at this time</span>
             </div>
@@ -181,7 +181,7 @@ class AvailabilityOverlap extends Component {
       })
       //this is the div for the day, that contains all the time blocks
       return (
-        <div className="overlapDays">
+        <div key={i} className="overlapDays">
           {overlapTimes}
         </div>
       )
@@ -189,7 +189,7 @@ class AvailabilityOverlap extends Component {
     //generates the days header
     let daysSimple = daysRef.map((day, i) => {
       return (
-        <div className="daysSimple">
+        <div key={i} className="daysSimple">
           {day}
         </div>
       )
@@ -197,7 +197,7 @@ class AvailabilityOverlap extends Component {
     //generates the times displayed on the side
     let timesSimple = timesFormatted.map((time, i) => {
       return (
-        <div className="timesSimple">
+        <div key={i} className="timesSimple">
           {time}
         </div>
       )
@@ -207,22 +207,22 @@ class AvailabilityOverlap extends Component {
 
     return (
       <section>
-        <div className="cardTitleWrap">
-        <div className="headerWrap">
-          <h2 className="smallHeading">Availability</h2>
-          </div>
-          <div className="legend">
-            <p className="colorIndicator">Least Available</p>
-            <div className="colorsWrap">
-              <div className="colorOne"> </div>
-              <div className="colorTwo"> </div>
-              <div className="colorThree"> </div>
+        <div className="overlapAvailability">
+          <div className="cardTitleWrap">
+            <div className="headerWrap">
+              <h2 className="smallHeading">Availability</h2>
             </div>
-            <p className="colorIndicator">Most Available</p>
+            <div className="legend">
+              <p className="colorIndicator">Least Available</p>
+              <div className="colorsWrap">
+                <div className="lightLegendColor" style={{ "backgroundColor": colors[1] }}> </div>
+                <div className="mediumLegendColor" style={{ "backgroundColor": colors[4] }}> </div>
+                <div className="darkLegendColor" style={{ "backgroundColor": colors[8] }}> </div>
+              </div>
+              <p className="colorIndicator">Most Available</p>
+            </div>
           </div>
-        </div>
-        <div className="availabilityCalendar">
-          <div className="calendarWrap">
+          <div className="availabilityCalendar">
             <div className="timesRow">
               {timesSimple}
             </div>
@@ -230,7 +230,7 @@ class AvailabilityOverlap extends Component {
               <div className="daysHeader">
                 {daysSimple}
               </div>
-              <div className="times">
+              <div className="overlapTimes">
                 {overlapDays}
               </div>
             </div>

@@ -1,3 +1,4 @@
+/*LANDING BACKGROUND */
 .landingBackground {
     background-image: url('../imgs/dance-bw.jpg');
     background-position: center;
@@ -13,8 +14,8 @@
     padding-left: 15%;
     padding-right: 15%;
 }
-/*LANDING HEADING */
-.landingHeading{
+/*LANDING BANNER */
+.landingBanner{
     padding-top: 20px;
     position: relative;
     width: auto;
@@ -30,7 +31,7 @@
 .officialLogoLandingPage{
     width: 200px;
 }
-.logInSignUpButtonWrap{
+.landingButtonsWrap{
     padding-top: 20px;
     display: inline-block;
     float: right;
@@ -49,7 +50,7 @@
     margin-bottom: 200px;
     z-index: 2;
 }
-.capstoneInfo{
+.capstoneInfoWrap{
     opacity: 0.95;
     border-radius: 10px;
     width: 100%;
@@ -57,7 +58,7 @@
     padding: 35px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
-.capstoneInfoSection{
+.capstoneInfo{
     width: 100%;
     position: relative;
     display: inline-block;
@@ -75,12 +76,12 @@
 .userRoleHeader{
     color: inherit;
 }
-.indentContentDouble{
+.indentContent{
     text-indent: 20px;
     font-size: 13px;
 }
-/*HEADER AND CONTENT SHARED*/
-.landingHeading, .landingContent, .landingView{
+/*HEADER AND CONTENT SHARED STYLES*/
+.landingBanner, .landingContent, .landingView{
     display: block;
 }
 /*TABLE WITH DANCER, CHOREOGRAPHER, DIRECTOR*/
@@ -111,8 +112,10 @@
     font-weight: 400;
     letter-spacing: 0.5px;
 }
+
+/*TABLET VIEW*/
 @media only screen and (max-width : 992px) {
-    .landingHeading{
+    .landingBanner{
         display: block;
         height: 100%;
    }
@@ -123,13 +126,15 @@
         margin: 0px;
    }
 }
+
+/*MOBILE VIEW*/
 @media only screen and (max-width : 552px) {
-    .landingHeading{
+    .landingBanner{
         width: 100%;
         display: block;
         overflow: hidden;
    }
-    .landingLogoWrap, .logInSignUpButtonWrap{
+    .landingLogoWrap, .landingButtonsWrap{
         width: 100%;
    }
     .officialLogoLandingPage {

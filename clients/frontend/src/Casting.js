@@ -9,6 +9,8 @@ import SelectCast from './SelectCast';
 import CheckAvailability from './CheckAvailability';
 import ResolveConflict from './ResolveConflict';
 import SetRehearsals from './SetRehearsals';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
@@ -18,6 +20,8 @@ import './styling/CastingFlowTablet.css';
 import ArrowBackIcon from 'mdi-react/ArrowBackIcon';
 import ArrowForwardIcon from 'mdi-react/ArrowForwardIcon';
 
+const HOST = "dasc.capstone.ischool.uw.edu";
+const WEBSOCKET = new WebSocket("wss://" + HOST + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
 
 class Casting extends Component {
   constructor(props) {
@@ -34,14 +38,15 @@ class Casting extends Component {
       },
       dropFromCast: {
         "action":"remove"
-      }
+      },
+      open: true,
+      error: false
     }
   };
 
   componentDidMount() {
-
     //this will take the message returned from the socket and store it in state
-    this.props.websocket.addEventListener("message", (event) => {
+    WEBSOCKET.addEventListener("message", (event) => {
       //TODO only do this for casting socket updates
       let update = JSON.parse(event.data)
 
@@ -51,22 +56,7 @@ class Casting extends Component {
         contested : update.data.contested
       })
 
-  })
-
-    //add user to casting session
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", "", "PUT", true)
-      .then((res) => {
-        if (res.ok) {
-          return res.text()
-        }
-        if (res.status === 401) {
-          Util.signOut()
-        }
-        return res.text().then((t) => Promise.reject(t));
-      })
-      .catch(err => {
-        console.error(err)
-      })
+    })
   }
 
   //handles a next click
@@ -131,11 +121,43 @@ class Casting extends Component {
       case 2:
         return <ResolveConflict audition={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>;
       case 3:
-        return <SetRehearsals cast={this.state.cast} contested={this.state.contested}/>
+        return <SetRehearsals audition={this.props.audition} cast={this.state.cast} contested={this.state.contested}/>
       default:
         return 'Someone is off the counts - stop the music, and refresh the page!';
     }
   }
+
+  enterCasting = () => {
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", "", "PUT", true)
+    .then((res) => {
+      if (res.ok) {
+        return res.text()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      if (res.status === 400) {
+        this.setState({
+          error: "This show is not currently casting. Contact your administrator if you believe this is inaccurate."
+        })
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(
+      this.setState({
+        open: false,
+      })
+    )
+    .catch(err => {
+      console.error(err)
+    })
+  }
+
+  cancelCast = () => {
+    //sends the user  to the dashboard
+    window.location = "/"
+  }
+  
 
   render() {
     const { stepIndex } = this.state;
@@ -143,62 +165,96 @@ class Casting extends Component {
     return (
       <section className="main">
         <div className="mainView">
-          <h1>Casting</h1>
-          <div className="card-casting">
-            <div className="castingFlowWrap">
+          <h1>Casting {this.props.name}</h1>
+          
+          {this.state.error &&
+            <div>
+              {this.state.error}
+            </div>
+          }
 
-              {/*This is the stepper styling - you can click the steps to go between them*/}
-              <div className="castingFlow" style={{ width: '100%', maxWidth: '100%', margin: 'auto', color: "red" }}>
-                <Stepper linear={true} activeStep={stepIndex}>
-                  <Step>
-                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 0 })} >
-                      Select Your Cast
-                    </StepButton>
-                  </Step>
-                  <Step>
-                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 1 })}>
-                      Check Availability
-                    </StepButton>
-                  </Step>
-                  <Step>
-                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 2 })}>
-                      Resolve Conflicts
-                    </StepButton>
-                  </Step>
-                  <Step>
-                    <StepButton className="steps" onClick={() => this.setState({ stepIndex: 3 })}>
-                      Post Casting
-                    </StepButton>
-                  </Step>
-                </Stepper>
+          {!this.state.error && this.state.open === false &&
+            <div className="card-casting">
+              <div className="castingFlowWrap">
 
-                {/*BUTTONS*/}
-                <div style={contentStyle}>
-                  <div style={{ marginTop: 12 }}>
-                    <ArrowBackIcon 
-                      size={26} 
-                      disabled={stepIndex === 0}
-                      onClick={this.handlePrev}
-                      className="back-button-styles-css"
-                    />
-                    <ArrowForwardIcon 
-                      size={26} 
-                      disabled={stepIndex === 3}
-                      onClick={this.handleNext}
-                      className="next-button-styles-css"
-                    />
+                {/*This is the stepper styling - you can click the steps to go between them*/}
+                <div className="castingFlow" style={{ width: '100%', maxWidth: '100%', margin: 'auto', color: "red" }}>
+                  <Stepper linear={true} activeStep={stepIndex}>
+                    <Step>
+                      <StepButton className="steps" onClick={() => this.setState({ stepIndex: 0 })} >
+                        Select Your Cast
+                      </StepButton>
+                    </Step>
+                    <Step>
+                      <StepButton className="steps" onClick={() => this.setState({ stepIndex: 1 })}>
+                        Check Availability
+                      </StepButton>
+                    </Step>
+                    <Step>
+                      <StepButton className="steps" onClick={() => this.setState({ stepIndex: 2 })}>
+                        Resolve Conflicts
+                      </StepButton>
+                    </Step>
+                    <Step>
+                      <StepButton className="steps" onClick={() => this.setState({ stepIndex: 3 })}>
+                        Post Casting
+                      </StepButton>
+                    </Step>
+                  </Stepper>
+
+                  {/*BUTTONS*/}
+                  <div style={contentStyle}>
+                    <div style={{ marginTop: 12 }}>
+                      <ArrowBackIcon 
+                        size={26} 
+                        disabled={stepIndex === 0}
+                        onClick={this.handlePrev}
+                        className="back-button-styles-css"
+                      />
+                      <ArrowForwardIcon 
+                        size={26} 
+                        disabled={stepIndex === 3}
+                        onClick={this.handleNext}
+                        className="next-button-styles-css"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          {/*CONTENT*/}
-
+          }
         </div>
 
-        {
+        { 
+          !this.state.error &&
+          this.state.open === false &&
           this.getStepContent(stepIndex)
         }
+
+        <Dialog
+          title="Enter Casting"
+          actions={[
+            <FlatButton
+              label="Cancel"
+              style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
+              primary={false}
+              onClick={this.cancelCast}
+            />,
+            <FlatButton
+              label="Enter Casting"
+              style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+              primary={false}
+              keyboardFocused={true}
+              onClick={this.enterCasting}
+            />,
+          ]}
+          modal={false}
+          open={this.state.open}
+        >
+          <div className="warningText"> By clicking Enter Casting you confirm that you are a choreograper for 
+          <strong className="importantText warningText">{" " + this.props.name + " "}</strong> 
+          and that you are currently casting for the show.</div>
+        </Dialog>
 
       </section>
 

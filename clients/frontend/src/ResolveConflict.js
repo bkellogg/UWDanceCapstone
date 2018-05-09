@@ -43,24 +43,34 @@ class ResolveConflict extends Component {
     return (
       <section>
         <div className="mainView mainContentView">
-          <div className="card1">
+        <div className="pageContentWrap">
+          <div className="fullWidthCard">
             <div className="wrap">
               <div className="conflictsCard">
-                <h2 className="conflictMessage">Conflicts between you and other choreographers.</h2> 
-              <table id="conflictsTable">
-                  <tbody>
-                    <tr className="categories">
-                      <th></th>
-                      <th>#</th>
-                      <th>Dancer</th>
-                      <th>Pieces</th>
-                      <th className="dancerRank">Rank</th>
-                      <th>Choreographers</th>
-                      <th></th>
-                    </tr>
-                    {conflictsRow}
-                  </tbody>
-                </table>
+              {
+                conflictsRow.length > 0 &&
+                <div>
+                  <h2 className="conflictMessage">Conflicts between you and other choreographers.</h2> 
+                  <table id="conflictsTable">
+                    <tbody>
+                      <tr className="categories">
+                        <th></th>
+                        <th>#</th>
+                        <th>Dancer</th>
+                        <th>Pieces</th>
+                        <th className="dancerRank">Rank</th>
+                        <th>Choreographers</th>
+                        <th></th>
+                      </tr>
+                      {conflictsRow}
+                    </tbody>
+                  </table>
+                </div>
+              }
+              {
+                conflictsRow.length === 0 &&
+                <h2 className="conflictMessage">There are no conflicts between you and other choreographers</h2>
+              }
                 </div>
             </div>
           </div>
@@ -99,6 +109,7 @@ class ResolveConflict extends Component {
                 </table>
               </div>
             </div>
+        </div>
         </div>
         </div>
         </div>

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import * as Util from './util';
+import RaisedButton from 'material-ui/RaisedButton';
 import './styling/General.css';
 
 //styling
-import { Card, CardText } from 'material-ui/Card';
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';
 
@@ -16,11 +16,13 @@ class Dashboard extends Component {
       announcements: [],
       announcementTypes: null,
       currAnnouncements: [],
+      pending: [],
     }
   };
 
   componentWillMount() {
     this.getAnnouncements();
+    this.getUserPieces()
   }
 
   //Getting all messages from announcements that have not been deleted
@@ -91,16 +93,72 @@ class Dashboard extends Component {
       .catch((err) => { });
   }
 
+  getUserPieces = () => {
+    Util.makeRequest("users/me/pieces/pending", "", "GET", true)
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(pieces => {
+      this.setState({
+        pending: pieces
+      })
+    })
+    .catch((err) => {
+      console.log(err)
+    }); 
+  }
+
+  acceptCasting = (pieceID) => {
+    Util.makeRequest("users/me/pieces/" + pieceID, "", "LINK", true)
+    .then((res) => {
+      if (res.ok) {
+        return res.text();
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then( () => {
+      this.getUserPieces()
+    } 
+    )
+    .catch((err) => {
+      console.log(err)
+    }); 
+  }
+
   render() {
+    const pending = this.state.pending
+    let pendingCasting = pending.map((piece, i) => {
+      return (
+        <div key={i} className="announcement announcementMessage cardBody">
+          Congratulations! You have been cast in {piece.name}. Rehearsal times will be here as well.
+          <div>
+            <RaisedButton
+              label="Accept"
+              onClick={() => this.acceptCasting(piece.id)}
+            />
+          </div>
+        </div>
+      )
+    })
     return (
       <section className='main' >
         <div className="mainView">
-          <div className="transparentCard">
+        <div className="pageContentWrap">
             <div className='dashboard'>
               <div id='welcome'>
                 <h1> Welcome, {this.state.user.firstName}!</h1>
               </div>
               <div id='announcements'>
+                {pendingCasting}
                 {this.state.user.bio === "" &&
                   <div className="announcement completeProfile">
                     <div className="warning cardBody">
