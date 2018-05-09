@@ -60,13 +60,36 @@ class Piece extends Component {
 
   componentWillMount() {
     //get info about everyone in the piece
-    this.getPieceUsers()
+    this.getPieceID()
   }
 
-  getPieceUsers = () => {
-    //hardcoded piece id as "1", will eventually get piece ID from somewhere else
+  //TODO deal with the error that a user has no pieces
+  getPieceID = () => {
+    Util.makeRequest("users/me/shows/" + this.props.show + "/choreographer", "", "GET", true)
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res
+          .text()
+          .then((t) => Promise.reject(t));
+      })
+      .then(piece => {
+        this.setState({
+          pieceID : piece.id
+        })
+        console.log(piece.id)
+        this.getPieceUsers(piece.id)
+      })
+
+  }
+
+  getPieceUsers = (pieceID) => {
     //TODO deal with pages
-    Util.makeRequest("pieces/1/users", "", "GET", true)
+    Util.makeRequest("pieces/" + pieceID + "/users", "", "GET", true)
       .then(res => {
         if (res.ok) {
           return res.json()

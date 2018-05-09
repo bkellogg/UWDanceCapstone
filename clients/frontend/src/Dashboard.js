@@ -137,7 +137,6 @@ class Dashboard extends Component {
   render() {
     const pending = this.state.pending
     let pendingCasting = pending.map((piece, i) => {
-      console.log(piece)
       return (
         <div key={i} className="announcement announcementMessage cardBody">
           Congratulations! You have been cast in {piece.name}. Rehearsal times will be here as well.
