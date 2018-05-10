@@ -77,7 +77,7 @@ class SetRehearsals extends Component {
   }
 
   calculateRehearsals = () => {
-    let startDate = this.state.startDate
+    //let startDate = this.state.startDate
     let endDate = this.props.endDate
     let rehearsalBlocks = this.state.rehearsalSchedule
     let allRehearsals = []
@@ -115,13 +115,29 @@ class SetRehearsals extends Component {
 
         rehearsalObject.start = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
         rehearsalObject.end = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
-
+        startDate = beginDate //need this in a sec
       }
+      
       //now we have one complete rehearsal object 
+      //add it to the list, now IDs will be based on length accurately
       allRehearsals.push(rehearsalObject)
+
+      //at this point start generating the weekly events following our start date (Whatever that might be)
+      let date = moment(startDate)
+      while (date.isBefore(moment(endDate))){
+        date = moment(date).add(1, 'week')
+        let newRehearsalObject = {
+          id : allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
+          title : "Weekly Rehearsal"
+        }
+        newRehearsalObject.start = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
+        newRehearsalObject.end = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
+
+        allRehearsals.push(newRehearsalObject)
+      }     
     })
     localStorage.setItem("rehearsals", JSON.stringify(allRehearsals))
-    console.log(JSON.parse(localStorage.getItem("rehearsals")))
+    //TODO add the server call!
   }
 
   handleOpen = () => {
