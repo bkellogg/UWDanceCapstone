@@ -26,7 +26,7 @@ let events = [
   }
 ]
 
-const tempEvents = JSON.parse(localStorage.rehearsals)
+const tempEvents = localStorage.rehearsals
 
 class Piece extends Component {
   constructor(props) {

@@ -96,8 +96,7 @@ class SetRehearsals extends Component {
       let rehearsalIndex = daysRef.indexOf(rehearsal.day) + 1 //will give us the number representing the day of the week [mondays start at 1 and are at position 0, hence the plus one]
       let startDateIndex = moment(startDate).day() //will give us the numeric representation of the day of the week that the rehearsal started on
       //doesn't work for sundays which are 0 whoops
-      console.log(startDateIndex + " " +rehearsalIndex)
-      if(startDateIndex === 0){
+      if (startDateIndex === 0) {
         rehearsalIndex = 0
       }
 
@@ -113,20 +112,15 @@ class SetRehearsals extends Component {
         if (moment(beginDate).isBefore(startDate)) {
           beginDate = moment(beginDate).add(1, 'week')
         }
-        console.log(beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)])
 
         rehearsalObject.start = new Date(beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)])
         rehearsalObject.end = new Date(beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)])
 
       }
-
       //now we have one complete rehearsal object 
       allRehearsals.push(rehearsalObject)
-
-
     })
     localStorage.setItem("rehearsals", JSON.stringify(allRehearsals))
-
   }
 
   handleOpen = () => {

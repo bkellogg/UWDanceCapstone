@@ -36,7 +36,7 @@ const styleNav = {
   backgroundColor: 'red'
 };
 
-localStorage.setItem("rehearsals", [])
+localStorage.setItem("rehearsals", styleNav)
 
 class Main extends Component {
   constructor(props) {
