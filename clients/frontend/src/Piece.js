@@ -1,32 +1,20 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
-import BigCalendar from 'react-big-calendar';
-import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+// import BigCalendar from 'react-big-calendar';
+// import moment from 'moment';
+// import 'react-big-calendar/lib/css/react-big-calendar.css';
 import FlatButton from 'material-ui/FlatButton';
 import Button from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import MusicianRow from './MusicianRow';
+import Calendar from './Calendar';
 import PersonRow from './PersonRow';
 import './styling/General.css';
 import Link from 'react-router-dom/Link';
 
-BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
-let views = ['month', 'week', 'day']
 const STYLES = { width: "600px", paddingLeft: "15px" }
-
-let events = [
-  {
-    id: 3,
-    title: 'Weekly Rehearsal',
-    start: new Date('2018-05-10 11:00 AM'),
-    end: new Date('2018-05-10 12:30 PM')
-  }
-]
-
-const tempEvents = localStorage.rehearsals
 
 class Piece extends Component {
   constructor(props) {
@@ -45,7 +33,6 @@ class Piece extends Component {
   componentWillMount() {
     //get info about everyone in the piece
     this.getPieceID()
-    console.log(tempEvents)
   }
 
   //TODO deal with the error that a user has no pieces
@@ -174,26 +161,7 @@ class Piece extends Component {
               }
               {
                 this.state.openCalendar &&
-                <section>
-                  <div className="toggleHeader">
-                    <h2 className="smallHeading">Calendar</h2>
-                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCalendar}></i>
-                  </div>
-                  <BigCalendar style={{ height: "800px", width: "800px" }}
-                    selectable
-                    defaultView='week'
-                    events={tempEvents}
-                    views={views}
-                    step={60}
-                    onSelectEvent={event => alert(event.title)}
-                    onSelectSlot={slotInfo =>
-                      alert(
-                        `selected rehearsal time: \n\nstart ${slotInfo.start.toLocaleString()} ` +
-                        `\nend: ${slotInfo.end.toLocaleString()}`
-                      )
-                    }
-                  />
-                </section>
+                <Calendar />
               }
             </div>
             <div className="fullWidthCard">

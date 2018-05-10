@@ -11,7 +11,7 @@ import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
 
-const timesFormatted = ["10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 AM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM"]
+const timesFormatted = ["10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM"]
 
 const daysFormatted = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
@@ -101,8 +101,8 @@ class SetRehearsals extends Component {
       }
 
       if (rehearsalIndex === startDateIndex) { //hooray we don't have to calculate the date
-        rehearsalObject.start = new Date(startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]) //times have to be formatted for moment we so get the index of our timeRef and get the formatted time using that
-        rehearsalObject.end = new Date(startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]) //we use the same date bc no one rehearses at midnight
+        rehearsalObject.start = startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)] //times have to be formatted for moment we so get the index of our timeRef and get the formatted time using that
+        rehearsalObject.end = startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)] //we use the same date bc no one rehearses at midnight
       } else {
         //here we get the DATE of the day of the week that is closest AFTER our start date
         //use that date to create our rehearsal object
@@ -113,14 +113,15 @@ class SetRehearsals extends Component {
           beginDate = moment(beginDate).add(1, 'week')
         }
 
-        rehearsalObject.start = new Date(beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)])
-        rehearsalObject.end = new Date(beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)])
+        rehearsalObject.start = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
+        rehearsalObject.end = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
 
       }
       //now we have one complete rehearsal object 
       allRehearsals.push(rehearsalObject)
     })
     localStorage.setItem("rehearsals", JSON.stringify(allRehearsals))
+    console.log(JSON.parse(localStorage.getItem("rehearsals")))
   }
 
   handleOpen = () => {
