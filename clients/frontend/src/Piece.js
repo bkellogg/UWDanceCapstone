@@ -53,7 +53,6 @@ class Piece extends Component {
         this.setState({
           pieceID : piece.id
         })
-        console.log(piece.id)
         this.getPieceUsers(piece.id)
       })
 
