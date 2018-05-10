@@ -188,15 +188,15 @@ class Main extends Component {
           <div className="mobileNavWrap">
             <div className="mobileNav">
               <div className="hamburger">
-              <div className="mobileNavLogoWrap">
-                <RaisedButton
-                  backgroundColor="#27384A"
-                  className="hamburgerButton"
-                  style={style}
-                  onClick={this.handleToggle}>
-                  <p className="hambMenu">MENU</p>
-                </RaisedButton>
-                
+                <div className="mobileNavLogoWrap">
+                  <RaisedButton
+                    backgroundColor="#27384A"
+                    className="hamburgerButton"
+                    style={style}
+                    onClick={this.handleToggle}>
+                    <p className="hambMenu">MENU</p>
+                  </RaisedButton>
+
                   <img className="mobileNavLogo" alt="logo" src={logo} />
                 </div>
               </div>
@@ -223,8 +223,9 @@ class Main extends Component {
                     </MenuItem>
                   </Link>
 
-                  <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
                 </div>
+                <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
+
               </Drawer>
             </div>
           </div>
@@ -235,9 +236,9 @@ class Main extends Component {
             <Route
               exact
               path='/'
-              render={props => <Dashboard {...props} shows={this.state.currShows} showTypes={this.state.showTypes}/>}/>
-            <Route exact path='/profile' component={Profile}/>
-            <Route path='/users/:userID' component={StaticProfile}/>
+              render={props => <Dashboard {...props} shows={this.state.currShows} showTypes={this.state.showTypes} />} />
+            <Route exact path='/profile' component={Profile} />
+            <Route path='/users/:userID' component={StaticProfile} />
           </Switch>
           {this
             .state
@@ -368,11 +369,10 @@ class Main extends Component {
                     pathname: "/profile"
                   }}>Profile</Link>
                 </li>
-                <li>
-                  <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
-                </li>
               </div>
+              <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
             </ul>
+            
           </div>
         </section>
       </section>
