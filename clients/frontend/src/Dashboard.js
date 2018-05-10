@@ -27,7 +27,7 @@ class Dashboard extends Component {
 
   //Getting all messages from announcements that have not been deleted
   getAnnouncements = () => {
-    fetch(Util.API_URL_BASE + "/announcements?includeDeleted=false&auth=" + this.state.auth)
+    Util.makeRequest("announcements?includeDeleted=false", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -53,7 +53,7 @@ class Dashboard extends Component {
 
   //Getting announcement types and adding type to each message
   getAnnouncementTypes = (announcements) => {
-    fetch(Util.API_URL_BASE + "/announcements/types?auth=" + this.state.auth)
+    Util.makeRequest("announcements/types", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json();
