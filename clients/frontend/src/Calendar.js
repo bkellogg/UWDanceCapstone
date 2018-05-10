@@ -6,21 +6,17 @@ import './styling/General.css';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 const VIEWS = ['month', 'week', 'day']
-const STYLES = { width: "600px", paddingLeft: "15px" }
-
-let events = [
-  {
-    id: 3,
-    title: 'Weekly Rehearsal',
-    start: new Date('2018-05-10 11:00 AM'),
-    end: new Date('2018-05-10 12:30 PM')
-  }
-]
+const MINTIME = new Date();
+MINTIME.setHours(8,30,0);
+const MAXTIME = new Date();
+MAXTIME.setHours(23,30,0);
 
 class Calendar extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      minTime : MINTIME,
+      maxTime : MAXTIME,
       events : [
         {
           id: 3,
@@ -55,21 +51,23 @@ class Calendar extends Component {
     })
   }
 
+  onSelect = (event) => {
+    alert(event.title + " from " + event.start.toLocaleTimeString() + " to " + event.end.toLocaleTimeString())
+  }
+
   render() {
     return (
       <section>
-        <div className="toggleHeader">
-          <h2 className="smallHeading">Calendar</h2>
-          <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCalendar}></i>
-        </div>
         <BigCalendar style={{ height: "800px", width: "800px" }}
           selectable
           defaultDate={new Date()}
           defaultView='week'
           events={this.state.events}
           views={VIEWS}
-          step={60}
-          onSelectEvent={event => alert(event.title)}
+          step={30}
+          min={this.state.minTime}
+          max={this.state.maxTime}
+          onSelectEvent={event => this.onSelect(event)}
           onSelectSlot={slotInfo =>
             alert(
               `selected rehearsal time: \n\nstart ${slotInfo.start.toLocaleString()} ` +

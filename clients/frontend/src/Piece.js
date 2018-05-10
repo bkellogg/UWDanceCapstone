@@ -161,7 +161,13 @@ class Piece extends Component {
               }
               {
                 this.state.openCalendar &&
-                <Calendar />
+                <section>
+                  <div className="toggleHeader">
+                    <h2 className="smallHeading">Calendar</h2>
+                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCalendar}></i>
+                  </div>
+                  <Calendar />
+                </section>
               }
             </div>
             <div className="fullWidthCard">

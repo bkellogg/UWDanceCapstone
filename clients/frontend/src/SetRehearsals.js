@@ -131,7 +131,7 @@ class SetRehearsals extends Component {
           title : "Weekly Rehearsal"
         }
         newRehearsalObject.start = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
-        newRehearsalObject.end = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
+        newRehearsalObject.end = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
 
         allRehearsals.push(newRehearsalObject)
       }     
