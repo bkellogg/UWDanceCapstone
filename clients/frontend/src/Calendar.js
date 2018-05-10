@@ -103,7 +103,25 @@ class Calendar extends Component {
       events : events,
       openSetRehearsal : false
     })
+  }
 
+  addRehearsal = () => {
+    let slotInfo = this.state.slotInfo
+    let events = this.state.events
+    let latestID = events[events.length - 1].id + 1
+
+    let rehearsalObject = {
+      id : latestID,
+      title : "Event Title",
+      start : new Date(slotInfo.start),
+      end : new Date(slotInfo.end)
+    }
+    events.push(rehearsalObject)
+
+    this.setState({
+      events : events,
+      openNewRehearsal : false
+    })
   }
 
   render() {
@@ -166,7 +184,7 @@ class Calendar extends Component {
               style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
               primary={false}
               keyboardFocused={true}
-              onClick={this.handleClose}
+              onClick={this.addRehearsal}
             />,
           ]}
           modal={false}
