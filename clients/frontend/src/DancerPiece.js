@@ -5,13 +5,18 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 const VIEWS = ['month', 'week', 'day']
+const MINTIME = new Date();
+MINTIME.setHours(8,30,0);
+const MAXTIME = new Date();
+MAXTIME.setHours(23,30,0);
 
-const events = []
 
 class DancerPiece extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      minTime : MINTIME,
+      maxTime : MAXTIME,
       events : [
         {
           id: 3,
@@ -57,6 +62,8 @@ class DancerPiece extends Component {
           events={this.state.events}
           views={VIEWS}
           step={60}
+          min={this.state.minTime}
+          max={this.state.maxTime}
           onSelectEvent={event => alert(event.title)}
         />
           <div>
