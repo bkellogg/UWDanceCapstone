@@ -16,7 +16,7 @@ class Dashboard extends Component {
       announcements: [],
       announcementTypes: null,
       currAnnouncements: [],
-      pending: [],
+      pending: []
     }
   };
 
@@ -95,48 +95,49 @@ class Dashboard extends Component {
 
   getUserPieces = () => {
     Util.makeRequest("users/me/pieces/pending", "", "GET", true)
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      if (res.status === 401) {
-        Util.signOut()
-      }
-      return res.text().then((t) => Promise.reject(t));
-    })
-    .then(pieces => {
-      this.setState({
-        pending: pieces
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
-    })
-    .catch((err) => {
-      console.log(err)
-    }); 
+      .then(pieces => {
+        this.setState({
+          pending: pieces
+        })
+      })
+      .catch((err) => {
+        console.log(err)
+      });
   }
 
   acceptCasting = (pieceID) => {
     Util.makeRequest("users/me/pieces/" + pieceID, "", "LINK", true)
-    .then((res) => {
-      if (res.ok) {
-        return res.text();
+      .then((res) => {
+        if (res.ok) {
+          return res.text();
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then(() => {
+        this.getUserPieces()
       }
-      if (res.status === 401) {
-        Util.signOut()
-      }
-      return res.text().then((t) => Promise.reject(t));
-    })
-    .then( () => {
-      this.getUserPieces()
-    } 
-    )
-    .catch((err) => {
-      console.log(err)
-    }); 
+      )
+      .catch((err) => {
+        console.log(err)
+      });
   }
 
   render() {
     const pending = this.state.pending
     let pendingCasting = pending.map((piece, i) => {
+      console.log(piece)
       return (
         <div key={i} className="announcement announcementMessage cardBody">
           Congratulations! You have been cast in {piece.name}. Rehearsal times will be here as well.
@@ -152,7 +153,7 @@ class Dashboard extends Component {
     return (
       <section className='main' >
         <div className="mainView">
-        <div className="pageContentWrap">
+          <div className="pageContentWrap">
             <div className='dashboard'>
               <div id='welcome'>
                 <h1> Welcome, {this.state.user.firstName}!</h1>
@@ -164,7 +165,7 @@ class Dashboard extends Component {
                     <div className="warning cardBody">
 
                       <p className="announcementMessage"> Please complete your profile. </p>
-                </div>
+                    </div>
                   </div>
 
                 }
