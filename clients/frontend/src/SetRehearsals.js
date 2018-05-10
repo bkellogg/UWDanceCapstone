@@ -6,7 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import RehearsalRow from './RehearsalRow';
 import AvailabilityOverlap from './AvailabilityOverlap';
 import PersonRow from './PersonRow';
-
+import moment from 'moment';
 import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
@@ -19,6 +19,7 @@ class SetRehearsals extends Component {
       numRehearsals: 2,
       open: false,
       finished: false,
+      finishedAdding: false,
       rehearsalSchedule: [],
       cast: [],
       contested: [],
@@ -44,6 +45,7 @@ class SetRehearsals extends Component {
   }
 
   postCasting = () => {
+
     Util.makeRequest("auditions/" + this.props.audition + "/casting", {}, "POST", true)
     .then((res) => {
       if (res.ok) {
@@ -57,7 +59,8 @@ class SetRehearsals extends Component {
     .then(() => {
       this.setState({
         open: false,
-        finished: true
+        finished: true,
+        finishedAdding: true,
       });
     })
     .catch(err => {
@@ -84,16 +87,20 @@ class SetRehearsals extends Component {
   removeRehearsal = () => {
     let newRehearsalNum = this.state.numRehearsals
     newRehearsalNum--
+    let rehearsals = this.state.rehearsalSchedule
+    rehearsals = rehearsals.slice(0, newRehearsalNum)
     this.setState({
-      numRehearsals: newRehearsalNum
+      numRehearsals: newRehearsalNum,
+      rehearsalSchedule: rehearsals
     })
   }
 
-  setRehearsal = (rehearsal) => {
-    //TODO add handlers to deal with two rehearsals on the same day and also everything every cri
-    if (rehearsal.day !== "" && rehearsal.startTime !== "" && rehearsal.endTime !== "") {
-      let rehearsals = this.state.rehearsalSchedule
-      rehearsals.push(rehearsal)
+  setRehearsal = (rehearsal, i) => {
+    //get current rehearsals
+    let rehearsals = this.state.rehearsalSchedule
+    
+    if (rehearsal.day !== "" && rehearsal.startTime !== "" && rehearsal.endTime !== "" && rehearsal.startTime < rehearsal.endTime) {
+      rehearsals[i] = rehearsal
       this.setState({
         rehearsalSchedule: rehearsals
       })
@@ -109,24 +116,31 @@ class SetRehearsals extends Component {
 
 
   render() {
-    const finished = this.state.finished
+    let finished = this.state.finished
+    if (this.state.rehearsalSchedule.length === 0 || !this.state.startDate) {
+      finished = true
+    }
     let numRehearsals = this.state.numRehearsals
     let rehearsals = []
     for (let i = 0; i < numRehearsals; i++) {
-      rehearsals.push(<RehearsalRow key={i} setRehearsal={(rehearsal) => this.setRehearsal(rehearsal)} finished={finished} />)
+      rehearsals.push(<RehearsalRow key={i} setRehearsal={(rehearsal, key) => this.setRehearsal(rehearsal, i)} finished={this.state.finishedAdding} />)
     }
-
-    let rehearsalList = []
-    this.state.rehearsalSchedule.forEach((rehearsal, i) => {
-      rehearsalList.push(
-        <div key={i}> {rehearsal.day} from {rehearsal.startTime} to {rehearsal.endTime}. </div>
-      )
-    })
 
     let castList = this.props.cast.map((dancer, i) => {
       return (
         <PersonRow p={dancer.dancer.user} setRehearsals={true} key={i} />
       )
+    })
+
+    let rehearsalSchedule = this.state.rehearsalSchedule.map((day, i) => {
+        return (
+          <p key={i}>
+            {day.day + " from "} 
+            {day.startTime + " to "} 
+            {day.endTime + " "} 
+          </p>
+        )
+      
     })
     
     return (
@@ -148,13 +162,13 @@ class SetRehearsals extends Component {
                         backgroundColor="#708090"
                         style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
                         onClick={this.addRehearsal}
-                        disabled={finished}>
+                        disabled={this.state.finishedAdding}>
                         ADD</Button>
 
                         <Button
                         backgroundColor="#708090"
                         style={{ color: '#ffffff', float: 'right' }}
-                        onClick={this.removeRehearsal} disabled={finished}>
+                        onClick={this.removeRehearsal} disabled={this.state.finishedAdding}>
                         REMOVE</Button>
                     </div>
                   </div>
@@ -210,9 +224,9 @@ class SetRehearsals extends Component {
                 onRequestClose={this.handleClose}
                 disabled={finished}
               >
-                <p className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong>, there are <strong className="importantText">no conflicts</strong> with other choreographers, and that your rehearsal times are :
-            <br /> insert rehearsal times here <br />
-                  <br /> </p>
+                <div className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong> and there are <strong className="importantText">no conflicts</strong> with other choreographers. <br /> Your rehearsal start date is {this.state.startDate} and your rehearsal times are :
+            <br />{rehearsalSchedule}<br />
+                  <br /> </div>
                 <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting.</p>
               </Dialog>
 

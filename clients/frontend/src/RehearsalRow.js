@@ -72,14 +72,23 @@ class RehearsalRow extends Component {
   }
 
   render() {
-      let timePicker = []
-      times.forEach((time, index) => {
+    let startTimePicker = []
+    times.forEach((time, index) => {
+      return (
+          startTimePicker.push(
+              <MenuItem key={index} value={time} primaryText={formattedTimes[index]} />
+          ) 
+      )
+    })
+    let endTimePicker = []
+    times.forEach((time, index) => {
+      if(time > this.state.rehearsal.startTime) {
         return (
-            timePicker.push(
+            endTimePicker.push(
                 <MenuItem key={index} value={time} primaryText={formattedTimes[index]} />
             ) 
         )
-      
+      }
     })
     let finished = this.props.finished
     return (
@@ -116,7 +125,7 @@ class RehearsalRow extends Component {
               autoWidth={true}
               disabled={finished}
             >
-              {timePicker}
+              {startTimePicker}
 
             </SelectField>
           </div>
@@ -132,7 +141,7 @@ class RehearsalRow extends Component {
               autoWidth={true}
               disabled={finished}
             >
-              {timePicker}
+              {endTimePicker}
 
             </SelectField>
           </div>
