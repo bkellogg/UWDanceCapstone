@@ -188,6 +188,7 @@ class Main extends Component {
           <div className="mobileNavWrap">
             <div className="mobileNav">
               <div className="hamburger">
+              <div className="mobileNavLogoWrap">
                 <RaisedButton
                   backgroundColor="#27384A"
                   className="hamburgerButton"
@@ -195,7 +196,7 @@ class Main extends Component {
                   onClick={this.handleToggle}>
                   <p className="hambMenu">MENU</p>
                 </RaisedButton>
-                <div className="mobileNavLogoWrap">
+                
                   <img className="mobileNavLogo" alt="logo" src={logo} />
                 </div>
               </div>

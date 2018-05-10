@@ -25,15 +25,20 @@
     width: 90%;
 }
 
+.hamburgerButton{
+    position: absolute;
+}
+
 .mobileNavLogoWrap{
     display: inline-block;
-    width: 45%;
+    width: 100%;
 }
 
 .mobileNavLogo{
     bottom: 0;
     height: 46px;
-    display: inline-block;
+    display: block;
+    margin: auto;
 }
 
 @media only screen and (max-width : 992px) {
