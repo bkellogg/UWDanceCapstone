@@ -52,6 +52,7 @@ CREATE TABLE Shows (
 
 CREATE TABLE Pieces (
     PieceID INT AUTO_INCREMENT PRIMARY KEY,
+    InfoSheetID INT NOT NULL,
     ChoreographerID INT,
     PieceName varchar(50) NOT NULL,
     ShowID INT NOT NULL,
@@ -59,6 +60,48 @@ CREATE TABLE Pieces (
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (ShowID) REFERENCES Shows(ShowID)
+);
+
+CREATE TABLE Musician (
+    MusicianID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Phone VARCHAR(11) NOT NULL,
+    Email VARCHAR(75) NOT NULL,
+    CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE PieceInfoSheet (
+    PieceInfoID INT AUTO_INCREMENT PRIMARY KEY,
+    ChoreographerPhone VARCHAR(11) NOT NULL,
+    Title VARCHAR(25) NOT NULL,
+    RunTime VARCHAR(25) NOT NULL,
+    Composers VARCHAR(75) NOT NULL,
+    MusicTitle VARCHAR(100) NOT NULL,
+    PerformedBy VARCHAR(100) NOT NULL,
+    MusicSource VARCHAR(100) NOT NULL,
+    NumMusicians INT NOT NULL DEFAULT 0,
+    RehearsalSchedule VARCHAR(100) NOT NULL,
+    ChorNotes VARCHAR(100) NOT NULL,
+    CostumeDesc VARCHAR(100) NOT NULL,
+    ItemDesc VARCHAR(100) NOT NULL,
+    LightingDesc VARCHAR(100) NOT NULL,
+    OtherNotes VARCHAR(100) NOT NULL,
+    CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE TABLE PieceInfoMusician (
+    PieceMusicianID INT AUTO_INCREMENT PRIMARY KEY,
+    PieceInfoID INT NOT NULL,
+    MusicianID INT NOT NULL,
+    CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
+    IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
+    FOREIGN KEY (PieceInfoID) REFERENCES PieceInfoSheet(PieceInfoID),
+    FOREIGN KEY (MusicianID) REFERENCES Musician(MusicianID)
 );
 
 CREATE TABLE UserPiece (

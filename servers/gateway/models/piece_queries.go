@@ -144,6 +144,96 @@ func (store *Database) GetPiecesByShowID(id, page int, includeDeleted bool) ([]*
 	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
 }
 
+// InsertNewPieceInfoSheet inserts the given pieceInfoSheet for the given PieceID.
+// Returns the completed PieceInfoSheet if successful and a DBError if otherwise.
+func (store *Database) InsertNewPieceInfoSheet(creator int, pieceID int, info *NewPieceInfoSheet) (*PieceInfoSheet, *DBError) {
+	// validate that the piece exists
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return nil, dberr
+	}
+	tx, err := store.db.Begin()
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	insertTime := time.Now()
+
+	// prepare the info to be returned to the client
+	finalInfo := &PieceInfoSheet{
+		ChorPhone:         info.ChorPhone,
+		Title:             info.Title,
+		RunTime:           info.RunTime,
+		Composers:         info.Composers,
+		MusicTitle:        info.MusicTitle,
+		PerformedBy:       info.PerformedBy,
+		MusicSource:       info.MusicSource,
+		NumMusicians:      info.NumMusicians,
+		RehearsalSchedule: info.RehearsalSchedule,
+		ChorNotes:         info.ChorNotes,
+		CostumeDesc:       info.CostumeDesc,
+		ItemDesc:          info.ItemDesc,
+		LightingDesc:      info.LightingDesc,
+		OtherNotes:        info.OtherNotes,
+		IsDeleted:         false,
+	}
+
+	// prepare the slice of final piece musicians to be added
+	// to the final info that will be returned to the client
+	finalMusicians := make([]*PieceMusician, 0, info.NumMusicians)
+
+	res, err := tx.Exec(`INSERT INTO PieceInfoSheet
+		(ChoreographerPhone, Title, RunTime, Composers, MusicTitle,
+		PerformedBy, MusicSource, NumMusicians, RehearsalSchedule,
+		ChorNotes, CostumeDesc, ItemDesc, LightingDesc, OtherNotes,
+		CreatedAt, CreatedBy, IsDeleted)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		info.ChorPhone, info.Title, info.RunTime, info.Composers, info.MusicTitle,
+		info.PerformedBy, info.MusicSource, info.NumMusicians,
+		info.RehearsalSchedule, info.ChorNotes, info.CostumeDesc,
+		info.ItemDesc, info.LightingDesc, info.OtherNotes, insertTime, creator, false)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error inserting piece info: %v", err), http.StatusInternalServerError)
+	}
+	infoID, err := res.LastInsertId()
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error getting piece info id: %v", err), http.StatusInternalServerError)
+	}
+	finalInfo.PieceInfoID = infoID
+
+	for _, newMusician := range info.Musicians {
+		musician := &PieceMusician{
+			Name:      newMusician.Name,
+			Phone:     newMusician.Phone,
+			Email:     newMusician.Email,
+			CreatedAt: insertTime,
+			CreatedBy: creator,
+			IsDeleted: false,
+		}
+		res, err = tx.Exec(`INSERT INTO Musician (Name, Phone, Email,
+		CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
+			newMusician.Name, newMusician.Phone, newMusician.Email, insertTime, creator, false)
+		if err != nil {
+			return nil, NewDBError(fmt.Sprintf("error inserting musician: %v", err), http.StatusInternalServerError)
+		}
+		musicianID, err := res.LastInsertId()
+		if err != nil {
+			return nil, NewDBError(fmt.Sprintf("error getting musician ID: %v", err), http.StatusInternalServerError)
+		}
+		musician.ID = musicianID
+		finalMusicians = append(finalMusicians, musician)
+
+		_, err = tx.Exec(`INSERT INTO PieceInfoMusician (PieceInfoID, MusicianID, CreatedAt, CreatedBy, IsDeleted)
+		VALUES (?, ?, ?, ?, ?)`, infoID, musicianID, insertTime, creator, false)
+		if err != nil {
+			return nil, NewDBError(fmt.Sprintf("error inserting piece info musician link: %v", err), http.StatusInternalServerError)
+		}
+	}
+	finalInfo.Musicians = finalMusicians
+	return finalInfo, nil
+}
+
 // handlePiecesFromDatabase compiles the given result and err into a slice of pieces or an error.
 func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, *DBError) {
 	if err != nil {
