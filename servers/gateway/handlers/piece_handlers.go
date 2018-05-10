@@ -157,6 +157,23 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 			return HTTPError(fmt.Sprintf("error converting users to user responses: %v", err), http.StatusInternalServerError)
 		}
 		return respond(w, models.NewPieceUsersResponse(page, chorRes, userRes), http.StatusOK)
+	case "info":
+		if r.Method == "POST" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			pieceInfo := &models.NewPieceInfoSheet{}
+			if httperr := receive(r, pieceInfo); httperr != nil {
+				return httperr
+			}
+			info, dberr := ctx.store.InsertNewPieceInfoSheet(int(u.ID), pieceID, pieceInfo)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error inserting piece info")
+			}
+			return respond(w, info, http.StatusCreated)
+		} else {
+			return methodNotAllowed()
+		}
 	default:
 		return objectTypeNotSupported()
 	}

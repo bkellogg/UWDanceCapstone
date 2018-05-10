@@ -6,6 +6,7 @@ import (
 	"log"
 	"sync"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
 )
 
@@ -160,6 +161,26 @@ func (pc *PermissionChecker) UserCanSeeUsersInPiece(u *User, piece int) bool {
 	return pc.UserCan(u, permissions.SeeAllUsers)
 }
 
+// UserCanSeePieceInfo returns true if the given user can see the
+// given piece's info sheet.
+func (pc *PermissionChecker) UserCanSeePieceInfo(u *User, piece int) bool {
+	return pc.UserIsAtLeast(u, appvars.PermChoreographer)
+}
+
+// UserCanSeePieceInfo returns true if the given user can see the
+// given piece's info sheet.
+func (pc *PermissionChecker) UserCanModifyPieceInfo(u *User, pieceID int) bool {
+	if pc.UserIsAtLeast(u, appvars.PermAdmin) {
+		return true
+	}
+	piece, err := pc.db.GetPieceByID(pieceID, false)
+	if err != nil {
+		log.Printf("perm checker: error getting piece by id: %v", err)
+		return false
+	}
+	return piece.ChoreographerID == int(u.ID)
+}
+
 // UserCanSeeUsersInShow returns true if the given user can see users
 // inside of the given show.
 func (pc *PermissionChecker) UserCanSeeUsersInAudition(u *User, audition int) bool {
@@ -172,10 +193,13 @@ func (pc *PermissionChecker) UserCanSeeUser(u *User, target int64) bool {
 	return pc.userHasPermissionTo(u, target, permissions.SeeAllUsers)
 }
 
+// UserCanSeeAvailability returns true if the given user can see the target
+// user's availability.
 func (pc *PermissionChecker) UserCanSeeAvailability(u *User, target int64) bool {
 	return pc.userHasPermissionTo(u, target, permissions.SeeUserAvailability)
 }
 
+// UserCanAddToPiece returns true if the given user can add to the given piece ID
 func (pc *PermissionChecker) UserCanAddToPiece(u *User, pieceID int64) bool {
 	if pc.UserCan(u, permissions.AddUserToPiece) {
 		return true
@@ -187,10 +211,14 @@ func (pc *PermissionChecker) UserCanAddToPiece(u *User, pieceID int64) bool {
 	return ok
 }
 
+// UserCanRemoveUserFromAudition returns true if the given user can remove users or themselves
+// from the given audition.
 func (pc *PermissionChecker) UserCanRemoveUserFromAudition(u *User, target int64) bool {
 	return pc.userHasPermissionTo(u, target, permissions.RemoveUserFromAudition)
 }
 
+// UserCanAddToAudition returns true if the given user can add users to the given
+// audition
 func (pc *PermissionChecker) UserCanAddToAudition(u *User, target int64) bool {
 	return pc.userHasPermissionTo(u, target, permissions.AddUserToAudition)
 }
