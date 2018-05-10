@@ -69,7 +69,7 @@ func (store *Database) ExpirePendingPieceInvites() (int64, *DBError) {
 // has pending invites for.
 func (store *Database) GetUserPieceInvites(id int) ([]*Piece, *DBError) {
 	rows, err := store.db.Query(`
-		SELECT P.PieceID, P.ChoreographerID, P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy, P.IsDeleted FROM Pieces P
+		SELECT P.PieceID, P.InfoSheetID, P.ChoreographerID, P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy, P.IsDeleted FROM Pieces P
 		JOIN UserPiecePending UPP ON UPP.PieceID = P.PieceID
 		WHERE UPP.UserID = ?
 		AND P.IsDeleted = FALSE

@@ -56,7 +56,7 @@ func (store *Database) InsertNewPiece(newPiece *NewPiece) (*Piece, *DBError) {
 func (store *Database) GetPieceByID(id int, includeDeleted bool) (*Piece, *DBError) {
 	piece := &Piece{}
 	err := store.db.QueryRow(`SELECT * FROM Pieces P WHERE P.PieceID = ? AND P.IsDeleted = FALSE`, id).Scan(
-		&piece.ID, &piece.ChoreographerID, &piece.Name,
+		&piece.ID, &piece.InfoSheetID, &piece.ChoreographerID, &piece.Name,
 		&piece.ShowID, &piece.CreatedAt,
 		&piece.CreatedBy, &piece.IsDeleted)
 	if err != nil {
@@ -176,6 +176,8 @@ func (store *Database) InsertNewPieceInfoSheet(creator int, pieceID int, info *N
 		ItemDesc:          info.ItemDesc,
 		LightingDesc:      info.LightingDesc,
 		OtherNotes:        info.OtherNotes,
+		CreatedAt:         insertTime,
+		CreatedBy:         creator,
 		IsDeleted:         false,
 	}
 
@@ -231,6 +233,9 @@ func (store *Database) InsertNewPieceInfoSheet(creator int, pieceID int, info *N
 		}
 	}
 	finalInfo.Musicians = finalMusicians
+	if err = tx.Commit(); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
 	return finalInfo, nil
 }
 
@@ -245,7 +250,7 @@ func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, *DBError) 
 	pieces := make([]*Piece, 0)
 	for result.Next() {
 		piece := &Piece{}
-		if err = result.Scan(&piece.ID, &piece.ChoreographerID, &piece.Name, &piece.ShowID,
+		if err = result.Scan(&piece.ID, &piece.InfoSheetID, &piece.ChoreographerID, &piece.Name, &piece.ShowID,
 			&piece.CreatedAt, &piece.CreatedBy, &piece.IsDeleted); err != nil {
 			return nil, NewDBError(fmt.Sprintf("error scanning result into pieces: %v", err), http.StatusInternalServerError)
 		}

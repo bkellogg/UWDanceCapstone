@@ -175,7 +175,7 @@ func (pc *PermissionChecker) UserCanModifyPieceInfo(u *User, pieceID int) bool {
 	}
 	piece, err := pc.db.GetPieceByID(pieceID, false)
 	if err != nil {
-		log.Printf("perm checker: error getting piece by id: %v", err)
+		log.Printf("perm checker: piece does not exist: %v", err)
 		return false
 	}
 	return piece.ChoreographerID == int(u.ID)

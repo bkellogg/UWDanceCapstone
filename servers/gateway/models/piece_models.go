@@ -83,7 +83,7 @@ type NewPieceInfoSheet struct {
 	Composers         string              `json:"composers"`
 	MusicTitle        string              `json:"musicTitle"`
 	PerformedBy       string              `json:"performedBy"`
-	MusicSource       string              `json:"MusicSource"`
+	MusicSource       string              `json:"musicSource"`
 	NumMusicians      int                 `json:"numMusicians"`
 	RehearsalSchedule string              `json:"rehearsalSchedule"`
 	ChorNotes         string              `json:"chorNotes"`
@@ -98,6 +98,7 @@ type NewPieceInfoSheet struct {
 // and error if one occurred. Also formats the various
 // fields to be consistent across all submissions.
 func (npis *NewPieceInfoSheet) Validate() error {
+	npis.ChorPhone = trimPhone(npis.ChorPhone)
 	if len(npis.ChorPhone) < 10 || len(npis.ChorPhone) > 11 {
 		return errors.New("piece musician must have a valid phone number")
 	}
@@ -140,6 +141,9 @@ func (npis *NewPieceInfoSheet) Validate() error {
 	if npis.NumMusicians != len(npis.Musicians) {
 		return errors.New("declared number of musicians does not match actual number of musicians")
 	}
+	if npis.Musicians == nil {
+		npis.Musicians = make([]*NewPieceMusician, 0)
+	}
 	for _, mus := range npis.Musicians {
 		if err := mus.Validate(); err != nil {
 			return fmt.Errorf("invalid musician given: %v", err)
@@ -172,6 +176,7 @@ type NewPieceMusician struct {
 // and error if one occurred. Also formats the various
 // fields to be consistent across all submissions.
 func (npm *NewPieceMusician) Validate() error {
+	npm.Phone = trimPhone(npm.Phone)
 	if len(npm.Name) == 0 {
 		return errors.New("piece musician must have a name")
 	}
@@ -190,4 +195,14 @@ func (npm *NewPieceMusician) Validate() error {
 	npm.Name = strings.Title(npm.Name)
 	npm.Email = strings.ToLower(npm.Email)
 	return nil
+}
+
+// timePhone removes any spaces, -, and () from the
+// phone number.
+func trimPhone(phone string) string {
+	phone = strings.Replace(phone, "-", "", -1)
+	phone = strings.Replace(phone, "(", "", -1)
+	phone = strings.Replace(phone, ")", "", -1)
+	phone = strings.Replace(phone, " ", "", -1)
+	return phone
 }
