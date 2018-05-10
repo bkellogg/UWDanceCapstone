@@ -36,6 +36,8 @@ const styleNav = {
   backgroundColor: 'red'
 };
 
+localStorage.setItem("rehearsals", [])
+
 class Main extends Component {
   constructor(props) {
     super(props);
@@ -269,7 +271,8 @@ class Main extends Component {
                   render={props => <Casting
                     {...props}
                     name={show.name}
-                    audition={show.auditionID} />} />
+                    audition={show.auditionID} 
+                    show={show.show}/>} />
 
                 let route2 = <Route
                   exact
@@ -302,6 +305,7 @@ class Main extends Component {
                     {...props}
                     name={show.name}
                     audition={show.auditionID}
+                    show={show.show}
                   />} />
 
                 let route2 = <Route

@@ -76,8 +76,62 @@ class SetRehearsals extends Component {
     })
   }
 
+  calculateRehearsals = () => {
+    let startDate = this.state.startDate
+    let endDate = this.props.endDate
+    let rehearsalBlocks = this.state.rehearsalSchedule
+    let allRehearsals = []
+    //TODO add a check that at least one of the rehearsals starts on the correct day of the week for the start date?
+
+    rehearsalBlocks.forEach((rehearsal, i) => {
+      //we will update this if the rehearsal is not the same day as the start date
+      let startDate = this.state.startDate
+
+      //an array of these are going to be pushed up to the server 
+      let rehearsalObject = {
+        id : allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
+        title : "Weekly Rehearsal"
+      }
+
+      let rehearsalIndex = daysRef.indexOf(rehearsal.day) + 1 //will give us the number representing the day of the week [mondays start at 1 and are at position 0, hence the plus one]
+      let startDateIndex = moment(startDate).day() //will give us the numeric representation of the day of the week that the rehearsal started on
+      //doesn't work for sundays which are 0 whoops
+      console.log(startDateIndex + " " +rehearsalIndex)
+      if(startDateIndex === 0){
+        rehearsalIndex = 0
+      }
+
+      if (rehearsalIndex === startDateIndex) { //hooray we don't have to calculate the date
+        rehearsalObject.start = new Date(startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]) //times have to be formatted for moment we so get the index of our timeRef and get the formatted time using that
+        rehearsalObject.end = new Date(startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]) //we use the same date bc no one rehearses at midnight
+      } else {
+        //here we get the DATE of the day of the week that is closest AFTER our start date
+        //use that date to create our rehearsal object
+        let beginDate = moment(startDate).day(rehearsalIndex)
+
+        //this is actually just getting a day DURING the week of our start time, so we're going to check to see if our new date is before or after our start date
+        if (moment(beginDate).isBefore(startDate)) {
+          beginDate = moment(beginDate).add(1, 'week')
+        }
+        console.log(beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)])
+
+        rehearsalObject.start = new Date(beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)])
+        rehearsalObject.end = new Date(beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)])
+
+      }
+
+      //now we have one complete rehearsal object 
+      allRehearsals.push(rehearsalObject)
+
+
+    })
+    localStorage.setItem("rehearsals", JSON.stringify(allRehearsals))
+
+  }
+
   handleOpen = () => {
     this.setState({ open: true });
+    this.calculateRehearsals()
   }
 
   handleClose = () => {

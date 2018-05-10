@@ -19,32 +19,14 @@ const STYLES = { width: "600px", paddingLeft: "15px" }
 
 let events = [
   {
-    id: 0,
-    title: 'All Day Event very long title',
-    allDay: true,
-    start: new Date(2015, 3, 0),
-    end: new Date(2015, 3, 1),
-  },
-  {
-    id: 1,
-    title: 'Long Event',
-    start: new Date(2015, 3, 7),
-    end: new Date(2015, 3, 10),
-  },
-
-  {
-    id: 2,
-    title: 'DTS STARTS',
-    start: new Date(2018, 2, 13, 0, 0, 0),
-    end: new Date(2018, 2, 20, 0, 0, 0),
-  },
-  {
     id: 3,
     title: 'Weekly Rehearsal',
-    start: new Date(2018, 5, 1, 0, 0, 0),
-    end: new Date(2018, 5, 1, 0, 0, 0)
+    start: new Date('2018-05-10 11:00 AM'),
+    end: new Date('2018-05-10 12:30 PM')
   }
 ]
+
+const tempEvents = JSON.parse(localStorage.rehearsals)
 
 class Piece extends Component {
   constructor(props) {
@@ -63,6 +45,7 @@ class Piece extends Component {
   componentWillMount() {
     //get info about everyone in the piece
     this.getPieceID()
+    console.log(tempEvents)
   }
 
   //TODO deal with the error that a user has no pieces
@@ -199,7 +182,7 @@ class Piece extends Component {
                   <BigCalendar style={{ height: "800px", width: "800px" }}
                     selectable
                     defaultView='week'
-                    events={events}
+                    events={tempEvents}
                     views={views}
                     step={60}
                     onSelectEvent={event => alert(event.title)}

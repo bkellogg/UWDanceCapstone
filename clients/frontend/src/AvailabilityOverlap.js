@@ -174,7 +174,7 @@ class AvailabilityOverlap extends Component {
 
         let names = uniqueIDs.map((dancer, i) => {
           return (
-           <div>{dancer.name}</div>
+           <div key={i}>{dancer.name}</div>
           )
         })
 
