@@ -272,27 +272,27 @@ class Profile extends Component {
               {/* FIRST CARD */}
               <div className="wrap">
                 <div className="header">
-                  
-                    <div id="photoContainer" className="photoContainer">
-                      {!this.state.edit &&
 
-                        <img id="photo" alt="profile" src={this.state.photoSrc}></img>
-                      }
-                      {this.state.edit &&
-                        <section>
-                          <div> Upload a head shot as a jpg file. </div>
-                          <AvatarEditorConsole img={this.state.photoSrc} changeImg={this.updateImage} />
-                        </section>
-                      }
-                    </div>
-                
+                  <div id="photoContainer" className="photoContainer">
+                    {!this.state.edit &&
+
+                      <img id="photo" alt="profile" src={this.state.photoSrc}></img>
+                    }
+                    {this.state.edit &&
+                      <section>
+                        <div>
+                          <p>Upload a head shot as a jpg file. </p>
+                        </div>
+                        <AvatarEditorConsole img={this.state.photoSrc} changeImg={this.updateImage} />
+                      </section>
+                    }
+                  </div>
+
 
                   <div className="nameAndBioWrap">
                     <div id="name" className="name">
 
                       {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
-
-
                       {this.state.edit &&
                         <div id="editName">
                           <Row>

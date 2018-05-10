@@ -4,21 +4,24 @@
   position: relative;
 }
 
-.header{
-  border-bottom: 1px solid hsl(0, 0%, 45%);
-    padding-bottom: 25px;
+.mainContentBorder{
+  border-top: 1px solid hsl(0, 0%, 45%);
+    padding-top: 25px;
 }
 
 .photoContainer {
   position: relative;
   display: inline-block;
   margin-right: 3%;
+  vertical-align: bottom;
 }
 
 .nameAndBioWrap{
   width: 60%;
   position: relative;
   display: inline-block;
+  vertical-align: top;
+  padding-top: 100px;
 }
 
 #edit {
@@ -28,8 +31,8 @@
 }
 
 img#photo {
-  width: 240px;
-  height: 240px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
 }
 
@@ -65,12 +68,10 @@ img#photo {
   margin-bottom:40px
 }
 
-
 .subheader {
   font-size: 15px;
 
 }
-
 
 #firstName, #lastName{
   margin-right: 10px
@@ -95,7 +96,15 @@ img#photo {
     margin-top: 25px;
     width: 100%;
     text-align: center;
-    border-bottom: 1px solid hsl(0, 0%, 45%);
     padding-bottom: 25px;
+    padding-top: 0;
+  }
+
+  img#photo {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: block;
+    margin: auto;
   }
 }
