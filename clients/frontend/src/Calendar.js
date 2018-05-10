@@ -48,7 +48,9 @@ class Calendar extends Component {
   }
 
   formatEvents = () => {
+    //TODO turn this into a route
     let events = JSON.parse(localStorage.rehearsals)
+
     let formattedEvents = []
     events.forEach((event) => {
       let start = new Date(event.start)
@@ -87,6 +89,23 @@ class Calendar extends Component {
     })
   }
 
+  deleteRehearsal = () => {
+    let event = this.state.event
+    
+    //go through all events and delete the one with the same ID
+    let events = this.state.events
+    events.forEach((e, i) => {
+      if(e.id === event.id){
+        events.splice(i, i + 1)
+      }
+    })
+    this.setState({
+      events : events,
+      openSetRehearsal : false
+    })
+
+  }
+
   render() {
     let event = this.state.event
     let slotInfo = this.state.slotInfo
@@ -120,7 +139,7 @@ class Calendar extends Component {
               style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
               primary={false}
               keyboardFocused={true}
-              onClick={this.handleClose}
+              onClick={event => this.deleteRehearsal(event)}
             />,
           ]}
           modal={false}
