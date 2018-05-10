@@ -27,7 +27,7 @@
     padding: 25px;
 }
 
-.fullWidthCard, .card2, .setTimes, .dancersList-filter, .overlapAvailabilityWrap, .choreographersSelecteCast, .restOfCast, .cardBody{
+img#photo, .fullWidthCard, .card2, .setTimes, .dancersList-filter, .overlapAvailabilityWrap, .choreographersSelecteCast, .restOfCast, .cardBody{
         border: 0;
     -webkit-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
     -moz-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);

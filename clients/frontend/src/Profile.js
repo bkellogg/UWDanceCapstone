@@ -272,7 +272,7 @@ class Profile extends Component {
               {/* FIRST CARD */}
               <div className="wrap">
                 <div className="header">
-                  <div className="photoContainerWrap">
+                  
                     <div id="photoContainer" className="photoContainer">
                       {!this.state.edit &&
 
@@ -285,7 +285,7 @@ class Profile extends Component {
                         </section>
                       }
                     </div>
-                  </div>
+                
 
                   <div className="nameAndBioWrap">
                     <div id="name" className="name">

@@ -77,6 +77,7 @@ class AvailabilityOverlap extends Component {
 
       let days = dancer.dancer.availability.days
       let id = dancer.dancer.user.id
+      let firstName = dancer.dancer.user.firstName
       if (filteredCast.indexOf(id) >= 0 && days !== undefined) { //check to see that they are in the filtered cast and did have an availability
 
         days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
@@ -98,7 +99,7 @@ class AvailabilityOverlap extends Component {
 
             while (incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
               let currPlace = dayTimes[j][incrementIndex]
-              currPlace.push(id)
+              currPlace.push({"id" : id, "name" : firstName})
               incrementIndex++
             }
             return incrementIndex //arbitrary
@@ -113,6 +114,7 @@ class AvailabilityOverlap extends Component {
       this.props.contested.map((dancer, i) => { //go through each dancer
         let days = dancer.rankedDancer.dancer.availability.days
         let id = dancer.rankedDancer.dancer.user.id
+        let firstName = dancer.rankedDancer.dancer.user.firstName
         if (filteredCast.indexOf(id) >= 0) {
 
           days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
@@ -134,7 +136,7 @@ class AvailabilityOverlap extends Component {
 
               while (incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
                 let currPlace = dayTimes[j][incrementIndex]
-                currPlace.push(id)
+                currPlace.push({"id" : id, "name" : firstName})
                 incrementIndex++
               }
               return incrementIndex //arbitrary return for linting
@@ -170,11 +172,19 @@ class AvailabilityOverlap extends Component {
           color = colors[colors.length - 1]
         }
 
+        let names = uniqueIDs.map((dancer, i) => {
+          return (
+           <div>{dancer.name}</div>
+          )
+        })
+
         //this is the div with the specific time block
         return (
           <div className="tooltip" key={j}>
             <div className="overlapTimes" style={{ "backgroundColor": color }}>
-              <span className="tooltiptext">There are {uniqueIDs.length} dancers available at this time</span>
+              {names.length >0 &&
+              <span className="tooltiptext">{names}</span>
+              }
             </div>
           </div>
         )
