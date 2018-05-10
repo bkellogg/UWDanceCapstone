@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -81,7 +80,7 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 		}
 		return respondWithString(w, "user updated", http.StatusOK)
 	case "DELETE":
-		if !!ctx.permChecker.UserCanDeleteUser(u, int64(userID)) {
+		if !ctx.permChecker.UserCanDeleteUser(u, int64(userID)) {
 			return permissionDenied()
 		}
 		if dberr := ctx.store.DeactivateUserByID(userID); err != nil {
@@ -193,6 +192,8 @@ func (ctx *AuthContext) UserMembershipActionDispatcher(w http.ResponseWriter, r 
 		return ctx.handleUserAuditionComment(userID, objID, u, w, r)
 	case objType == "auditions" && subObject == "availability":
 		return ctx.handleUserAuditionAvailability(userID, objID, u, w, r)
+	case objType == "shows" && subObject == "choreographer":
+		return ctx.handleChoreographerShowPiece(userID, objID, w, u)
 	default:
 		return subObjectNotSupported()
 	}
@@ -210,7 +211,6 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 		return unparsableIDGiven()
 	}
 	userID, httperr := parseUserID(r, u)
-	fmt.Println(userID)
 	if httperr != nil {
 		return httperr
 	}
@@ -256,7 +256,7 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 			function = ctx.store.RemoveUserFromPiece
 			message = "user removed from piece"
 		} else if objType == "auditions" {
-			if !ctx.permChecker.UserCan(u, permissions.RemoveUserFromAudition) {
+			if !ctx.permChecker.UserCanRemoveUserFromAudition(u, int64(userID)) {
 				return permissionDenied()
 			}
 			function = ctx.store.RemoveUserFromAudition

@@ -96,33 +96,26 @@ func (store *Database) UserHasInviteForPiece(userID, pieceID int64) (bool, *DBEr
 
 // MakInvite marks the given invite between the user and piece as accepted or
 // declined depending on the given accepted param
-func (store *Database) MarkInvite(userID, pieceID int, accepted bool) *DBError {
+func (store *Database) MarkInvite(userID, pieceID int, status string) *DBError {
 	tx, err := store.db.Begin()
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
 	}
 	defer tx.Rollback()
 
-	status := appvars.CastStatusAccepted
-	if !accepted {
-		status = appvars.CastStatusDeclined
+	switch status {
+	case appvars.CastStatusDeclined,
+		appvars.CastStatusAccepted,
+		appvars.CastStatusExpired:
+	default:
+		return NewDBError("invalid cast status", http.StatusBadRequest)
 	}
 
-	res, err := tx.Exec(`UPDATE UserPiecePending UPP SET UPP.Status = ?
-		WHERE UPP.UserID = ?
-		AND UPP.PieceID = ?
-		AND UPP.IsDeleted = FALSE
-		AND UPP.Status = ?`, status, userID, pieceID, appvars.CastStatusPending)
-	if err != nil {
-		return NewDBError(fmt.Sprintf("error updating user piece invite: %v", err), http.StatusInternalServerError)
+	dberr := txMarkInvite(tx, userID, pieceID, status)
+	if dberr != nil {
+		return dberr
 	}
-	numRows, err := res.RowsAffected()
-	if err != nil {
-		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
-	}
-	if numRows == 0 {
-		return NewDBError("invite between given user and given piece does not exist", http.StatusNotFound)
-	}
+
 	if err = tx.Commit(); err != nil {
 		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
 	}

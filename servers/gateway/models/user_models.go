@@ -171,26 +171,6 @@ func (u *User) Authenticate(password string) error {
 	return nil
 }
 
-// ConvertUserToUserResponse converts the given user to a User
-// prepared to be written back to the client.
-func (store *Database) ConvertUserToUserResponse(u *User) (*UserResponse, error) {
-	userResponse := &UserResponse{
-		ID:        u.ID,
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-		Email:     u.Email,
-		Bio:       u.Bio,
-		Active:    u.Active,
-		CreatedAt: u.CreatedAt,
-	}
-	role, err := store.GetRoleByID(u.RoleID)
-	if err != nil {
-		return nil, errors.New(err.Message)
-	}
-	userResponse.Role = role
-	return userResponse, nil
-}
-
 // generateRandomUser creates a random user and returns it
 func generateRandomUser() *User {
 	user := &User{

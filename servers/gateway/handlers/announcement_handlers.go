@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/Pallinder/go-randomdata"
+	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/notify"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
@@ -78,6 +80,30 @@ func (ctx *AuthContext) AnnouncementTypesHandler(w http.ResponseWriter, r *http.
 			return HTTPError(err.Message, err.HTTPStatus)
 		}
 		return respond(w, announcementType, http.StatusCreated)
+	default:
+		return methodNotAllowed()
+	}
+}
+
+// SpecificAnnouncementHandler handles requests for a specific announcement
+func (ctx *AnnouncementContext) SpecificAnnouncementHandler(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return unparsableIDGiven()
+	}
+	switch r.Method {
+	case "DELETE":
+		if !ctx.permChecker.UserCan(u, permissions.DeleteAnnouncements) {
+			return permissionDenied()
+		}
+
+		dberr := ctx.Store.DeleteAnnouncementByID(id)
+		if dberr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dberr, "error deleting announcement")
+		}
+		return respondWithString(w, "announcement deleted", http.StatusOK)
 	default:
 		return methodNotAllowed()
 	}

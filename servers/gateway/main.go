@@ -89,7 +89,7 @@ func main() {
 	mailContext := handlers.NewMailContext(mailUser, mailPass, permChecker)
 	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials(), permChecker)
 	announcementContext := handlers.NewAnnouncementContext(db, notifier, permChecker)
-	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
+	authorizer := middleware.NewHandlerAuthorizer(sessionKey, redis)
 
 	castingContext := handlers.NewCastingContext(permChecker,
 		castingSession,
@@ -113,8 +113,9 @@ func main() {
 	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
 	announcementsRouter := baseRouter.PathPrefix(appvars.AnnouncementsPath).Subrouter()
-	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(announcementContext.AnnouncementsHandler))
 	announcementsRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.AnnouncementTypesHandler))
+	announcementsRouter.Handle(appvars.ResourceID, authorizer.Authorize(announcementContext.SpecificAnnouncementHandler))
+	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(announcementContext.AnnouncementsHandler))
 	announcementsRouter.Handle("/dummy", authorizer.Authorize(announcementContext.DummyAnnouncementHandler))
 
 	usersRouter := baseRouter.PathPrefix(appvars.UsersPath).Subrouter()
@@ -153,7 +154,7 @@ func main() {
 
 	baseRouter.Handle(appvars.BaseAPIPath, http.NotFoundHandler())
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
-	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath + "index.html")).Methods(http.MethodGet)
+	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath)).Methods(http.MethodGet)
 
 	treatedRouter := middleware.EnsureHeaders(middleware.BlockIE(
 		middleware.LogErrors(baseRouter, db)))

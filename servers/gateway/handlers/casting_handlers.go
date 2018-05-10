@@ -174,20 +174,44 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 	}
 
 	for _, id64 := range dancers {
-		id := int(id64)
-		user, dberr := ctx.Session.Store.GetUserByID(id, false)
-		if dberr != nil {
-			log.Printf("error getting user with id %d: %s\n", id, dberr.Message)
-			continue
-		}
+		go handleUserInvite(ctx, int(id64), u, piece)
+	}
+	return respond(w, dancers, http.StatusOK)
+}
+
+// handleUserInvite handles creating an invite for the given dancerID for the given
+// piece and sending them an email
+// Intended to be used on its own goroutine so does not return an error but
+// logs all errors to standard out.
+func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piece *models.Piece) {
+	user, dberr := ctx.Session.Store.GetUserByID(dancerID, false)
+	if dberr != nil {
+		log.Printf("error getting user with dancerID %d: %s\n", dancerID, dberr.Message)
+		return
+	}
+
+	dberr = ctx.Session.Store.MarkInvite(dancerID, piece.ID, appvars.CastStatusExpired)
+	if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
+		log.Printf("error marking old invite as expired: %s", dberr.Message)
+	}
+
+	inPiece, dberr := ctx.Session.Store.UserIsInPiece(dancerID, piece.ID)
+	if dberr != nil {
+		log.Printf("error determining if user is in piece: %s", dberr.Message)
+		return
+	}
+
+	// only create a new invite if the user is not already in the piece.
+	if !inPiece {
 		dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, time.Now().Add(appvars.AcceptCastTime))
 		if dberr != nil {
 			log.Printf("error creating new user piece pending entry: %v", dberr.Message)
 		}
+
 		tplVars := &models.CastingConfVars{
 			Name:      user.FirstName,
-			ChorFName: u.FirstName,
-			ChorLName: u.LastName,
+			ChorFName: chor.FirstName,
+			ChorLName: chor.LastName,
 			URL:       appvars.StageURL,
 		}
 
@@ -198,12 +222,11 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 			[]string{user.Email})
 		if err != nil {
 			log.Printf("error generating message from template: %v\n", err)
-			continue
+			return
 		}
 		if err = message.Send(); err != nil {
 			log.Printf("error sending message: %v", err)
+			return
 		}
 	}
-
-	return respond(w, dancers, http.StatusOK)
 }

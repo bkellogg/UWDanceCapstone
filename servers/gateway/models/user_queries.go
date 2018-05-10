@@ -255,7 +255,7 @@ func (store *Database) ContainsUser(newUser *NewUserRequest) (bool, *DBError) {
 		}
 		return false, err
 	}
-	return user == nil, nil
+	return user != nil, nil
 }
 
 // InsertNewUser inserts the given new user into the store
