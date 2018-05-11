@@ -139,8 +139,8 @@ class Dashboard extends Component {
     let pendingCasting = pending.map((piece, i) => {
       return (
         <div key={i} className="announcement announcementMessage cardBody">
-          Congratulations! You have been cast in {piece.name}. Rehearsal times will be here as well.
-          <div>
+          Congratulations! You have been cast in {piece.name}.
+          <div style={{paddingTop: "20px"}}>
             <RaisedButton
               label="Accept"
               onClick={() => this.acceptCasting(piece.id)}

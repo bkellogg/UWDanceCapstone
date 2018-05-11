@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
-// import BigCalendar from 'react-big-calendar';
-// import moment from 'moment';
-// import 'react-big-calendar/lib/css/react-big-calendar.css';
 import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
@@ -12,7 +9,6 @@ import Calendar from './Calendar';
 import PersonRow from './PersonRow';
 import './styling/Piece.css';
 import './styling/General.css';
-import Link from 'react-router-dom/Link';
 
 const STYLES = { width: "600px", paddingLeft: "15px" }
 
@@ -237,7 +233,7 @@ class Piece extends Component {
 
   render() {
     let musicianRow = []
-    let numMusicians = this.state.numMusicians
+    //let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
     musicianRow = musicians.map((musician, i) => {
       return (
