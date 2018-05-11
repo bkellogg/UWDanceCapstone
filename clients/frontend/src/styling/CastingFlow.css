@@ -185,7 +185,7 @@ th{
 }
 
 .postCastingWrap{
-    margin-top: 10%;
+    margin-top: 25px;
 }
 
 .importantText{
@@ -203,6 +203,10 @@ th{
 .dancerAssignedNumber{
     font-weight: 600;
     padding-right: 5px;
+}
+
+.choreographersSelectedCast{
+    margin-top: 25px;
 }
 
 

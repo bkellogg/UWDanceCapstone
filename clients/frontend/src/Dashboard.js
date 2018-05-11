@@ -153,8 +153,8 @@ class Dashboard extends Component {
             <RaisedButton
               label="Accept"
               className="acceptCastButton"
-              backgroundColor="#22A7E0"
               style={{ color: '#ffffff' }}
+              backgroundColor="#22A7E0"
               //onClick={() => this.acceptCasting(piece.id)}
               onClick={() => this.setState({ pending: [] })}
             />
