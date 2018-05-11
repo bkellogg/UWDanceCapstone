@@ -35,7 +35,7 @@ class SetRehearsals extends Component {
     }
   };
 
-  componentWillMount(){
+  componentWillMount() {
     let filteredCast = []
     this.props.cast.map((dancer, i) => {
       filteredCast.push(dancer.dancer.user.id)
@@ -46,34 +46,34 @@ class SetRehearsals extends Component {
       return filteredCast
     })
     this.setState({
-      filteredCast : filteredCast,
-      cast : this.props.cast,
-      contested : this.props.contested
+      filteredCast: filteredCast,
+      cast: this.props.cast,
+      contested: this.props.contested
     })
   }
 
   postCasting = () => {
 
     Util.makeRequest("auditions/" + this.props.audition + "/casting", {}, "POST", true)
-    .then((res) => {
-      if (res.ok) {
-        return res.text()
-      }
-      if (res.status === 401) {
-        Util.signOut()
-      }
-      return res.text().then((t) => Promise.reject(t));
-    })
-    .then(() => {
-      this.setState({
-        open: false,
-        finished: true,
-        finishedAdding: true,
-      });
-    })
-    .catch(err => {
-      console.error(err)
-    })
+      .then((res) => {
+        if (res.ok) {
+          return res.text()
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then(() => {
+        this.setState({
+          open: false,
+          finished: true,
+          finishedAdding: true,
+        });
+      })
+      .catch(err => {
+        console.error(err)
+      })
   }
 
   calculateRehearsals = () => {
@@ -89,8 +89,8 @@ class SetRehearsals extends Component {
 
       //an array of these are going to be pushed up to the server 
       let rehearsalObject = {
-        id : allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
-        title : "Weekly Rehearsal"
+        id: allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
+        title: "Weekly Rehearsal"
       }
 
       let rehearsalIndex = daysRef.indexOf(rehearsal.day) + 1 //will give us the number representing the day of the week [mondays start at 1 and are at position 0, hence the plus one]
@@ -117,24 +117,24 @@ class SetRehearsals extends Component {
         rehearsalObject.end = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
         startDate = beginDate //need this in a sec
       }
-      
+
       //now we have one complete rehearsal object 
       //add it to the list, now IDs will be based on length accurately
       allRehearsals.push(rehearsalObject)
 
       //at this point start generating the weekly events following our start date (Whatever that might be)
       let date = moment(startDate)
-      while (date.isBefore(moment(endDate))){
+      while (date.isBefore(moment(endDate))) {
         date = moment(date).add(1, 'week')
         let newRehearsalObject = {
-          id : allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
-          title : "Weekly Rehearsal"
+          id: allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
+          title: "Weekly Rehearsal"
         }
         newRehearsalObject.start = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
         newRehearsalObject.end = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
 
         allRehearsals.push(newRehearsalObject)
-      }     
+      }
     })
     localStorage.setItem("rehearsals", JSON.stringify(allRehearsals))
     //TODO add the server call!
@@ -171,7 +171,7 @@ class SetRehearsals extends Component {
   setRehearsal = (rehearsal, i) => {
     //get current rehearsals
     let rehearsals = this.state.rehearsalSchedule
-    
+
     if (rehearsal.day !== "" && rehearsal.startTime !== "" && rehearsal.endTime !== "" && rehearsal.startTime < rehearsal.endTime) {
       rehearsals[i] = rehearsal
       this.setState({
@@ -183,7 +183,7 @@ class SetRehearsals extends Component {
   setStartDate = (e) => {
     let date = e.target.value
     this.setState({
-      startDate : date
+      startDate: date
     })
   }
 
@@ -209,39 +209,41 @@ class SetRehearsals extends Component {
       let dayIndex = daysRef.indexOf(day.day)
       let startTimeIndex = timesRef.indexOf(day.startTime)
       let endTimeIndex = timesRef.indexOf(day.endTime)
-        return (
-          <p key={i}>
-            {daysFormatted[dayIndex] + " from "} 
-            {timesFormatted[startTimeIndex] + " to "} 
-            {timesFormatted[endTimeIndex] + " "} 
-          </p>
-        )
-      
+      return (
+        <p key={i}>
+          {daysFormatted[dayIndex] + " from "}
+          {timesFormatted[startTimeIndex] + " to "}
+          {timesFormatted[endTimeIndex] + " "}
+        </p>
+      )
+
     })
-    
+
     return (
       <section >
         <div className="mainView mainContentView">
-        <div className="pageContentWrap">
+          <div className="pageContentWrap">
             <div className="wrap">
               <div className="castList">
                 <div className="extraClass">
                   <div className="setTimes">
 
                     <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
-                    First Rehearsal Date
-                    <input type="date" name="rehearsalStartDate" id="rehearsalStartDate" onChange={this.setStartDate}/>
-                    Weekly Rehearsal Times
+                    <p>First Rehearsal Date</p>
+                    <div className="chooseRehearsalTimes">
+                      <input type="date" name="rehearsalStartDate" id="rehearsalStartDate" onChange={this.setStartDate} />
+                    </div>
+                    <p>Weekly Rehearsal Times</p>
                     {rehearsals}
                     <div className="buttonsWrap">
-                        <Button
+                      <Button
                         backgroundColor="#708090"
                         style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
                         onClick={this.addRehearsal}
                         disabled={this.state.finishedAdding}>
                         ADD</Button>
 
-                        <Button
+                      <Button
                         backgroundColor="#708090"
                         style={{ color: '#ffffff', float: 'right' }}
                         onClick={this.removeRehearsal} disabled={this.state.finishedAdding}>
@@ -264,7 +266,7 @@ class SetRehearsals extends Component {
                     <div className="postCasting">
                       <Button
                         backgroundColor="#22A7E0"
-                        style={{ color: '#ffffff', width: '100%', height:'50' }}
+                        style={{ color: '#ffffff', width: '100%', height: '50' }}
                         onClick={this.handleOpen}
                         disabled={finished}>
                         POST CASTING</Button>
@@ -274,8 +276,8 @@ class SetRehearsals extends Component {
                 </div>
 
                 <div className="overlapAvailabilityWrap">
-                <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast}/> 
-               </div>
+                  <AvailabilityOverlap cast={this.state.cast} contested={this.state.contested} filteredCast={this.state.filteredCast} />
+                </div>
               </div>
 
               <Dialog
