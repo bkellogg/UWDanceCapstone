@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
-import Button from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './styling/General.css';
-import RehearsalRow from './RehearsalRow';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 const VIEWS = ['month', 'week', 'day']
