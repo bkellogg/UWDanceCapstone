@@ -99,6 +99,19 @@ type NewPieceInfoSheet struct {
 // fields to be consistent across all submissions.
 func (npis *NewPieceInfoSheet) Validate() error {
 	npis.ChorPhone = trimPhone(npis.ChorPhone)
+	npis.Title = strings.TrimSpace(npis.Title)
+	npis.RunTime = strings.TrimSpace(npis.RunTime)
+	npis.Composers = strings.TrimSpace(npis.Composers)
+	npis.MusicTitle = strings.TrimSpace(npis.MusicTitle)
+	npis.PerformedBy = strings.TrimSpace(npis.PerformedBy)
+	npis.MusicSource = strings.TrimSpace(npis.MusicSource)
+	npis.RehearsalSchedule = strings.TrimSpace(npis.RehearsalSchedule)
+	npis.ChorNotes = strings.TrimSpace(npis.ChorNotes)
+	npis.CostumeDesc = strings.TrimSpace(npis.CostumeDesc)
+	npis.ItemDesc = strings.TrimSpace(npis.ItemDesc)
+	npis.LightingDesc = strings.TrimSpace(npis.LightingDesc)
+	npis.OtherNotes = strings.TrimSpace(npis.OtherNotes)
+
 	if len(npis.ChorPhone) < 10 || len(npis.ChorPhone) > 11 {
 		return errors.New("piece musician must have a valid phone number")
 	}
@@ -177,6 +190,8 @@ type NewPieceMusician struct {
 // fields to be consistent across all submissions.
 func (npm *NewPieceMusician) Validate() error {
 	npm.Phone = trimPhone(npm.Phone)
+	npm.Name = strings.TrimSpace(npm.Name)
+	npm.Email = strings.TrimSpace(npm.Email)
 	if len(npm.Name) == 0 {
 		return errors.New("piece musician must have a name")
 	}
