@@ -1,17 +1,199 @@
 import React, { Component } from 'react';
-import './styling/Calendar.css';
+import BigCalendar from 'react-big-calendar';
+import moment from 'moment';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import './styling/General.css';
+
+BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
+const VIEWS = ['month', 'week', 'day']
+const MINTIME = new Date();
+MINTIME.setHours(8,30,0);
+const MAXTIME = new Date();
+MAXTIME.setHours(23,30,0);
 
 class Calendar extends Component {
   constructor(props) {
     super(props);
-    console.log(this.state);
+    this.state = {
+      event: {
+        title: "",
+        start: new Date(),
+        end: new Date(),
+      },
+      slotInfo: {
+        start: new Date(),
+        end: new Date(),
+      },
+      minTime : MINTIME,
+      maxTime : MAXTIME,
+      openSetRehearsal : false,
+      openNewRehearsal : false,
+      events : [
+        {
+          id: 3,
+          title: 'Weekly Rehearsal',
+          start: new Date('2018-05-10 11:00 AM'),
+          end: new Date('2018-05-10 12:30 PM')
+        }
+      ]
+    }
   };
 
+  componentWillMount() {
+    this.formatEvents()
+  }
+
+  formatEvents = () => {
+    //TODO turn this into a route
+    let events = JSON.parse(localStorage.rehearsals)
+
+    let formattedEvents = []
+    events.forEach((event) => {
+      let start = new Date(event.start)
+      let end = new Date(event.end)
+      let tempEvent = {
+        id : event.id,
+        title : event.title,
+        start : start,
+        end : end
+      }
+      formattedEvents.push(tempEvent)
+    })
+    this.setState({
+      events : formattedEvents
+    })
+  }
+
+  handleClose = () => {
+    this.setState({
+      openSetRehearsal : false,
+      openNewRehearsal: false
+    })
+  }
+
+  onSelectExisting = (event) => {
+    this.setState({
+      event : event,
+      openSetRehearsal : true
+    })
+  }
+
+  onSelectNew = (slotInfo) => {
+    this.setState({
+      slotInfo : slotInfo,
+      openNewRehearsal: true
+    })
+  }
+
+  deleteRehearsal = () => {
+    let event = this.state.event
+    
+    //go through all events and delete the one with the same ID
+    let events = this.state.events
+    events.forEach((e, i) => {
+      if(e.id === event.id){
+        events.splice(i, i + 1)
+      }
+    })
+    this.setState({
+      events : events,
+      openSetRehearsal : false
+    })
+  }
+
+  addRehearsal = () => {
+    let slotInfo = this.state.slotInfo
+    let events = this.state.events
+    let latestID = events[events.length - 1].id + 1
+
+    let rehearsalObject = {
+      id : latestID,
+      title : "Event Title",
+      start : new Date(slotInfo.start),
+      end : new Date(slotInfo.end)
+    }
+    events.push(rehearsalObject)
+
+    this.setState({
+      events : events,
+      openNewRehearsal : false
+    })
+  }
+
   render() {
+    let event = this.state.event
+    let slotInfo = this.state.slotInfo
     return (
-      <div>
-        <h5>Calendar!</h5>
-      </div>
+      <section>
+        <BigCalendar style={{ height: "100%", width: "100%" }}
+          selectable
+          defaultDate={new Date()}
+          defaultView='week'
+          events={this.state.events}
+          views={VIEWS}
+          step={30}
+          min={this.state.minTime}
+          max={this.state.maxTime}
+          onSelectEvent={event => this.onSelectExisting(event)}
+          onSelectSlot={slotInfo => this.onSelectNew(slotInfo)}
+        />
+
+        {/*this is for deleting rehearsals that have been set*/}
+        <Dialog
+          title={event.title}
+          actions={[
+            <FlatButton
+              label="Cancel"
+              style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
+              primary={false}
+              onClick={this.handleClose}
+            />,
+            <FlatButton
+              label="Delete Rehearsal"
+              style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+              primary={false}
+              keyboardFocused={true}
+              onClick={event => this.deleteRehearsal(event)}
+            />,
+          ]}
+          modal={false}
+          open={this.state.openSetRehearsal}
+          onRequestClose={this.handleClose}
+          >
+          <div>
+            This rehearsal goes from {event.start.toLocaleTimeString()} to {event.end.toLocaleTimeString()}
+          </div>
+        </Dialog>
+
+        {/*this is the dialoge for adding a new one time rehearsal*/}
+        <Dialog
+          title={"Create New Rehearsal"}
+          actions={[
+            <FlatButton
+              label="Cancel"
+              style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
+              primary={false}
+              onClick={this.handleClose}
+            />,
+            <FlatButton
+              label="Set Rehearsal"
+              style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+              primary={false}
+              keyboardFocused={true}
+              onClick={this.addRehearsal}
+            />,
+          ]}
+          modal={false}
+          open={this.state.openNewRehearsal}
+          onRequestClose={this.handleClose}
+          >
+          <div>
+            This rehearsal will go from {slotInfo.start.toLocaleTimeString()} to {slotInfo.end.toLocaleTimeString()} on {slotInfo.start.toLocaleDateString()}
+          </div>
+        </Dialog>
+      </section>
     );
   };
 }

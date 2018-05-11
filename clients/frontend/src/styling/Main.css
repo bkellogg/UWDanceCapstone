@@ -3,14 +3,6 @@
     width: 250px;
 }
 
-#signOut{
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    height: 7%;
-    bottom: 7%;
-}
-
 .main {
     padding-left: 240px;
 }
@@ -23,7 +15,22 @@
 .officialLogoImage{
     height: 90%;
     width: 90%;
-    
+}
+
+.hamburgerButton{
+    position: absolute;
+}
+
+.mobileNavLogoWrap{
+    display: inline-block;
+    width: 100%;
+}
+
+.mobileNavLogo{
+    bottom: 0;
+    height: 46px;
+    display: block;
+    margin: auto;
 }
 
 @media only screen and (max-width : 992px) {

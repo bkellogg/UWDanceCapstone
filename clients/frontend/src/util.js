@@ -93,7 +93,7 @@ export function uploadPhoto(val){
         }
     };
 
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
+    xhr.open("POST", API_URL_BASE+ "users/me/photo");
     xhr.setRequestHeader("Authorization", getAuth());
     xhr.setRequestHeader("ImageFieldName", "image");
 
@@ -121,7 +121,7 @@ export function uploadResume(val){
         }
     };
 
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
+    xhr.open("POST", API_URL_BASE + "users/me/resume");
     xhr.setRequestHeader("Authorization", getAuth());
     xhr.setRequestHeader("ResumeFieldName", "resume");
 

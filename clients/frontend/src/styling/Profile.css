@@ -1,24 +1,27 @@
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
-
-
 .header, .mainContentBorder{
   width: 100%;
   padding: 2%;
   position: relative;
 }
 
-.photoContainerWrap {
+.mainContentBorder{
+  border-top: 1px solid hsl(0, 0%, 45%);
+    padding-top: 25px;
+}
+
+.photoContainer {
   position: relative;
   display: inline-block;
   margin-right: 3%;
+  vertical-align: bottom;
 }
 
 .nameAndBioWrap{
-  width: 70%;
+  width: 60%;
   position: relative;
   display: inline-block;
+  vertical-align: top;
+  padding-top: 100px;
 }
 
 #edit {
@@ -28,10 +31,9 @@ body {
 }
 
 img#photo {
-  width: 240px;
-  height: 240px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
-  
 }
 
 .name, .bio{
@@ -66,18 +68,43 @@ img#photo {
   margin-bottom:40px
 }
 
-
 .subheader {
   font-size: 15px;
 
 }
-
 
 #firstName, #lastName{
   margin-right: 10px
 }
 
 
-@media only screen and (max-width : 992px) {
+/*TABLET VIEW*/
+@media only screen and (max-width : 1043px)  {
+  .photoContainer{
+    padding-top: 30px;
+    position: relative;
+    width: 100%;
+    z-index: 1;
+  }
 
+  .header{
+    border-bottom: none;
+      padding-bottom: 0px;
+  }
+  
+  .nameAndBioWrap{
+    margin-top: 25px;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 25px;
+    padding-top: 0;
+  }
+
+  img#photo {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: block;
+    margin: auto;
+  }
 }

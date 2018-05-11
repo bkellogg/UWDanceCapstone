@@ -76,7 +76,7 @@ class ResolveConflict extends Component {
           </div>
           
           <div className="transparentCard">
-          <div className="wrap">
+          <div className="wrap wrapFlex">
             <div className="castList-v2 cardAddMargin">
               <div className="choreographersSelecteCast">
                 <h2 className="smallHeading"> Your cast </h2>

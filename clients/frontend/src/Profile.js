@@ -58,7 +58,6 @@ class Profile extends Component {
 
   formatHistory = (shows) => {
     let showTypes = {};
-
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
@@ -98,7 +97,7 @@ class Profile extends Component {
   }
 
   getPhoto = () => {
-    fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
+    Util.makeRequest("users/me/photo", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.blob();
@@ -120,7 +119,7 @@ class Profile extends Component {
   }
 
   getResume = () => {
-    fetch(Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth)
+    Util.makeRequest("users/me/resume", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.blob();
@@ -156,41 +155,12 @@ class Profile extends Component {
       }
     };
 
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
+    xhr.open("POST", Util.API_URL_BASE + "users/me/photo");
     xhr.setRequestHeader("Authorization", Util.getAuth());
     xhr.setRequestHeader("ImageFieldName", "image");
 
     xhr.send(data);
   }
-
-  uploadResume = (val) => {
-    let file = val;
-    let data = new FormData();
-    data.append("resume", file.files[0]);
-
-    let xhr = new XMLHttpRequest();
-
-    xhr.addEventListener("readystatechange", () => {
-      if (this.readyState === 4) {
-        this.getResume()
-      }
-    });
-
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === XMLHttpRequest.DONE) {
-        if (xhr.status < 400) {
-          return xhr.responseText
-        }
-      }
-    };
-
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
-    xhr.setRequestHeader("Authorization", Util.getAuth());
-    xhr.setRequestHeader("ResumeFieldName", "resume");
-
-    xhr.send(data);
-  }
-
 
   onClick = () => {
     if (this.state.edit) {
@@ -272,27 +242,27 @@ class Profile extends Component {
               {/* FIRST CARD */}
               <div className="wrap">
                 <div className="header">
-                  <div className="photoContainerWrap">
-                    <div id="photoContainer" className="photoContainer">
-                      {!this.state.edit &&
 
-                        <img id="photo" alt="profile" src={this.state.photoSrc}></img>
-                      }
-                      {this.state.edit &&
-                        <section>
-                          <div> Upload a head shot as a jpg file. </div>
-                          <AvatarEditorConsole img={this.state.photoSrc} changeImg={this.updateImage} />
-                        </section>
-                      }
-                    </div>
+                  <div id="photoContainer" className="photoContainer">
+                    {!this.state.edit &&
+
+                      <img id="photo" alt="profile" src={this.state.photoSrc}></img>
+                    }
+                    {this.state.edit &&
+                      <section>
+                        <div>
+                          <p>Upload a head shot as a jpg file. </p>
+                        </div>
+                        <AvatarEditorConsole img={this.state.photoSrc} changeImg={this.updateImage} />
+                      </section>
+                    }
                   </div>
+
 
                   <div className="nameAndBioWrap">
                     <div id="name" className="name">
 
                       {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
-
-
                       {this.state.edit &&
                         <div id="editName">
                           <Row>
