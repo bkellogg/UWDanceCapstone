@@ -5,7 +5,12 @@ class MusicianRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
+        id: this.props.id,
+        musician : {
+            name : "",
+            phone : "",
+            email : ""
+        }
     }
   };
 
@@ -13,7 +18,35 @@ class MusicianRow extends Component {
     this.setState({
       [name]: event.target.value,
     });
+    
   };
+
+  updateName = (event) => {
+    let musician = this.state.musician
+    musician.name = event.target.value
+    this.setState({
+        musician : musician
+    })
+    this.props.musicianContact(musician, this.state.id)
+  }
+
+  updateNumber = (event) => {
+    let musician = this.state.musician
+    musician.phone = event.target.value
+    this.setState({
+        musician : musician
+    })
+    this.props.musicianContact(musician, this.state.id)
+  }
+
+  updateEmail = (event) => {
+    let musician = this.state.musician
+    musician.email = event.target.value
+    this.setState({
+        musician : musician
+    })
+    this.props.musicianContact(musician, this.state.id)
+  }
 
   render() {
     return (
@@ -21,20 +54,23 @@ class MusicianRow extends Component {
           <div>
             Name:
                 <TextField 
+                    id="musicianName"
                     className="musicianName"
-                    onChange={this.handleChange('musicianName')}
+                    onChange={this.updateName}
                 />
             
             Phone Number:
                 <TextField 
+                    id="musicianPhoneNumber"
                     className="musicianPhoneNumber"
-                    onChange={this.handleChange('musicianPhoneNumber')}
+                    onChange={this.updateNumber}
                 />
             
             Email:
                 <TextField 
+                    id="musicianEmail"
                     className="musicianEmail"
-                    onChange={this.handleChange('musicianEmail')}
+                    onChange={this.updateEmail}
                 />
             
         </div>

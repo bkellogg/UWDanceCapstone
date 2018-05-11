@@ -27,7 +27,21 @@ class Piece extends Component {
       openInfo: false,
       openCast: false,
       openCalendar: false,
-      error : false
+      error : false,
+      choreographerPhone : "",
+      danceTitle : "",
+      runtime : "",
+      composer : "",
+      musicTitle : "",
+      musicPerformer : "",
+      musicSource : "",
+      rehearsalSchedule : "",
+      choreoNotes : "",
+      musicians : [],
+      costumeDesc : "",
+      propsDesc : "",
+      lightingDesc : "",
+      otherDesc : ""
     }
   };
 
@@ -36,7 +50,6 @@ class Piece extends Component {
     this.getPieceID()
   }
 
-  //TODO deal with the error that a user has no pieces [there's no bug, but we should probably show a different component if they don't have one]
   getPieceID = () => {
     Util.makeRequest("users/me/shows/" + this.props.show + "/choreographer", "", "GET", true)
       .then(res => {
@@ -46,6 +59,7 @@ class Piece extends Component {
         if (res.status === 401) {
           Util.signOut()
         }
+        //this is if there is no piece
         if (res.status === 404) {
           this.setState({
             error : true
@@ -60,6 +74,7 @@ class Piece extends Component {
           pieceID : piece.id
         })
         this.getPieceUsers(piece.id)
+        this.getInfoSheet(piece.id)
       })
       .catch((err) => {
         console.error(err)
@@ -67,8 +82,41 @@ class Piece extends Component {
 
   }
 
-  getInfoSheet = () => {
-
+  getInfoSheet = (id) => {
+    Util.makeRequest("pieces/" + id + "/info", "", "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res
+        .text()
+        .then((t) => Promise.reject(t));
+    })
+    .then(res => {
+      this.setState({
+        numMusicians: res.numMusicians,
+        choreographerPhone : res.choreographerPhone,
+        danceTitle : res.title,
+        runtime : res.runTime,
+        composer : res.composers,
+        musicTitle : res.musicTitle,
+        musicPerformer : res.performedBy,
+        musicSource : res.musicSource,
+        rehearsalSchedule : res.rehearsalSchedule,
+        choreoNotes : res.chorNotes,
+        musicians : res.musicians,
+        costumeDesc : res.costumeDesc,
+        propsDesc : res.itemDesc,
+        lightingDesc : res.lightingDesc,
+        otherDesc : res.otherNotes
+      })
+    })
+    .catch((err) => {
+      console.error(err)
+    })
   }
 
   setInfoSheet = () => {
@@ -83,23 +131,31 @@ class Piece extends Component {
       "numMusicians": this.state.numMusicians,
       "rehearsalSchedule": this.state.rehearsalSchedule,
       "chorNotes": this.state.choreoNotes,
-      "musicians": [
-        {
-          "name": "Nathan Swanson",
-          "phone": "(206) 786-9826",
-          "email": "swag@leet.com"
-        },
-        {
-          "name": "Bill Clinton",
-          "phone": "291 876 9180",
-          "email": "leet@swag.com"
-        }
-      ],
+      "musicians": this.state.musicians,
       "costumeDesc": this.state.costumeDesc,
       "itemDesc": this.state.propsDesc,
       "lightingDesc": this.state.lightingDesc,
       "otherNotes": this.state.otherDesc
     }
+
+    Util.makeRequest("pieces/" + this.state.pieceID + "/info", body, "POST", true)
+    .then(res => {
+      if (res.ok) {
+        return res.text()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res
+        .text()
+        .then((t) => Promise.reject(t));
+    })
+    .then(res => {
+        console.log(res)
+    })
+    .catch((err) => {
+      console.error(err)
+    })
   }
 
   getPieceUsers = (pieceID) => {
@@ -141,7 +197,12 @@ class Piece extends Component {
   };
 
   handleChangeMusician = (event, index, value) => {
-    this.setState({ numMusicians: value })
+    let musicians = this.state.musicians
+    musicians = musicians.slice(0, value )
+    this.setState({ 
+      numMusicians: value,
+      musicians : musicians
+    })
   };
 
   toggleInfo = () => {
@@ -165,13 +226,19 @@ class Piece extends Component {
     })
   }
 
-
+  updateMusicianList = (musician, id) => {
+      let musicians = this.state.musicians
+      musicians[id] = musician
+      this.setState({
+        musicians : musicians
+      })
+  }
 
   render() {
     let musicianRow = []
     let numMusicians = this.state.numMusicians
     for (let i = 0; i < numMusicians; i++) {
-      musicianRow.push(<MusicianRow key={i} />)
+      musicianRow.push(<MusicianRow key={i} id={i} musicianContact={this.updateMusicianList}/>)
     }
 
     let castRows = this.state.dancers.map((dancer, i) => {
@@ -190,7 +257,7 @@ class Piece extends Component {
         </tr>
       )
     })
-
+    console.log(this.state.pieceID)
     return (
       <section className="main">
         <div className="mainView">
@@ -298,6 +365,7 @@ class Piece extends Component {
                       <p>Choreographer's Phone Number:</p>
                       <TextField
                         id="choreographerPhone"
+                        defaultValue={this.state.choreographerPhone}
                         onChange={this.handleChange('choreographerPhone')}
                         style={STYLES}
                       />
@@ -321,12 +389,14 @@ class Piece extends Component {
                       <p>Dance Title: </p>
                       <TextField
                         id="danceTitle"
+                        defaultValue={this.state.danceTitle}
                         onChange={this.handleChange('danceTitle')}
                         style={STYLES}
                       />
-                      <p>Dance RunTime:</p>
+                      <p>Dance Runtime:</p>
                       <TextField
                         id="runtime"
+                        defaultValue={this.state.runtime}
                         onChange={this.handleChange('runtime')}
                         style={STYLES}
                       />
@@ -334,6 +404,7 @@ class Piece extends Component {
                       <p>Composer(s):</p>
                       <TextField
                         id="composer"
+                        defaultValue={this.state.composer}
                         onChange={this.handleChange('composer')}
                         style={STYLES}
                       />
@@ -341,6 +412,7 @@ class Piece extends Component {
                       <p>Music title(s): </p>
                       <TextField
                         id="musicTitle"
+                        defaultValue={this.state.musicTitle}
                         onChange={this.handleChange('musicTitle')}
                         style={STYLES}
                       />
@@ -348,6 +420,7 @@ class Piece extends Component {
                       <p>Performed By:</p>
                       <TextField
                         id="musicPerformer"
+                        defaultValue={this.state.musicPerformer}
                         onChange={this.handleChange('musicPerformer')}
                         style={STYLES}
                       />
@@ -355,12 +428,14 @@ class Piece extends Component {
                       <p>Music Source:</p>
                       <TextField
                         id="musicSource"
+                        defaultValue={this.state.musicSource}
                         onChange={this.handleChange('musicSource')}
                         style={STYLES}
                       />
 
                       <p>If music will be performed live, number of musicians:  </p>
                       <SelectField
+                        defaultValue={this.state.numMusicians}
                         value={this.state.numMusicians}
                         onChange={this.handleChangeMusician}
                       >
@@ -387,6 +462,7 @@ class Piece extends Component {
                       <p>Rehearsal Schedule:</p>
                       <TextField
                         id="rehearsalSchedule"
+                        defaultValue={this.state.rehearsalSchedule}
                         onChange={this.handleChange('rehearsalSchedule')}
                         style={STYLES}
                       />
@@ -395,6 +471,7 @@ class Piece extends Component {
                       <p>Choreographers Notes: </p>
                       <TextField
                         id="choreoNotes"
+                        defaultValue={this.state.choreoNotes}
                         multiLine={true}
                         onChange={this.handleChange('choreoNotes')}
                         style={STYLES}
@@ -403,6 +480,7 @@ class Piece extends Component {
                       <p>Costume Descriptions:  </p>
                       <TextField
                         id="costumeDesc"
+                        defaultValue={this.state.costumeDesc}
                         multiLine={true}
                         onChange={this.handleChange('costumeDesc')}
                         style={STYLES}
@@ -411,6 +489,7 @@ class Piece extends Component {
                       <p>Props/Scenic Items Descriptions: </p>
                       <TextField
                         id="propsDesc"
+                        defaultValue={this.state.propsDesc}
                         multiLine={true}
                         onChange={this.handleChange('propsDesc')}
                         style={STYLES}
@@ -419,6 +498,7 @@ class Piece extends Component {
                       <p>Lighting Description: </p>
                       <TextField
                         id="lightingDesc"
+                        defaultValue={this.state.lightingDesc}
                         multiLine={true}
                         onChange={this.handleChange('lightingDesc')}
                         style={STYLES}
@@ -427,6 +507,7 @@ class Piece extends Component {
                       <p>Other special needs:  </p>
                       <TextField
                         id="otherDesc"
+                        defaultValue={this.state.otherDesc}
                         multiLine={true}
                         onChange={this.handleChange('otherDesc')}
                         style={STYLES}
@@ -434,7 +515,7 @@ class Piece extends Component {
 
                     </div>
                   </div>
-                  <Button>Save Info Sheet</Button>
+                  <Button onClick={this.setInfoSheet}>Save Info Sheet</Button>
                 </section>
               }
             </div>
