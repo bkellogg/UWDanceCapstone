@@ -73,16 +73,16 @@ class Piece extends Component {
 
   setInfoSheet = () => {
     let body = {
-      "choreographerPhone": "253-514-9548",
-      "title": "some title",
-      "runtime": "10hrs",
-      "composers": "brendan",
-      "musicTitle": "ride of valkyries",
-      "performedBy": "brendan",
-      "musicSource": "some music",
-      "numMusicians": 2,
-      "rehearsalSchedule": "24/7",
-      "chorNotes": "best piece ever",
+      "choreographerPhone": this.state.choreographerPhone,
+      "title": this.state.danceTitle,
+      "runtime": this.state.runtime,
+      "composers": this.state.composer,
+      "musicTitle": this.state.musicTitle,
+      "performedBy": this.state.musicPerformer,
+      "musicSource": this.state.musicSource,
+      "numMusicians": this.state.numMusicians,
+      "rehearsalSchedule": this.state.rehearsalSchedule,
+      "chorNotes": this.state.choreoNotes,
       "musicians": [
         {
           "name": "Nathan Swanson",
@@ -95,10 +95,10 @@ class Piece extends Component {
           "email": "leet@swag.com"
         }
       ],
-      "costumeDesc": "Roman Empire",
-      "itemDesc": "Jesus and a cross",
-      "lightingDesc": "dusk",
-      "otherNotes": "Et tu, brutus?"
+      "costumeDesc": this.state.costumeDesc,
+      "itemDesc": this.state.propsDesc,
+      "lightingDesc": this.state.lightingDesc,
+      "otherNotes": this.state.otherDesc
     }
   }
 
@@ -297,8 +297,8 @@ class Piece extends Component {
                       <p>Choreographer's Name: {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
                       <p>Choreographer's Phone Number:</p>
                       <TextField
-                        id="phoneNumber"
-                        onChange={this.handleChange('phoneNumber')}
+                        id="choreographerPhone"
+                        onChange={this.handleChange('choreographerPhone')}
                         style={STYLES}
                       />
 
