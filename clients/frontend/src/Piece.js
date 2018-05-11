@@ -247,7 +247,7 @@ class Piece extends Component {
                         <tr className="categories">
                           <th className="avatar2"></th>
                           <th>Name</th>
-                          <th className="userRoleDisp">Bio</th>
+                          <th className="bioOfUser">Bio</th>
                           <th className="userEmail">Email</th>
                         </tr>
                         {castRows}
