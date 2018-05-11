@@ -237,9 +237,15 @@ class Piece extends Component {
   render() {
     let musicianRow = []
     let numMusicians = this.state.numMusicians
-    for (let i = 0; i < numMusicians; i++) {
-      musicianRow.push(<MusicianRow key={i} id={i} musicianContact={this.updateMusicianList}/>)
-    }
+    let musicians = this.state.musicians
+    musicianRow = musicians.map((musician, i) => {
+      return (
+        <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
+      )
+    })
+    // for (let i = 0; i < numMusicians; i++) {
+    //   musicianRow.push(<MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} />)
+    // }
 
     let castRows = this.state.dancers.map((dancer, i) => {
       return (<PersonRow p={dancer} piece={true} key={i} />)
@@ -257,7 +263,6 @@ class Piece extends Component {
         </tr>
       )
     })
-    console.log(this.state.pieceID)
     return (
       <section className="main">
         <div className="mainView">

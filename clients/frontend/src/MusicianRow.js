@@ -54,6 +54,7 @@ class MusicianRow extends Component {
           <div>
             Name:
                 <TextField 
+                    defaultValue={this.props.musician.name}
                     id="musicianName"
                     className="musicianName"
                     onChange={this.updateName}
@@ -61,6 +62,7 @@ class MusicianRow extends Component {
             
             Phone Number:
                 <TextField 
+                    defaultValue={this.props.musician.phone}
                     id="musicianPhoneNumber"
                     className="musicianPhoneNumber"
                     onChange={this.updateNumber}
@@ -68,6 +70,7 @@ class MusicianRow extends Component {
             
             Email:
                 <TextField 
+                    defaultValue={this.props.musician.email}
                     id="musicianEmail"
                     className="musicianEmail"
                     onChange={this.updateEmail}
