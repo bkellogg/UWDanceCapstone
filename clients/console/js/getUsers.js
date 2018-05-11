@@ -1,6 +1,5 @@
 "use strict";
 
-
 refreshLocalUser();
 
 var page = 1;
@@ -40,13 +39,12 @@ function populateUserTable(allUsers) {
         "columnDefs": [{
             "targets": -1,
             "data": null,
-            "defaultContent": "<button>Click!</button>"
+            "defaultContent": "<button href='userProfile.html'>Click!</button>"
         }]
     });
 
     $('#users_table tbody').on('click', 'button', function () {
         var data = table.row($(this).parents('tr')).data();
-        alert(data[0]);
+        window.location.href = "userProfile.html"
     });
 }
-

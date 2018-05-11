@@ -12,6 +12,7 @@
 </head>
 
 <body>
+    <nav id='nav-bar'></nav>
     <h1>Create New Show</h1>
     <form class="show-form">
         <div class="showType">
@@ -73,5 +74,10 @@
 <script src="js/common.js"></script>
 <script src="js/createNewShow.js"></script>
 
+<script>
+    $(function () {
+        $("#nav-bar").load("navigation.html");
+    });
+</script>
 
 </html>

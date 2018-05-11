@@ -12,6 +12,7 @@
 </head>
 
 <body>
+    <nav id='nav-bar'></nav>
     <h1>Create New Tech Schedule</h1>
     <form id="techRehearsal-form">
         <div class="heading">
@@ -43,5 +44,11 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.3/jquery.timepicker.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/createTechSchedule.js"></script>
+
+<script>
+    $(function () {
+        $("#nav-bar").load("navigation.html");
+    });
+</script>
 
 </html>

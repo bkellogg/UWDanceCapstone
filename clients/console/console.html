@@ -11,71 +11,21 @@
 </head>
 
 <body>
-    <nav class="col-1">
-        <a href="console.html">Admin Console </a>
-        <div class="nav">
-            <div id="sideBar">
-                <ul>
-                    <li class="has-submenu">
-                        <a href="#">Users</a>
-                        <ul>
-                            <li>
-                                <a href="#" onclick="load_getUsers()">Users</a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="load_createNewUser()">Create New User</a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="load_createNewUserRole()">Create New User Role</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="has-submenu">
-                        <a href="#">Shows</a>
-                        <ul>
-                            <li>
-                                <a href="#" onclick="load_createNewShow()">Create New Show</a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="load_createNewShowType()">Create New Show Type</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="has-submenu">
-                        <a href="#">Announcements</a>
-                        <ul>
-                            <li>
-                                <a href="#" onclick="load_announcements()">Active Announcements</a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="load_createNewAnnouncement()">Create New Announcement</a>
-                            </li>
-                            <li>
-                                <a href="#" onclick="load_createNewAnnouncementType()">Create New Announcement Type</a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#" onclick="load_createTechSchedule()">Create Tech Schedule</a>
-                    </li>
-                    <li>
-                        <a href="#" onclick="load_profile()">Profile</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
+    <header class="header">
         <div id="signout">
             <button class="js-signout-btn">Sign Out</button>
         </div>
-    </nav>
-    <div class="col-2">
-        <header class="header"></header>
-        <main id="content"></main>
-    </div>
+    </header>
+    <nav id='nav-bar'></nav>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/console.js"></script>
+
+<script>
+    $(function () {
+        $("#nav-bar").load("navigation.html");
+    });
+</script>
 
 </html>

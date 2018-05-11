@@ -5,34 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>STAGE Users</title>
+    <title>STAGE User Profile</title>
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.1/datatables.min.css" />
 </head>
 
 <body>
     <nav id='nav-bar'></nav>
-    <h1>Users</h1>
-    <table id="users_table" class="display">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>View Profile</th>
-            </tr>
-        </thead>
-        <tfoot>
-
-        </tfoot>
-    </table>
+    <h1>This Is A User Profile!!!</h1>
+    <div class="image-loc"></div>
+    <h2>Bio</h2>
+    <div class="bio-content"></div>
+    <h2>Resume</h2>
+    <div class="resume-content"></div>
 </body>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-
 <script src="js/common.js"></script>
 <script src="js/getUsers.js"></script>
+
 <script>
     $(function () {
         $("#nav-bar").load("navigation.html");
