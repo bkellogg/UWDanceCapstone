@@ -27,16 +27,73 @@ class SignUpExtra extends Component {
   signUp(event) {
     event.preventDefault()
     if (this.state.bio !== null && this.state.bio !== "") {
-      Util.uploadBio(this.state.bio)
+      this.uploadBio(this.state.bio)
     }
     if (this.state.resumeUpload !== null) {
-      Util.uploadResume(this.state.resumeUpload)
+      this.uploadResume(this.state.resumeUpload)
     }
     if (this.state.photoUpload !== null) {
-      Util.uploadPhoto(this.state.photoUpload)
+      this.uploadPhoto(this.state.photoUpload)
     }
     this.props.skip()
   }
+
+  uploadPhoto = (img) => {
+    let data = new FormData();
+    data.append("image", img);
+    let xhr = new XMLHttpRequest();
+    xhr.addEventListener("readystatechange", () => {
+      this.getPhoto()
+    });
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status < 400) {
+          return xhr.responseText
+        }
+      }
+    };
+
+    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
+    xhr.setRequestHeader("Authorization", Util.getAuth());
+    xhr.setRequestHeader("ImageFieldName", "image");
+
+    xhr.send(data);
+  }
+
+  uploadResume = (val) => {
+    let file = val;
+    let data = new FormData();
+    data.append("resume", file.files[0]);
+
+    let xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", () => {
+      if (this.readyState === 4) {
+        this.getResume()
+      }
+    });
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status < 400) {
+          return xhr.responseText
+        }
+      }
+    };
+
+    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
+    xhr.setRequestHeader("Authorization", Util.getAuth());
+    xhr.setRequestHeader("ResumeFieldName", "resume");
+
+    xhr.send(data);
+  }
+
+  uploadBio = (val) => {
+    let payload = {
+        "bio": val
+    };
+    Util.makeRequest("users/me", payload, "PATCH", true)
+}
 
   inputChange(val) {
     const name = val.target.name

@@ -26,6 +26,7 @@
     .overlapAvailabilityWrap{
         display: block;
         float: left;
+        width: 100% !important;
     }
 
     .overlapAvailability{

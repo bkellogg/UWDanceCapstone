@@ -205,22 +205,34 @@ class AllDancersRow extends Component {
             });
     }
 
-    render() {
-        let p = this.state.person
-        let hasComments = true
-        if (this.props.comments === undefined) {
-            hasComments = false
-        } else if (this.props.comments.length === 0) {
-            hasComments = false
-        }
-        let choreographers = this.props.choreographers
-        let choreos = []
-        if (choreographers) {
-            choreos = choreographers.map((choreo, i) => {
-                return (
-                    <p className="choreos" key={i}>{choreo.firstName + " " + choreo.lastName.charAt(0) + "."} 	&nbsp; </p>
-                )
-            })
+    return (
+      <tr>
+          {
+            this.props.checkAvailability &&
+                <td>
+                    <Checkbox
+                        iconStyle={{fill:'black'}}
+                        onCheck = {this.onCheck}
+                        checked = {this.state.filterChecked}
+                    />
+                </td>
+            }
+        <td>
+            <img src={this.state.photoUrl} alt="profile" className="avatar"/>
+        </td>
+        <td className="dancerAssignedNumber">
+            {this.props.regNum}
+        </td>
+        <td>
+            {/* ADD CLASSNAME HERE TO STYLE LINK NAME */}
+            <Link className="personNameLink" to={{pathname: "/users/" + p.id}} target="_blank">{p.firstName + " " + p.lastName}</Link>
+        </td>
+        {
+            this.props.selectCast &&
+                <td>
+                    {this.props.numPieces}
+                </td>
+
         }
 
         return (
@@ -335,9 +347,66 @@ class AllDancersRow extends Component {
                             DROP </Button>
                     }
                 </td>
-            </tr>
-        );
-    };
+        }
+        <td>
+            {
+                this.props.selectCast && 
+                    <section className="personRankBoxes">
+                        <div className="check">
+                            <Checkbox
+                            iconStyle={{fill:'black'}}
+                                value="1"
+                                checked={this.state.checked.one}
+                                onCheck={this.updateCheck}
+                            />
+                        </div>
+                        <div className="check">
+                            <Checkbox 
+                            iconStyle={{fill:'black'}}
+                                value="2"
+                                checked={this.state.checked.two}
+                                onCheck={this.updateCheck}
+                            />
+                        </div>
+                        <div className="check">
+                            <Checkbox
+                            iconStyle={{fill:'black'}}
+                                value="3"
+                                checked={this.state.checked.three}
+                                onCheck={this.updateCheck}
+                            />
+                        </div>
+                    </section>
+            }
+            {
+                this.props.resolveNotYourCast &&
+                    <Button 
+                    backgroundColor="#708090"
+                    style={{color: '#ffffff', float: 'right'}}
+                    onClick={() => this.addToCast(1)}> 
+                    ADD </Button>
+            }
+            {
+                this.props.resolveYourCast &&
+                    <Button 
+                    backgroundColor="#708090"
+                    style={{color: '#ffffff', float: 'right'}}
+                    onClick={() => this.dropFromCast()}> 
+                    DROP </Button>
+            }
+            {
+                this.props.resolveConflict &&
+                    <Button 
+                    backgroundColor="#708090"
+                    style={{color: '#ffffff', float: 'right'}}
+                    onClick={() => this.dropFromCast()}> 
+                    DROP </Button>
+            }
+        </td>
+      </tr>
+  );
+};
+
 
 }
 export default AllDancersRow;
