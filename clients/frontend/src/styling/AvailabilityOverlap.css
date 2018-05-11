@@ -52,7 +52,6 @@
 /*OVERLAP CALENDAR CONTENT*/
 .availabilityCalendar{
     position: static;
-    overflow: hidden;
 }
 
 .overlapDays, .daysSimple, .timesRow, .timeBlock, .colorIndicator{

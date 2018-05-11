@@ -3,14 +3,6 @@
     width: 250px;
 }
 
-#signOut{
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    height: 7%;
-    bottom: 7%;
-}
-
 .main {
     padding-left: 240px;
 }
