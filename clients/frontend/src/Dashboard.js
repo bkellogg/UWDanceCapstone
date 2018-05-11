@@ -146,21 +146,21 @@ class Dashboard extends Component {
     const pending = this.state.pending
     let pendingCasting = pending.map((piece, i) => {
       console.log(piece)
-      return (
-        <div key={i} className="announcement castBorderColor">
-        <p className="announcementMessage">Congratulations! You have been cast in {piece.name} Rehearsal times will be here as well. </p>
-          <div>
-            <RaisedButton
-              label="Accept"
-              className="acceptCastButton"
-              style={{ color: '#ffffff' }}
-              backgroundColor="#22A7E0"
-              //onClick={() => this.acceptCasting(piece.id)}
-              onClick={() => this.setState({ pending: [] })}
-            />
-          </div>
-        </div>
-      )
+      // return (
+      //   <div key={i} className="announcement castBorderColor">
+      //   <p className="announcementMessage">Congratulations! You have been cast in {piece.name} Rehearsal times will be here as well. </p>
+      //     <div>
+      //       <RaisedButton
+      //         label="Accept"
+      //         className="acceptCastButton"
+      //         style={{ color: '#ffffff' }}
+      //         backgroundColor="#22A7E0"
+      //         //onClick={() => this.acceptCasting(piece.id)}
+      //         onClick={() => this.setState({ pending: [] })}
+      //       />
+      //     </div>
+      //   </div>
+      // )
     })
     return (
       <section className='main' >
