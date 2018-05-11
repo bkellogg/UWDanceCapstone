@@ -20,7 +20,7 @@ import './styling/CastingFlowTablet.css';
 import ArrowBackIcon from 'mdi-react/ArrowBackIcon';
 import ArrowForwardIcon from 'mdi-react/ArrowForwardIcon';
 
-const WEBSOCKET = new WebSocket("wss://" + Util.HOST + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
+const WEBSOCKET = new WebSocket("wss://" + Util.host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
 
 class Casting extends Component {
   constructor(props) {
