@@ -22,7 +22,15 @@ class Dashboard extends Component {
 
   componentWillMount() {
     this.getAnnouncements();
-    this.getUserPieces()
+    //this.getUserPieces()
+
+      //dummy
+      this.setState({
+        pending :[{
+          id : 12,
+          name : "Rosemary's Piece!" 
+        }]
+      })
   }
 
   //Getting all messages from announcements that have not been deleted
@@ -144,7 +152,8 @@ class Dashboard extends Component {
           <div>
             <RaisedButton
               label="Accept"
-              onClick={() => this.acceptCasting(piece.id)}
+              //onClick={() => this.acceptCasting(piece.id)}
+              onClick={() => this.setState({pending:[]})}
             />
           </div>
         </div>
