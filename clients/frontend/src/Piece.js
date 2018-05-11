@@ -4,13 +4,13 @@ import * as Util from './util.js';
 // import moment from 'moment';
 // import 'react-big-calendar/lib/css/react-big-calendar.css';
 import FlatButton from 'material-ui/FlatButton';
-import Button from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import MusicianRow from './MusicianRow';
 import Calendar from './Calendar';
 import PersonRow from './PersonRow';
+import './styling/Piece.css';
 import './styling/General.css';
 import Link from 'react-router-dom/Link';
 
@@ -248,7 +248,7 @@ class Piece extends Component {
                           <th className="avatar2"></th>
                           <th>Name</th>
                           <th className="userRoleDisp">Bio</th>
-                          <th>Email</th>
+                          <th className="userEmail">Email</th>
                         </tr>
                         {castRows}
                       </tbody>
@@ -258,7 +258,7 @@ class Piece extends Component {
                     {
                       !this.state.viewAvailability &&
                       <FlatButton
-                        style={{ color: '#333333', marginRight: '20px'}}
+                        style={{ color: '#22A7E0', marginRight: '20px'}}
                         onClick={this.viewAvailability}>
                         View Cast Availability </FlatButton>
                     }
@@ -266,9 +266,8 @@ class Piece extends Component {
                       this.state.viewAvailability &&
                       <div>
                         <FlatButton
-                          backgroundColor="#708090"
-                          style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
-                          onClick={this.viewAvailability}>
+                        style={{ color: '#22A7E0', marginRight: '20px'}}
+                        onClick={this.viewAvailability}>
                           Hide Cast Availabiltiy </FlatButton>
                         <p>View availability ay</p>
                       </div>
@@ -294,19 +293,19 @@ class Piece extends Component {
                   </div>
                   <div className="peopleList">
                     <div className="choreoContact">
-                      <p>Choreographer's Name: {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
-                      <p>Choreographer's Phone Number:</p>
+                      <p><b>Choreographer's Name:</b> {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
+                      <p><b>Choreographer's Phone Number:</b></p>
                       <TextField
                         id="choreographerPhone"
                         onChange={this.handleChange('choreographerPhone')}
                         style={STYLES}
                       />
 
-                      <p>Choreographer's email: {this.state.choreographer.email}</p>
+                      <p><b>Choreographer's email: {this.state.choreographer.email}</b></p>
                     </div>
                     <div className="dancerInfo">
-                      <p>Number of dancers: {this.state.dancers.length}</p>
-                      <p>Dancer Contact Information:</p>
+                      <p><b>Number of dancers: </b>{this.state.dancers.length}</p>
+                      <p><b>Dancer Contact Information:</b></p>
                       <table>
                         <tbody>
                           <tr className="categories">
@@ -318,48 +317,48 @@ class Piece extends Component {
                       </table>
                     </div>
                     <div className="pieceInfo">
-                      <p>Dance Title: </p>
+                      <p><b>Dance Title: </b></p>
                       <TextField
                         id="danceTitle"
                         onChange={this.handleChange('danceTitle')}
                         style={STYLES}
                       />
-                      <p>Dance RunTime:</p>
+                      <p><b>Dance RunTime:</b></p>
                       <TextField
                         id="runtime"
                         onChange={this.handleChange('runtime')}
                         style={STYLES}
                       />
 
-                      <p>Composer(s):</p>
+                      <p><b>Composer(s):</b></p>
                       <TextField
                         id="composer"
                         onChange={this.handleChange('composer')}
                         style={STYLES}
                       />
 
-                      <p>Music title(s): </p>
+                      <p><b>Music title(s): </b></p>
                       <TextField
                         id="musicTitle"
                         onChange={this.handleChange('musicTitle')}
                         style={STYLES}
                       />
 
-                      <p>Performed By:</p>
+                      <p><b>Performed By:</b></p>
                       <TextField
                         id="musicPerformer"
                         onChange={this.handleChange('musicPerformer')}
                         style={STYLES}
                       />
 
-                      <p>Music Source:</p>
+                      <p><b>Music Source:</b></p>
                       <TextField
                         id="musicSource"
                         onChange={this.handleChange('musicSource')}
                         style={STYLES}
                       />
 
-                      <p>If music will be performed live, number of musicians:  </p>
+                      <p><b>If music will be performed live, number of musicians: </b> </p>
                       <SelectField
                         value={this.state.numMusicians}
                         onChange={this.handleChangeMusician}
@@ -380,11 +379,11 @@ class Piece extends Component {
                       {
                         this.state.numMusicians > 0 &&
                         <div className="musicianInfo">
-                          <p>List of contact info for musicians: </p>
+                          <p><b>List of contact info for musicians:</b> </p>
                           {musicianRow}
                         </div>
                       }
-                      <p>Rehearsal Schedule:</p>
+                      <p><b>Rehearsal Schedule:</b></p>
                       <TextField
                         id="rehearsalSchedule"
                         onChange={this.handleChange('rehearsalSchedule')}
@@ -392,7 +391,7 @@ class Piece extends Component {
                       />
                     </div>
                     <div className="notes">
-                      <p>Choreographers Notes: </p>
+                      <p><b>Choreographers Notes:</b> </p>
                       <TextField
                         id="choreoNotes"
                         multiLine={true}
@@ -400,7 +399,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Costume Descriptions:  </p>
+                      <p><b>Costume Descriptions: </b> </p>
                       <TextField
                         id="costumeDesc"
                         multiLine={true}
@@ -408,7 +407,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Props/Scenic Items Descriptions: </p>
+                      <p><b>Props/Scenic Items Descriptions:</b> </p>
                       <TextField
                         id="propsDesc"
                         multiLine={true}
@@ -416,7 +415,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Lighting Description: </p>
+                      <p><b>Lighting Description: </b></p>
                       <TextField
                         id="lightingDesc"
                         multiLine={true}
@@ -424,7 +423,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Other special needs:  </p>
+                      <p><b>Other special needs: </b> </p>
                       <TextField
                         id="otherDesc"
                         multiLine={true}
@@ -434,7 +433,9 @@ class Piece extends Component {
 
                     </div>
                   </div>
-                  <Button>Save Info Sheet</Button>
+                  <FlatButton
+                        style={{ color: '#22A7E0', marginRight: '20px'}}
+                        >Save Info Sheet</FlatButton>
                 </section>
               }
             </div>

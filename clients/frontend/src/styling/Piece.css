@@ -1,0 +1,18 @@
+.userRoleDisp{
+    width: 60%;
+}
+
+td.userEmail{
+    padding-left: 10px;
+}
+
+@media only screen 
+and (max-width : 1024px)  {
+    .userBioDisp, .userRoleDisp{
+        visibility: hidden;
+        width: 0%;
+        clear: both;
+        display: none;
+    }
+
+}
