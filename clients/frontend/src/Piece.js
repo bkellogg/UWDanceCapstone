@@ -26,7 +26,8 @@ class Piece extends Component {
       dancers: [],
       openInfo: false,
       openCast: false,
-      openCalendar: false
+      openCalendar: false,
+      error : false
     }
   };
 
@@ -35,7 +36,7 @@ class Piece extends Component {
     this.getPieceID()
   }
 
-  //TODO deal with the error that a user has no pieces
+  //TODO deal with the error that a user has no pieces [there's no bug, but we should probably show a different component if they don't have one]
   getPieceID = () => {
     Util.makeRequest("users/me/shows/" + this.props.show + "/choreographer", "", "GET", true)
       .then(res => {
@@ -44,6 +45,11 @@ class Piece extends Component {
         }
         if (res.status === 401) {
           Util.signOut()
+        }
+        if (res.status === 404) {
+          this.setState({
+            error : true
+          })
         }
         return res
           .text()
@@ -55,7 +61,45 @@ class Piece extends Component {
         })
         this.getPieceUsers(piece.id)
       })
+      .catch((err) => {
+        console.error(err)
+      })
 
+  }
+
+  getInfoSheet = () => {
+
+  }
+
+  setInfoSheet = () => {
+    let body = {
+      "choreographerPhone": this.state.choreographerPhone,
+      "title": this.state.danceTitle,
+      "runtime": this.state.runtime,
+      "composers": this.state.composer,
+      "musicTitle": this.state.musicTitle,
+      "performedBy": this.state.musicPerformer,
+      "musicSource": this.state.musicSource,
+      "numMusicians": this.state.numMusicians,
+      "rehearsalSchedule": this.state.rehearsalSchedule,
+      "chorNotes": this.state.choreoNotes,
+      "musicians": [
+        {
+          "name": "Nathan Swanson",
+          "phone": "(206) 786-9826",
+          "email": "swag@leet.com"
+        },
+        {
+          "name": "Bill Clinton",
+          "phone": "291 876 9180",
+          "email": "leet@swag.com"
+        }
+      ],
+      "costumeDesc": this.state.costumeDesc,
+      "itemDesc": this.state.propsDesc,
+      "lightingDesc": this.state.lightingDesc,
+      "otherNotes": this.state.otherDesc
+    }
   }
 
   getPieceUsers = (pieceID) => {
@@ -77,6 +121,9 @@ class Piece extends Component {
           choreographer: piece.choreographer,
           dancers: piece.dancers
         })
+      })
+      .catch((err) => {
+        console.error(err)
       })
   }
 
@@ -149,6 +196,14 @@ class Piece extends Component {
         <div className="mainView">
           <div className="pageContentWrap">
             <h1>My Piece</h1>
+
+            { this.state.error && 
+              <div>
+                You don't have a piece yet! Cast some dancers to get started :) 
+              </div>
+            }
+            { !this.state.error && 
+            <section>
             <div className="fullWidthCard">
               {
                 !this.state.openCalendar &&
@@ -242,8 +297,8 @@ class Piece extends Component {
                       <p>Choreographer's Name: {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
                       <p>Choreographer's Phone Number:</p>
                       <TextField
-                        id="phoneNumber"
-                        onChange={this.handleChange('phoneNumber')}
+                        id="choreographerPhone"
+                        onChange={this.handleChange('choreographerPhone')}
                         style={STYLES}
                       />
 
@@ -383,7 +438,8 @@ class Piece extends Component {
                 </section>
               }
             </div>
-
+            </section>
+            }
           </div>
         </div>
       </section>

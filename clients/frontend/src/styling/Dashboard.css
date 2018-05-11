@@ -1,22 +1,40 @@
+/*NEW AUDITION MESSAGE -- BLUE TONES*/
+.newAuditionBorderColor{
+  border-left: 6px solid rgb(241, 196, 15);
+}
+
+.auditionAnnouncementCardColor{
+  padding: 15px 25px;
+  background-color: rgb(254, 249, 231);
+}
+
+/*COMPLETE PROFILE MESSAGE -- RED TONES*/
+.completeProfileBorderColor {
+  border-left: 6px solid rgb(231, 76, 60);
+}
+
+.completeProfileCardColor{
+  background-color:rgb(253, 237, 236);
+}
+
+/*CAST MESSAGE -- YELLOW TONES*/
+.castBorderColor{
+  border-left: 6px solid rgb(52, 152, 219);
+  background-color: rgb(235, 245, 251);
+}
+
+
+/*GENERAL MESSAGE -- PURPLE TONES*/
+.announcementBorderColor {
+  border-left: 6px solid rgb(142, 68, 173);
+}
+
+.announcementCardColor{
+  background-color: rgb(245, 238, 248);
+}
+
 .announcement {
   margin-top: 20px;
-  border-left: 6px solid rgb(167, 167, 241);
-}
-
-.secondColor{
-  border-left: 6px solid rgb(149, 188, 248);
-}
-
-.cardBody{
-  background-color: rgb(230, 230, 250);
-}
-
-.warning{
-  background-color:rgb(249, 229, 229);
-}
-
-.completeProfile {
-  border-left: 6px solid rgb(236, 132, 132);
 }
 
 .announcementMessage{
@@ -24,13 +42,14 @@
   padding: 15px 25px;
 }
 
-.showTitle2{
-  font-size: 14px;
+.acceptCastButton{
+  margin-left: 25px;
+  margin-bottom: 15px;
+  margin-top: -25px;
 }
 
-.auditionAnnouncementCard{
-  padding: 15px 25px;
-  background-color: rgb(223, 234, 250);
+.showTitle2{
+  font-size: 14px;
 }
 
 .auditionHeading{

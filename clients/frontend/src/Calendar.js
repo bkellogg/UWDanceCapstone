@@ -48,7 +48,9 @@ class Calendar extends Component {
   }
 
   formatEvents = () => {
+    //TODO turn this into a route
     let events = JSON.parse(localStorage.rehearsals)
+
     let formattedEvents = []
     events.forEach((event) => {
       let start = new Date(event.start)
@@ -87,12 +89,47 @@ class Calendar extends Component {
     })
   }
 
+  deleteRehearsal = () => {
+    let event = this.state.event
+    
+    //go through all events and delete the one with the same ID
+    let events = this.state.events
+    events.forEach((e, i) => {
+      if(e.id === event.id){
+        events.splice(i, i + 1)
+      }
+    })
+    this.setState({
+      events : events,
+      openSetRehearsal : false
+    })
+  }
+
+  addRehearsal = () => {
+    let slotInfo = this.state.slotInfo
+    let events = this.state.events
+    let latestID = events[events.length - 1].id + 1
+
+    let rehearsalObject = {
+      id : latestID,
+      title : "Event Title",
+      start : new Date(slotInfo.start),
+      end : new Date(slotInfo.end)
+    }
+    events.push(rehearsalObject)
+
+    this.setState({
+      events : events,
+      openNewRehearsal : false
+    })
+  }
+
   render() {
     let event = this.state.event
     let slotInfo = this.state.slotInfo
     return (
       <section>
-        <BigCalendar style={{ height: "800px", width: "800px" }}
+        <BigCalendar style={{ height: "100%", width: "100%" }}
           selectable
           defaultDate={new Date()}
           defaultView='week'
@@ -120,7 +157,7 @@ class Calendar extends Component {
               style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
               primary={false}
               keyboardFocused={true}
-              onClick={this.handleClose}
+              onClick={event => this.deleteRehearsal(event)}
             />,
           ]}
           modal={false}
@@ -147,7 +184,7 @@ class Calendar extends Component {
               style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
               primary={false}
               keyboardFocused={true}
-              onClick={this.handleClose}
+              onClick={this.addRehearsal}
             />,
           ]}
           modal={false}
