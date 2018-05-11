@@ -233,10 +233,63 @@ func (store *Database) InsertNewPieceInfoSheet(creator int, pieceID int, info *N
 		}
 	}
 	finalInfo.Musicians = finalMusicians
+
+	_, err = tx.Exec(`UPDATE Pieces SET InfoSheetID = ? WHERE PieceID = ?`, infoID, pieceID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error setting piece's info sheet id: %v", err), http.StatusInternalServerError)
+	}
+
 	if err = tx.Commit(); err != nil {
 		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
 	}
 	return finalInfo, nil
+}
+
+// GetPieceInfoSheet returns the piece's info sheet if it exists. Returns an error
+// if one occurred.
+func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError) {
+	piece, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return nil, dberr
+	}
+	if piece.InfoSheetID == 0 {
+		return nil, NewDBError("piece does not have an info sheet", http.StatusNotFound)
+	}
+	rows, err := store.db.Query(`SELECT * FROM PieceInfoSheet PIS WHERE PIS.PieceInfoID = ?`, piece.InfoSheetID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error retrieving piece info sheet: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, NewDBError("no piece info sheet found", http.StatusNotFound)
+	}
+	is := &PieceInfoSheet{}
+	if err = rows.Scan(&is.PieceInfoID, &is.ChorPhone, &is.Title, &is.RunTime,
+		&is.Composers, &is.MusicTitle, &is.PerformedBy, &is.MusicSource,
+		&is.NumMusicians, &is.RehearsalSchedule, &is.ChorNotes,
+		&is.CostumeDesc, &is.ItemDesc, &is.LightingDesc, &is.OtherNotes,
+		&is.CreatedAt, &is.CreatedBy, &is.IsDeleted); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error scanning result into info sheet: %v", err), http.StatusInternalServerError)
+	}
+	rows, err = store.db.Query(`SELECT M.MusicianID, M.Name, M.Phone,
+		M.Email, M.CreatedAt, M.CreatedBy,
+		M.IsDeleted FROM Musician M
+		JOIN PieceInfoMusician PIM ON M.MusicianID = PIM.MusicianID
+		WHERE PIM.PieceInfoID = ?`, is.PieceInfoID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error retrieving piece musicians: %v", err), http.StatusInternalServerError)
+	}
+	musicians := make([]*PieceMusician, 0, is.NumMusicians)
+	for rows.Next() {
+		musician := &PieceMusician{}
+		if err = rows.Scan(&musician.ID, &musician.Name, &musician.Phone, &musician.Email,
+			&musician.CreatedAt, &musician.CreatedBy, &musician.IsDeleted); err != nil {
+			return nil, NewDBError(fmt.Sprintf("error scanning row into info musician: %v", err), http.StatusInternalServerError)
+		}
+		musicians = append(musicians, musician)
+	}
+	is.Musicians = musicians
+	return is, nil
 }
 
 // handlePiecesFromDatabase compiles the given result and err into a slice of pieces or an error.

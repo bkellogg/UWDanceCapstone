@@ -162,6 +162,14 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
 				return permissionDenied()
 			}
+			piece, dberr := ctx.store.GetPieceByID(pieceID, false)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting piece by id")
+			}
+			if piece.InfoSheetID != 0 {
+				return HTTPError(fmt.Sprintf("piece already has an info sheet with id: %d", piece.InfoSheetID),
+					http.StatusBadRequest)
+			}
 			pieceInfo := &models.NewPieceInfoSheet{}
 			if httperr := receive(r, pieceInfo); httperr != nil {
 				return httperr
@@ -171,6 +179,15 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 				return middleware.HTTPErrorFromDBErrorContext(dberr, "error inserting piece info")
 			}
 			return respond(w, info, http.StatusCreated)
+		} else if r.Method == "GET" {
+			if !ctx.permChecker.UserCanSeePieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			pieceInfo, dberr := ctx.store.GetPieceInfoSheet(pieceID)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting piece info sheet")
+			}
+			return respond(w, pieceInfo, http.StatusOK)
 		} else {
 			return methodNotAllowed()
 		}
