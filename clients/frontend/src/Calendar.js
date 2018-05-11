@@ -129,7 +129,7 @@ class Calendar extends Component {
     let slotInfo = this.state.slotInfo
     return (
       <section>
-        <BigCalendar style={{ height: "800px", width: "800px" }}
+        <BigCalendar style={{ height: "100%", width: "100%" }}
           selectable
           defaultDate={new Date()}
           defaultView='week'

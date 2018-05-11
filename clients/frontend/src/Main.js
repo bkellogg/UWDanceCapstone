@@ -348,10 +348,6 @@ class Main extends Component {
               return (
                 <Switch key={i}>
                   <Route exact path={path} render={props => <Show {...props} name={show.name} />} /> {routes}
-                  {/* <Route
-                    exact
-                    path={path + "/piece"}
-                    render={props => <Piece {...props} name={show.name} audition={show.auditionID}/>}/> */}
                 </Switch>
               )
             })}
