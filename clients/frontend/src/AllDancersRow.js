@@ -229,6 +229,7 @@ class AllDancersRow extends Component {
             this.props.checkAvailability &&
                 <td>
                     <Checkbox
+                        iconStyle={{fill:'black'}}
                         onCheck = {this.onCheck}
                         checked = {this.state.filterChecked}
                     />
@@ -285,7 +286,6 @@ class AllDancersRow extends Component {
                     <section className="personRankBoxes">
                         <div className="check">
                             <Checkbox
-                            inputStyle={{backgroundColor: 'red'}}
                             iconStyle={{fill:'black'}}
                                 value="1"
                                 checked={this.state.checked.one}
