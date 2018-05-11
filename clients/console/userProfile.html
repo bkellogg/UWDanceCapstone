@@ -17,6 +17,19 @@
     <div class="bio-content"></div>
     <h2>Resume</h2>
     <div class="resume-content"></div>
+    <input id="resume" type="button" value="Download Resume" onclick="getResume();" />
+    <div id="content"></div>
+    <h2>Change Role</h2>
+    <form class="roleChange-form">
+        <div class="role">
+            <select id="roleName">
+                <option id="role-input" value=''>
+                </option>
+            </select>
+        </div>
+        <button type="submit">Change Role</button>
+    </form>
+    <div class="js-error"></div>
 </body>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="js/common.js"></script>
