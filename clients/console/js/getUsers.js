@@ -24,7 +24,7 @@ function getUsers() {
                 user.push(value.lastName);
                 user.push(value.email);
                 user.push(value.role.displayName);
-                user.push("");
+                user.push('<a target="_blank" href="userProfile.html?user=' + value.id + '">Profile</a>');
                 allUsers.push(user);
             });
         })
@@ -32,19 +32,15 @@ function getUsers() {
             populateUserTable(allUsers);
         })
 }
-
+ 
 function populateUserTable(allUsers) {
     var table = $('#users_table').DataTable({
-        "data": allUsers,
-        "columnDefs": [{
-            "targets": -1,
-            "data": null,
-            "defaultContent": "<button href='userProfile.html'>Click!</button>"
-        }]
+        "data": allUsers
     });
 
     $('#users_table tbody').on('click', 'button', function () {
         var data = table.row($(this).parents('tr')).data();
+        console.log(data);
         window.location.href = "userProfile.html"
     });
 }
