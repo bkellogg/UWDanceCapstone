@@ -61,6 +61,11 @@ func main() {
 	adminEmail := require("STAGE_ADMIN_EMAIL", "")
 	adminPaswd := require("STAGE_ADMIN_PASSWORD", "")
 
+	// URL that the app is served from
+	// this will be used when generating links back to itself.
+	url := require("STAGE_HOST", "dasc.capstone.ischool.uw.edu")
+	appvars.StageURL = "https://" + url
+
 	// Open connections to the databases
 	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
 	if err != nil {
@@ -84,7 +89,7 @@ func main() {
 	mailContext := handlers.NewMailContext(mailUser, mailPass, permChecker)
 	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials(), permChecker)
 	announcementContext := handlers.NewAnnouncementContext(db, notifier, permChecker)
-	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
+	authorizer := middleware.NewHandlerAuthorizer(sessionKey, redis)
 
 	castingContext := handlers.NewCastingContext(permChecker,
 		castingSession,
@@ -108,8 +113,9 @@ func main() {
 	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
 	announcementsRouter := baseRouter.PathPrefix(appvars.AnnouncementsPath).Subrouter()
-	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(announcementContext.AnnouncementsHandler))
 	announcementsRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.AnnouncementTypesHandler))
+	announcementsRouter.Handle(appvars.ResourceID, authorizer.Authorize(announcementContext.SpecificAnnouncementHandler))
+	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(announcementContext.AnnouncementsHandler))
 	announcementsRouter.Handle("/dummy", authorizer.Authorize(announcementContext.DummyAnnouncementHandler))
 
 	usersRouter := baseRouter.PathPrefix(appvars.UsersPath).Subrouter()
@@ -119,7 +125,7 @@ func main() {
 	usersRouter.Handle(appvars.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
 	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler)).
 		Methods("LINK", "UNLINK")
-	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserAuditionHandler))
+	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserObjectDispatcher))
 	usersRouter.Handle(appvars.UserMembershipObjectPath, authorizer.Authorize(authContext.UserMembershipActionDispatcher))
 
 	auditionRouter := baseRouter.PathPrefix(appvars.AuditionsPath).Subrouter()
@@ -148,7 +154,7 @@ func main() {
 
 	baseRouter.Handle(appvars.BaseAPIPath, http.NotFoundHandler())
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
-	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath + "index.html")).Methods(http.MethodGet)
+	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath)).Methods(http.MethodGet)
 
 	treatedRouter := middleware.EnsureHeaders(middleware.BlockIE(
 		middleware.LogErrors(baseRouter, db)))

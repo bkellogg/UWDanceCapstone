@@ -31,10 +31,16 @@ func (nr *NewRole) Validate() error {
 	if len(nr.Name) > appvars.MaxRoleNameLength {
 		return fmt.Errorf("role name can only be %d characters long", appvars.MaxRoleNameLength)
 	}
-	nr.Name = strings.ToLower(strings.Replace(nr.Name, " ", "_", -1))
+	if len(nr.Name) == 0 {
+		return fmt.Errorf("role name must exist")
+	}
+	if len(nr.DisplayName) == 0 {
+		return fmt.Errorf("role display name must exist")
+	}
 	if len(nr.DisplayName) > appvars.MaxRoleDisplayNameLength {
 		return fmt.Errorf("role display name can only be %d characters long", appvars.MaxRoleDisplayNameLength)
 	}
+	nr.Name = strings.ToLower(strings.Replace(nr.Name, " ", "_", -1))
 
 	nr.DisplayName = strings.Title(strings.ToLower(nr.DisplayName))
 	if nr.Level < 1 || nr.Level > 100 {
