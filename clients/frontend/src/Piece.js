@@ -119,6 +119,7 @@ class Piece extends Component {
     })
   }
 
+  //TODO show errors for invalid information (when strings are longer than 0 they must be valid emails orphone numbers)
   setInfoSheet = () => {
     let body = {
       "choreographerPhone": this.state.choreographerPhone,
