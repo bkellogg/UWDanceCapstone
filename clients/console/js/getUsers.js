@@ -2,7 +2,7 @@
 
 refreshLocalUser();
 
-var page = 1;
+var page = 239;
 var allUsers = [];
 var done = false;
 
@@ -36,6 +36,8 @@ function getUsers() {
 
 function populateUserTable() {
     var table = $('#users_table').DataTable({
-        "data": allUsers
+        "data": allUsers,
+        "paging": false,
+        "IDisplayLength": 25
     });
 }
