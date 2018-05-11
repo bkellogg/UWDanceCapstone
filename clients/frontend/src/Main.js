@@ -278,8 +278,8 @@ class Main extends Component {
                   render={props => <Casting
                     {...props}
                     name={show.name}
-                    audition={show.auditionID} 
-                    show={show.show}/>} />
+                    audition={show.auditionID}
+                    show={show.show} />} />
 
                 let route2 = <Route
                   exact
@@ -375,9 +375,9 @@ class Main extends Component {
                   }}>Profile</Link>
                 </li>
               </div>
-              <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
+              <Button id='signOut' className="signOutDesktop" onClick={() => this.signOut()}>Sign Out</Button>
+
             </ul>
-            
           </div>
         </section>
       </section>

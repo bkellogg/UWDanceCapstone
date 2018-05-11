@@ -37,7 +37,7 @@ tr{
 
     /* TABLE HEADERS - THIS IS SHARED CODE*/
 th{
-    color: #22A7E0;    
+    color: hsl(0, 0%, 45%);   
     padding:0;
     padding-bottom: 10px;
     border: none;
