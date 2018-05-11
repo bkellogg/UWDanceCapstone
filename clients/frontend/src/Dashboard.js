@@ -22,15 +22,7 @@ class Dashboard extends Component {
 
   componentWillMount() {
     this.getAnnouncements();
-    //this.getUserPieces()
-
-    //dummy
-    this.setState({
-      pending: [{
-        id: 12,
-        name: "Rosemary's Piece!"
-      }]
-    })
+    this.getUserPieces()
   }
 
   //Getting all messages from announcements that have not been deleted
@@ -145,22 +137,20 @@ class Dashboard extends Component {
   render() {
     const pending = this.state.pending
     let pendingCasting = pending.map((piece, i) => {
-      console.log(piece)
-      // return (
-      //   <div key={i} className="announcement castBorderColor">
-      //   <p className="announcementMessage">Congratulations! You have been cast in {piece.name} Rehearsal times will be here as well. </p>
-      //     <div>
-      //       <RaisedButton
-      //         label="Accept"
-      //         className="acceptCastButton"
-      //         style={{ color: '#ffffff' }}
-      //         backgroundColor="#22A7E0"
-      //         //onClick={() => this.acceptCasting(piece.id)}
-      //         onClick={() => this.setState({ pending: [] })}
-      //       />
-      //     </div>
-      //   </div>
-      // )
+      return (
+        <div key={i} className="announcement castBorderColor">
+          <p className="announcementMessage">Congratulations! You have been cast in {piece.name}. </p>
+          <div>
+            <RaisedButton
+              label="Accept"
+              className="acceptCastButton"
+               style={{ color: '#ffffff' }}
+               backgroundColor="#22A7E0"
+              onClick={() => this.acceptCasting(piece.id)}
+            />
+          </div>
+        </div>
+      )
     })
     return (
       <section className='main' >
