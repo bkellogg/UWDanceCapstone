@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/mail"
@@ -160,22 +161,58 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		ShowID:          show.ID,
 		CreatedBy:       int(u.ID),
 	}
-	_, dberr = ctx.Session.Store.InsertNewPiece(np)
-	if dberr != nil {
-		return middleware.HTTPErrorFromDBErrorContext(dberr, "inserting new piece when posting casting")
+	var piece *models.Piece
+	piece, dberr = ctx.Session.Store.GetChoreographerShowPiece(show.ID, int(u.ID))
+	if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
+		return middleware.HTTPErrorFromDBErrorContext(dberr, "error looking up existing piece")
+	}
+	if piece == nil {
+		piece, dberr = ctx.Session.Store.InsertNewPiece(np)
+		if dberr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dberr, "inserting new piece when posting casting")
+		}
 	}
 
-	for id64 := range dancers {
-		id := int(id64)
-		user, dberr := ctx.Session.Store.GetUserByID(id, false)
+	for _, id64 := range dancers {
+		go handleUserInvite(ctx, int(id64), u, piece)
+	}
+	return respond(w, dancers, http.StatusOK)
+}
+
+// handleUserInvite handles creating an invite for the given dancerID for the given
+// piece and sending them an email
+// Intended to be used on its own goroutine so does not return an error but
+// logs all errors to standard out.
+func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piece *models.Piece) {
+	user, dberr := ctx.Session.Store.GetUserByID(dancerID, false)
+	if dberr != nil {
+		log.Printf("error getting user with dancerID %d: %s\n", dancerID, dberr.Message)
+		return
+	}
+
+	dberr = ctx.Session.Store.MarkInvite(dancerID, piece.ID, appvars.CastStatusExpired)
+	if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
+		log.Printf("error marking old invite as expired: %s", dberr.Message)
+	}
+
+	inPiece, dberr := ctx.Session.Store.UserIsInPiece(dancerID, piece.ID)
+	if dberr != nil {
+		log.Printf("error determining if user is in piece: %s", dberr.Message)
+		return
+	}
+
+	// only create a new invite if the user is not already in the piece.
+	if !inPiece {
+		dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, time.Now().Add(appvars.AcceptCastTime))
 		if dberr != nil {
-			log.Printf("error getting user by id: %s\n", dberr.Message)
-			continue
+			log.Printf("error creating new user piece pending entry: %v", dberr.Message)
 		}
+
 		tplVars := &models.CastingConfVars{
-			Name:          user.FirstName,
-			Choreographer: u.FirstName,
-			URL:           appvars.StageURL + "/dashboard",
+			Name:      user.FirstName,
+			ChorFName: chor.FirstName,
+			ChorLName: chor.LastName,
+			URL:       appvars.StageURL,
 		}
 
 		message, err := mail.NewMessageFromTemplate(ctx.MailCredentials,
@@ -185,12 +222,11 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 			[]string{user.Email})
 		if err != nil {
 			log.Printf("error generating message from template: %v\n", err)
-			continue
+			return
 		}
 		if err = message.Send(); err != nil {
 			log.Printf("error sending message: %v", err)
+			return
 		}
 	}
-
-	return respond(w, dancers, http.StatusOK)
 }

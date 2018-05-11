@@ -78,7 +78,7 @@ func (n *Notifier) GetClient(id int64) (*WebSocketClient, bool) {
 
 // AddClient adds a new client to the Notifier
 func (n *Notifier) AddClient(u *models.User, c *websocket.Conn) {
-	client := newWebSocketClient(u, c, false)
+	client := newWebSocketClient(u, c)
 	n.newClientQ <- client
 	n.readControlMessages(u.ID, c)
 }
