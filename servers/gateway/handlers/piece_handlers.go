@@ -188,6 +188,15 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting piece info sheet")
 			}
 			return respond(w, pieceInfo, http.StatusOK)
+		} else if r.Method == "DELETE" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			dberr := ctx.store.DeletePieceInfoSheet(pieceID)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error deleting piece info sheet")
+			}
+			return respondWithString(w, fmt.Sprintf("piece %d's info sheet has been deleted", pieceID), http.StatusOK)
 		} else {
 			return methodNotAllowed()
 		}

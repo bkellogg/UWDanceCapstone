@@ -292,6 +292,35 @@ func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError
 	return is, nil
 }
 
+// DeletePieceInfoSheet deletes the given piece's info sheet, if it exists.
+// Returns a DBError if one occurred.
+func (store *Database) DeletePieceInfoSheet(pieceID int) *DBError {
+	piece, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return dberr
+	}
+	if piece.InfoSheetID == 0 {
+		return NewDBError("piece has no info sheet", http.StatusNotFound)
+	}
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec(`UPDATE PieceInfoSheet SET IsDeleted = TRUE WHERE PieceInfoID = ?`, piece.InfoSheetID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error deleting piece info sheet: %v", err), http.StatusInternalServerError)
+	}
+	_, err = tx.Exec(`UPDATE Pieces SET InfoSheetID = 0 WHERE PieceID = ?`, pieceID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error marking piece as having no info sheet: %v", err), http.StatusInternalServerError)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
 // handlePiecesFromDatabase compiles the given result and err into a slice of pieces or an error.
 func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, *DBError) {
 	if err != nil {
