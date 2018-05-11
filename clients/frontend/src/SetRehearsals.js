@@ -227,7 +227,6 @@ class SetRehearsals extends Component {
               <div className="castList">
                 <div className="extraClass">
                   <div className="setTimes">
-
                     <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
                     <p>First Rehearsal Date</p>
                     <div className="chooseRehearsalTimes">
@@ -242,7 +241,6 @@ class SetRehearsals extends Component {
                         onClick={this.addRehearsal}
                         disabled={this.state.finishedAdding}>
                         ADD</Button>
-
                       <Button
                         backgroundColor="#708090"
                         style={{ color: '#ffffff', float: 'right' }}
@@ -250,7 +248,8 @@ class SetRehearsals extends Component {
                         REMOVE</Button>
                     </div>
                   </div>
-                  <div className="choreographersSelecteCast">
+                  
+                  <div className="choreographersSelectedCast setTimes">
                     <h2 className="smallHeading">Your Cast</h2>
                     <table>
                       <tbody>
@@ -262,6 +261,7 @@ class SetRehearsals extends Component {
                       </tbody>
                     </table>
                   </div>
+                  
                   <div className="postCastingWrap">
                     <div className="postCasting">
                       <Button

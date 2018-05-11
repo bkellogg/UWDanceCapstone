@@ -27,7 +27,7 @@ class Dashboard extends Component {
 
   //Getting all messages from announcements that have not been deleted
   getAnnouncements = () => {
-    fetch(Util.API_URL_BASE + "/announcements?includeDeleted=false&auth=" + this.state.auth)
+    Util.makeRequest("announcements?includeDeleted=false", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -53,7 +53,7 @@ class Dashboard extends Component {
 
   //Getting announcement types and adding type to each message
   getAnnouncementTypes = (announcements) => {
-    fetch(Util.API_URL_BASE + "/announcements/types?auth=" + this.state.auth)
+    Util.makeRequest("announcements/types", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -160,19 +160,17 @@ class Dashboard extends Component {
               <div id='announcements'>
                 {pendingCasting}
                 {this.state.user.bio === "" &&
-                  <div className="announcement completeProfile">
-                    <div className="warning cardBody">
-
+                  <div className="announcement completeProfileBorderColor">
+                    <div className="completeProfileCardColor">
                       <p className="announcementMessage"> Please complete your profile. </p>
                     </div>
                   </div>
-
                 }
                 {this.state.currAnnouncements.map((anncouncement, index) => {
                   return (
-                    <div key={index} className="announcement">
+                    <div key={index} className="announcement announcementBorderColor">
                       {
-                        <div className="cardBody">
+                        <div className="announcementCardColor">
                           <p className="announcementMessage"> {anncouncement.message} </p>
                         </div>
                       }
@@ -186,27 +184,23 @@ class Dashboard extends Component {
                   var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
                   var auditionLink = anncouncement.name.split(' ').join('');
                   return (
-                    <div key={index} className="announcement secondColor">
-                      <div className="cardBody">
-                        {
-
-                          <div className="auditionAnnouncementCard">
-                            <div className="showTitle">
-                              <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
-                            </div>
-                            <div className="showInformation">
-                              <p> <b>Date:</b> {auditionDay} </p>
-                              <p> <b>Time:</b> {auditionTime} </p>
-                              <p> <b>Location:</b> {anncouncement.audition.location} </p>
-                              <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
-                            </div>
+                    <div key={index} className="announcement newAuditionBorderColor">
+                      {
+                        <div className="auditionAnnouncementCardColor">
+                          <div className="showTitle">
+                            <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
                           </div>
-                        }
-                      </div>
+                          <div className="showInformation">
+                            <p> <b>Date:</b> {auditionDay} </p>
+                            <p> <b>Time:</b> {auditionTime} </p>
+                            <p> <b>Location:</b> {anncouncement.audition.location} </p>
+                            <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
+                          </div>
+                        </div>
+                      }
                     </div>
                   )
                 })}
-
               </div>
             </div>
           </div>
@@ -214,7 +208,6 @@ class Dashboard extends Component {
       </section>
     )
   }
-
 }
 
 

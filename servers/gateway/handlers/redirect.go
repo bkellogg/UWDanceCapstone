@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"strings"
 
@@ -26,6 +25,5 @@ func HTTPSRedirectHandler(w http.ResponseWriter, r *http.Request) {
 	if len(r.URL.RawQuery) > 0 {
 		target += "?" + r.URL.RawQuery
 	}
-	log.Printf("Redirecting insecure request to: %s", target)
 	http.Redirect(w, r, target, http.StatusTemporaryRedirect)
 }

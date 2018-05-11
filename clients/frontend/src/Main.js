@@ -208,6 +208,7 @@ class Main extends Component {
                 </div>
               </div>
               <Drawer
+                backgroundColor="red"
                 style={styleNav}
                 docked={false}
                 width={250}
@@ -351,7 +352,6 @@ class Main extends Component {
                 </Switch>
               )
             })}
-
         </section>
 
         <section className="desktop">
@@ -376,7 +376,6 @@ class Main extends Component {
                 </li>
               </div>
               <Button id='signOut' className="signOutDesktop" onClick={() => this.signOut()}>Sign Out</Button>
-
             </ul>
           </div>
         </section>

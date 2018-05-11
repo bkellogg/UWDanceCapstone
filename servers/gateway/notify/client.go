@@ -17,7 +17,7 @@ type WebSocketClient struct {
 
 // newWebSocketClient creates a new websocket client from the
 // given information.
-func newWebSocketClient(u *models.User, c *websocket.Conn, isCasting bool) *WebSocketClient {
+func newWebSocketClient(u *models.User, c *websocket.Conn) *WebSocketClient {
 	wsc := &WebSocketClient{
 		user: u,
 	}

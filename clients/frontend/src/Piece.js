@@ -4,13 +4,13 @@ import * as Util from './util.js';
 // import moment from 'moment';
 // import 'react-big-calendar/lib/css/react-big-calendar.css';
 import FlatButton from 'material-ui/FlatButton';
-import Button from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import MusicianRow from './MusicianRow';
 import Calendar from './Calendar';
 import PersonRow from './PersonRow';
+import './styling/Piece.css';
 import './styling/General.css';
 import Link from 'react-router-dom/Link';
 
@@ -320,8 +320,8 @@ class Piece extends Component {
                         <tr className="categories">
                           <th className="avatar2"></th>
                           <th>Name</th>
-                          <th className="userRoleDisp">Bio</th>
-                          <th>Email</th>
+                          <th className="bioOfUser">Bio</th>
+                          <th className="userEmail">Email</th>
                         </tr>
                         {castRows}
                       </tbody>
@@ -331,7 +331,7 @@ class Piece extends Component {
                     {
                       !this.state.viewAvailability &&
                       <FlatButton
-                        style={{ color: '#333333', marginRight: '20px'}}
+                        style={{ color: '#22A7E0', marginRight: '20px'}}
                         onClick={this.viewAvailability}>
                         View Cast Availability </FlatButton>
                     }
@@ -339,9 +339,8 @@ class Piece extends Component {
                       this.state.viewAvailability &&
                       <div>
                         <FlatButton
-                          backgroundColor="#708090"
-                          style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
-                          onClick={this.viewAvailability}>
+                        style={{ color: '#22A7E0', marginRight: '20px'}}
+                        onClick={this.viewAvailability}>
                           Hide Cast Availabiltiy </FlatButton>
                         <p>View availability ay</p>
                       </div>
@@ -367,8 +366,8 @@ class Piece extends Component {
                   </div>
                   <div className="peopleList">
                     <div className="choreoContact">
-                      <p>Choreographer's Name: {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
-                      <p>Choreographer's Phone Number:</p>
+                      <p><b>Choreographer's Name:</b> {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
+                      <p><b>Choreographer's Phone Number:</b></p>
                       <TextField
                         id="choreographerPhone"
                         defaultValue={this.state.choreographerPhone}
@@ -376,11 +375,11 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Choreographer's email: {this.state.choreographer.email}</p>
+                      <p><b>Choreographer's email: {this.state.choreographer.email}</b></p>
                     </div>
                     <div className="dancerInfo">
-                      <p>Number of dancers: {this.state.dancers.length}</p>
-                      <p>Dancer Contact Information:</p>
+                      <p><b>Number of dancers: </b>{this.state.dancers.length}</p>
+                      <p><b>Dancer Contact Information:</b></p>
                       <table>
                         <tbody>
                           <tr className="categories">
@@ -392,7 +391,7 @@ class Piece extends Component {
                       </table>
                     </div>
                     <div className="pieceInfo">
-                      <p>Dance Title: </p>
+                      <p><b>Dance Title: </b></p>
                       <TextField
                         id="danceTitle"
                         defaultValue={this.state.danceTitle}
@@ -407,7 +406,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Composer(s):</p>
+                      <p><b>Composer(s):</b></p>
                       <TextField
                         id="composer"
                         defaultValue={this.state.composer}
@@ -415,7 +414,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Music title(s): </p>
+                      <p><b>Music title(s): </b></p>
                       <TextField
                         id="musicTitle"
                         defaultValue={this.state.musicTitle}
@@ -423,7 +422,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Performed By:</p>
+                      <p><b>Performed By:</b></p>
                       <TextField
                         id="musicPerformer"
                         defaultValue={this.state.musicPerformer}
@@ -431,7 +430,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Music Source:</p>
+                      <p><b>Music Source:</b></p>
                       <TextField
                         id="musicSource"
                         defaultValue={this.state.musicSource}
@@ -439,7 +438,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>If music will be performed live, number of musicians:  </p>
+                      <p><b>If music will be performed live, number of musicians: </b> </p>
                       <SelectField
                         defaultValue={this.state.numMusicians}
                         value={this.state.numMusicians}
@@ -461,11 +460,11 @@ class Piece extends Component {
                       {
                         this.state.numMusicians > 0 &&
                         <div className="musicianInfo">
-                          <p>List of contact info for musicians: </p>
+                          <p><b>List of contact info for musicians:</b> </p>
                           {musicianRow}
                         </div>
                       }
-                      <p>Rehearsal Schedule:</p>
+                      <p><b>Rehearsal Schedule:</b></p>
                       <TextField
                         id="rehearsalSchedule"
                         defaultValue={this.state.rehearsalSchedule}
@@ -474,7 +473,7 @@ class Piece extends Component {
                       />
                     </div>
                     <div className="notes">
-                      <p>Choreographers Notes: </p>
+                      <p><b>Choreographers Notes:</b> </p>
                       <TextField
                         id="choreoNotes"
                         defaultValue={this.state.choreoNotes}
@@ -483,7 +482,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Costume Descriptions:  </p>
+                      <p><b>Costume Descriptions: </b> </p>
                       <TextField
                         id="costumeDesc"
                         defaultValue={this.state.costumeDesc}
@@ -492,7 +491,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Props/Scenic Items Descriptions: </p>
+                      <p><b>Props/Scenic Items Descriptions:</b> </p>
                       <TextField
                         id="propsDesc"
                         defaultValue={this.state.propsDesc}
@@ -501,7 +500,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Lighting Description: </p>
+                      <p><b>Lighting Description: </b></p>
                       <TextField
                         id="lightingDesc"
                         defaultValue={this.state.lightingDesc}
@@ -510,7 +509,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p>Other special needs:  </p>
+                      <p><b>Other special needs: </b> </p>
                       <TextField
                         id="otherDesc"
                         defaultValue={this.state.otherDesc}
@@ -521,7 +520,10 @@ class Piece extends Component {
 
                     </div>
                   </div>
-                  <Button onClick={this.setInfoSheet}>Save Info Sheet</Button>
+                  <FlatButton
+                        style={{ color: '#22A7E0', marginRight: '20px'}}
+                        onClick={this.setInfoSheet}
+                        >Save Info Sheet</FlatButton>
                 </section>
               }
             </div>

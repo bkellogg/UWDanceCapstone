@@ -84,9 +84,7 @@ deployAPI () {
 	-v $GOPATH/src/github.com/BKellogg/UWDanceCapstone/clients/:/clients/:ro \
 	-v $GOPATH/src/github.com/BKellogg/UWDanceCapstone/assets/:/assets/:ro \
 	-e ADDR=:443 \
-	-e TEMPLATESPATH=/templates/ \
 	-e HTTPREDIRADDR=:80 \
-	-e CLIENTPATH=$CLIENTPATH \
 	-e TLSKEY=$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/privkey.pem \
 	-e TLSCERT=$GOPATH/src/github.com/BKellogg/UWDanceCapstone/servers/gateway/tls/fullchain.pem \
 	-e REDISADDR=redis:6379 \
@@ -100,10 +98,13 @@ deployAPI () {
     -e ASSETSPATH=/assets/ \
     -e ADMINCONSOLEPATH=/clients/console \
     -e FRONTENDPATH=/clients/frontend/build/ \
+    -e TEMPLATESPATH=/assets/tpl/ \
+    -e CLIENTPATH=$CLIENTPATH \
     -e STAGE_ADMIN_FIRSTNAME=Brendan \
     -e STAGE_ADMIN_LASTNAME=Kellogg \
     -e STAGE_ADMIN_EMAIL=brendan6@uw.edu \
     -e STAGE_ADMIN_PASSWORD=$STAGE_ADMIN_PASSWORD \
+    -e STAGE_HOST=localhost \
 	brendankellogg/dancegateway
 
     echo -e >&2 "${GREEN}Complete!${NC}"

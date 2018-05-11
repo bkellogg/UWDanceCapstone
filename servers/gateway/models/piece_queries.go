@@ -68,6 +68,22 @@ func (store *Database) GetPieceByID(id int, includeDeleted bool) (*Piece, *DBErr
 	return piece, nil
 }
 
+// GetChoreographerShowPiece gets the current piece in the show that the given
+// choreographer is running, if it exists. Returns an error if one occurred.
+func (store *Database) GetChoreographerShowPiece(showID, choreographerID int) (*Piece, *DBError) {
+	pArr, dberr := handlePiecesFromDatabase(store.db.Query(`SELECT * FROM Pieces P
+		WHERE P.ChoreographerID = ?
+		AND P.ShowID = ?
+		AND P.IsDeleted = FALSE`, choreographerID, showID))
+	if dberr != nil {
+		return nil, dberr
+	}
+	if len(pArr) == 0 {
+		return nil, NewDBError("no pieces found", http.StatusNotFound)
+	}
+	return pArr[0], nil
+}
+
 // AssignChoreographerToPiece assigns the given user id as a
 // choreographer to the given piece. Assumes the user is a valid
 // choreographer user. Returns an error if one occurred.

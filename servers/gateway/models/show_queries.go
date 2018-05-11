@@ -96,6 +96,10 @@ func (store *Database) InsertNewShowType(showType *ShowType) *DBError {
 		return NewDBError(fmt.Sprintf("error retrieving last insert id: %v", err), http.StatusInternalServerError)
 	}
 	showType.ID = int(showTypeID)
+
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
 	return nil
 }
 
