@@ -1,50 +1,20 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
-import BigCalendar from 'react-big-calendar';
-import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+// import BigCalendar from 'react-big-calendar';
+// import moment from 'moment';
+// import 'react-big-calendar/lib/css/react-big-calendar.css';
 import FlatButton from 'material-ui/FlatButton';
 import Button from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import MusicianRow from './MusicianRow';
+import Calendar from './Calendar';
 import PersonRow from './PersonRow';
 import './styling/General.css';
 import Link from 'react-router-dom/Link';
 
-BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
-let views = ['month', 'week', 'day']
 const STYLES = { width: "600px", paddingLeft: "15px" }
-
-let events = [
-  {
-    id: 0,
-    title: 'All Day Event very long title',
-    allDay: true,
-    start: new Date(2015, 3, 0),
-    end: new Date(2015, 3, 1),
-  },
-  {
-    id: 1,
-    title: 'Long Event',
-    start: new Date(2015, 3, 7),
-    end: new Date(2015, 3, 10),
-  },
-
-  {
-    id: 2,
-    title: 'DTS STARTS',
-    start: new Date(2018, 2, 13, 0, 0, 0),
-    end: new Date(2018, 2, 20, 0, 0, 0),
-  },
-  {
-    id: 3,
-    title: 'Weekly Rehearsal',
-    start: new Date(2018, 5, 1, 0, 0, 0),
-    end: new Date(2018, 5, 1, 0, 0, 0)
-  }
-]
 
 class Piece extends Component {
   constructor(props) {
@@ -83,7 +53,6 @@ class Piece extends Component {
         this.setState({
           pieceID : piece.id
         })
-        console.log(piece.id)
         this.getPieceUsers(piece.id)
       })
 
@@ -196,20 +165,7 @@ class Piece extends Component {
                     <h2 className="smallHeading">Calendar</h2>
                     <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCalendar}></i>
                   </div>
-                  <BigCalendar style={{ height: "800px", width: "800px" }}
-                    selectable
-                    defaultView='week'
-                    events={events}
-                    views={views}
-                    step={60}
-                    onSelectEvent={event => alert(event.title)}
-                    onSelectSlot={slotInfo =>
-                      alert(
-                        `selected rehearsal time: \n\nstart ${slotInfo.start.toLocaleString()} ` +
-                        `\nend: ${slotInfo.end.toLocaleString()}`
-                      )
-                    }
-                  />
+                  <Calendar />
                 </section>
               }
             </div>

@@ -36,6 +36,13 @@ const styleNav = {
   backgroundColor: 'red'
 };
 
+localStorage.setItem("rehearsals", JSON.stringify([{
+  id: 3,
+  title: 'Weekly Rehearsal',
+  start: new Date('2018-05-10 11:00 AM'),
+  end: new Date('2018-05-10 12:30 PM')
+}]))
+
 class Main extends Component {
   constructor(props) {
     super(props);
@@ -271,7 +278,8 @@ class Main extends Component {
                   render={props => <Casting
                     {...props}
                     name={show.name}
-                    audition={show.auditionID} />} />
+                    audition={show.auditionID} 
+                    show={show.show}/>} />
 
                 let route2 = <Route
                   exact
@@ -304,6 +312,7 @@ class Main extends Component {
                     {...props}
                     name={show.name}
                     audition={show.auditionID}
+                    show={show.show}
                   />} />
 
                 let route2 = <Route
