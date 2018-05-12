@@ -50,14 +50,19 @@ function reset_form() {
 // populate field types
 function populateFieldTypes() {
     fieldOptions = '<option value="">Title</option>' +
+        '<option value="showing">Showing</option>' +
         '<option value="spacing">1st Spacing</option>' +
         '<option value="load-in">Load-in: Set MFA plot in theater - House Crew</option>' +
         '<option value="load-in-notes">Load-in: Notes</option>' +
-        '<option value="load-in-focus-notes">Load-in: focus notes</option>' +
+        '<option value="load-in-focus-notes">Load-in: focus notes - House Crew</option>' +
         '<option value="notes">Notes - House Crew</option>' +
         '<option value="tech-rehearsal">Technical Rehearsal - Show Crew</option>' +
         '<option value="tech-notes">Tech Notes</option>' +
-        '<option value="performance"><strong>PERFORMANCE</strong></option>' 
+        '<option value="call-dancers">Call Dancers & crew meet in theatre - Show Crew</option>' +
+        '<option value="call">Call</option>' +
+        '<option value="video">Video set-up</option>' +
+        '<option value="dress-rehearsal">DRESS REHEARSAL (Photography)</option>' +
+        '<option value="performance"><strong>PERFORMANCE</strong></option>'
 }
 
 // Get date ranges and populate form with options for all dates
