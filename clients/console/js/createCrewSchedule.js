@@ -1,22 +1,15 @@
 "use strict";
 refreshLocalUser();
-
-var timeOptions = ["6:00am", "6:30am", "7:00am", "7:30am", "8:00am", "8:30am", "9:00am", "9:30am", "10:00am", "10:30am", "11:00am", "11:30am", "12:00pm",
-    "12:30pm", "1:00pm", "1:30pm", "2:00pm", "2:30pm", "3:00pm", "3:30pm", "4:00pm", "4:30pm", "5:00pm", "5:30pm", "6:00pm", "6:30pm", "7:00pm", "7:30pm",
-    "8:00pm", "8:30pm", "9:00pm", "9:30pm", "10:00pm", "10:30pm", "11:00pm", "11:30pm"];
 var dateRange = [];
+var fieldOptions = [];
 var startTime;
 var endTime;
-var fieldOptions = [];
-var studio_crew_types = [];
 var fieldCount = 0;
 
 
 createDates();
-createTimes();
 populateConcertNames();
 populateFieldTypes();
-populate_studio_crew_types();
 
 // Pick date
 function createDates() {
@@ -30,20 +23,6 @@ $(document).ready(function () {
     var year = date.getFullYear();
     document.getElementById("today").value = year;
 });
-
-// Create Times
-function createTimes() {
-    startTime = '<option value="">Start Time</option>' +
-        '<option value=""><strong></strong></option>';
-    endTime = '<option value=""><strong>End Time</strong></option>' +
-        '<option value=""><strong></strong></option>' +
-        '<option value="Call"><strong>Call</strong></option>' +
-        '<option value="Curtain"><strong>Curtain</strong></option>';
-    $(timeOptions).each(function (index, value) {
-        startTime += '<option value="' + value + '">' + value + '</option>';
-        endTime += '<option value="' + value + '">' + value + '</option>';
-    });
-}
 
 // Get to show types
 function populateConcertNames() {
@@ -70,32 +49,20 @@ function reset_form() {
 
 // populate field types
 function populateFieldTypes() {
-    fieldOptions = '<option value="">Slot Type</option>' +
-        '<option value="showing"><strong>Showing</strong></option>' +
-        '<option value="spacing"><strong>Spacing</strong></option>' +
-        '<option value="load-in"><strong>Load-In</strong></option>' +
-        '<option value="notes"><strong>Notes</strong></option>' +
-        '<option value="tech-rehearsal"><strong>Tech Rehearsal</strong></option>' +
-        '<option value="dress-rehearsal"><strong>Dress Rehearsal</strong></option>' +
-        '<option value="preview"><strong>Preview</strong></option>' +
-        '<option value="performance"><strong>Performance</strong></option>' +
-        '<option value="misc"><strong>Misc</strong></option>';
-}
-
-// populate studio/crew types
-function populate_studio_crew_types() {
-    studio_crew_types = '<option value="">Studio/Crew Type</option>' +
-        '<option value="dance studio"><strong>Dance Studio</strong></option>' +
-        '<option value="peter only studio theater"><strong>Peter Only Studio Theater</strong></option>' +
-        '<option value="peter only"><strong>Peter Only</strong></option>' +
-        '<option value="house crew"><strong>House Crew</strong></option>' +
-        '<option value="show crew"><strong>Show Crew</strong></option>'
+    fieldOptions = '<option value="">Title</option>' +
+        '<option value="spacing">1st Spacing</option>' +
+        '<option value="load-in">Load-in: Set MFA plot in theater - House Crew</option>' +
+        '<option value="load-in-notes">Load-in: Notes</option>' +
+        '<option value="load-in-focus-notes">Load-in: focus notes</option>' +
+        '<option value="notes">Notes - House Crew</option>' +
+        '<option value="tech-rehearsal">Technical Rehearsal - Show Crew</option>' +
+        '<option value="tech-notes">Tech Notes</option>' +
+        '<option value="performance"><strong>PERFORMANCE</strong></option>' 
 }
 
 // Get date ranges and populate form with options for all dates
 $('#get-date-range').on('click', function (e) {
     if (dateRange.length != 0) {
-        console.log("swany");
         var myNode = document.getElementById("tech-rehearsal-form-body");
         while (myNode.hasChildNodes()) {
             myNode.removeChild(myNode.lastChild);
@@ -119,10 +86,10 @@ $('#get-date-range').on('click', function (e) {
     $.each(dateRange, function (index, value) {
         $("#tech-rehearsal-form-body").append('<li id="date" class="has-submenu"><a id ="temp" href="#">' + value + '</a></li>');
         $("#date").append('<ul class="schedule-options"></ul>');
-        $("#date ul").append('<li><a href="#" onclick="add_slot(this)">New Slot +</a></li>');
+        $("#date ul").append('<li><a href="#" onclick="add_slot(this)">New Slot</a></li>');
         $("#date li").addClass('date-' + index);
         $("#date").attr("id", "date-" + index);
-        initial_slots("date-" + index);
+        //initial_slots("date-" + index);
     })
     // toggle date list options
     $(".has-submenu ul").hide();
@@ -139,11 +106,10 @@ $('#get-date-range').on('click', function (e) {
 function add_slot(element) {
     var id = $(element).closest("li").attr("class");
     fieldCount++;
-    $("#" + id).append('<div id="slot"><select class="startTime-input"><option id="slot-startTime-input value=""></option></select><select class="endTime-input"><option id="slot-endTime-input" value=""></option></select><select class="slot-type-input"><option id="slot-type-input value=""></option></select><input type="text" id="slot-name-input" placeholder="Name" /><input type="text" id="slot-desc-input" placeholder="Desc" /><select class="studio-crew-input"><option id="slot-studio-crew-input" value=""></option></select><a href="#" class="delete">Delete</a></div>');
-    $('#slot .startTime-input').html(startTime);
-    $('#slot .endTime-input').html(endTime);
-    $('#slot .slot-type-input').html(fieldOptions);
-    $('#slot .studio-crew-input').html(studio_crew_types);
+    $("#" + id).append('<div id="slot"><input class="startTime-input" placeholder="Start Time"><input class="endTime-input" placeholder="End Time"><select class="slot-title-input"><option id="slot-title-input value=""></option></select><a href="#" class="delete">Delete</a></div>');
+    $('#slot .startTime-input').timepicker();
+    $('#slot .endTime-input').timepicker();
+    $('#slot .slot-title-input').html(fieldOptions);
     $('#slot').attr("id", "slot-" + fieldCount);
 
     $("#" + id).on("click", ".delete", function (e) {
@@ -156,11 +122,10 @@ function add_slot(element) {
 function initial_slots(element) {
     for (var i = 0; i < 2; i++) {
         fieldCount++;
-        $("#" + element).append('<div id="slot"><select class="startTime-input"><option id="slot-startTime-input value=""></option></select><select class="endTime-input"><option id="slot-endTime-input" value=""></option></select><select class="slot-type-input"><option id="slot-type-input value=""></option></select><input type="text" id="slot-name-input" placeholder="Name" /><input type="text" id="slot-desc-input" placeholder="Desc" /><select class="studio-crew-input"><option id="slot-studio-crew-input" value=""></option></select><a href="#" class="delete">Delete</a></div>');
-        $('#slot .startTime-input').html(startTime);
-        $('#slot .endTime-input').html(endTime);
-        $('#slot .slot-type-input').html(fieldOptions);
-        $('#slot .studio-crew-input').html(studio_crew_types);
+        $("#" + element).append('<div id="slot"><input class="startTime-input" placeholder="Start Time"><input class="endTime-input" placeholder="End Time"><select class="slot-title-input"><option id="slot-title-input value=""></option></select><a href="#" class="delete">Delete</a></div>');
+        $('#slot .startTime-input').timepicker();
+        $('#slot .endTime-input').timepicker();
+        $('#slot .slot-title-input').html(fieldOptions);
         $('#slot').attr("id", "slot-" + fieldCount);
     }
 
