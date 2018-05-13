@@ -382,9 +382,15 @@ func (c *CastingSession) toCastingUpdate(chorID int64) (*CastingUpdate, error) {
 	castingUpdate.Uncasted = odSlice
 
 	// sort the dancers before returning them
-	sort.Slice(castingUpdate.Contested, CDSlice(castingUpdate.Contested).Less)
-	sort.Slice(castingUpdate.Uncasted, DSlice(castingUpdate.Uncasted).Less)
-	sort.Slice(castingUpdate.Cast, RDSlice(castingUpdate.Cast).Less)
+	if len(castingUpdate.Contested) > 0 {
+		sort.Slice(castingUpdate.Contested, CDSlice(castingUpdate.Contested).Less)
+	}
+	if len(castingUpdate.Uncasted) > 0 {
+		sort.Slice(castingUpdate.Uncasted, DSlice(castingUpdate.Uncasted).Less)
+	}
+	if len(castingUpdate.Cast) > 0 {
+		sort.Slice(castingUpdate.Cast, RDSlice(castingUpdate.Cast).Less)
+	}
 
 	return castingUpdate, nil
 }
