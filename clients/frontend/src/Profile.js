@@ -245,7 +245,6 @@ class Profile extends Component {
 
                   <div id="photoContainer" className="photoContainer">
                     {!this.state.edit &&
-
                       <img id="photo" alt="profile" src={this.state.photoSrc}></img>
                     }
                     {this.state.edit &&
@@ -266,8 +265,8 @@ class Profile extends Component {
                       {this.state.edit &&
                         <div id="editName">
                           <Row>
-                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
-                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
+                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname}/>
+                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname}/>
                           </Row>
                         </div>
                       }
@@ -287,7 +286,7 @@ class Profile extends Component {
                             <form className="col s12">
                               <div className="row">
                                 <div className="input-field col s12">
-                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
+                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange} defaultValue={this.state.bio}></textarea>
                                   <label htmlFor="textarea1">Bios should be 60 words or less</label>
                                 </div>
                               </div>
@@ -345,7 +344,7 @@ class Profile extends Component {
                   {this.state.edit &&
                     <section>
                       <div> Upload your dance resume as a PDF. </div>
-                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange}/>
                     </section>
                   }
                 </div>
