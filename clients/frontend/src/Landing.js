@@ -130,7 +130,7 @@ class App extends Component {
                 <div className="capstoneInfo theTeamCard">
                   <h2 className="capstoneInfoHeading"> Meet The Team </h2>
                   <div className="teamMember">
-                    <img className="teamMemberImage" alt="Brendan Kellog - Backend Developer" src={brendanKellog} />
+                    <img className="teamMemberImage" alt="Brendan Kellogg - Backend Developer" src={brendanKellog} />
                     <p className="teamMemberName"><a href="https://www.linkedin.com/in/brendankellogg/">Brendan Kellog</a></p>
                     <p className="capstoneInfoContent"> Backend Developer</p>
 

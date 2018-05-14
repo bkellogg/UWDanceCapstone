@@ -17,7 +17,7 @@ class PersonRow extends Component {
   }
 
   getPhoto = () => {
-    fetch(Util.API_URL_BASE + "users/" + this.props.p.id +"/photo?auth=" + localStorage.auth)
+    Util.makeRequest("users/" + this.props.p.id + "/photo", {}, "GET", true)
     .then((res) => {
       if (res.ok) {
         return res.blob();

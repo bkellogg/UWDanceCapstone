@@ -1,7 +1,7 @@
 /*HEADER AND LEGEND WRAP*/
 .cardTitleWrap{
     display: inline-block;
-    width: 100%;
+    width: 580px;
     padding-bottom: 20px;
 }
 
@@ -52,7 +52,6 @@
 /*OVERLAP CALENDAR CONTENT*/
 .availabilityCalendar{
     position: static;
-    overflow: hidden;
 }
 
 .overlapDays, .daysSimple, .timesRow, .timeBlock, .colorIndicator{
@@ -91,9 +90,3 @@
     width: auto;
     border: 0.5px solid rgb(219, 219, 219);
 }
-
-
-
-
-
-

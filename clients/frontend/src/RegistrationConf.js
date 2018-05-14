@@ -48,7 +48,7 @@ class RegistrationConf extends Component {
     return (
       <div className="cardsWrap">
       <div className="fullWidthCard profileCard1">
-      <div className="wrap">
+      <div className="wrap wrapFlex">
         <div className="card101">
           <div className="numberDiv">
             <p id="number">{this.props.regNum}</p>

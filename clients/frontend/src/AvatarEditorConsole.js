@@ -12,17 +12,17 @@ class AvatarEditorConsole extends Component {
     rotate: 0,
     borderRadius: 200,
     preview: null,
-    width: 300,
-    height: 300,
+    width: 200,
+    height: 200,
   }
 
   dataURLtoFile = (dataurl, filename) => {
     let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-    while(n--){
-        u8arr[n] = bstr.charCodeAt(n);
+      bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
     }
-    return new File([u8arr], filename, {type:mime});
+    return new File([u8arr], filename, { type: mime });
   }
 
   sendUpImage = () => {
@@ -95,7 +95,7 @@ class AvatarEditorConsole extends Component {
           onDrop={this.handleDrop}
           disableClick
           multiple={false}
-          style={{ width: this.state.width, height: this.state.height, marginBottom:'35px' }}
+          style={{ width: this.state.width, height: this.state.height, marginBottom: '35px' }}
         >
           <div>
             <ReactAvatarEditor
@@ -113,10 +113,10 @@ class AvatarEditorConsole extends Component {
           </div>
         </Dropzone>
         <br />
-        New File:
+        <p>New File:</p>
         <input name="newImage" type="file" onChange={this.handleNewImage} />
         <br />
-        Zoom:
+        <p>Zoom:</p>
         <input
           name="scale"
           type="range"
@@ -128,10 +128,11 @@ class AvatarEditorConsole extends Component {
         />
         <br />
 
-        Rotate:
+        <p>Rotate: &nbsp; 
         <button onClick={this.rotateLeft}>Left</button>
         <button onClick={this.rotateRight}>Right</button>
-        <br />
+        </p>
+        {/* <br />
         <br />
         <input type="button" onClick={this.handleSave} value="Preview" />
         <br />
@@ -148,7 +149,7 @@ class AvatarEditorConsole extends Component {
                 (this.state.preview.borderRadius / 2 / 100)}px`,
             }}
           />
-        )}
+        )} */}
       </div>
     )
   }

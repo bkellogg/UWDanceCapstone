@@ -16,7 +16,7 @@ class Dashboard extends Component {
       announcements: [],
       announcementTypes: null,
       currAnnouncements: [],
-      pending: [],
+      pending: []
     }
   };
 
@@ -27,7 +27,7 @@ class Dashboard extends Component {
 
   //Getting all messages from announcements that have not been deleted
   getAnnouncements = () => {
-    fetch(Util.API_URL_BASE + "/announcements?includeDeleted=false&auth=" + this.state.auth)
+    Util.makeRequest("announcements?includeDeleted=false", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -53,7 +53,7 @@ class Dashboard extends Component {
 
   //Getting announcement types and adding type to each message
   getAnnouncementTypes = (announcements) => {
-    fetch(Util.API_URL_BASE + "/announcements/types?auth=" + this.state.auth)
+    Util.makeRequest("announcements/types", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -95,54 +95,57 @@ class Dashboard extends Component {
 
   getUserPieces = () => {
     Util.makeRequest("users/me/pieces/pending", "", "GET", true)
-    .then((res) => {
-      if (res.ok) {
-        return res.json();
-      }
-      if (res.status === 401) {
-        Util.signOut()
-      }
-      return res.text().then((t) => Promise.reject(t));
-    })
-    .then(pieces => {
-      this.setState({
-        pending: pieces
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
-    })
-    .catch((err) => {
-      console.log(err)
-    }); 
+      .then(pieces => {
+        this.setState({
+          pending: pieces
+        })
+      })
+      .catch((err) => {
+        console.log(err)
+      });
   }
 
   acceptCasting = (pieceID) => {
     Util.makeRequest("users/me/pieces/" + pieceID, "", "LINK", true)
-    .then((res) => {
-      if (res.ok) {
-        return res.text();
+      .then((res) => {
+        if (res.ok) {
+          return res.text();
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then(() => {
+        this.getUserPieces()
       }
-      if (res.status === 401) {
-        Util.signOut()
-      }
-      return res.text().then((t) => Promise.reject(t));
-    })
-    .then( () => {
-      this.getUserPieces()
-    } 
-    )
-    .catch((err) => {
-      console.log(err)
-    }); 
+      )
+      .catch((err) => {
+        console.log(err)
+      });
   }
 
   render() {
     const pending = this.state.pending
     let pendingCasting = pending.map((piece, i) => {
       return (
-        <div key={i} className="announcement announcementMessage cardBody">
-          Congratulations! You have been cast in {piece.name}. Rehearsal times will be here as well.
+        <div key={i} className="announcement castBorderColor">
+          <p className="announcementMessage">Congratulations! You have been cast in {piece.name}. </p>
           <div>
             <RaisedButton
               label="Accept"
+              className="acceptCastButton"
+               style={{ color: '#ffffff' }}
+               backgroundColor="#22A7E0"
               onClick={() => this.acceptCasting(piece.id)}
             />
           </div>
@@ -152,7 +155,7 @@ class Dashboard extends Component {
     return (
       <section className='main' >
         <div className="mainView">
-        <div className="pageContentWrap">
+          <div className="pageContentWrap">
             <div className='dashboard'>
               <div id='welcome'>
                 <h1> Welcome, {this.state.user.firstName}!</h1>
@@ -160,19 +163,17 @@ class Dashboard extends Component {
               <div id='announcements'>
                 {pendingCasting}
                 {this.state.user.bio === "" &&
-                  <div className="announcement completeProfile">
-                    <div className="warning cardBody">
-
+                  <div className="announcement completeProfileBorderColor">
+                    <div className="completeProfileCardColor">
                       <p className="announcementMessage"> Please complete your profile. </p>
-                </div>
+                    </div>
                   </div>
-
                 }
                 {this.state.currAnnouncements.map((anncouncement, index) => {
                   return (
-                    <div key={index} className="announcement">
+                    <div key={index} className="announcement announcementBorderColor">
                       {
-                        <div className="cardBody">
+                        <div className="announcementCardColor">
                           <p className="announcementMessage"> {anncouncement.message} </p>
                         </div>
                       }
@@ -186,27 +187,23 @@ class Dashboard extends Component {
                   var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
                   var auditionLink = anncouncement.name.split(' ').join('');
                   return (
-                    <div key={index} className="announcement secondColor">
-                      <div className="cardBody">
-                        {
-
-                          <div className="auditionAnnouncementCard">
-                            <div className="showTitle">
-                              <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
-                            </div>
-                            <div className="showInformation">
-                              <p> <b>Date:</b> {auditionDay} </p>
-                              <p> <b>Time:</b> {auditionTime} </p>
-                              <p> <b>Location:</b> {anncouncement.audition.location} </p>
-                              <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
-                            </div>
+                    <div key={index} className="announcement newAuditionBorderColor">
+                      {
+                        <div className="auditionAnnouncementCardColor">
+                          <div className="showTitle">
+                            <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
                           </div>
-                        }
-                      </div>
+                          <div className="showInformation">
+                            <p> <b>Date:</b> {auditionDay} </p>
+                            <p> <b>Time:</b> {auditionTime} </p>
+                            <p> <b>Location:</b> {anncouncement.audition.location} </p>
+                            <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
+                          </div>
+                        </div>
+                      }
                     </div>
                   )
                 })}
-
               </div>
             </div>
           </div>
@@ -214,7 +211,6 @@ class Dashboard extends Component {
       </section>
     )
   }
-
 }
 
 

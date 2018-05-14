@@ -20,8 +20,7 @@ import './styling/CastingFlowTablet.css';
 import ArrowBackIcon from 'mdi-react/ArrowBackIcon';
 import ArrowForwardIcon from 'mdi-react/ArrowForwardIcon';
 
-const HOST = "dasc.capstone.ischool.uw.edu";
-const WEBSOCKET = new WebSocket("wss://" + HOST + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
+const WEBSOCKET = new WebSocket("wss://" + Util.HOST + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
 
 class Casting extends Component {
   constructor(props) {
@@ -29,6 +28,7 @@ class Casting extends Component {
     this.state = {
       finished: false,
       stepIndex: 0,
+      show: {},
       user: JSON.parse(localStorage.getItem("user")),
       cast: [],
       uncast: [],
@@ -56,6 +56,28 @@ class Casting extends Component {
         contested : update.data.contested
       })
 
+    })
+    this.getShow()
+  }
+
+  getShow = () => {
+    Util.makeRequest("shows/"+this.props.show, "", "GET", true)
+    .then((res) => {
+      if (res.ok) {
+        return res.json()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then( show => {
+      this.setState({
+        show: show,
+      })
+    })
+    .catch(err => {
+      console.error(err)
     })
   }
 
@@ -121,7 +143,7 @@ class Casting extends Component {
       case 2:
         return <ResolveConflict audition={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>;
       case 3:
-        return <SetRehearsals audition={this.props.audition} cast={this.state.cast} contested={this.state.contested}/>
+        return <SetRehearsals audition={this.props.audition} cast={this.state.cast} contested={this.state.contested} endDate={this.state.show.endDate}/>
       default:
         return 'Someone is off the counts - stop the music, and refresh the page!';
     }

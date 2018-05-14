@@ -88,7 +88,7 @@ class StaticProfile extends Component {
   }
 
   getPhoto = () => {
-    fetch(Util.API_URL_BASE + "users/" + this.state.userID + "/photo?auth=" + this.state.auth)
+    Util.makeRequest("users/" + this.state.userID + "/photo", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.blob();
@@ -110,7 +110,7 @@ class StaticProfile extends Component {
   }
 
   getResume = () => {
-    fetch(Util.API_URL_BASE + "users/" + this.state.userID + "/resume?auth=" + this.state.auth)
+    Util.makeRequest("users/" + this.state.userID + "/resume", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.blob();

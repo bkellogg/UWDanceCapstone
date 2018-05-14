@@ -37,7 +37,7 @@ tr{
 
     /* TABLE HEADERS - THIS IS SHARED CODE*/
 th{
-    color: #22A7E0;    
+    color: hsl(0, 0%, 45%);   
     padding:0;
     padding-bottom: 10px;
     border: none;
@@ -94,14 +94,15 @@ th{
 
 .overlapAvailabilityWrap{
     width: 60%;
-    min-width: 650px;
+    /* min-width: 650px; */
     vertical-align: top;
+    background-color: #F6F8FC;
     display: inline-block;  
 }
 
 .overlapAvailability{
-    width: 100%;
-    background-color: #F6F8FC;
+    min-width: 650px;
+    max-width: 800px;
     padding: 20px;
 }
 
@@ -184,7 +185,7 @@ th{
 }
 
 .postCastingWrap{
-    margin-top: 10%;
+    margin-top: 25px;
 }
 
 .importantText{
@@ -202,6 +203,10 @@ th{
 .dancerAssignedNumber{
     font-weight: 600;
     padding-right: 5px;
+}
+
+.choreographersSelectedCast{
+    margin-top: 25px;
 }
 
 
