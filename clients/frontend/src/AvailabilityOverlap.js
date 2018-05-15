@@ -7,7 +7,7 @@ const daysRef = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday
 const timesRef = ["1000", "1030", "1100", "1130", "1200", "1230", "1300", "1330", "1400", "1430",
   "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130", "2200", "2230"]
 
-const timesFormatted = ["", "10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:00 PM", "", "2:00 PM", "", "3:00 PM", "", "4:00 PM", "",
+const timesFormatted = ["10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:00 PM", "", "2:00 PM", "", "3:00 PM", "", "4:00 PM", "",
   "5:00 PM", "", "6:00 PM", "", "7:00 PM", "", "8:00 PM", "", "9:00 PM", "", "10:00 PM", ""]
 
 
@@ -219,8 +219,9 @@ class AvailabilityOverlap extends Component {
       )
     })
     //generates the days header
-    let daysSimple = daysRef.map((day, i) => {
-      return (
+    let daysSimple = [<div className="daysSimple"></div>]
+    daysRef.forEach((day, i) => {
+      daysSimple.push(
         <div key={i} className="daysSimple">
           {day}
         </div>
@@ -236,7 +237,6 @@ class AvailabilityOverlap extends Component {
     })
 
     let midColor = Math.round(this.state.maxCast / 2)
-
     return (
       <section>
         <div className="overlapAvailability">
@@ -255,15 +255,20 @@ class AvailabilityOverlap extends Component {
             </div>
           </div>
           <div className="availabilityCalendar">
-            <div className="timesRow">
-              {timesSimple}
-            </div>
             <div className="timeBlock">
+              {/* <div className="timesRow">
+                {timesSimple}
+              </div> */}
               <div className="daysHeader">
                 {daysSimple}
               </div>
-              <div className="overlapTimes">
+              <div>
+                <div style={{float: "left"}}>
+                {timesSimple}
+                </div>
+                <div>
                 {overlapDays}
+                </div>
               </div>
             </div>
           </div>
