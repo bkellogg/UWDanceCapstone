@@ -6,7 +6,7 @@ import "react-table-drag-select/style.css";
 import './styling/Availability.css'
 
 const times = ["1000", "1030","1100","1130","1200","1230","1300", "1330", "1400","1430", 
-"1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130"]
+"1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130", "2200", "2230"]
 
 const days = ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"]
 
@@ -18,6 +18,8 @@ class Availability extends Component {
         this.calculateTimes = this.calculateTimes.bind(this)
         this.state = {
             cells: [
+                [false, false, false, false, false, false, false, false],
+                [false, false, false, false, false, false, false, false],
                 [false, false, false, false, false, false, false, false],
                 [false, false, false, false, false, false, false, false],
                 [false, false, false, false, false, false, false, false],
@@ -81,7 +83,10 @@ class Availability extends Component {
         [false, false, false, false, false, false, false, false],
         [false, false, false, false, false, false, false, false],
         [false, false, false, false, false, false, false, false],
-        [false, false, false, false, false, false, false, false]]
+        [false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false]
+      ]
       
         this.setState({ cells });
 
@@ -401,6 +406,26 @@ class Availability extends Component {
         </tr>
         <tr>
           <td disabled>9:00 PM</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr>
+          <td disabled></td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr>
+          <td disabled>10:00 PM</td>
           <td />
           <td />
           <td />
