@@ -4,7 +4,6 @@ import * as Util from './util.js';
 //components
 import Registration from './Registration';
 import RegistrationConf from './RegistrationConf';
-import Availability from './Availability';
 
 //styling
 import './styling/Audition.css';
@@ -43,7 +42,11 @@ class Audition extends Component {
           .then((t) => Promise.reject(t));
       })
       .then(audition => {
-        this.setState({ registered: true, audition: audition.audition, regNum: audition.regNum, currAvailability: audition.availability })
+        this.setState({ 
+          registered: true, 
+          audition: audition.audition, 
+          regNum: audition.regNum, 
+          currAvailability: audition.availability })
       })
       .catch(err => {
         console.error(err)
@@ -132,9 +135,6 @@ class Audition extends Component {
               setAvailability={this.setAvailability}
               discardChanges={() => this.setState({ changeRegistration: false })} />
             }
-            {/* {this.state.changeRegistration &&
-              <Availability availability={this.setAvailability} currAvailability={this.state.currAvailability} />
-            } */}
             <Snackbar
               open={this.state.open}
               message="Successfully Unregistered"

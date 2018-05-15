@@ -81,6 +81,7 @@
     width: 100%;
     padding-top: 5%;
     text-align: center;
+    text-overflow: clip; 
     /* border-bottom: 0.5px solid rgb(219, 219, 219); */
 }
 

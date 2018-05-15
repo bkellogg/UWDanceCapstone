@@ -251,7 +251,7 @@ class AvailabilityOverlap extends Component {
                 <div className="mediumLegendColor" style={{ "backgroundColor": colors[midColor] }}> </div>
                 <div className="darkLegendColor" style={{ "backgroundColor": colors[this.state.maxCast] }}> </div>
               </div>
-              <p className="colorIndicator">{this.state.maxCast} Available</p>
+              <p className="colorIndicator">{this.state.maxCast} available</p>
             </div>
           </div>
           <div className="availabilityCalendar">
