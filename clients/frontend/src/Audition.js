@@ -128,11 +128,13 @@ class Audition extends Component {
               changeReg={this.changeReg}
               updateAvailability={this.updateAvailability}
               showChangeReg={this.state.changeRegistration}
+              currAvailability = {this.state.currAvailability}
+              setAvailability={this.setAvailability}
               discardChanges={() => this.setState({ changeRegistration: false })} />
             }
-            {this.state.changeRegistration &&
+            {/* {this.state.changeRegistration &&
               <Availability availability={this.setAvailability} currAvailability={this.state.currAvailability} />
-            }
+            } */}
             <Snackbar
               open={this.state.open}
               message="Successfully Unregistered"

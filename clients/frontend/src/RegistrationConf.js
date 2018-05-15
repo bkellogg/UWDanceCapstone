@@ -5,6 +5,7 @@ import Moment from 'react-moment';
 import './styling/General.css';
 import './styling/RegistrationConf.css';
 import './styling/RegistrationConfMobile.css';
+import Availability from './Availability';
 import * as Util from './util.js';
 import Button from 'react-materialize/lib/Button';
 
@@ -68,24 +69,29 @@ class RegistrationConf extends Component {
           </div>
       </div>
       <div className="card102">
-      {!this.props.showChangeReg &&
-        <div className="editRegistration">
-          <div className="unregister">
-            <Button className="unregisterButton" onClick={this.unLink}>Unregister</Button>
+      {
+        !this.props.showChangeReg &&
+
+          <div className="editRegistration">
+            <div className="unregister">
+              <Button className="unregisterButton" onClick={this.unLink}>Unregister</Button>
+            </div>
+            <div className="changeAvailability">
+              <Button className="changeAvailabilityButton" onClick={this.changeReg}>Change Availability</Button>
+            </div>
           </div>
-          <div className="changeAvailability">
-            <Button className="changeAvailabilityButton" onClick={this.changeReg}>Change Availability</Button>
-          </div>
-        </div>
       }
-      {this.props.showChangeReg &&
-      
-      <div className="editRegistration">
-        <div className="changeAvailability">
-            <Button className="unregisterButton" onClick={this.discardChanges}>Discard Changes</Button>
-            <Button className="changeAvailabilityButton" onClick={this.updateAvailability}>Confirm Availability</Button>
+      {
+        this.props.showChangeReg &&
+        <section>
+          <Availability className="availability" availability={this.props.setAvailability} currAvailability={this.props.currAvailability}/>
+          <div className="editRegistration">
+            <div className="changeAvailability">
+                <Button className="unregisterButton" onClick={this.discardChanges}>Discard Changes</Button>
+                <Button className="changeAvailabilityButton" onClick={this.updateAvailability}>Confirm Availability</Button>
+              </div>
           </div>
-      </div>
+        </section>
       }
         </div>
       </div>

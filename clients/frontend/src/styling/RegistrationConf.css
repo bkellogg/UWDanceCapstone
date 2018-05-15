@@ -35,6 +35,7 @@
 }
 
 .editRegistration{
+    margin-top: 20px;
     z-index: 2;
 }
 
@@ -68,8 +69,6 @@
     padding: 0;
     text-align: center;
 }
-
-
 
 /*CHANGE AVAILABILITY FORM*/
 .availabilityTableDragDown{
