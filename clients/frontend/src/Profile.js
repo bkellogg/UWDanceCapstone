@@ -1,28 +1,21 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
-import img from './imgs/defaultProfile.jpg'
+import img from './imgs/defaultProfile.jpg';
+import AvatarEditorConsole from './AvatarEditorConsole';
 import './styling/Profile.css';
 import './styling/General.css';
 
 class Profile extends Component {
   constructor(props) {
     super(props);
-    this.getPhoto = this.getPhoto.bind(this);
-    this.onClick = this.onClick.bind(this);
-    this.inputChange = this.inputChange.bind(this);
-    this.resumeChange = this.resumeChange.bind(this);
-    this.photoChange = this.photoChange.bind(this);
-    this.formatHistory = this.formatHistory.bind(this);
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
-      photoError: null,
-      photoSrc: null,
+      photoSrc: img,
       bio: JSON.parse(localStorage.getItem("user")).bio,
-      history: null,
+      history: [],
       resume: null,
-      resumeErr: null,
       fname: JSON.parse(localStorage.getItem("user")).firstName,
       lname: JSON.parse(localStorage.getItem("user")).lastName,
       edit: false,
@@ -41,11 +34,15 @@ class Profile extends Component {
     this.getResume();
 
     //TODO deal with the fact that there are going to be pages
-    Util.makeRequest("users/1/shows?history=all", {}, "GET", true)
+    Util.makeRequest("users/" + this.state.user.id + "/shows?history=all", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then((res) => {
         this.setState({
@@ -54,22 +51,26 @@ class Profile extends Component {
         this.formatHistory(res.shows)
       })
       .catch((err) => {
-        console.log("whoops!")
+        console.error(err);
+        Util.handleError(err)
       })
   }
 
-  formatHistory(shows) {
+  formatHistory = (shows) => {
     let showTypes = {};
-
     Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json()
         }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then((data) => {
         data.map(function (show) {
-          showTypes[show.id.toString()] = show.desc
+          return showTypes[show.id.toString()] = show.desc
         })
         return showTypes
       })
@@ -89,14 +90,20 @@ class Profile extends Component {
           history: showHistory
         })
       })
+      .catch(err => {
+        console.error(err)
+        Util.handleError(err)
+      })
   }
 
-  //want to move this to util eventually
-  getPhoto() {
-    fetch(Util.API_URL_BASE + "users/me/photo?auth=" + this.state.auth)
+  getPhoto = () => {
+    Util.makeRequest("users/me/photo", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.blob();
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -106,17 +113,19 @@ class Profile extends Component {
         })
       })
       .catch((err) => {
-        this.setState({
-          photoError: err
-        })
+        console.error(err)
+        Util.handleError(err)
       });
   }
 
-  getResume() {
-    fetch(Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth)
+  getResume = () => {
+    Util.makeRequest("users/me/resume", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.blob();
+        }
+        if (res.status === 401) {
+          Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -126,14 +135,34 @@ class Profile extends Component {
         })
       })
       .catch((err) => {
-        this.setState({
-          resumeErr: err
-        })
+        console.error(err)
+        Util.handleError(err)
       });
   }
 
+  uploadPhoto = (img) => {
+    let data = new FormData();
+    data.append("image", img);
+    let xhr = new XMLHttpRequest();
+    xhr.addEventListener("readystatechange", () => {
+      this.getPhoto()
+    });
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status < 400) {
+          return xhr.responseText
+        }
+      }
+    };
 
-  onClick() {
+    xhr.open("POST", Util.API_URL_BASE + "users/me/photo");
+    xhr.setRequestHeader("Authorization", Util.getAuth());
+    xhr.setRequestHeader("ImageFieldName", "image");
+
+    xhr.send(data);
+  }
+
+  onClick = () => {
     if (this.state.edit) {
       if (this.state.firstName !== "") {
         Util.uploadFName(this.state.firstName);
@@ -144,11 +173,10 @@ class Profile extends Component {
         this.setState({ lname: this.state.lastName })
       }
       if (this.state.photoUpload !== "") {
-        Util.uploadPhoto(this.state.photoUpload)
-        this.setState({ photoSrc: this.state.photoUpload })
+        this.uploadPhoto(this.state.photoUpload)
       }
       if (this.state.bioUpload !== "") {
-        Util.uploadBio(this.state.bioUpload) //refreshing the local user is built in aka don't need to call the bio back from the server
+        Util.uploadBio(this.state.bioUpload)
         this.setState({ bio: this.state.bioUpload })
       }
       if (this.state.resumeUpload !== "") {
@@ -169,145 +197,163 @@ class Profile extends Component {
     })
   }
 
-  inputChange(val) {
+  inputChange = (val) => {
     const name = val.target.name
     this.setState({
       [name]: val.target.value
     })
   }
 
-  resumeChange(val) {
+  resumeChange = (val) => {
     this.setState({
       resumeUpload: val.target
     })
   }
 
-  photoChange(val) {
+  onKeyDown = event => {
+    let len = event.target.value.split(/[\s]+/);
     this.setState({
-      photoUpload: val.target,
+      bioUpload: event.target.value,
+      wordCount: len.length,
+    });
+    if (len.length > 60) {
+      if (event.keyCode === 46 || event.keyCode === 8 || (event.keyCode >= 37 && event.keyCode <= 40)) {
+
+      } else if (event.keyCode < 48 || event.keyCode > 57) {
+        event.preventDefault();
+      }
+    }
+  }
+
+  updateImage = (img) => {
+    this.setState({
+      photoUpload: img
     })
   }
 
   render() {
     return (
       <section className="main">
-      <div className="mainView">
-      <h5 className="pagetitle">Your Profile </h5>
+        <div className="mainView">
+          <div className="pageContentWrap">
+            <h1 className="pagetitle">Your Profile </h1>
 
-        <div className="sub">
-          {/* FIRST CARD */}
-          <div className="headerBorder">
-            <div className="header">
-              <div className="photoContainerWrap">
-                <div id="photoContainer" className="photoContainer">
-                  {!this.state.edit &&
-                    <img id="photo" src={this.state.photoSrc}></img>
-                  }
-                  {this.state.edit &&
-                    <section>
-                      <div> Upload a head shot as a jpg file. </div>
-                      <Input id="photoUpload" name="photoUpload" type="file" onChange={this.photoChange} />
-                    </section>
-                  }
-                </div>
-              </div>
+            <div className="fullWidthCard">
+              {/* FIRST CARD */}
+              <div className="wrap">
+                <div className="header">
 
-              <div className="nameAndBioWrap">
-                <div id="name" className="name">
-                  {!this.state.edit && <h5 id="profileName">{this.state.fname} {this.state.lname}</h5>}
-                  {this.state.edit &&
-                    <div id="editName">
-                      <Row>
-                        <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
-                        <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
-                      </Row>
-                    </div>
-                  }
-                </div>
+                  <div id="photoContainer" className="photoContainer">
+                    {!this.state.edit &&
 
-                <div id="bio" className="bio">
-                  <div className="subheader"><b>Dancer Bio:</b></div>
-                  {!this.state.edit &&
-                    <section>
-                      {this.state.bio !== "" && this.state.bio}
-                      {this.state.bio === "" && " Dancer has no bio"}
-                    </section>
-                  }
-                  {this.state.edit &&
-                    <div id="editBio">
-
-                      <div class="row">
-                        <form class="col s12">
-                          <div class="row">
-                            <div class="input-field col s12">
-                              <textarea id="textarea1" name="bioUpload" s={6} class="materialize-textarea" onChange={this.inputChange}></textarea>
-                              <label for="textarea1">Bios should be 60 words or less</label>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-
-                      {/* <Input id="bioUpload" name="bioUpload" s={6} placeholder="Bios should be 60 words or less" onChange={this.inputChange}/> */}
-                    </div>
-
-                  }
-                </div>
-              </div>
-              {!this.state.edit &&
-                <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                  <i className="large material-icons"> mode_edit </i>
-                </Button>
-
-              }
-              {this.state.edit &&
-                <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                  <i className="large material-icons"> check </i>
-                </Button>
-              }
-            </div>
-          </div>
-        </div>
-
-        <div className="sub2">
-
-          {/* SECOND CARD */}
-          <div className="mainContentBorder">
-            <div id="history">
-              <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-              {this.state.history !== null && this.state.history.map((p, i) => {
-                return (
-                  //TODO STYLE THESE
-                  <div className="showHistory" key={i}>
-                    <p>{p.name}</p>
-                    <p>{p.year}</p>
+                      <img id="photo" alt="profile" src={this.state.photoSrc}></img>
+                    }
+                    {this.state.edit &&
+                      <section>
+                        <div>
+                          <p>Upload a head shot as a jpg file. </p>
+                        </div>
+                        <AvatarEditorConsole img={this.state.photoSrc} changeImg={this.updateImage} />
+                      </section>
+                    }
                   </div>
-                )
-              })}
-              {this.state.history === null &&
-                <p> Dancer has no piece history </p>
-              }
-            </div>
 
-            <div id="resume">
-              {!this.state.edit &&
-                <section>
-                  {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                  <a href={this.state.resume} target="_blank">Resume</a>
-                </section>
-              }
-              {this.state.edit &&
-                <section>
-                  <div> Upload your dance resume as a PDF. </div>
-                  <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
-                </section>
-              }
+
+                  <div className="nameAndBioWrap">
+                    <div id="name" className="name">
+
+                      {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+                      {this.state.edit &&
+                        <div id="editName">
+                          <Row>
+                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
+                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
+                          </Row>
+                        </div>
+                      }
+                    </div>
+
+                    <div id="bio" className="bio">
+                      <div className="subheader"><b>Dancer Bio:</b></div>
+                      {!this.state.edit &&
+                        <section>
+                          {this.state.bio !== "" && this.state.bio}
+                          {this.state.bio === "" && " Dancer has no bio"}
+                        </section>
+                      }
+                      {this.state.edit &&
+                        <div id="editBio">
+                          <div className="row">
+                            <form className="col s12">
+                              <div className="row">
+                                <div className="input-field col s12">
+                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
+                                  <label htmlFor="textarea1">Bios should be 60 words or less</label>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+
+                      }
+
+                    </div>
+
+                  </div>
+                  {!this.state.edit &&
+                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                      <i className="large material-icons"> mode_edit </i>
+                    </Button>
+
+                  }
+                  {this.state.edit &&
+                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                      <i className="large material-icons"> check </i>
+                    </Button>
+                  }
+                </div>
+              </div>
+              <div className="mainContentBorder">
+                <div id="history">
+                  <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+                  {this.state.history.length > 0 && this.state.history.map((p, i) => {
+                    return (
+                      //TODO STYLE THESE
+                      <div className="showHistory" key={i}>
+                        <p>{p.name}</p>
+                        <p>{p.year}</p>
+                      </div>
+                    )
+                  })}
+                  {this.state.history.length === 0 &&
+                    <p> Dancer has no piece history </p>
+                  }
+                </div>
+
+                <div id="resume">
+                  {!this.state.edit &&
+                    <section>
+                      {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                      {this.state.resume != null && (
+                        <div>
+                          <a href={Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                        </div>
+                      )}
+
+                    </section>
+                  }
+                  {this.state.edit &&
+                    <section>
+                      <div> Upload your dance resume as a PDF. </div>
+                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                    </section>
+                  }
+                </div>
+
+              </div>
             </div>
 
           </div>
-
-
-        </div>
-
         </div>
       </section>
     );

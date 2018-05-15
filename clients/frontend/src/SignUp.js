@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Button } from 'react-materialize';
 import * as Util from './util.js';
+import logo from './imgs/logoex.png'
 import SignUpExtra from './SignUpExtra.js'
+import './styling/SignIn.css';
 import './styling/SignUp.css';
 
 class SignUp extends Component {
@@ -49,7 +51,6 @@ class SignUp extends Component {
       })
       .catch((err) => {
         let error = err
-        console.log(error)
         if (error.indexOf("new user first name must exist") >= 0) {
           this.setState({
             error: "A first name must be supplied"
@@ -79,6 +80,7 @@ class SignUp extends Component {
             error: "An error occurred"
           })
         }
+        Util.handleError(err)
       })
   }
 
@@ -102,28 +104,33 @@ class SignUp extends Component {
     this.props.onSignUp(this.state.auth)
   }
 
+  toLanding = () => {
+    this.props.toLanding()
+  }
+
   render() {
     return (
-      <div className="LogInLanding" style={{ height: 100 + '%' }}>
-        <section className="signUp">
-          {/* <div className="LogInPhoto">
-            <img src={img}></img>
-            </div> */}
-          <div className="Functionality">
-            <div className="Logo"></div>
-            <div className='content'>
-              <h5 className='title'> Sign up </h5>
+
+      <section className="signUp">
+        <div className="signUpLanding">
+        <i className="fas fa-arrow-circle-left fa-2x" onClick={this.toLanding}></i>
+          <div className="functionality">
+            <div className="signInUplogoWrap">
+              <img className="officialLogoLandingPage" alt="logo" src={logo} />
+            </div>
+            <div className='signIn-SignUpContent'>
+              <h1 className='title'> Sign up </h1>
               <div className="error">
                 {
-                  this.state.error !== null &&
+                  this.state.error !== null && !this.state.signUpExtra &&
                   <p>{this.state.error}</p>
                 }
               </div>
               {
                 this.state.signUpExtra === false &&
-                <div>
-                  <div>
-                    <form>
+                <div className="SignUp">
+                  <div className="Input">
+                    <form className="authenticate">
                       <div className="row">
                         <div className="input-field col s12">
                           <input type="text" name="firstname" id="firstname" onChange={this.inputChange} />
@@ -147,15 +154,13 @@ class SignUp extends Component {
                         </div>
                       </div>
                     </form>
-
-
-                    {/* <Button onClick={this.goBack}> Back </Button> */}
-                    <Button onClick={this.onClick}> Sign Up </Button>
-
-                    <div className="Link">
-                      {/* forgot password?? */}
-                      <a className="signlink" onClick={this.goBack}> Sign In </a>
+                    <div className="buttons">
+                      <Button onClick={this.onClick}> Sign Up </Button>
                     </div>
+                    <div className="link">
+                      <a className="blueTextLink" onClick={this.goBack}> Sign In </a>
+                    </div>
+
 
                   </div>
                 </div>
@@ -165,15 +170,11 @@ class SignUp extends Component {
                 this.state.signUpExtra === true && this.state.auth != null &&
                 <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
               }
-
-              {
-                this.state.signUpExtra === true && this.state.auth != null &&
-                <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
-              }
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
+
     )
   };
 }

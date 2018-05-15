@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import * as Util from './util.js';
 
 //components
+import Landing from './Landing';
 import SignUp from './SignUp.js';
 import SignIn from './SignIn.js';
 import Main from './Main.js'
@@ -15,19 +15,22 @@ class App extends Component {
     this.state = {
       user: null,
       signUp: false,
-      authorized: false
+      authorized: false,
+      landing: true
     };
   };
 
   registerUser = (userVal) => {
     this.setState({
-      user: userVal
+      user: userVal,
+      landing: false,
     })
   };
 
   handleSignUp = () => {
     this.setState({
-      signUp: true
+      signUp: true,
+      landing: false,
     })
   }
 
@@ -40,24 +43,45 @@ class App extends Component {
   signOut = () => {
     this.setState({
       authorized: false,
-      user: null
+      user: null,
+      landing: true,
+    })
+  }
+
+  showSignIn = () => {
+    this.setState({
+      landing: false
+    })
+  }
+
+  showSignUp = () => {
+    this.setState({
+      landing: false,
+      signUp: true
+    })
+  }
+
+  toLanding = () => {
+    this.setState({
+      landing: true,
+      signUp: false,
+      signIn: false
     })
   }
 
   componentWillMount(){
-    Util.refreshLocalUser();
     if(localStorage.getItem("user")){
       this.setState({
         authorized: true
       })
     } 
-    localStorage["firstLoad"] = true
   }
 
   componentDidUpdate(){
     if(this.state.authorized === false){
       if(this.state.user !== null){
         this.setState({
+          landing: false,
           authorized: true
         })
       }
@@ -67,13 +91,20 @@ class App extends Component {
   render() {
     return (  
       <section>
-        {this.state.authorized === false && this.state.signUp === false &&
-          <SignIn onSignIn={this.registerUser} onSignUp={this.handleSignUp}/>
+        {
+          this.state.landing && !this.state.authorized && !this.state.signUp &&
+          <Landing logIn={this.showSignIn} signUp={this.showSignUp} />
         }
-        {this.state.authorized === false && this.state.signUp === true &&
-          <SignUp onSignUp={this.registerUser} goBack={this.goBack}/>
+        {
+          !this.state.landing && !this.state.authorized && !this.state.signUp &&
+          <SignIn onSignIn={this.registerUser} onSignUp={this.handleSignUp} toLanding={this.toLanding}/>
         }
-        {this.state.authorized === true &&
+        {
+          !this.state.landing && !this.state.authorized && this.state.signUp &&
+          <SignUp onSignUp={this.registerUser} goBack={this.goBack} toLanding={this.toLanding}/>
+        }
+        {
+          this.state.authorized &&
           <Main auth={this.signOut}/>
         }
       </section>

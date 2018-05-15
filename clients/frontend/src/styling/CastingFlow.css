@@ -1,0 +1,258 @@
+/* STEPPER  */
+.card-casting{
+    width: 95%;
+    margin-bottom: 3%;
+}
+.back-button-styles-css, .next-button-styles-css {
+    margin: 12 auto !important;
+    float: left;
+    fill: white !important;
+    background-color: #708090 !important;
+    padding: 5px;
+    border-radius: 50%;
+}
+.next-button-styles-css{
+    float: right;
+}
+.back-button-styles-css:hover, .next-button-styles-css:hover{
+    background-color: #22A7E0 !important;
+}
+.steps{
+    background-color: transparent !important;
+    color: red !important;
+}
+
+/*SELECT CAST*/
+td{
+    padding: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: none;
+}
+
+    /* REMOVE HORIZONTAL LINES IN TABLE - THIS IS SHARED CODE*/
+tr{
+    border: none;
+}
+
+    /* TABLE HEADERS - THIS IS SHARED CODE*/
+th{
+    color: hsl(0, 0%, 45%);   
+    padding:0;
+    padding-bottom: 10px;
+    border: none;
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.check, .checkOne {
+    display: inline-block;
+}
+
+.checkOne {
+    padding-left: 30%;
+}
+
+.rankDancer{
+    align-items: center;
+}
+
+.rank {
+    padding: 10px;
+    text-align: center;
+}
+
+.personRankBoxes{
+    text-align: center;
+}
+
+.variableCastHeader {
+    text-align: center;
+    border-bottom: 3px solid hsl(0, 0%, 45%);
+}
+
+    /*YOUR CAST, CONFLICTS, UNCAST DANCERS DIVIDER*/
+.selectedCastDividerText{
+    font-size: 13px;
+    color: hsl(0, 0%, 29%);
+    width: 10%;
+}
+
+/* CHECK AVAILABILITY */
+    /*LAYOUT*/
+    /* small card with cast filter */
+.castList{
+    width: 100%;
+    position: relative;
+}
+
+    /* HALF CARDS */
+    /*inside of small card with cast filter*/
+.dancersList-filter{
+    padding: 25px;
+}
+
+.overlapAvailabilityWrap{
+    width: 60%;
+    /* min-width: 650px; */
+    vertical-align: top;
+    background-color: #F6F8FC;
+    display: inline-block;  
+}
+
+.overlapAvailability{
+    min-width: 650px;
+    max-width: 800px;
+    padding: 20px;
+}
+
+.dancersList-filter, .extraClass {
+    height: 100%;
+    width: 37%;
+    /* max-width: 440px; */
+    position: relative;
+    display: inline-block;
+    margin-right: 2%;
+  }
+
+
+/*RESOLVE CONFLICTS*/  
+.castList-v2{
+    width: 48%;
+}
+
+.cardAddMargin{
+    margin-right: 4%;
+}
+
+.conflictsCard{
+    width: 100%;
+    z-index: 1;
+}
+
+.conflictMessage{
+    font-weight: 500;
+    font-size: 15px;
+    color: #e65100;
+    margin: 0;
+    padding-top: 10px;
+    padding-bottom: 30px;
+}
+
+
+.choreographersSelecteCast, .restOfCast{
+    padding: 25px;
+}
+
+
+/* STEP 4 */
+.setTimes{
+    width: 100%;
+    padding: 25px;
+}
+
+.chooseRehearsalTimes{
+    position: relative;
+    display: block;
+    border: 1px solid lightgray;
+    background-color: #fff;
+    overflow: hidden;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    padding-left: 5px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.singleRehearsal{
+    padding: 0;
+    position: relative;
+    width: 100%;
+    display: flex;
+}
+
+.selectField{
+    position: relative;
+    display: inline-block;
+    width: 100%; 
+}
+
+.buttonsWrap{
+    margin-top: 20px;
+    height: 100%;
+    position: relative;
+    display: flex;
+}
+
+.postCastingWrap{
+    margin-top: 25px;
+}
+
+.importantText{
+    color: #22A7E0;
+}
+
+.warningText{
+    font-size: 15px;
+}
+
+.choreos{
+    display: inline-block;
+}
+
+.dancerAssignedNumber{
+    font-weight: 600;
+    padding-right: 5px;
+}
+
+.choreographersSelectedCast{
+    margin-top: 25px;
+}
+
+
+
+/**Hover over exclamation point**/
+.tooltip {
+    position: relative;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+/*SHARED*/
+.smallHeading{
+    font-size: 15px;
+    font-weight: 500;
+    padding-bottom: 20px;
+}
+

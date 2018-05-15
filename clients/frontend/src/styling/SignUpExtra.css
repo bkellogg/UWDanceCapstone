@@ -1,7 +1,14 @@
-.content {
+.signIn-SignUpContent {
     margin-left:100px;
     margin-top:35%;
     width: 320px;
+  }
+
+  .functionality {
+    float:right;
+    min-height: 100%;
+    width:50%;
+    vertical-align: top;
   }
   
   .title {
@@ -12,14 +19,15 @@
     margin: 10px;
   }
 
-  .Functionality {
-    display: inline-block;
-    float:right;
-    min-height: 100%;
-    width:50%;
-    vertical-align: top;
+  .signUpExtra {
+    background-color: lavender;
   }
 
+  #bioWarning {
+    color: red;
+  }
+  
+  /* 
   LogInPhoto {
     height: 100%;
     display: inline-block;
@@ -32,8 +40,4 @@
   .LogInPhoto > img{
     width: 100%;
     min-height: 100%;
-  }
-
-  .signUpExtra {
-    background-color: lavender;
-  }
+  } */

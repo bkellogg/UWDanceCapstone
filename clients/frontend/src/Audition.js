@@ -2,142 +2,155 @@ import React, { Component } from 'react';
 import * as Util from './util.js';
 
 //components
+import Registration from './Registration';
+import RegistrationConf from './RegistrationConf';
 import Availability from './Availability';
 
 //styling
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import { Card, CardText, CardTitle} from 'material-ui/Card';
-import Checkbox from 'material-ui/Checkbox';
 import './styling/Audition.css';
-
-const styles = {
-  customWidth: {
-    width: 150,
-  },
-};
+import './styling/General.css';
+import Snackbar from 'material-ui/Snackbar';
 
 class Audition extends Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleRegister = this.handleRegister.bind(this);
-    this.state ={
-      value: 1,
-      registered: false
+    this.state = {
+      registered: false,
+      audition: null,
+      regNum: 0,
+      open: false,
+      openAvailability: false,
+      changeRegistration: false
     }
-    console.log(this.props.audition)
   };
 
-  handleChange = (event, index, value) => this.setState({value});
+  componentWillMount() {
+    this.checkRegistration()
+  }
 
-  setAvailability = (availability) => this.setState({availability: availability});
-
-  addComment = (e) => this.setState({comments: e.target.value})
-
-  handleRegister (){
-    //MAKE POST
-    //.then set state isRegistered to true, which will cause the page to rerender
-    let body = {
-      "comment" : this.state.comments,
-      "availability" : {
-        "days": this.state.availability
-      }
-    }
-
-    Util.makeRequest("users/me/auditions/" + this.props.auditionID, body, "LINK", true)
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-      return res.text().then((t) => Promise.reject(t));
-    })
-    .then(res => {
-      this.setState({
-        registered: true
+  checkRegistration = () => {
+    Util
+      .makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res
+          .text()
+          .then((t) => Promise.reject(t));
       })
+      .then(audition => {
+        this.setState({ registered: true, audition: audition.audition, regNum: audition.regNum, currAvailability: audition.availability })
+      })
+      .catch(err => {
+        console.error(err)
+        Util.handleError(err)
+      })
+  }
+
+  registerUser = () => {
+    this.checkRegistration()
+  }
+
+  unregister = () => {
+    this.setState({
+      registered: false,
+      open: true
     })
-    .catch(err => console.log(err))
+  }
+
+  changeReg = () => {
+    this.setState({
+      changeRegistration: true
+    })
+  }
+
+  updateAvailability = () => {
+    let body = {
+      "days": this.state.availability
+    }
+    Util.makeRequest("users/me/auditions/" + this.props.audition + "/availability", body, "PATCH", true)
+      .then(res => {
+        if (res.ok) {
+          return res.text()
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then(
+        this.setState({
+          changeRegistration: false,
+          openAvailability: true,
+        })
+      )
+      .then(
+        this.checkRegistration()
+      )
+      .catch(err => {
+        console.error(err)
+        Util.handleError(err)
+      })
+
+  }
+
+  handleRequestClose = () => {
+    this.setState({
+      open: false,
+      openAvailability: false
+    });
+  };
+
+  setAvailability = (availability) => {
+    this.setState({
+      availability: availability
+    })
   }
 
   render() {
-      return(
-        <section className="main">
-          <div className="audition">
-            <h1 id="auditionTitle">{this.props.name}</h1>
-            {
-              this.state.registered === false &&
-                <div className="auditionForm">
-                  <div className="row">
-                    <div><p>Number of pieces I am available for: </p></div>
-                    <SelectField
-                      value={this.state.value}
-                      onChange={this.handleChange}
-                      style={styles.customWidth}
-                    >
-                      <MenuItem value={1} primaryText="1" />
-                      <MenuItem value={2} primaryText="2" />
-                    </SelectField>
-                  </div>
-                  <br />
-                  <div className="row">
-                    <div>You must be enrolled in a class during the quarter the production is occurring.<br/>
-                   </div>
-                   <br />
-                    <Checkbox
-                      label="I confirm I am enrolled in a class for the quarter during which the show is occuring."
-                      
-                    />
-                  </div>
-                  <br/>
-                  <div className="row">
-                    <div><p>Availability [click & drag to indicate when you are <b>available</b> to rehearse]</p></div>
-                    <Availability availability = {this.setAvailability}/>
-                  </div>
-                  <br/>
-                  <div className="row">
-                    <div><p>Please indicate any additional notes below</p></div>
-                    <TextField
-                      name="comments"
-                      onChange = {this.addComment}
-                      multiLine={true}
-                      rows={2}
-                    />
-                  </div>
-                  <RaisedButton className='register' onClick={this.handleRegister} style={{backgroundColor: "#BFB2E5"}}> Register </RaisedButton>
-                </div>
+    return (
+      <section className="main">
+        <div className="mainView">
+          <div className="pageContentWrap">
+            <h1 id="auditionTitle">{this.props.name + " Audition Form"}</h1>
+            {!this.state.registered && <Registration
+              audition={this.props.audition}
+              registered={() => this.checkRegistration()} />
             }
-            {
-              this.state.registered === true &&
-              <div className="registered">
-                <Card className="successCard">
-                  <div className="success">
-                    <CardTitle>You have successfully registered</CardTitle>
-                  </div>
-                    <CardText>
-                      <p>Meany Hall Studio 265</p>
-                      <p>Audition starts at 6:30</p>
-                      <p>Doors open for warmup 30 minutes prior</p>
-                    </CardText>
-                </Card>
-                <Card className="successCard" id="regCard">
-                  <div className="regNum">
-                    <CardTitle><h3>You are number</h3> </CardTitle>
-                    </div>
-                    <CardText id="numArea">
-                      <p id="number">1</p>
-                    </CardText>
-                </Card>
-              </div>
+            {this.state.registered && <RegistrationConf
+              audition={this.state.audition}
+              regNum={this.state.regNum}
+              unregister={this.unregister}
+              changeReg={this.changeReg}
+              updateAvailability={this.updateAvailability}
+              showChangeReg={this.state.changeRegistration}
+              discardChanges={() => this.setState({ changeRegistration: false })} />
             }
+            {this.state.changeRegistration &&
+              <Availability availability={this.setAvailability} currAvailability={this.state.currAvailability} />
+            }
+            <Snackbar
+              open={this.state.open}
+              message="Successfully Unregistered"
+              autoHideDuration={3000}
+              onRequestClose={this.handleRequestClose}
+            />
+            <Snackbar
+              open={this.state.openAvailability}
+              message="Successfully Updated Availability"
+              autoHideDuration={3000}
+              onRequestClose={this.handleRequestClose}
+            />
           </div>
-        </section>
-      )
+        </div>
+      </section>
+    )
   }
 
 }
-
 
 export default Audition;

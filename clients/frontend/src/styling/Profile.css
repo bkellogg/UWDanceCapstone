@@ -1,33 +1,27 @@
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #9194B5;
-}
-
-.headerBorder{
-  display: flex;
-  position: relative;
-  height: 100%;
-  width: 100%;
-  
-}
-
 .header, .mainContentBorder{
   width: 100%;
-  margin-bottom: 3%;
   padding: 2%;
   position: relative;
 }
 
-.photoContainerWrap {
+.mainContentBorder{
+  border-top: 1px solid hsl(0, 0%, 45%);
+    padding-top: 25px;
+}
+
+.photoContainer {
   position: relative;
   display: inline-block;
   margin-right: 3%;
+  vertical-align: bottom;
 }
 
 .nameAndBioWrap{
-  width: 70%;
+  width: 60%;
   position: relative;
   display: inline-block;
+  vertical-align: top;
+  padding-top: 100px;
 }
 
 #edit {
@@ -36,9 +30,10 @@ body {
   right: 0;
 }
 
-#photo {
-  max-height: 100%;
-  max-width: 100%
+img#photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
 }
 
 .name, .bio{
@@ -55,19 +50,11 @@ body {
   z-index: 2;
 }
 
-.sub, .sub2, #photo{
-  border-radius: 5px;
-  -webkit-box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
--moz-box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
-box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);  
+.card1, .card2, #photo{
+  border-radius: 3px;
+  /* box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;  */
 }
 
-.sub, .sub2 {
-  width: 90%;
-  margin-bottom: 3%;
-  padding: 1.5%;
-  background-color: white;
-}
 
 #historyTitle {
   margin-bottom:15px
@@ -86,26 +73,38 @@ box-shadow: 1px 1px 16px -3px rgba(145,148,181,1);
 
 }
 
-section{
-  font-size: 14px;
-  /* margin-top: 1%; */
-}
-
-/* #editName{
-  padding-left: 25px;
-  display: flex;
-  position: absolute;
-  bottom: 0px;
-  margin-bottom:0px;
-} */
-
 #firstName, #lastName{
   margin-right: 10px
 }
 
-/* #editBio{
-  width: 80%;
-} */
-@media only screen and (max-width : 992px) {
 
+/*TABLET VIEW*/
+@media only screen and (max-width : 1043px)  {
+  .photoContainer{
+    padding-top: 30px;
+    position: relative;
+    width: 100%;
+    z-index: 1;
+  }
+
+  .header{
+    border-bottom: none;
+      padding-bottom: 0px;
+  }
+  
+  .nameAndBioWrap{
+    margin-top: 25px;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 25px;
+    padding-top: 0;
+  }
+
+  img#photo {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: block;
+    margin: auto;
+  }
 }

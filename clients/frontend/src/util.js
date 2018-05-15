@@ -1,6 +1,7 @@
 export const headerAuthorization = "Authorization";
 
-export const API_URL_BASE = "https://dasc.capstone.ischool.uw.edu/api/v1/";
+export const HOST = "dasc.capstone.ischool.uw.edu";
+export const API_URL_BASE = "https://"+ HOST +"/api/v1/";
 
 
 export function saveAuth(auth) {
@@ -26,6 +27,12 @@ export function getAuth() {
 export function clearAuthAndUser() {
     localStorage.removeItem("auth");
     localStorage.removeItem("user");
+    localStorage.removeItem("allUsers");
+    localStorage.removeItem("firstLoad");
+    localStorage.removeItem("cast");
+    localStorage.removeItem("socketCast");
+    localStorage.removeItem("contested");
+    localStorage.removeItem("uncasted")
 };
 
 export function makeRequest(resource, payload = "", method = "GET", useAuth = false) {
@@ -59,14 +66,14 @@ export function refreshLocalUser() {
         setLocalUser(JSON.stringify(data));
     })
     .catch((err) => {
-        console.error(err);
         signOut();
     })
 }
 
 export function signOut() {
     clearAuthAndUser();
-    localStorage.removeItem("firstLoad")
+    window.location.reload()
+    window.location = "/"
 }
 
 export function uploadPhoto(val){
@@ -76,21 +83,17 @@ export function uploadPhoto(val){
     let xhr = new XMLHttpRequest();
 
     xhr.addEventListener("readystatechange", function () {
-        if (this.readyState === 4) {
-            console.log(this.responseText);
-        }
+        
     });
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
                 return xhr.responseText
-            } else {
-                return "get fucked"
-            }
+            } 
         }
     };
 
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
+    xhr.open("POST", API_URL_BASE+ "users/me/photo");
     xhr.setRequestHeader("Authorization", getAuth());
     xhr.setRequestHeader("ImageFieldName", "image");
 
@@ -106,7 +109,7 @@ export function uploadResume(val){
 
     xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
-            console.log(this.responseText);
+            
         }
     });
 
@@ -114,13 +117,11 @@ export function uploadResume(val){
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
                 return xhr.responseText
-            } else {
-                return "get fucked"
-            }
+            } 
         }
     };
 
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
+    xhr.open("POST", API_URL_BASE + "users/me/resume");
     xhr.setRequestHeader("Authorization", getAuth());
     xhr.setRequestHeader("ResumeFieldName", "resume");
 
@@ -142,7 +143,9 @@ export function uploadBio(val){
         .then(() => {
             refreshLocalUser()
         })
-        .catch((err) => {})
+        .catch((err) => {
+            console.error(err)
+        })
 }
 
 export function uploadFName(val){
@@ -160,7 +163,9 @@ export function uploadFName(val){
         .then(() => {
             refreshLocalUser()
         })
-        .catch((err) => {})
+        .catch((err) => {
+            console.error(err)
+        })
 }
 
 export function uploadLName(val){
@@ -178,7 +183,9 @@ export function uploadLName(val){
         .then(() => {
             refreshLocalUser()
         })
-        .catch((err) => {})
+        .catch((err) => {
+            console.error(err)
+        })
 }
 
 //TODO - needs to use the resume header? not sure how we're going to display this
@@ -189,7 +196,6 @@ export function getResume(){
             console.log(res)
             return res.json();
         }
-        //return res.text().then((t) => Promise.reject(t));
     })
     .catch((err) => {
         console.error(err);
@@ -203,8 +209,15 @@ export function getDancerHistory(){
       if(res.ok){
           return res.json()
       }
-      return "Whoops!"
   }).catch((err) => {
-    console.log(err)
+    console.error(err)
   })
 }
+
+export function handleError(err){
+    if (err === "you must be signed in to use this resource"){
+        signOut()
+    }
+}
+
+

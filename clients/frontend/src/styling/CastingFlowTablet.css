@@ -1,0 +1,26 @@
+@media only screen and (min-width : 769px) 
+and (max-width : 1024px)  {
+    /* STYLES GO HERE */
+    .categories{
+        font-size: 12px;
+    }
+
+    /*CHECK AVAILABILITY -- PUT DIVS IN BLOCK*/
+    .overlapAvailabilityWrap{
+        display: block;
+        float: left;
+        width: 100%;
+    }
+
+    .dancersList-filter{
+        width: 100%;
+    }
+
+    .dancersList-filter, .overlapAvailability, .castList-v2, .extraClass{
+        width: 100% !important;
+        margin-top: 10px;
+        margin-bottom: 30px;
+        display: block !important;
+    }
+    
+}

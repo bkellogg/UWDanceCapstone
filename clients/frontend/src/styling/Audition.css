@@ -1,24 +1,22 @@
-.audition {
-    padding-left: 25px;
-    margin-top: 50px
-}
-
-#auditionTitle{
-    font-size: 35px
-}
-
 .row{
-    display: block
+    display: block;
 }
 
 .audition{
     margin-bottom: 200px
 }
 
-.register{
-    margin-top: 15px;
-    background-color: lavender 
+
+.question {
+    margin-top: 10px;
 }
+
+
+
+.table-drag-select{
+    width: 800px;
+}
+
 
 .success{
     background-color: lavender
@@ -42,6 +40,35 @@
     padding: 0px;
 }
 
-.regNum{
-    background-color: #BFB2E5
+
+
+.row{
+    display: block;
 }
+
+.formWrap{
+    padding-left: 2%;
+}
+
+Checkbox{
+    color: red;
+}
+
+.table-drag-select td.cell-selected{
+    background-color: #22A7E0;
+}
+
+.table-drag-select td.cell-being-selected{
+    background-color: #708090;
+}
+
+
+.register{
+    background-color: black;
+  }
+  
+RaisedButton:hover{
+    background-color: #22A7E0;
+    color: white;
+  }
+

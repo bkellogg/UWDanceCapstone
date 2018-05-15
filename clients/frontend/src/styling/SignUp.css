@@ -1,43 +1,50 @@
-
-/* 
-.content {
-    margin-left:100px;
-    margin-top:25%;
-    width: 320px;
-  }
-  
-  .title {
-    color:grey;
-  }
-  
-  Button {
-    margin: 10px;
-  } */
-/* 
-  .Functionality {
-    display: inline-block;
-    float:right;
-    min-height: 100%;
-    width:50%;
-    vertical-align: top;
-  } */
-/* 
-  LogInPhoto {
-    height: 100%;
-    display: inline-block;
-    width: 50%;
-    background-image: url('../imgs/tresmaines.jpg');
-    background-repeat: no-repeat;
-    background-size: cover
-  } */
-  
-  /* .LogInPhoto > img{
-    width: 100%;
-    min-height: 100%;
-  } */
-
-  /* .signUp, .signUpExtra {
-    background-image: url('../imgs/bg-100.jpg');
+/*SIGN UP PAGE */
+.signUpLanding {
+  background-image: url('../imgs/dance-bw.jpg');
+  background-position: center;
   background-repeat: no-repeat;
-  background-size: 100%;
-  } */
+  background-size: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 100vh;
+  width: 100vw;
+
+}
+.functionality{
+  height: 100vh;
+  overflow: scroll;
+}
+
+/*SKIP EXTRA SIGN UP INFO*/
+.signUpSkipButton{
+  background-color: transparent;
+  box-shadow: none;
+  color: #22A7E0;
+  cursor: pointer;
+}
+
+/*BIO FORM*/
+.bioTextbox{
+  display: block;
+}
+
+.extra-signup-input-field{
+  margin-bottom: 30px;
+}
+
+@media only screen and (max-width : 992px) {
+  .SignUpLanding {
+    background-image: url('../imgs/dance-bw.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    top: 0;
+    left: 0;
+    bottom: 0;
+  right: 0;
+  }
+} 

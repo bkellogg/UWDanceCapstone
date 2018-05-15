@@ -1,0 +1,77 @@
+.card1{
+    display: block;
+    position: relative;
+}
+
+
+.card101{
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    display: block
+}
+.card102{
+    z-index: 2;
+    display: block;
+    margin-top: 2%;
+}
+
+.numberDiv, .informationalDiv{
+    float: left;
+}
+
+.numberDiv{
+    width: 30%;
+}
+
+.informationalDiv{
+    width: 60%;
+    padding-left: 3%;
+    padding-right: 0;
+}
+
+#successMessage{
+    font-weight: 600;
+}
+
+.editRegistration{
+    z-index: 2;
+}
+
+.unregisterButton{
+    float: left;
+    margin-right: 2%;
+    /* background-color: #f15b59; */
+}
+
+.changeAvailabilityButton{
+    text-transform: capitalize;
+}
+
+.unregisterButton, .changeAvailabilityButton{
+    background-color: #708090;
+}
+
+.unregisterButton:hover{
+    background-color: #ef5350;
+}
+
+#numberMessage{
+    font-size: 20px;
+    margin: 0;
+}
+
+#number{
+    color: #22A7E0;
+    font-size: 120px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+
+
+/*CHANGE AVAILABILITY FORM*/
+.availabilityTableDragDown{
+    margin-top: 50px;
+}

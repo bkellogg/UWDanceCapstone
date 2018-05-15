@@ -1,18 +1,102 @@
+/*PAGE LAYOUT STYLE*/
 .mainView{
     padding-left: 5%;
+    margin-bottom: 50px;
+    max-width: 1500px;
 }
 
-h5 {
-	font-size: 22px;
-	font-style: normal;
-	font-variant: normal;
-  font-weight: 400;
-  letter-spacing: 1px;
-  color: #EA6336;
-  text-transform: capitalize;
-  margin-bottom: 2%;
+.mainContentView{
+    margin-top: 70px;
 }
 
-.dashboard{
-    width: 90%;
+.wrap{
+    /* display: flex; */
+    position: relative;
+    height: 100%;
+    width: 100%;
 }
+
+.wrapFlex{
+    display: flex;
+}
+
+.pageContentWrap{
+    width: 95%;
+}
+
+.fullWidthCard, .card2{
+    width: 100%;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    padding: 25px;
+}
+
+img#photo, .fullWidthCard, .card2, .setTimes, .dancersList-filter, .overlapAvailabilityWrap, .choreographersSelecteCast, .restOfCast, .cardBody{
+        border: 0;
+    -webkit-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+    -moz-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+    box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+}
+
+.transparentCard{
+    padding: 0;
+}
+
+.fullWidthCard, .card2, .choreographersSelecteCast, .restOfCast, .dancersList-filter, .setTimes{
+    background-color: #F6F8FC;
+}
+
+h1 {
+    font-size: 22px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: hsl(0, 0%, 13%);
+    text-transform: capitalize;
+    margin-bottom: 2%;
+}
+
+h2{
+    margin: 0;
+    padding: 0;
+}
+
+.avatar {
+    vertical-align: middle;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.fa-exclamation-circle:hover {
+    color: red
+}
+
+.toggleHeader h2 {
+    display: inline-block;
+    width: 95%; 
+}
+
+.toggleHeader i {
+    display: inline-block;
+}
+
+/*PEOPLE NAME WITH A LINK TO THEIR PROFILE*/
+.personNameLink{
+    color: #22A7E0;
+}
+
+.personNameLink:hover{
+    text-decoration: underline;
+}
+span.thumb.active{
+    background-color: transparent
+ }
+
+/*SUPER LARGE SCREEN SIZING*/
+ @media only screen and (min-width : 1920px) {
+    .mainView{
+        width: 1500px;
+    }
+ }

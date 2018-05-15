@@ -1,0 +1,53 @@
+@media only screen and (max-width : 768px) {
+    .categories{
+        font-size: 12px;
+    }
+
+    .avatar, .dancerRank, .userRoleDisp, .avatar2{
+        visibility: hidden;
+        width: 0%;
+        clear: both;
+        display: none;
+    }
+
+    .check{
+        width: 20px;
+    }
+
+    .castList, .dancersList-filter, .overlapAvailability, .castList-v2, .castList-v2-1, .wrap{
+        display: block;
+    }
+
+    .dancersList-filter, .overlapAvailability, .castList-v2, .extraClass{
+        width: 100% !important;
+        margin-top: 10px;
+        margin-bottom: 30px;
+        display: block !important;
+    }
+
+    .overlapAvailabilityWrap{
+        display: block;
+        float: left;
+        width: 100% !important;
+    }
+
+    .overlapAvailability{
+        width: auto !important;
+        display: block !important;
+    }
+
+    .extraClass, .overlapAvailability{
+        width: 100%;
+    }
+
+    .extraClass, .overlapAvailability{
+        display: block;
+    }
+
+    .extraClass{
+        z-index: 1 !important;
+    }
+    .overlapAvailability{
+        z-index: 2 !important;
+    }
+}

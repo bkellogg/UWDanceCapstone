@@ -1,26 +1,36 @@
 #logo{
     text-align: center;
-    background-color: lavender;
-    height: 70px;
-}
-
-#signOut{
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    padding-bottom:50px;
-    padding-top:20px;
-    height: 100px;
-    width: 100%;
-    text-align: center;
+    width: 250px;
 }
 
 .main {
-    padding-left: 17%;
+    padding-left: 240px;
 }
 
 .mobile {
-    visibility: hidden
+    visibility: hidden;
+    margin-bottom: 0;
+}
+
+.officialLogoImage{
+    height: 90%;
+    width: 90%;
+}
+
+.hamburgerButton{
+    position: absolute;
+}
+
+.mobileNavLogoWrap{
+    display: inline-block;
+    width: 100%;
+}
+
+.mobileNavLogo{
+    bottom: 0;
+    height: 46px;
+    display: block;
+    margin: auto;
 }
 
 @media only screen and (max-width : 992px) {
@@ -29,7 +39,8 @@
     }
 
     .mobile {
-        visibility: visible
+        visibility: visible;
+        margin-bottom: 4%;
     }
 
     .desktop {

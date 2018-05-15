@@ -2,12 +2,13 @@ import React, { Component } from 'react';
 //import { Link } from 'react-router-dom';
 import { Button } from 'react-materialize';
 import * as Util from './util.js';
-
+import logo from './imgs/logoex.png'
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
 import TextField from 'material-ui/TextField';
 import './styling/SignIn.css';
+
 
 class SignIn extends Component {
   constructor(props) {
@@ -69,6 +70,8 @@ class SignIn extends Component {
         this.setState({
           error: true
         })
+        console.error(err)
+        Util.handleError(err)
       })
   };
 
@@ -88,7 +91,7 @@ class SignIn extends Component {
           this.handleClose()
         )
         .catch(err => {
-          console.log(err)
+          Util.handleError(err)
         })
     }
   }
@@ -105,17 +108,16 @@ class SignIn extends Component {
     this.setState({ forgotemail: event.target.value })
   }
 
+  toLanding = () => {
+    this.props.toLanding()
+  }
+
   render() {
     const actions = [
       <TextField
         hintText="Account Email"
         onChange={this.getEmail}
       />,
-      /*<FlatButton
-        label="Cancel"
-        primary={true}
-        onClick={this.handleClose}
-      />,*/
       <FlatButton
         label="Submit"
         primary={true}
@@ -124,17 +126,14 @@ class SignIn extends Component {
     ];
 
     return (
-      <div className="LogInLanding" style={{ height: 100 + '%' }}>
-        
-        {/* <div className="LogInPhoto">
-        <img src={img}></img>
-        </div> */}
-
-        <div className="Functionality">
-          <div className="Logo">
+      <div className="logInLanding">
+        <i className="fas fa-arrow-circle-left fa-2x" onClick={this.toLanding}></i>
+        <div className="functionality">
+          <div className="signInUplogoWrap">
+            <img className="officialLogoLandingPage" alt="logo" src={logo} />
           </div>
-          <div className="content">
-            <h5 className="title">Sign in</h5>
+          <div className="signIn-SignUpContent">
+            <h1 className="title">Sign in</h1>
             <div className='error'>
               {this.state.error === true &&
                 <p> Incorrect username or password </p>
@@ -154,13 +153,11 @@ class SignIn extends Component {
                     </div>
                   </div>
                 </form>
-                <div className="Buttons">
-
+                <div className="buttons">
                   <Button onClick={this.signIn}>Sign In</Button>
-                  {/* <Button onClick ={this.signUp}>Sign Up</Button> */}
                 </div>
-                <div className="Link">
-                  <a className="signlink" onClick={this.handleOpen}> Forgot password? </a>
+                <div className="link">
+                  <a className="blueTextLink" onClick={this.handleOpen}> Forgot password? </a>
                   <div>
                     <Dialog
                       title="Password Reset"
@@ -169,10 +166,10 @@ class SignIn extends Component {
                       open={this.state.open}
                       onRequestClose={this.handleClose}
                     >
-                      Enter the email address associated with your account. You will recieve an email with instructions on how to reset your password.
+                      Enter the email address associated with your account. You will receive an email with instructions on how to reset your password.
                 </Dialog>
                   </div>
-                  <a className="signlink" onClick={this.signUp}> Sign Up </a>
+                  <a className="blueTextLink" onClick={this.signUp}> Sign Up </a>
                 </div>
 
               </div>
