@@ -137,6 +137,7 @@ class Profile extends Component {
         this.setState({
           resume: URL.createObjectURL(data)
         })
+        console.log(this.state.resume);
       })
       .catch((err) => {
         console.error(err)
@@ -221,7 +222,7 @@ class Profile extends Component {
   }
 
   // Set Bio word count 
-    setCounts = value => {
+  setCounts = value => {
     const trimmedValue = value.trim();
     const words = compose(this.removeEmptyElements, this.removeBreaks)(trimmedValue.split(' '));
 
@@ -231,7 +232,7 @@ class Profile extends Component {
       wordCount: value === '' ? 0 : words.length,
     });
   }
-  
+
   removeBreaks = arr => {
     const index = arr.findIndex(el => el.match(/\r?\n|\r/g));
 
@@ -365,7 +366,7 @@ class Profile extends Component {
                       {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
                       {this.state.resume != null && (
                         <div>
-                          <a href={Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                          <a href={this.state.resume}>View PDF Resume</a>
                         </div>
                       )}
 
@@ -373,7 +374,7 @@ class Profile extends Component {
                   }
                   {this.state.edit &&
                     <section>
-                      <div> Upload your dance resume as a PDF. </div>
+                      <div> Upload your dance resume as a <b>PDF</b>. </div>
                       <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
                     </section>
                   }

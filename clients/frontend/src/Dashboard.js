@@ -134,6 +134,7 @@ class Dashboard extends Component {
       });
   }
 
+  // Fix announcements render 
   render() {
     const pending = this.state.pending
     let pendingCasting = pending.map((piece, i) => {

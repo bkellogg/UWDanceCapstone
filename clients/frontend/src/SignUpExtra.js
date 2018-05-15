@@ -53,7 +53,7 @@ class SignUpExtra extends Component {
       }
     };
 
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
+    xhr.open("POST", Util.API_URL_BASE + "users/me/photo");
     xhr.setRequestHeader("Authorization", Util.getAuth());
     xhr.setRequestHeader("ImageFieldName", "image");
 
@@ -81,7 +81,7 @@ class SignUpExtra extends Component {
       }
     };
 
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
+    xhr.open("POST", Util.API_URL_BASE + "users/me/resume");
     xhr.setRequestHeader("Authorization", Util.getAuth());
     xhr.setRequestHeader("ResumeFieldName", "resume");
 
