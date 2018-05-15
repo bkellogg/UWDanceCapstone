@@ -6,6 +6,11 @@
     .avatar, .dancerRank, .userRoleDisp, .avatar2{
         visibility: hidden;
         position: absolute;
+
+
+        width: 0%;
+        clear: both;
+        display: none;
     }
 
     .check{
