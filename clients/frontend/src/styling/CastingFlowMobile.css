@@ -3,10 +3,8 @@
         font-size: 12px;
     }
 
-    .avatar, .dancerRank, .userRoleDisp, .avatar2{
+    .avatar, .dancerRank, .userRoleDisp, .avatar2, .avatarWrap{
         visibility: hidden;
-        position: absolute;
-
 
         width: 0%;
         clear: both;

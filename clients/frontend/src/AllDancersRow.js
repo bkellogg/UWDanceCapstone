@@ -234,7 +234,7 @@ class AllDancersRow extends Component {
                     />
                 </td>
             }
-        <td>
+        <td className="avatarWrap">
             <img src={this.state.photoUrl} alt="profile" className="avatar"/>
         </td>
         <td className="dancerAssignedNumber">

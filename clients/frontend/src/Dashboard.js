@@ -163,7 +163,7 @@ class Dashboard extends Component {
               <div id='announcements'>
                 {pendingCasting}
                 {this.state.user.bio === "" &&
-                  <div className="announcement completeProfileBorderColor">
+                  <div className="announcement completeProfileBorderColor" onClick={ () => window.location = "/profile"}>
                     <div className="completeProfileCardColor">
                       <p className="announcementMessage"> Please complete your profile. </p>
                     </div>
