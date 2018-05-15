@@ -48,6 +48,13 @@
     text-transform: capitalize;
 }
 
+.cancelButton, .cancelButton:hover{
+    background-color: transparent;
+    box-shadow: none;
+    color: #22A7E0;
+    text-transform: capitalize;
+}
+
 .unregisterButton, .changeAvailabilityButton{
     background-color: #708090;
 }
@@ -75,3 +82,4 @@
 .availabilityTableDragDown{
     margin-top: 50px;
 }
+

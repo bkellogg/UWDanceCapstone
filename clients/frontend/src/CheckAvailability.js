@@ -101,7 +101,7 @@ class CheckAvailability extends Component {
                       <th></th>
                       <th>#</th>
                       <th>Dancer</th>
-                      <th></th>
+                      <th>Notes</th>
                     </tr>
                     {rows}
                     {conflictRows}

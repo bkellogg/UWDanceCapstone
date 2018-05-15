@@ -3,14 +3,6 @@
         font-size: 12px;
     }
 
-    .avatar, .dancerRank, .userRoleDisp, .avatar2, .avatarWrap{
-        visibility: hidden;
-
-        width: 0%;
-        clear: both;
-        display: none;
-    }
-
     .check{
         width: 20px;
     }
