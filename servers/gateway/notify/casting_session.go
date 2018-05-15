@@ -159,7 +159,7 @@ func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, error) {
 	chor := Choreographer(chorID)
 
 	// confirm that the choreographer is in the current casting session
-	if _, exists := c.Choreographers[chor]; !exists {
+	if exists := c.choreographerExists(chorID); !exists {
 		return nil, errors.New("choreographer is not currently casting in this session")
 	}
 
@@ -173,21 +173,36 @@ func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, error) {
 
 	dancerIDSlice := make([]int64, 0, len(c.ChorCast[chor]))
 
+	// remove the choreographer's ChorCast entry
+	delete(c.ChorCast, chor)
+
 	// Add the dancers id to the slice to be returned and purge
 	// other entries that they are in, if they exist.
 	for dancerID, _ := range c.ChorCast[chor] {
 		dancerIDSlice = append(dancerIDSlice, dancerID.int())
-		delete(c.Dancers, dancerID)
-		delete(c.Casted, dancerID)
-		delete(c.Uncasted, dancerID)
+
+		// remove the entry saying the choreographer has casted
+		// this dancer
+		delete(c.Casted[dancerID], chor)
+
+		// after removing the choreographer as casting the
+		// dancer, decrement the number of shows this dancer
+		// is available for.
+		dancer, found := c.dancer(int64(dancerID))
+		if found {
+			dancer.NumShows--
+			// if the dancer is available for 0 more shows,
+			// remove them from the casting session since
+			// they can no longer be cast in any other show.
+			if dancer.NumShows == 0 {
+				delete(c.Dancers, dancerID)
+				delete(c.Casted, dancerID)
+				delete(c.Uncasted, dancerID)
+			}
+		}
 	}
 
-	// remove the choreographer from the casting session
-	delete(c.Choreographers, chor)
-
-	// remove the choreographer's ChorCast entry
-	delete(c.ChorCast, chor)
-
+	// might be unnecessary - disabling for now
 	choreographers := make([]Choreographer, 0, len(c.Choreographers))
 	for chor, _ := range c.Choreographers {
 		choreographers = append(choreographers, chor)

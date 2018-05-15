@@ -55,6 +55,11 @@ func main() {
 	frontEndPath := require("FRONTENDPATH", "")
 	assetsPath := require("ASSETSPATH", "")
 
+	isDebug := require("STAGE_DEBUG", "false") == "true"
+	if isDebug {
+		log.Println("debug mode enabled")
+	}
+
 	// admin user info
 	adminFName := require("STAGE_ADMIN_FIRSTNAME", "")
 	adminLName := require("STAGE_ADMIN_LASTNAME", "")
@@ -94,7 +99,8 @@ func main() {
 	castingContext := handlers.NewCastingContext(permChecker,
 		castingSession,
 		templatesPath+"confirmation_tpl.html",
-		mailContext.AsMailCredentials())
+		mailContext.AsMailCredentials(),
+		isDebug)
 
 	baseRouter := middleware.NewAuthenticatedRouter(sessionKey, redis)
 	baseRouter.Handle(appvars.MailPath, authorizer.Authorize(mailContext.MailHandler))

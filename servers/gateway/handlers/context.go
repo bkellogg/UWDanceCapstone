@@ -56,6 +56,7 @@ type CastingContext struct {
 	Session         *notify.CastingSession
 	CastingTPLPath  string
 	MailCredentials *mail.Credentials
+	IsDebugMode     bool
 }
 
 // NewCastingContext returns a new CastingContext
@@ -63,12 +64,14 @@ type CastingContext struct {
 func NewCastingContext(pc *models.PermissionChecker,
 	session *notify.CastingSession,
 	tplPath string,
-	credentials *mail.Credentials) *CastingContext {
+	credentials *mail.Credentials,
+	debugMode bool) *CastingContext {
 	return &CastingContext{
 		permChecker:     pc,
 		Session:         session,
 		CastingTPLPath:  tplPath,
 		MailCredentials: credentials,
+		IsDebugMode:     debugMode,
 	}
 }
 
