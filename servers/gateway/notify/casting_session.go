@@ -366,8 +366,13 @@ func (c *CastingSession) toCastingUpdate(chorID int64) (*CastingUpdate, error) {
 			castingUpdate.Contested = append(castingUpdate.Contested, c.makeContestedDancer(
 				dancerID, int(rank), chorsContesting, chorID))
 		} else {
-			dancer, _ := c.dancer(dancerID.int())
-			castingUpdate.Cast = append(castingUpdate.Cast, dancer.Rank(int(rank)))
+			dancer, found := c.dancer(dancerID.int())
+			if !found {
+				log.Printf("dancer with ID %d was not found in the casting sessions dancers\n", dancerID)
+				continue
+			}
+			rankedDancer := dancer.Rank(int(rank))
+			castingUpdate.Cast = append(castingUpdate.Cast, rankedDancer)
 		}
 	}
 
@@ -383,13 +388,21 @@ func (c *CastingSession) toCastingUpdate(chorID int64) (*CastingUpdate, error) {
 
 	// sort the dancers before returning them
 	if len(castingUpdate.Contested) > 0 {
-		sort.Slice(castingUpdate.Contested, CDSlice(castingUpdate.Contested).Less)
+		sort.Slice(castingUpdate.Contested, func(i, j int) bool {
+			return castingUpdate.Contested[i].Dancer.Dancer.RegNum <
+				castingUpdate.Contested[j].Dancer.Dancer.RegNum
+		})
 	}
 	if len(castingUpdate.Uncasted) > 0 {
-		sort.Slice(castingUpdate.Uncasted, DSlice(castingUpdate.Uncasted).Less)
+		sort.Slice(castingUpdate.Uncasted, func(i, j int) bool {
+			return castingUpdate.Uncasted[i].RegNum < castingUpdate.Uncasted[j].RegNum
+		})
 	}
+
 	if len(castingUpdate.Cast) > 0 {
-		sort.Slice(castingUpdate.Cast, RDSlice(castingUpdate.Cast).Less)
+		sort.Slice(castingUpdate.Cast, func(i, j int) bool {
+			return castingUpdate.Cast[i].Dancer.RegNum < castingUpdate.Cast[j].Dancer.RegNum
+		})
 	}
 
 	return castingUpdate, nil
