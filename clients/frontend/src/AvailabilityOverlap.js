@@ -263,7 +263,7 @@ class AvailabilityOverlap extends Component {
                 {daysSimple}
               </div>
               <div>
-                <div style={{float: "left"}}>
+                <div style={{float: "left", width: "12.5%"}}>
                 {timesSimple}
                 </div>
                 <div>
