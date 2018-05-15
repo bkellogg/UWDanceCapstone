@@ -150,6 +150,7 @@ class AllDancersRow extends Component {
     }
 
   dropFromCast = () => {
+      console.log(this.state.person)
     let castBody = {
         "action": "remove",
         "drops" : [this.state.person.id]
@@ -271,12 +272,15 @@ class AllDancersRow extends Component {
                 </td>
         }
         {
-            this.props.checkAvailability && hasComments && 
+            this.props.checkAvailability &&
                 <td>
+                    {
+                    hasComments &&
                     <div className="tooltip">
                         <i className="fas fa-comment"></i>
                         <span className="tooltiptext">{this.props.comments[0].comment}</span>
                     </div>
+                    }
                 </td>
         }
         <td>
@@ -328,6 +332,14 @@ class AllDancersRow extends Component {
             }
             {
                 this.props.resolveConflict &&
+                    <Button 
+                    backgroundColor="#708090"
+                    style={{color: '#ffffff', float: 'right'}}
+                    onClick={() => this.dropFromCast()}> 
+                    DROP </Button>
+            }
+            {
+                this.props.checkAvailability &&
                     <Button 
                     backgroundColor="#708090"
                     style={{color: '#ffffff', float: 'right'}}

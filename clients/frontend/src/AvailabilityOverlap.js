@@ -14,7 +14,7 @@ const timesFormatted = ["10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:00 PM
 //const colors = ["#fff", "#9ABB3E", "#CC66AD", "#2B823D", "#6640BF", "#C8BA5B", "#7A2932", "#260D0D"] visually distinct, helpful for debugging
 //const colors = ["#fff", "#D6E0F5", "#ADC2EB", "#85A3E0", "#5C85D6", "#3366CC", "#2952A3", "#1F3D7A", "#142952"]
 
-const colors = ["fff", "#f1f5fc", "#e3eaf8", "#d6e0f5", "#c8d6f2", "#baccee", "#adc2eb", "#9fb8e8", 
+const colors = ["#fff", "#f1f5fc", "#e3eaf8", "#d6e0f5", "#c8d6f2", "#baccee", "#adc2eb", "#9fb8e8", 
 "#91aee4", "#84a3e1", "#7699de", "#688fda", "#5b85d7", "#4d7bd4", "#4071d0", "#3266cd", "#2f60bf", "#2b59b2", "#2852a4", 
 "#254b96", "#214489", "#1e3d7b", "#1b376d", "#173060", "#142952", "#124", "#0d1b37", "#0a1529", "#070e1b", "#03070e", "#000"]
 
@@ -219,7 +219,7 @@ class AvailabilityOverlap extends Component {
       )
     })
     //generates the days header
-    let daysSimple = [<div className="daysSimple"></div>]
+    let daysSimple = [<div key={daysRef.length + 1} className="daysSimple"></div>]
     daysRef.forEach((day, i) => {
       daysSimple.push(
         <div key={i} className="daysSimple">
