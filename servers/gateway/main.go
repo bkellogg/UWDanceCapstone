@@ -55,6 +55,7 @@ func main() {
 	frontEndPath := require("FRONTENDPATH", "")
 	assetsPath := require("ASSETSPATH", "")
 
+	// determine if the app should be started in DEBUG mode
 	isDebug := require("STAGE_DEBUG", "false") == "true"
 	if isDebug {
 		log.Println("debug mode enabled")

@@ -2,7 +2,7 @@ package appvars
 
 const (
 	ErrNotSignedIn               = "you must be signed in to use this resource"
-	ErrPermissionDenied          = "you do not have access to this resource"
+	ErrPermissionDenied          = "you do not have access to the requested resource or the requested entity"
 	ErrMethodNotAllowed          = "request method is not supported on this resource"
 	ErrObjectTypeNotSupported    = "object type is not supported on this resource"
 	ErrSubObjectTypeNotSupported = "sub object type is not supported on the given object type"
