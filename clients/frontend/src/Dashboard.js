@@ -145,11 +145,45 @@ class Dashboard extends Component {
             <RaisedButton
               label="Accept"
               className="acceptCastButton"
-               style={{ color: '#ffffff' }}
-               backgroundColor="#22A7E0"
+              style={{ color: '#ffffff' }}
+              backgroundColor="#22A7E0"
               onClick={() => this.acceptCasting(piece.id)}
             />
           </div>
+        </div>
+      )
+    })
+    let displayAnnouncements = this.state.currAnnouncements.map((anncouncement, index) => {
+      return (
+        <div key={index} className="announcement announcementBorderColor">
+          {
+            <div className="announcementCardColor">
+              <p className="announcementMessage"> {anncouncement.message} </p>
+            </div>
+          }
+        </div>
+      )
+    })
+    let displayShows = this.props.shows.map((anncouncement, index) => {
+      var moment = require('moment');
+      var auditionDay = moment(anncouncement.audition.time).format('MMM. d, YYYY');
+      var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
+      var auditionLink = anncouncement.name.split(' ').join('');
+      return (
+        <div key={index} className="announcement newAuditionBorderColor">
+          {
+            <div className="auditionAnnouncementCardColor">
+              <div className="showTitle">
+                <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
+              </div>
+              <div className="showInformation">
+                <p> <b>Date:</b> {auditionDay} </p>
+                <p> <b>Time:</b> {auditionTime} </p>
+                <p> <b>Location:</b> {anncouncement.audition.location} </p>
+                <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
+              </div>
+            </div>
+          }
         </div>
       )
     })
@@ -170,41 +204,8 @@ class Dashboard extends Component {
                     </div>
                   </div>
                 }
-                {this.state.currAnnouncements.map((anncouncement, index) => {
-                  return (
-                    <div key={index} className="announcement announcementBorderColor">
-                      {
-                        <div className="announcementCardColor">
-                          <p className="announcementMessage"> {anncouncement.message} </p>
-                        </div>
-                      }
-                    </div>
-                  )
-                })}
-
-                {this.props.shows.map((anncouncement, index) => {
-                  var moment = require('moment');
-                  var auditionDay = moment(anncouncement.audition.time).format('MMM. d, YYYY');
-                  var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
-                  var auditionLink = anncouncement.name.split(' ').join('');
-                  return (
-                    <div key={index} className="announcement newAuditionBorderColor">
-                      {
-                        <div className="auditionAnnouncementCardColor">
-                          <div className="showTitle">
-                            <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
-                          </div>
-                          <div className="showInformation">
-                            <p> <b>Date:</b> {auditionDay} </p>
-                            <p> <b>Time:</b> {auditionTime} </p>
-                            <p> <b>Location:</b> {anncouncement.audition.location} </p>
-                            <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  )
-                })}
+                {displayAnnouncements}
+                {displayShows}
               </div>
             </div>
           </div>

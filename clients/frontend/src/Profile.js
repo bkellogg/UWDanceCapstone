@@ -137,7 +137,6 @@ class Profile extends Component {
         this.setState({
           resume: URL.createObjectURL(data)
         })
-        console.log(this.state.resume);
       })
       .catch((err) => {
         console.error(err)
