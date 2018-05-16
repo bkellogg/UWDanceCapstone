@@ -31,14 +31,7 @@ class Calendar extends Component {
       maxTime : MAXTIME,
       openSetRehearsal : false,
       openNewRehearsal : false,
-      events : [
-        {
-          id: 3,
-          title: 'Weekly Rehearsal',
-          start: new Date('2018-05-10 11:00 AM'),
-          end: new Date('2018-05-10 12:30 PM'),
-        }
-      ]
+      events : []
     }
   };
 
@@ -128,7 +121,7 @@ class Calendar extends Component {
     let slotInfo = this.state.slotInfo
     return (
       <section>
-        <BigCalendar style={{ height: "100%", width: "100%" }}
+        <BigCalendar style={{ height: "650px", width: "100%" }}
           selectable
           defaultDate={new Date()}
           defaultView='week'

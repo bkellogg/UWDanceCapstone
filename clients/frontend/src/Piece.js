@@ -67,7 +67,6 @@ class Piece extends Component {
           .then((t) => Promise.reject(t));
       })
       .then(piece => {
-        console.log(piece)
         this.setState({
           pieceID : piece.id
         })
@@ -316,6 +315,7 @@ class Piece extends Component {
                           <th>Name</th>
                           <th className="bioOfUser">Bio</th>
                           <th className="userEmail">Email</th>
+                          <th></th>
                         </tr>
                         {castRows}
                       </tbody>
