@@ -49,6 +49,9 @@ class Audition extends Component {
           currAvailability: audition.availability })
       })
       .catch(err => {
+        this.state.error({
+          error: err
+        })
         console.error(err)
         Util.handleError(err)
       })
@@ -96,6 +99,9 @@ class Audition extends Component {
       )
       .catch(err => {
         console.error(err)
+        this.state.error({
+          error: err
+        })
         Util.handleError(err)
       })
 
@@ -134,6 +140,10 @@ class Audition extends Component {
               currAvailability = {this.state.currAvailability}
               setAvailability={this.setAvailability}
               discardChanges={() => this.setState({ changeRegistration: false })} />
+            }
+            {
+              this.state.error &&
+              <p>{this.state.error}</p>  
             }
             <Snackbar
               open={this.state.open}

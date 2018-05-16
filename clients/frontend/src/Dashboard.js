@@ -146,7 +146,7 @@ class Dashboard extends Component {
               className="acceptCastButton"
                style={{ color: '#ffffff' }}
                backgroundColor="#22A7E0"
-              onClick={() => this.acceptCasting(piece.id)}
+                onClick={() => this.acceptCasting(piece.id)}
             />
           </div>
         </div>
