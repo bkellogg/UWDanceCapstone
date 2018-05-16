@@ -5,41 +5,46 @@ import './styling/CastingFlow.css';
 const daysRef = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] //TODO make audition match this CRYYYY
 
 const timesRef = ["1000", "1030", "1100", "1130", "1200", "1230", "1300", "1330", "1400", "1430",
-  "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100"]
+  "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130", "2200", "2230"]
 
-const timesFormatted = ["", "10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:00 PM", "", "2:00 PM", "", "3:00 PM", "", "4:00 PM", "",
-  "5:00 PM", "", "6:00 PM", "", "7:00 PM", "", "8:00 PM", "", "9:00 PM"]
+const timesFormatted = ["10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:00 PM", "", "2:00 PM", "", "3:00 PM", "", "4:00 PM", "",
+  "5:00 PM", "", "6:00 PM", "", "7:00 PM", "", "8:00 PM", "", "9:00 PM", "", "10:00 PM", ""]
 
 
 //const colors = ["#fff", "#9ABB3E", "#CC66AD", "#2B823D", "#6640BF", "#C8BA5B", "#7A2932", "#260D0D"] visually distinct, helpful for debugging
-const colors = ["#fff", "#D6E0F5", "#ADC2EB", "#85A3E0", "#5C85D6", "#3366CC", "#2952A3", "#1F3D7A", "#142952"]
+//const colors = ["#fff", "#D6E0F5", "#ADC2EB", "#85A3E0", "#5C85D6", "#3366CC", "#2952A3", "#1F3D7A", "#142952"]
+
+const colors = ["#fff", "#f1f5fc", "#e3eaf8", "#d6e0f5", "#c8d6f2", "#baccee", "#adc2eb", "#9fb8e8", 
+"#91aee4", "#84a3e1", "#7699de", "#688fda", "#5b85d7", "#4d7bd4", "#4071d0", "#3266cd", "#2f60bf", "#2b59b2", "#2852a4", 
+"#254b96", "#214489", "#1e3d7b", "#1b376d", "#173060", "#142952", "#124", "#0d1b37", "#0a1529", "#070e1b", "#03070e", "#000"]
 
 class AvailabilityOverlap extends Component {
   constructor(props) {
     super(props);
     this.state = {
       filteredCast: this.props.filteredCast,
+      maxCast: this.props.filteredCast,
       dayTimes: [
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ]
       ]
     };
@@ -63,7 +68,7 @@ class AvailabilityOverlap extends Component {
     let dayTimes = this.state.dayTimes
     let newWeek = []
     dayTimes.map(days => {
-      newWeek.push([[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []])
+      newWeek.push([[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []])
       return newWeek
     })
     return newWeek
@@ -125,8 +130,7 @@ class AvailabilityOverlap extends Component {
               let startIndex = timesRef.indexOf(time.start)
               let endIndex = timesRef.indexOf(time.end)
 
-              //okay so for the times in timesRef it works,but brendan put times in that aren't in our calendar
-              //which is fine, but it means I am going to ignore times that aren't in our window, so when index = -1
+              // I am going to ignore times that aren't in our window, so when index = -1
               if (startIndex < 0 || endIndex < 0) {
                 return
               }
@@ -152,7 +156,24 @@ class AvailabilityOverlap extends Component {
       dayTimes: dayTimes
     })
 
+    this.calculateMaxCast(dayTimes)
+
     return dayTimes
+  }
+
+  calculateMaxCast = (dayTimes) => {
+    let max = 0
+    dayTimes.forEach((day, i) => {// go through each day
+      day.forEach((time, j) => {
+        let uniqueIDs = [...new Set(time)];
+        if (uniqueIDs.length > max) {
+          max = uniqueIDs.length
+        }
+      })
+    })
+    this.setState({
+      maxCast : max
+    })
   }
 
   render() {
@@ -182,8 +203,9 @@ class AvailabilityOverlap extends Component {
         return (
           <div className="tooltip" key={j}>
             <div className="overlapTimes" style={{ "backgroundColor": color }}>
-              {names.length >0 &&
-              <span className="tooltiptext">{names}</span>
+              {
+                names.length > 0 &&
+                <span className="tooltiptext">{names}</span>
               }
             </div>
           </div>
@@ -197,8 +219,9 @@ class AvailabilityOverlap extends Component {
       )
     })
     //generates the days header
-    let daysSimple = daysRef.map((day, i) => {
-      return (
+    let daysSimple = [<div key={daysRef.length + 1} className="daysSimple"></div>]
+    daysRef.forEach((day, i) => {
+      daysSimple.push(
         <div key={i} className="daysSimple">
           {day}
         </div>
@@ -213,8 +236,7 @@ class AvailabilityOverlap extends Component {
       )
     })
 
-
-
+    let midColor = Math.round(this.state.maxCast / 2)
     return (
       <section>
         <div className="overlapAvailability">
@@ -223,25 +245,30 @@ class AvailabilityOverlap extends Component {
               <h2 className="smallHeading">Availability</h2>
             </div>
             <div className="legend">
-              <p className="colorIndicator">Least Available</p>
+              <p className="colorIndicator">1 available</p>
               <div className="colorsWrap">
                 <div className="lightLegendColor" style={{ "backgroundColor": colors[1] }}> </div>
-                <div className="mediumLegendColor" style={{ "backgroundColor": colors[4] }}> </div>
-                <div className="darkLegendColor" style={{ "backgroundColor": colors[8] }}> </div>
+                <div className="mediumLegendColor" style={{ "backgroundColor": colors[midColor] }}> </div>
+                <div className="darkLegendColor" style={{ "backgroundColor": colors[this.state.maxCast] }}> </div>
               </div>
-              <p className="colorIndicator">Most Available</p>
+              <p className="colorIndicator">{this.state.maxCast} available</p>
             </div>
           </div>
           <div className="availabilityCalendar">
-            <div className="timesRow">
-              {timesSimple}
-            </div>
             <div className="timeBlock">
+              {/* <div className="timesRow">
+                {timesSimple}
+              </div> */}
               <div className="daysHeader">
                 {daysSimple}
               </div>
-              <div className="overlapTimes">
+              <div>
+                <div style={{float: "left", width: "12.5%"}}>
+                {timesSimple}
+                </div>
+                <div>
                 {overlapDays}
+                </div>
               </div>
             </div>
           </div>

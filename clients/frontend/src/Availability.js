@@ -6,7 +6,7 @@ import "react-table-drag-select/style.css";
 import './styling/Availability.css'
 
 const times = ["1000", "1030","1100","1130","1200","1230","1300", "1330", "1400","1430", 
-"1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130"]
+"1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130", "2200", "2230"]
 
 const days = ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"]
 
@@ -18,6 +18,8 @@ class Availability extends Component {
         this.calculateTimes = this.calculateTimes.bind(this)
         this.state = {
             cells: [
+                [false, false, false, false, false, false, false, false],
+                [false, false, false, false, false, false, false, false],
                 [false, false, false, false, false, false, false, false],
                 [false, false, false, false, false, false, false, false],
                 [false, false, false, false, false, false, false, false],
@@ -81,7 +83,10 @@ class Availability extends Component {
         [false, false, false, false, false, false, false, false],
         [false, false, false, false, false, false, false, false],
         [false, false, false, false, false, false, false, false],
-        [false, false, false, false, false, false, false, false]]
+        [false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false, false]
+      ]
       
         this.setState({ cells });
 
@@ -169,7 +174,7 @@ class Availability extends Component {
             <div>
                 <div className="availabilityTableDragDown">
       <TableDragSelect value={this.state.cells} onChange={this.handleChange}>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled />
           <td disabled>Monday</td>
           <td disabled>Tuesday</td>
@@ -179,8 +184,8 @@ class Availability extends Component {
           <td disabled>Saturday</td>
           <td disabled>Sunday</td>
         </tr>
-        <tr>
-          <td disabled>10:00 AM</td>
+        <tr className="availabilityRow">
+          <td disabled>10:00AM</td>
           <td />
           <td />
           <td />
@@ -189,7 +194,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -199,8 +204,8 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>11:00 AM</td>
+        <tr className="availabilityRow">
+          <td disabled>11:00AM</td>
           <td />
           <td />
           <td />
@@ -209,7 +214,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -219,8 +224,8 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>12:00 PM</td>
+        <tr className="availabilityRow">
+          <td disabled>12:00PM</td>
           <td />
           <td />
           <td />
@@ -229,7 +234,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -239,8 +244,8 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>1:00 PM</td>
+        <tr className="availabilityRow">
+          <td disabled>1:00PM</td>
           <td />
           <td />
           <td />
@@ -249,7 +254,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -259,8 +264,8 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>2:00 PM</td>
+        <tr className="availabilityRow">
+          <td disabled>2:00PM</td>
           <td />
           <td />
           <td />
@@ -269,7 +274,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -279,8 +284,8 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>3:00 PM </td>
+        <tr className="availabilityRow">
+          <td disabled>3:00PM </td>
           <td />
           <td />
           <td />
@@ -289,7 +294,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -299,8 +304,8 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>4:00 PM</td>
+        <tr className="availabilityRow">
+          <td disabled>4:00PM</td>
           <td />
           <td />
           <td />
@@ -309,7 +314,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -319,8 +324,8 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>5:00 PM</td>
+        <tr className="availabilityRow">
+          <td disabled>5:00PM</td>
           <td />
           <td />
           <td />
@@ -329,7 +334,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -339,8 +344,8 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>6:00 PM</td>
+        <tr className="availabilityRow">
+          <td disabled>6:00PM</td>
           <td />
           <td />
           <td />
@@ -349,7 +354,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -359,8 +364,8 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>7:00 PM</td>
+        <tr className="availabilityRow">
+          <td disabled>7:00PM</td>
           <td />
           <td />
           <td />
@@ -369,7 +374,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -379,8 +384,8 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>8:00 PM </td>
+        <tr className="availabilityRow">
+          <td disabled>8:00PM </td>
           <td />
           <td />
           <td />
@@ -389,7 +394,7 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
+        <tr className="availabilityRow">
           <td disabled></td>
           <td />
           <td />
@@ -399,8 +404,28 @@ class Availability extends Component {
           <td />
           <td />
         </tr>
-        <tr>
-          <td disabled>9:00 PM</td>
+        <tr className="availabilityRow">
+          <td disabled>9:00PM</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr className="availabilityRow">
+          <td disabled></td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr className="availabilityRow">
+          <td disabled>10:00PM</td>
           <td />
           <td />
           <td />

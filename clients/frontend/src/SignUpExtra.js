@@ -139,7 +139,8 @@ class SignUpExtra extends Component {
       <section className="signUpExtra">
         <form className="authenticate">
         <div className="extra-signup-input-field">
-            <p>Bio (60 words or less)</p>
+          <h2 style={{fontSize: "16px", textAlign:"center"}}>This step is not required.</h2>
+            <p>Bio</p>
             <TextField
               className="bioTextbox"
               name="bio"
@@ -151,7 +152,7 @@ class SignUpExtra extends Component {
             )}
           </div>
           <div className="extra-signup-input-field">
-            <p>Resume (PDF)</p>
+            <p>Resume <b>(PDF)</b></p>
             <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
           </div>
           <div className="extra-signup-input-field">

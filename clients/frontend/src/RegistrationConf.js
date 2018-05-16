@@ -5,6 +5,7 @@ import Moment from 'react-moment';
 import './styling/General.css';
 import './styling/RegistrationConf.css';
 import './styling/RegistrationConfMobile.css';
+import Availability from './Availability';
 import * as Util from './util.js';
 import Button from 'react-materialize/lib/Button';
 

@@ -75,7 +75,7 @@ class CheckAvailability extends Component {
     if (this.state.cast) {
       rows = this.state.cast.map(dancer => {
         return (
-          <AllDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} comments={dancer.dancer.comments} regNum={dancer.dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)} />
+          <AllDancersRow key={dancer.dancer.user.id} person={dancer.dancer.user} comments={dancer.dancer.comments} regNum={dancer.dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)} audition={this.props.auditionID}/>
         )
       })
     }
@@ -83,7 +83,7 @@ class CheckAvailability extends Component {
       conflictRows = this.state.contested.map(conflict => {
         let dancer = conflict.rankedDancer.dancer
         return (
-          <AllDancersRow key={dancer.user.id} person={dancer.user} comments={dancer.comments} regNum={dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)} />
+          <AllDancersRow key={dancer.user.id} person={dancer.user} comments={dancer.comments} regNum={dancer.regNum} checkAvailability={true} filterCast={(id) => this.filterCast(id)} audition={this.props.auditionID}/>
         )
       })
     }
@@ -102,6 +102,8 @@ class CheckAvailability extends Component {
                       <th>#</th>
                       <th>Dancer</th>
                       <th>Notes</th>
+                      <th>Comment</th>
+                      <th></th>
                     </tr>
                     {rows}
                     {conflictRows}
