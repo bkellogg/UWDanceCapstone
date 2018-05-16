@@ -172,12 +172,6 @@ class Calendar extends Component {
         <Dialog
           title={"Create New Rehearsal"}
           actions={[
-            <TextField
-              hintText="Rehearsal Name"
-              onChange={(event) => this.setState({
-                rehearsalName : event.target.value
-              })}
-            />,
             <FlatButton
               label="Cancel"
               style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
@@ -197,7 +191,21 @@ class Calendar extends Component {
           onRequestClose={this.handleClose}
           >
           <div>
-            This rehearsal will go from {slotInfo.start.toLocaleTimeString()} to {slotInfo.end.toLocaleTimeString()} on {slotInfo.start.toLocaleDateString()}
+          <TextField
+              hintText="Rehearsal Name"
+              onChange={(event) => this.setState({
+                rehearsalName : event.target.value
+              })}
+            />
+            <br />
+            <br />
+            This rehearsal will go from 
+            <input type="time" name="start" value={moment(slotInfo.start).format("HH:mm")} />
+            
+            to 
+            <input type="time" name="start" value={moment(slotInfo.end).format("HH:mm")} />
+            on 
+            <input type="date" name="date" value={moment(slotInfo.start).format('YYYY-MM-DD')} />
           </div>
         </Dialog>
       </section>
