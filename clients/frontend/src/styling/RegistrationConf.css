@@ -56,8 +56,12 @@
     text-transform: capitalize;
 }
 
-.unregisterButton, .changeAvailabilityButton{
+.changeAvailabilityButton{
     background-color: #708090;
+}
+
+.unregisterButton {
+    background-color: #ef5350;
 }
 
 .unregisterButton:hover{
