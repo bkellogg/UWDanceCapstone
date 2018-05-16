@@ -74,5 +74,6 @@ func (store *Database) LogError(err ErrorLog) {
 		err.Time, err.RemoteAddr, err.RequestMethod, err.RequestURI, err.Code, err.Message)
 	if dbErr != nil {
 		log.Println("logging failed: " + dbErr.Error())
+		log.Println(err.Message)
 	}
 }
