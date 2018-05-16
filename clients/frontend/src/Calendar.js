@@ -164,7 +164,7 @@ class Calendar extends Component {
           onRequestClose={this.handleClose}
           >
           <div>
-            This rehearsal goes from {event.start.toLocaleTimeString()} to {event.end.toLocaleTimeString()}
+            This rehearsal goes from {moment(event.start).format("hh:mm A")} to {moment(event.end).format("hh:mm A")}
           </div>
         </Dialog>
 
@@ -201,7 +201,6 @@ class Calendar extends Component {
             <br />
             This rehearsal will go from 
             <input type="time" name="start" value={moment(slotInfo.start).format("HH:mm")} />
-            
             to 
             <input type="time" name="start" value={moment(slotInfo.end).format("HH:mm")} />
             on 

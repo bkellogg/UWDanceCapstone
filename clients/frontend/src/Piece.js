@@ -67,6 +67,7 @@ class Piece extends Component {
           .then((t) => Promise.reject(t));
       })
       .then(piece => {
+        console.log(piece)
         this.setState({
           pieceID : piece.id
         })
@@ -234,7 +235,6 @@ class Piece extends Component {
 
   render() {
     let musicianRow = []
-    //let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
     musicianRow = musicians.map((musician, i) => {
       return (
@@ -243,7 +243,7 @@ class Piece extends Component {
     })
 
     let castRows = this.state.dancers.map((dancer, i) => {
-      return (<PersonRow p={dancer} piece={true} key={i} />)
+      return (<PersonRow p={dancer} piece={true} key={i} audition={1}/>)
     })
 
     let contactRows = this.state.dancers.map((dancer, i) => {

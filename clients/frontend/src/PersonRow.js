@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import img from './imgs/defaultProfile.jpg';
+import Button from 'react-materialize/lib/Button';
+
 import * as Util from './util.js';
 import './styling/General.css';
 
@@ -14,6 +16,21 @@ class PersonRow extends Component {
 
   componentDidMount(){
     this.getPhoto()
+  }
+
+  dropFromCast = () => {
+    let castBody = {
+        "action": "remove",
+        "drops" : [this.props.p.id]
+    }
+
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", castBody, "PATCH", true)
+    .then(res => {
+      if (res.ok) {
+        return res.text()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
   }
 
   getPhoto = () => {
@@ -66,6 +83,16 @@ class PersonRow extends Component {
           <td>
           {p.email}
           </td>
+          {
+            this.props.piece &&
+            <td className="dropDancer">
+              <Button 
+                backgroundColor="#708090"
+                style={{color: '#ffffff', float: 'right'}}
+                onClick={() => this.dropFromCast()}> 
+                DROP </Button>
+            </td>
+          }
         </tr>
     )
 };

@@ -150,7 +150,6 @@ class AllDancersRow extends Component {
     }
 
   dropFromCast = () => {
-      console.log(this.state.person)
     let castBody = {
         "action": "remove",
         "drops" : [this.state.person.id]
