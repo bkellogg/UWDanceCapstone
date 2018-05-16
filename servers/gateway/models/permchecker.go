@@ -197,10 +197,10 @@ func (pc *PermissionChecker) UserCanSeeUser(u *User, target int64) bool {
 	rows, err := pc.db.db.Query(`SELECT COUNT(DISTINCT P.PieceID)
 		AS NumSharedPieces FROM Pieces P JOIN UserPiece UP ON P.PieceID = UP.PieceID
 		WHERE EXISTS (
-			SELECT * FROM UserPiece WHERE UserID = 2 AND PieceID = P.PieceID AND IsDeleted = FALSE
+			SELECT * FROM UserPiece WHERE UserID = ? AND PieceID = P.PieceID AND IsDeleted = FALSE
 		) AND EXISTS (
-			SELECT * FROM UserPiece WHERE UserID = 90 AND PieceID = P.PieceID AND IsDeleted = FALSE
-		) AND P.IsDeleted = FALSE AND UP.IsDeleted = FALSE`)
+			SELECT * FROM UserPiece WHERE UserID = ? AND PieceID = P.PieceID AND IsDeleted = FALSE
+		) AND P.IsDeleted = FALSE AND UP.IsDeleted = FALSE`, u.ID, target)
 	if err != nil {
 		log.Printf("error looking up common pieces between users: %v\n", err)
 		return false
