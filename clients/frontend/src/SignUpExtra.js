@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import TextField from 'material-ui/TextField';
+import { compose } from 'ramda';
 import { Button, Input } from 'react-materialize';
 import * as Util from './util.js';
 
@@ -20,7 +20,7 @@ class SignUpExtra extends Component {
       resumeUpload: null,
       photoUpload: null,
       // User bio word count
-      wordCount: null,
+      wordCount: 0,
     }
   };
 
@@ -53,7 +53,7 @@ class SignUpExtra extends Component {
       }
     };
 
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
+    xhr.open("POST", Util.API_URL_BASE + "users/me/photo");
     xhr.setRequestHeader("Authorization", Util.getAuth());
     xhr.setRequestHeader("ImageFieldName", "image");
 
@@ -81,7 +81,7 @@ class SignUpExtra extends Component {
       }
     };
 
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
+    xhr.open("POST", Util.API_URL_BASE + "users/me/resume");
     xhr.setRequestHeader("Authorization", Util.getAuth());
     xhr.setRequestHeader("ResumeFieldName", "resume");
 
@@ -90,10 +90,10 @@ class SignUpExtra extends Component {
 
   uploadBio = (val) => {
     let payload = {
-        "bio": val
+      "bio": val
     };
     Util.makeRequest("users/me", payload, "PATCH", true)
-}
+  }
 
   inputChange(val) {
     const name = val.target.name
@@ -114,20 +114,41 @@ class SignUpExtra extends Component {
     })
   }
 
-  onKeyDown = event => {
-    let len = event.target.value.split(/[\s]+/);
+  onKeyDown = value => {
+    const trimmedValue = value.target.value.trim();
+    const words = compose(this.removeEmptyElements, this.removeBreaks)(trimmedValue.split(' '));
+    
     this.setState({
-      bio: event.target.value,
-      wordCount: len.length,
+      bio: value,
+      wordCount: value === '' ? 0 : words.length,
     });
-    if (len.length > 60) {
-      if (event.keyCode === 46 || event.keyCode === 8 || (event.keyCode >= 37 && event.keyCode <= 40)) {
-
-      } else if (event.keyCode < 48 || event.keyCode > 57) {
-        event.preventDefault();
-      }
-    }
   }
+
+  removeBreaks = arr => {
+    const index = arr.findIndex(el => el.match(/\r?\n|\r/g));
+
+    if (index === -1)
+      return arr;
+
+    const newArray = [
+      ...arr.slice(0, index),
+      ...arr[index].split(/\r?\n|\r/),
+      ...arr.slice(index + 1, arr.length)
+    ];
+
+    return this.removeBreaks(newArray);
+  }
+
+  removeEmptyElements = arr => {
+    const index = arr.findIndex(el => el.trim() === '');
+
+    if (index === -1)
+      return arr;
+
+    arr.splice(index, 1);
+
+    return this.removeEmptyElements(arr)
+  };
 
   //let user skip adding additional info
   skip() {
@@ -138,17 +159,10 @@ class SignUpExtra extends Component {
     return (
       <section className="signUpExtra">
         <form className="authenticate">
-        <div className="extra-signup-input-field">
+          <div className="extra-signup-input-field">
             <p>Bio (60 words or less)</p>
-            <TextField
-              className="bioTextbox"
-              name="bio"
-              style = {{width: '100%'}}
-              onKeyDown={this.onKeyDown}>
-            </TextField>
-            {this.state.wordCount > 60 && (
-              <div id="bioWarning">You have reached the max word limit</div>
-            )}
+            <textarea id="textarea" name="bio" s={6} className="bioTextbox"  onChange={this.onKeyDown}></textarea>
+            <p><strong>Word Count:</strong> {this.state.wordCount}</p>
           </div>
           <div className="extra-signup-input-field">
             <p>Resume (PDF)</p>
