@@ -68,3 +68,7 @@ RaisedButton:hover{
     color: white;
   }
 
+
+  .importantAvailabilityFormMessage{
+      color: #22A7E0;
+  }

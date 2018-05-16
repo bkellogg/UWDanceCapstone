@@ -300,21 +300,15 @@ class Profile extends Component {
 
                   </div>
                   {!this.state.edit &&
-                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                      <i className="large material-icons"> mode_edit </i>
-                    </Button>
+                    <Button id="edit" className="editButton" onClick={() => this.onClick()}>Edit</Button>
 
                   }
-                  {this.state.edit &&
-                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                      <i className="large material-icons"> check </i>
-                    </Button>
-                  }
+                  
                 </div>
               </div>
               <div className="mainContentBorder">
                 <div id="history">
-                  <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+                  <div id="historyTitle" className="subheader"><b>Your Piece History</b></div>
                   {this.state.history.length > 0 && this.state.history.map((p, i) => {
                     return (
                       //TODO STYLE THESE
@@ -348,7 +342,9 @@ class Profile extends Component {
                     </section>
                   }
                 </div>
-
+                {this.state.edit &&
+                    <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
+                  }
               </div>
             </div>
 

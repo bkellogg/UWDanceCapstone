@@ -94,6 +94,17 @@ span.thumb.active{
     background-color: transparent
  }
 
+ @media only screen and (max-width : 768px) {
+    .avatar, .dancerRank, .userRoleDisp, .avatar2, .avatarWrap{
+        visibility: hidden;
+        width: 0%;
+        clear: both;
+        display: none;
+    }
+
+ }
+
+
 /*SUPER LARGE SCREEN SIZING*/
  @media only screen and (min-width : 1920px) {
     .mainView{

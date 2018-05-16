@@ -44,7 +44,7 @@ class PersonRow extends Component {
     return (
         <tr>
           { !this.props.setRehearsals &&
-            <td>
+            <td className="avatarWrap">
               <img src={this.state.photoUrl} alt="profile" className="avatar"/>
             </td>
           }

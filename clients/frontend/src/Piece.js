@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
 import FlatButton from 'material-ui/FlatButton';
+import Button from 'react-materialize/lib/Button';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -240,9 +241,6 @@ class Piece extends Component {
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
       )
     })
-    // for (let i = 0; i < numMusicians; i++) {
-    //   musicianRow.push(<MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} />)
-    // }
 
     let castRows = this.state.dancers.map((dancer, i) => {
       return (<PersonRow p={dancer} piece={true} key={i} />)
@@ -513,10 +511,16 @@ class Piece extends Component {
 
                     </div>
                   </div>
-                  <FlatButton
+
+                      <Button 
+                      className="saveButton" 
+                      onClick={this.setInfoSheet}>
+                      Save</Button>
+
+                  {/* <FlatButton
                         style={{ color: '#22A7E0', marginRight: '20px'}}
                         onClick={this.setInfoSheet}
-                        >Save Info Sheet</FlatButton>
+                        >Save Info Sheet</FlatButton> */}
                 </section>
               }
             </div>

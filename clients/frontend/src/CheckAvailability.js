@@ -97,10 +97,11 @@ class CheckAvailability extends Component {
                 <table id="checkAvailabilityTable">
                   <tbody>
                     <tr className="categories">
-                      <th></th>
+                      <th className="avatarWrap"></th>
                       <th></th>
                       <th>#</th>
                       <th>Dancer</th>
+                      <th>Notes</th>
                       <th>Comment</th>
                       <th></th>
                     </tr>

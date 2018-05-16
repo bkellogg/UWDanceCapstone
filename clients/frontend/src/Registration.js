@@ -100,7 +100,7 @@ class Registration extends Component {
             </div>
             <br />
             <div className="row">
-              <div><p>3. Availability [click & drag to indicate when you are <b>available</b> to rehearse]</p></div>
+              <div><p>3. Availability <b className="importantAvailabilityFormMessage">[click & drag to indicate when you are available to rehearse]</b></p></div>
               <Availability availability={this.setAvailability} />
             </div>
             <br />
@@ -123,7 +123,7 @@ class Registration extends Component {
           backgroundColor="#22A7E0"
           style={{ color: '#ffffff' }}
         >
-          Register </RaisedButton>
+          REGISTER </RaisedButton>
       </div>
 
     )
