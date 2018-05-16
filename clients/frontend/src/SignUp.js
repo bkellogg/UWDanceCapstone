@@ -46,8 +46,9 @@ class SignUp extends Component {
         Util.setLocalUser(JSON.stringify(data));
         this.setState({
           auth: data,
-          signUpExtra: true
+          // signUpExtra: true
         });
+        this.skip()
       })
       .catch((err) => {
         let error = err
@@ -166,10 +167,10 @@ class SignUp extends Component {
                 </div>
               }
 
-              {
+              {/* {
                 this.state.signUpExtra === true && this.state.auth != null &&
                 <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
-              }
+              } */}
             </div>
           </div>
         </div>
