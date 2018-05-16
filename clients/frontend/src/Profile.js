@@ -343,7 +343,7 @@ class Profile extends Component {
                   }
                   {this.state.edit &&
                     <section>
-                      <div> Upload your dance resume as a PDF. </div>
+                      <div> Upload your dance resume <b>AS A PDF.</b> </div>
                       <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange}/>
                     </section>
                   }
