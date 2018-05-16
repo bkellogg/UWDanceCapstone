@@ -241,9 +241,6 @@ class Piece extends Component {
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
       )
     })
-    // for (let i = 0; i < numMusicians; i++) {
-    //   musicianRow.push(<MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} />)
-    // }
 
     let castRows = this.state.dancers.map((dancer, i) => {
       return (<PersonRow p={dancer} piece={true} key={i} />)
@@ -278,17 +275,17 @@ class Piece extends Component {
               {
                 !this.state.openCalendar &&
                 // Styling for toggle header is in general
-                <div className="toggleHeader">
+                <div className="toggleHeader" onClick={this.toggleCalendar}>
                   <h2 className="smallHeading">Calendar</h2>
-                  <i className="fas fa-chevron-down fa-lg" onClick={this.toggleCalendar}></i>
+                  <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
               }
               {
                 this.state.openCalendar &&
                 <section>
-                  <div className="toggleHeader">
+                  <div className="toggleHeader" onClick={this.toggleCalendar}>
                     <h2 className="smallHeading">Calendar</h2>
-                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCalendar}></i>
+                    <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
                   <Calendar />
                 </section>
@@ -298,18 +295,18 @@ class Piece extends Component {
               {
                 !this.state.openCast &&
                 // Styling for toggle header is in general
-                <div className="toggleHeader">
+                <div className="toggleHeader" onClick={this.toggleCast}>
                   <h2 className="smallHeading">My Cast</h2>
-                  <i className="fas fa-chevron-down fa-lg" onClick={this.toggleCast}></i>
+                  <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
               }
               {
                 this.state.openCast &&
                 <section>
 
-                  <div className="toggleHeader">
+                  <div className="toggleHeader" onClick={this.toggleCast}>
                     <h2 className="smallHeading">My Cast</h2>
-                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCast}></i>
+                    <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
                   <div className="peopleList">
                     <table>
@@ -327,31 +324,16 @@ class Piece extends Component {
                   <div className="buttons">
                     {
                       !this.state.viewAvailability &&
-
-                      <Button 
-                      className="changeAvailabilityButton" 
-                      onClick={this.viewAvailability}>
-                      View Availability</Button>
-
-                      // <FlatButton
-                      //   style={{ color: '#22A7E0', marginRight: '20px'}}
-                      //   onClick={this.viewAvailability}>
-                      //   View Cast Availability </FlatButton>
+                      <div className="toggleHeader" onClick={this.viewAvailability}>
+                        <h2 className="smallHeading">View Cast Availability</h2>
+                        <i className="fas fa-chevron-down fa-lg"></i>
+                      </div>
                     }
                     {
                       this.state.viewAvailability &&
-                      <div>
-
-                        <Button 
-                      className="changeAvailabilityButton" 
-                      onClick={this.viewAvailability}>
-                      Hide Availability</Button>
-
-                        {/* <FlatButton
-                        style={{ color: '#22A7E0', marginRight: '20px'}}
-                        onClick={this.viewAvailability}>
-                          Hide Cast Availabiltiy </FlatButton> */}
-                        <p>View availability ay</p>
+                      <div className="toggleHeader" onClick={this.viewAvailability}>
+                        <h2 className="smallHeading">Hide Cast Availability</h2>
+                        <i className="fas fa-chevron-up fa-lg"></i>
                       </div>
                     }
                   </div>
@@ -361,17 +343,17 @@ class Piece extends Component {
             <div className="fullWidthCard">
               {
                 !this.state.openInfo &&
-                <div className="toggleHeader">
+                <div className="toggleHeader" onClick={this.toggleInfo}>
                   <h2 className="smallHeading">Information Sheet</h2>
-                  <i className="fas fa-chevron-down fa-lg" onClick={this.toggleInfo}></i>
+                  <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
               }
               {
                 this.state.openInfo &&
                 <section>
-                  <div className="toggleHeader">
+                  <div className="toggleHeader" onClick={this.toggleInfo}>
                     <h2 className="smallHeading">Information Sheet</h2>
-                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleInfo}></i>
+                    <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
                   <div className="peopleList">
                     <div className="choreoContact">

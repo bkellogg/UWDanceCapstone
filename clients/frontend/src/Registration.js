@@ -100,7 +100,7 @@ class Registration extends Component {
             </div>
             <br />
             <div className="row">
-              <div><p>3. Availability <b className="importantAvailabilityFormMessage">[click & drag to indicate when you are available to rehearse]</b></p></div>
+              <div><p>3. Availability <b>[click & drag to indicate when you are <b className="importantAvailabilityFormMessage">AVAILABLE </b>to rehearse]</b></p></div>
               <Availability availability={this.setAvailability} />
             </div>
             <br />

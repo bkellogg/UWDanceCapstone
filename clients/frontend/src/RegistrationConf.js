@@ -69,7 +69,8 @@ class RegistrationConf extends Component {
           </div>
         </div>
         <div className="card102">
-          {!this.props.showChangeReg &&
+          {
+            !this.props.showChangeReg &&
             <div className="editRegistration">
               <div className="unregister">
                 <Button className="unregisterButton" onClick={this.unLink}>Unregister</Button>
@@ -81,13 +82,17 @@ class RegistrationConf extends Component {
           }
 
         </div>
-        {this.props.showChangeReg &&
-          <div className="editRegistration">
-            <div className="changeAvailability">
-              <Button className="changeAvailabilityButton" onClick={this.updateAvailability}>Confirm Availability</Button>
-              <Button className="cancelButton" onClick={this.discardChanges}>Cancel</Button>
+        {
+          this.props.showChangeReg &&
+          <section>
+            <Availability className="availability" availability={this.props.setAvailability} currAvailability={this.props.currAvailability}/>
+            <div className="editRegistration">
+              <div className="changeAvailability">
+                <Button className="changeAvailabilityButton" onClick={this.updateAvailability}>Confirm Availability</Button>
+                <Button className="cancelButton" onClick={this.discardChanges}>Cancel</Button>
+              </div>
             </div>
-          </div>
+          </section>
         }
       </div>
     )

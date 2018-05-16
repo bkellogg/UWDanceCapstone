@@ -14,4 +14,7 @@
 .table-drag-select {
     margin-left: 0px
 }
-  
+
+.timeLabel {
+    text-align: right
+}

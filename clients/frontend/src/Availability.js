@@ -185,7 +185,7 @@ class Availability extends Component {
           <td disabled>Sunday</td>
         </tr>
         <tr className="availabilityRow">
-          <td disabled>10:00AM</td>
+          <td disabled className="timeLabel">10:00AM</td>
           <td />
           <td />
           <td />
@@ -205,7 +205,27 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled>11:00AM</td>
+          <td disabled className="timeLabel">11:00AM</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr className="availabilityRow">
+          <td disabled className="timeLabel"></td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr className="availabilityRow">
+          <td disabled className="timeLabel">12:00PM</td>
           <td />
           <td />
           <td />
@@ -225,7 +245,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled>12:00PM</td>
+          <td disabled className="timeLabel">1:00PM</td>
           <td />
           <td />
           <td />
@@ -245,7 +265,27 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled>1:00PM</td>
+          <td disabled className="timeLabel">2:00PM</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr className="availabilityRow">
+          <td disabled className="timeLabel"></td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr className="availabilityRow">
+          <td disabled className="timeLabel">3:00PM</td>
           <td />
           <td />
           <td />
@@ -265,7 +305,47 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled>2:00PM</td>
+          <td disabled className="timeLabel">4:00PM</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr className="availabilityRow">
+          <td disabled className="timeLabel"></td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr className="availabilityRow">
+          <td disabled className="timeLabel">5:00PM</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr className="availabilityRow">
+          <td disabled className="timeLabel"></td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr className="availabilityRow">
+          <td disabled className="timeLabel">6:00PM</td>
           <td />
           <td />
           <td />
@@ -285,7 +365,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled>3:00PM </td>
+          <td disabled className="timeLabel">7:00PM</td>
           <td />
           <td />
           <td />
@@ -305,7 +385,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled>4:00PM</td>
+          <td disabled className="timeLabel">8:00PM </td>
           <td />
           <td />
           <td />
@@ -325,7 +405,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled>5:00PM</td>
+          <td disabled className="timeLabel">9:00PM</td>
           <td />
           <td />
           <td />
@@ -345,87 +425,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled>6:00PM</td>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-        </tr>
-        <tr className="availabilityRow">
-          <td disabled></td>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-        </tr>
-        <tr className="availabilityRow">
-          <td disabled>7:00PM</td>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-        </tr>
-        <tr className="availabilityRow">
-          <td disabled></td>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-        </tr>
-        <tr className="availabilityRow">
-          <td disabled>8:00PM </td>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-        </tr>
-        <tr className="availabilityRow">
-          <td disabled></td>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-        </tr>
-        <tr className="availabilityRow">
-          <td disabled>9:00PM</td>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-        </tr>
-        <tr className="availabilityRow">
-          <td disabled></td>
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-          <td />
-        </tr>
-        <tr className="availabilityRow">
-          <td disabled>10:00PM</td>
+          <td disabled className="timeLabel">10:00PM</td>
           <td />
           <td />
           <td />
