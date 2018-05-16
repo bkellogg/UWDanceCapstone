@@ -229,7 +229,11 @@ class AvailabilityOverlap extends Component {
       )
     })
 
+    let minCast = 1
     let midColor = Math.round(this.state.maxCast / 2)
+    if(this.state.maxCast === 0){
+      minCast = 0
+    }
     return (
       <section>
         <div className="overlapAvailability">
@@ -238,13 +242,13 @@ class AvailabilityOverlap extends Component {
               <h2 className="smallHeading">Availability</h2>
             </div>
             <div className="legend">
-              <p className="colorIndicator">1 available</p>
+              <p className="colorIndicator">{minCast}/{this.state.maxCast} available</p>
               <div className="colorsWrap">
-                <div className="lightLegendColor" style={{ "backgroundColor": colors[1] }}> </div>
+                <div className="lightLegendColor" style={{ "backgroundColor": colors[minCast] }}> </div>
                 <div className="mediumLegendColor" style={{ "backgroundColor": colors[midColor] }}> </div>
                 <div className="darkLegendColor" style={{ "backgroundColor": colors[this.state.maxCast] }}> </div>
               </div>
-              <p className="colorIndicator">{this.state.maxCast} available</p>
+              <p className="colorIndicator">{this.state.maxCast}/{this.state.maxCast} available</p>
             </div>
           </div>
           <div className="availabilityCalendar">

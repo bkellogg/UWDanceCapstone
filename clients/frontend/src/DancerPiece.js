@@ -35,7 +35,7 @@ class DancerPiece extends Component {
 
   componentWillMount() {
     this.formatEvents()
-    this.getPieceID()
+    //this.getPieceID()
   }
 
   getPieceID = () => {
@@ -58,7 +58,6 @@ class DancerPiece extends Component {
           .then((t) => Promise.reject(t));
       })
       .then(piece => {
-        console.log(piece)
         this.setState({
           pieceID : piece.id
         })
@@ -67,7 +66,6 @@ class DancerPiece extends Component {
       .catch((err) => {
         console.error(err)
       })
-
   }
 
   getPieceUsers = (pieceID) => {

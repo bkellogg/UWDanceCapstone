@@ -287,7 +287,7 @@ class Profile extends Component {
                               <div className="row">
                                 <div className="input-field col s12">
                                   <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange} defaultValue={this.state.bio}></textarea>
-                                  <label htmlFor="textarea1">Bios should be 60 words or less</label>
+                                  <label htmlFor="textarea1">Bios will be used in the program for the show</label>
                                 </div>
                               </div>
                             </form>

@@ -98,10 +98,8 @@ class CheckAvailability extends Component {
                   <tbody>
                     <tr className="categories">
                       <th className="avatarWrap"></th>
-                      <th></th>
                       <th>#</th>
                       <th>Dancer</th>
-                      <th>Notes</th>
                       <th>Comment</th>
                       <th></th>
                     </tr>

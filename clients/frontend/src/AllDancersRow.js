@@ -234,9 +234,12 @@ class AllDancersRow extends Component {
                     />
                 </td>
             }
-        <td className="avatarWrap">
-            <img src={this.state.photoUrl} alt="profile" className="avatar"/>
-        </td>
+        {
+            !this.props.checkAvailability &&
+            <td className="avatarWrap">
+                <img src={this.state.photoUrl} alt="profile" className="avatar"/>
+            </td>
+        }
         <td className="dancerAssignedNumber">
             {this.props.regNum}
         </td>

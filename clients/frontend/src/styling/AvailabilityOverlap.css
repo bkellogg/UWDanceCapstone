@@ -32,18 +32,6 @@
     display: inline-block;
 }
 
-.lightLegendColor{
-    background-color: red;
-}
-
-.mediumLegendColor{
-    background-color: blue;
-}
-
-.darkLegendColor{
-    background-color: black;
-}
-
 .colorIndicator{
     margin: 0;
     color: hsl(0, 0%, 45%);
