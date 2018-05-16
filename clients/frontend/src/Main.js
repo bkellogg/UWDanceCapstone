@@ -4,6 +4,7 @@ import People from './People';
 import Piece from './Piece';
 import Audition from './Audition';
 import Show from './Show';
+import FAQ from './FAQ';
 import Dashboard from './Dashboard';
 import Profile from './Profile';
 import Casting from './Casting';
@@ -223,14 +224,17 @@ class Main extends Component {
                   </Link>
                   {this.getMobileNavigation()}
 
-                  <Link to={{
-                    pathname: "/profile"
-                  }}>
+                  <Link to={{pathname: "/profile"}}>
                     <MenuItem onClick={this.handleClose}>
                       <p className="mobileNavItem">Profile</p>
                     </MenuItem>
                   </Link>
 
+                  <Link to="/faq">
+                    <MenuItem onClick={this.handleClose}>
+                      <p className="mobileNavItem">FAQ</p>
+                    </MenuItem>
+                  </Link>
                 </div>
                 <Button id='signOut' onClick={() => this.signOut()}>Sign Out</Button>
 
@@ -241,12 +245,10 @@ class Main extends Component {
 
         <section className="routing">
           <Switch>
-            <Route
-              exact
-              path='/'
-              render={props => <Dashboard {...props} shows={this.state.currShows} showTypes={this.state.showTypes} />} />
+            <Route exact path='/' render={props => <Dashboard {...props} shows={this.state.currShows} showTypes={this.state.showTypes} />} />
             <Route exact path='/profile' component={Profile} />
             <Route path='/users/:userID' component={StaticProfile} />
+            <Route path='/faq' component={FAQ} />
           </Switch>
           {this
             .state
@@ -348,7 +350,8 @@ class Main extends Component {
               }
               return (
                 <Switch key={i}>
-                  <Route exact path={path} render={props => <Show {...props} name={show.name} />} /> {routes}
+                  <Route exact path={path} render={props => <Show {...props} name={show.name} />} /> 
+                  {routes}
                 </Switch>
               )
             })}
@@ -370,9 +373,10 @@ class Main extends Component {
                   {this.getNavigation()}
                 </li>
                 <li className="dropDown">
-                  <Link to={{
-                    pathname: "/profile"
-                  }}>Profile</Link>
+                  <Link to={{ pathname: "/profile" }}>Profile</Link>
+                </li>
+                <li className="dropDown">
+                  <Link to={{ pathname: "/faq" }}>Help</Link>
                 </li>
               </div>
               <Button id='signOut' className="signOutDesktop" onClick={() => this.signOut()}>Sign Out</Button>
