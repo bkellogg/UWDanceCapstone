@@ -308,7 +308,7 @@ class Profile extends Component {
               </div>
               <div className="mainContentBorder">
                 <div id="history">
-                  <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+                  <div id="historyTitle" className="subheader"><b>Your Piece History</b></div>
                   {this.state.history.length > 0 && this.state.history.map((p, i) => {
                     return (
                       //TODO STYLE THESE

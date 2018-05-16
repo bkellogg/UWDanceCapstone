@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
 import FlatButton from 'material-ui/FlatButton';
+import Button from 'react-materialize/lib/Button';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -326,18 +327,30 @@ class Piece extends Component {
                   <div className="buttons">
                     {
                       !this.state.viewAvailability &&
-                      <FlatButton
-                        style={{ color: '#22A7E0', marginRight: '20px'}}
-                        onClick={this.viewAvailability}>
-                        View Cast Availability </FlatButton>
+
+                      <Button 
+                      className="changeAvailabilityButton" 
+                      onClick={this.viewAvailability}>
+                      View Availability</Button>
+
+                      // <FlatButton
+                      //   style={{ color: '#22A7E0', marginRight: '20px'}}
+                      //   onClick={this.viewAvailability}>
+                      //   View Cast Availability </FlatButton>
                     }
                     {
                       this.state.viewAvailability &&
                       <div>
-                        <FlatButton
+
+                        <Button 
+                      className="changeAvailabilityButton" 
+                      onClick={this.viewAvailability}>
+                      Hide Availability</Button>
+
+                        {/* <FlatButton
                         style={{ color: '#22A7E0', marginRight: '20px'}}
                         onClick={this.viewAvailability}>
-                          Hide Cast Availabiltiy </FlatButton>
+                          Hide Cast Availabiltiy </FlatButton> */}
                         <p>View availability ay</p>
                       </div>
                     }
@@ -516,10 +529,16 @@ class Piece extends Component {
 
                     </div>
                   </div>
-                  <FlatButton
+
+                      <Button 
+                      className="saveButton" 
+                      onClick={this.setInfoSheet}>
+                      Save</Button>
+
+                  {/* <FlatButton
                         style={{ color: '#22A7E0', marginRight: '20px'}}
                         onClick={this.setInfoSheet}
-                        >Save Info Sheet</FlatButton>
+                        >Save Info Sheet</FlatButton> */}
                 </section>
               }
             </div>
