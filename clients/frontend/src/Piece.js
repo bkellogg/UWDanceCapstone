@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
-import FlatButton from 'material-ui/FlatButton';
 import Button from 'react-materialize/lib/Button';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';

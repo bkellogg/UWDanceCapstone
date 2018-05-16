@@ -147,9 +147,9 @@ class Availability extends Component {
       let cells = this.state.cells
       if (this.props.currAvailability) {
         if (this.props.currAvailability.days !== undefined) {//make sure they have an availability
-          this.props.currAvailability.days.map(day => {
+          this.props.currAvailability.days.forEach(day => {
             let dayIndex = daysRef.indexOf(day.day)
-            day.times.map(time => {
+            day.times.forEach(time => {
               let startIndex = times.indexOf(time.start)
               let endIndex = times.indexOf(time.end)
               if (startIndex > -1 && endIndex > -1) { //both times are within our timesRef

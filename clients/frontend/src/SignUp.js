@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Button } from 'react-materialize';
 import * as Util from './util.js';
 import logo from './imgs/logoex.png'
-import SignUpExtra from './SignUpExtra.js'
 import './styling/SignIn.css';
 import './styling/SignUp.css';
 

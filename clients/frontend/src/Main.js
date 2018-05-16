@@ -262,11 +262,13 @@ class Main extends Component {
               if (this.state.user.role.level === 10) { //dancer
 
                 let route1 = <Route
+                  key={i + "audition"}
                   exact
                   path={path + "/audition"}
                   render={props => <Audition {...props} name={show.name} audition={show.auditionID} />} />
 
                 let route2 = <Route
+                  key={i + "piece"}
                   exact
                   path={path + "/piece"}
                   render={props => <DancerPiece {...props} name={show.name} audition={show.auditionID} />} />
@@ -276,6 +278,7 @@ class Main extends Component {
               } else if (this.state.user.role.level === 70) { //choreographer
 
                 let route1 = <Route
+                  key={i + "casting"}
                   exact
                   path={path + "/casting"}
                   render={props => <Casting
@@ -285,6 +288,7 @@ class Main extends Component {
                     show={show.show} />} />
 
                 let route2 = <Route
+                  key={i + "people"}
                   exact
                   path={path + "/people"}
                   render={props => <People
@@ -294,6 +298,7 @@ class Main extends Component {
                     show={show.show} />} />
 
                 let route3 = <Route
+                  key={i + "choreopiece"}
                   exact
                   path={path + "/piece"}
                   render={props => <Piece
@@ -335,6 +340,7 @@ class Main extends Component {
                   render={props => <Audition {...props} name={show.name} audition={show.auditionID} />} />
 
                 let route4 = <Route
+                  key={i * 1000}
                   exact
                   path={path + "/piece"}
                   render={props => <Piece

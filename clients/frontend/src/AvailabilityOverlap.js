@@ -77,17 +77,17 @@ class AvailabilityOverlap extends Component {
 
     let dayTimes = this.flushDayTimes()
 
-    this.props.cast.map((dancer, i) => { //go through each dancer
+    this.props.cast.forEach((dancer, i) => { //go through each dancer
 
       let days = dancer.dancer.availability.days
       let id = dancer.dancer.user.id
       let firstName = dancer.dancer.user.firstName
       if (filteredCast.indexOf(id) >= 0 && days !== undefined) { //check to see that they are in the filtered cast and did have an availability
 
-        days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
+        days.forEach((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
           let times = day.times
 
-          times.map((time, k) => { //times is the array of times for that day
+          times.forEach((time, k) => { //times is the array of times for that day
 
             let startIndex = timesRef.indexOf(time.start)
             let endIndex = timesRef.indexOf(time.end)
@@ -106,25 +106,22 @@ class AvailabilityOverlap extends Component {
               currPlace.push({"id" : id, "name" : firstName})
               incrementIndex++
             }
-            return incrementIndex //arbitrary
           })
-          return times //arbitrary
         })
       }
-      return days //arbitrary
     })
     //just going to go through contested dancers again because I am tired and lazy
     if (this.props.contested) {
-      this.props.contested.map((dancer, i) => { //go through each dancer
+      this.props.contested.forEach((dancer, i) => { //go through each dancer
         let days = dancer.rankedDancer.dancer.availability.days
         let id = dancer.rankedDancer.dancer.user.id
         let firstName = dancer.rankedDancer.dancer.user.firstName
         if (filteredCast.indexOf(id) >= 0  && days !== undefined) {
 
-          days.map((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
+          days.forEach((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
             let times = day.times
 
-            times.map((time, k) => { //times is the array of times for that day
+            times.forEach((time, k) => { //times is the array of times for that day
 
               let startIndex = timesRef.indexOf(time.start)
               let endIndex = timesRef.indexOf(time.end)
@@ -142,12 +139,9 @@ class AvailabilityOverlap extends Component {
                 currPlace.push({"id" : id, "name" : firstName})
                 incrementIndex++
               }
-              return incrementIndex //arbitrary return for linting
             })
-            return times //arbitrary
           })
         }
-        return days //arbitrary
       })
     }
 
