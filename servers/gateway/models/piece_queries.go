@@ -122,7 +122,7 @@ func (store *Database) DeletePieceByID(id int) *DBError {
 // GetPiecesByUserID gets all pieces the given user is in.
 func (store *Database) GetPiecesByUserID(id, page int, includeDeleted bool) ([]*Piece, *DBError) {
 	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT P.PieceID, P.ChoreographerID ,P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy,
+	query := `SELECT DISTINCT P.PieceID, P.InfoSheetID, P.ChoreographerID ,P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy,
 	P.IsDeleted FROM Pieces P 
 	JOIN UserPiece UP ON P.PieceID = UP.PieceID 
 	WHERE UP.UserID = ?`
