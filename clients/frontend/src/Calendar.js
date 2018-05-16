@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import Dialog from 'material-ui/Dialog';
+import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './styling/General.css';
@@ -35,7 +36,7 @@ class Calendar extends Component {
           id: 3,
           title: 'Weekly Rehearsal',
           start: new Date('2018-05-10 11:00 AM'),
-          end: new Date('2018-05-10 12:30 PM')
+          end: new Date('2018-05-10 12:30 PM'),
         }
       ]
     }
@@ -110,7 +111,7 @@ class Calendar extends Component {
 
     let rehearsalObject = {
       id : latestID,
-      title : "Event Title",
+      title : this.state.rehearsalName,
       start : new Date(slotInfo.start),
       end : new Date(slotInfo.end)
     }
@@ -171,6 +172,12 @@ class Calendar extends Component {
         <Dialog
           title={"Create New Rehearsal"}
           actions={[
+            <TextField
+              hintText="Rehearsal Name"
+              onChange={(event) => this.setState({
+                rehearsalName : event.target.value
+              })}
+            />,
             <FlatButton
               label="Cancel"
               style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
