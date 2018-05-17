@@ -95,7 +95,7 @@ func (store *Database) ChangeUserRole(userID int, roleName string) *DBError {
 	if rows.Next() {
 		err = rows.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level, &role.IsDeleted)
 		if err != nil {
-			return NewDBError(fmt.Sprintf("error scanning row into role: %v"), http.StatusInternalServerError)
+			return NewDBError(fmt.Sprintf("error scanning row into role: %v", err), http.StatusInternalServerError)
 		}
 	} else {
 		return NewDBError(appvars.ErrNoRoleFound, http.StatusNotFound)
