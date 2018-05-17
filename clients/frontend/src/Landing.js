@@ -131,7 +131,7 @@ class App extends Component {
                   <h2 className="capstoneInfoHeading"> Meet The Team </h2>
                   <div className="teamMember">
                     <img className="teamMemberImage" alt="Brendan Kellogg - Backend Developer" src={brendanKellog} />
-                    <p className="teamMemberName"><a href="https://www.linkedin.com/in/brendankellogg/">Brendan Kellog</a></p>
+                    <p className="teamMemberName"><a href="https://www.linkedin.com/in/brendankellogg/">Brendan Kellogg</a></p>
                     <p className="capstoneInfoContent"> Backend Developer</p>
 
                   </div>
@@ -143,13 +143,13 @@ class App extends Component {
                   </div>
                   <div className="teamMember">
                     <img className="teamMemberImage" alt="Saniya Mazmanova - UX/UI Designer" src={saniyaMazmanova} />
-                    <p className="teamMemberName"><a href="">Saniya Mazmanova</a></p>
+                    <p className="teamMemberName"><a href="https://www.linkedin.com/in/mazmans">Saniya Mazmanova</a></p>
                     <p className="capstoneInfoContent"> UX/UI Designer</p>
 
                   </div>
                   <div className="teamMember">
                     <img className="teamMemberImage" alt="Nathan Swanson - Project Manager" src={nathanSwanson} />
-                    <p className="teamMemberName"><a href="">Nathan Swanson</a></p>
+                    <p className="teamMemberName"><a href="https://www.linkedin.com/in/nathan-swanson/">Nathan Swanson</a></p>
                     <p className="capstoneInfoContent"> Project Manager</p>
 
                   </div>

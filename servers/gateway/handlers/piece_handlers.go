@@ -157,6 +157,49 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 			return HTTPError(fmt.Sprintf("error converting users to user responses: %v", err), http.StatusInternalServerError)
 		}
 		return respond(w, models.NewPieceUsersResponse(page, chorRes, userRes), http.StatusOK)
+	case "info":
+		if r.Method == "POST" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			piece, dberr := ctx.store.GetPieceByID(pieceID, false)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting piece by id")
+			}
+			if piece.InfoSheetID != 0 {
+				return HTTPError(fmt.Sprintf("piece already has an info sheet with id: %d", piece.InfoSheetID),
+					http.StatusBadRequest)
+			}
+			pieceInfo := &models.NewPieceInfoSheet{}
+			if httperr := receive(r, pieceInfo); httperr != nil {
+				return httperr
+			}
+			info, dberr := ctx.store.InsertNewPieceInfoSheet(int(u.ID), pieceID, pieceInfo)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error inserting piece info")
+			}
+			return respond(w, info, http.StatusCreated)
+		} else if r.Method == "GET" {
+			if !ctx.permChecker.UserCanSeePieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			pieceInfo, dberr := ctx.store.GetPieceInfoSheet(pieceID)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting piece info sheet")
+			}
+			return respond(w, pieceInfo, http.StatusOK)
+		} else if r.Method == "DELETE" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			dberr := ctx.store.DeletePieceInfoSheet(pieceID)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error deleting piece info sheet")
+			}
+			return respondWithString(w, fmt.Sprintf("piece %d's info sheet has been deleted", pieceID), http.StatusOK)
+		} else {
+			return methodNotAllowed()
+		}
 	default:
 		return objectTypeNotSupported()
 	}

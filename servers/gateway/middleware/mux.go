@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 	"github.com/gorilla/mux"
 )
@@ -21,7 +22,7 @@ func (ar *AuthenticatedRouter) HandleAuth(pattern string, handler authenticatedH
 	return ar.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
 		user, err := sessions.GetUserFromRequest(r, ar.key, ar.store)
 		if err != nil {
-			http.Error(w, "you must be signed in to use this resource", http.StatusUnauthorized)
+			http.Error(w, appvars.ErrNotSignedIn, http.StatusUnauthorized)
 			return
 		}
 		if httperr := handler(w, r, user); httperr != nil {

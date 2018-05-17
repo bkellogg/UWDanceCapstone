@@ -215,6 +215,10 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 			URL:       appvars.StageURL,
 		}
 
+		// do not send the email if we are in debug mode
+		if ctx.IsDebugMode {
+			return
+		}
 		message, err := mail.NewMessageFromTemplate(ctx.MailCredentials,
 			ctx.CastingTPLPath,
 			appvars.CastInPieceSubject,

@@ -159,7 +159,7 @@ func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, error) {
 	chor := Choreographer(chorID)
 
 	// confirm that the choreographer is in the current casting session
-	if _, exists := c.Choreographers[chor]; !exists {
+	if exists := c.choreographerExists(chorID); !exists {
 		return nil, errors.New("choreographer is not currently casting in this session")
 	}
 
@@ -177,21 +177,33 @@ func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, error) {
 	// other entries that they are in, if they exist.
 	for dancerID, _ := range c.ChorCast[chor] {
 		dancerIDSlice = append(dancerIDSlice, dancerID.int())
-		delete(c.Dancers, dancerID)
-		delete(c.Casted, dancerID)
-		delete(c.Uncasted, dancerID)
-	}
 
-	// remove the choreographer from the casting session
-	delete(c.Choreographers, chor)
+		// remove the entry saying the choreographer has casted
+		// this dancer
+		delete(c.Casted[dancerID], chor)
+
+		// after removing the choreographer as casting the
+		// dancer, decrement the number of shows this dancer
+		// is available for.
+		dancer, found := c.dancer(int64(dancerID))
+		if found {
+			dancer.NumShows--
+			// if the dancer is available for 0 more shows,
+			// remove them from the casting session since
+			// they can no longer be cast in any other show.
+			if dancer.NumShows == 0 {
+				delete(c.Dancers, dancerID)
+				delete(c.Casted, dancerID)
+				delete(c.Uncasted, dancerID)
+			}
+		}
+	}
 
 	// remove the choreographer's ChorCast entry
 	delete(c.ChorCast, chor)
 
-	choreographers := make([]Choreographer, 0, len(c.Choreographers))
-	for chor, _ := range c.Choreographers {
-		choreographers = append(choreographers, chor)
-	}
+	// delete the choreographer from the casting session
+	delete(c.Choreographers, Choreographer(chorID))
 
 	return dancerIDSlice, c.sendUpdates()
 }
@@ -213,7 +225,7 @@ func (c *CastingSession) handle(chorID int64, cu *ChoreographerUpdate) error {
 // is in the casting session, false if otherwise. Unsafe for
 // concurrent access.
 func (c *CastingSession) choreographerExists(id int64) bool {
-	_, found := c.ChorCast[Choreographer(id)]
+	_, found := c.Choreographers[Choreographer(id)]
 	return found
 }
 
@@ -366,8 +378,13 @@ func (c *CastingSession) toCastingUpdate(chorID int64) (*CastingUpdate, error) {
 			castingUpdate.Contested = append(castingUpdate.Contested, c.makeContestedDancer(
 				dancerID, int(rank), chorsContesting, chorID))
 		} else {
-			dancer, _ := c.dancer(dancerID.int())
-			castingUpdate.Cast = append(castingUpdate.Cast, dancer.Rank(int(rank)))
+			dancer, found := c.dancer(dancerID.int())
+			if !found {
+				log.Printf("dancer id %d was not in this choreographers cast", dancerID)
+				continue
+			}
+			rankedDancer := dancer.Rank(int(rank))
+			castingUpdate.Cast = append(castingUpdate.Cast, rankedDancer)
 		}
 	}
 
@@ -382,9 +399,23 @@ func (c *CastingSession) toCastingUpdate(chorID int64) (*CastingUpdate, error) {
 	castingUpdate.Uncasted = odSlice
 
 	// sort the dancers before returning them
-	sort.Slice(castingUpdate.Contested, CDSlice(castingUpdate.Contested).Less)
-	sort.Slice(castingUpdate.Uncasted, DSlice(castingUpdate.Uncasted).Less)
-	sort.Slice(castingUpdate.Cast, RDSlice(castingUpdate.Cast).Less)
+	if len(castingUpdate.Contested) > 0 {
+		sort.Slice(castingUpdate.Contested, func(i, j int) bool {
+			return castingUpdate.Contested[i].Dancer.Dancer.RegNum <
+				castingUpdate.Contested[j].Dancer.Dancer.RegNum
+		})
+	}
+	if len(castingUpdate.Uncasted) > 0 {
+		sort.Slice(castingUpdate.Uncasted, func(i, j int) bool {
+			return castingUpdate.Uncasted[i].RegNum < castingUpdate.Uncasted[j].RegNum
+		})
+	}
+
+	if len(castingUpdate.Cast) > 0 {
+		sort.Slice(castingUpdate.Cast, func(i, j int) bool {
+			return castingUpdate.Cast[i].Dancer.RegNum < castingUpdate.Cast[j].Dancer.RegNum
+		})
+	}
 
 	return castingUpdate, nil
 }

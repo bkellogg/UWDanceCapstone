@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
@@ -49,7 +50,7 @@ func (a *AuthorizedHandler) Middleware(handler http.Handler) http.Handler {
 func (a *AuthorizedHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	user, err := sessions.GetUserFromRequest(r, a.signingKey, a.store)
 	if err != nil {
-		http.Error(w, "you must be signed in to use this resource", http.StatusUnauthorized)
+		http.Error(w, appvars.ErrNotSignedIn, http.StatusUnauthorized)
 		return
 	}
 	if res := a.handler(w, r, user); res != nil {

@@ -1,11 +1,13 @@
 package models
 
 import (
+	_ "database/sql"
 	"errors"
 	"fmt"
 	"log"
 	"sync"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/permissions"
 )
 
@@ -160,6 +162,26 @@ func (pc *PermissionChecker) UserCanSeeUsersInPiece(u *User, piece int) bool {
 	return pc.UserCan(u, permissions.SeeAllUsers)
 }
 
+// UserCanSeePieceInfo returns true if the given user can see the
+// given piece's info sheet.
+func (pc *PermissionChecker) UserCanSeePieceInfo(u *User, piece int) bool {
+	return pc.UserIsAtLeast(u, appvars.PermChoreographer)
+}
+
+// UserCanSeePieceInfo returns true if the given user can see the
+// given piece's info sheet.
+func (pc *PermissionChecker) UserCanModifyPieceInfo(u *User, pieceID int) bool {
+	if pc.UserIsAtLeast(u, appvars.PermAdmin) {
+		return true
+	}
+	piece, err := pc.db.GetPieceByID(pieceID, false)
+	if err != nil {
+		log.Printf("perm checker: piece does not exist: %v", err)
+		return false
+	}
+	return piece.ChoreographerID == int(u.ID)
+}
+
 // UserCanSeeUsersInShow returns true if the given user can see users
 // inside of the given show.
 func (pc *PermissionChecker) UserCanSeeUsersInAudition(u *User, audition int) bool {
@@ -169,13 +191,39 @@ func (pc *PermissionChecker) UserCanSeeUsersInAudition(u *User, audition int) bo
 // UserCanSeeUser returns true if the given user can see the given target user,
 // false if otherwise.
 func (pc *PermissionChecker) UserCanSeeUser(u *User, target int64) bool {
-	return pc.userHasPermissionTo(u, target, permissions.SeeAllUsers)
+	if pc.userHasPermissionTo(u, target, permissions.SeeAllUsers) {
+		return true
+	}
+	rows, err := pc.db.db.Query(`SELECT COUNT(DISTINCT P.PieceID)
+		AS NumSharedPieces FROM Pieces P JOIN UserPiece UP ON P.PieceID = UP.PieceID
+		WHERE EXISTS (
+			SELECT * FROM UserPiece WHERE UserID = ? AND PieceID = P.PieceID AND IsDeleted = FALSE
+		) AND EXISTS (
+			SELECT * FROM UserPiece WHERE UserID = ? AND PieceID = P.PieceID AND IsDeleted = FALSE
+		) AND P.IsDeleted = FALSE AND UP.IsDeleted = FALSE`, u.ID, target)
+	if err != nil {
+		log.Printf("error looking up common pieces between users: %v\n", err)
+		return false
+	}
+	defer rows.Close()
+	var numPiecesInCommon int64
+	if !rows.Next() {
+		return false
+	}
+	if err = rows.Scan(&numPiecesInCommon); err != nil {
+		log.Printf("error scanning number of common pieces between users: %v\n", err)
+		return false
+	}
+	return numPiecesInCommon > 0
 }
 
+// UserCanSeeAvailability returns true if the given user can see the target
+// user's availability.
 func (pc *PermissionChecker) UserCanSeeAvailability(u *User, target int64) bool {
 	return pc.userHasPermissionTo(u, target, permissions.SeeUserAvailability)
 }
 
+// UserCanAddToPiece returns true if the given user can add to the given piece ID
 func (pc *PermissionChecker) UserCanAddToPiece(u *User, pieceID int64) bool {
 	if pc.UserCan(u, permissions.AddUserToPiece) {
 		return true
@@ -187,10 +235,14 @@ func (pc *PermissionChecker) UserCanAddToPiece(u *User, pieceID int64) bool {
 	return ok
 }
 
+// UserCanRemoveUserFromAudition returns true if the given user can remove users or themselves
+// from the given audition.
 func (pc *PermissionChecker) UserCanRemoveUserFromAudition(u *User, target int64) bool {
 	return pc.userHasPermissionTo(u, target, permissions.RemoveUserFromAudition)
 }
 
+// UserCanAddToAudition returns true if the given user can add users to the given
+// audition
 func (pc *PermissionChecker) UserCanAddToAudition(u *User, target int64) bool {
 	return pc.userHasPermissionTo(u, target, permissions.AddUserToAudition)
 }
