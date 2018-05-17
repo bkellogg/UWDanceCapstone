@@ -242,13 +242,13 @@ class AvailabilityOverlap extends Component {
               <h2 className="smallHeading">Availability</h2>
             </div>
             <div className="legend">
-              <p className="colorIndicator">{minCast}/{this.state.maxCast} available</p>
+              <p className="colorIndicator">{minCast}/{this.props.filteredCast.length} available</p>
               <div className="colorsWrap">
                 <div className="lightLegendColor" style={{ "backgroundColor": colors[minCast] }}> </div>
                 <div className="mediumLegendColor" style={{ "backgroundColor": colors[midColor] }}> </div>
                 <div className="darkLegendColor" style={{ "backgroundColor": colors[this.state.maxCast] }}> </div>
               </div>
-              <p className="colorIndicator">{this.state.maxCast}/{this.state.maxCast} available</p>
+              <p className="colorIndicator">{this.state.maxCast}/{this.props.filteredCast.length} available</p>
             </div>
           </div>
           <div className="availabilityCalendar">

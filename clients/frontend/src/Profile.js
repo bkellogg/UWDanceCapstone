@@ -348,7 +348,8 @@ class Profile extends Component {
                     )
                   })}
                   {this.state.history.length === 0 &&
-                    <p> Dancer has no piece history </p>
+                    <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
+                    
                   }
                 </div>
 
