@@ -3,6 +3,7 @@ import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
 import AvatarEditorConsole from './AvatarEditorConsole';
+import { compose } from 'ramda';
 import './styling/Profile.css';
 import './styling/General.css';
 
@@ -24,7 +25,9 @@ class Profile extends Component {
       lastName: "",
       photoUpload: "",
       bioUpload: "",
-      resumeUpload: ""
+      resumeUpload: "",
+      wordCount: "",
+      text: ""
     }
   };
 
@@ -32,6 +35,7 @@ class Profile extends Component {
     this.getPhoto();
     //this.getHistory();
     this.getResume();
+    this.setCounts(this.state.bio);
 
     //TODO deal with the fact that there are going to be pages
     Util.makeRequest("users/" + this.state.user.id + "/shows?history=all", {}, "GET", true)
@@ -175,7 +179,7 @@ class Profile extends Component {
       if (this.state.photoUpload !== "") {
         this.uploadPhoto(this.state.photoUpload)
       }
-      if (this.state.bioUpload !== "") {
+      if (this.state.bioUpload !== this.state.bio) {
         Util.uploadBio(this.state.bioUpload)
         this.setState({ bio: this.state.bioUpload })
       }
@@ -210,26 +214,51 @@ class Profile extends Component {
     })
   }
 
-  onKeyDown = event => {
-    let len = event.target.value.split(/[\s]+/);
-    this.setState({
-      bioUpload: event.target.value,
-      wordCount: len.length,
-    });
-    if (len.length > 60) {
-      if (event.keyCode === 46 || event.keyCode === 8 || (event.keyCode >= 37 && event.keyCode <= 40)) {
-
-      } else if (event.keyCode < 48 || event.keyCode > 57) {
-        event.preventDefault();
-      }
-    }
-  }
-
   updateImage = (img) => {
     this.setState({
       photoUpload: img
     })
   }
+
+  // Set Bio word count 
+  setCounts = value => {
+    const trimmedValue = value.trim();
+    const words = compose(this.removeEmptyElements, this.removeBreaks)(trimmedValue.split(' '));
+
+    this.setState({
+      text: value,
+      bioUpload: value,
+      wordCount: value === '' ? 0 : words.length,
+    });
+  }
+
+  removeBreaks = arr => {
+    const index = arr.findIndex(el => el.match(/\r?\n|\r/g));
+
+    if (index === -1)
+      return arr;
+
+    const newArray = [
+      ...arr.slice(0, index),
+      ...arr[index].split(/\r?\n|\r/),
+      ...arr.slice(index + 1, arr.length)
+    ];
+
+    return this.removeBreaks(newArray);
+  }
+
+  removeEmptyElements = arr => {
+    const index = arr.findIndex(el => el.trim() === '');
+
+    if (index === -1)
+      return arr;
+
+    arr.splice(index, 1);
+
+    return this.removeEmptyElements(arr)
+  };
+
+  handleBioChange = e => this.setCounts(e.target.value);
 
   render() {
     return (
@@ -245,7 +274,6 @@ class Profile extends Component {
 
                   <div id="photoContainer" className="photoContainer">
                     {!this.state.edit &&
-
                       <img id="photo" alt="profile" src={this.state.photoSrc}></img>
                     }
                     {this.state.edit &&
@@ -266,8 +294,8 @@ class Profile extends Component {
                       {this.state.edit &&
                         <div id="editName">
                           <Row>
-                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
-                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
+                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname}/>
+                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname}/>
                           </Row>
                         </div>
                       }
@@ -287,8 +315,8 @@ class Profile extends Component {
                             <form className="col s12">
                               <div className="row">
                                 <div className="input-field col s12">
-                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" onChange={this.inputChange}></textarea>
-                                  <label htmlFor="textarea1">Bios should be 60 words or less</label>
+                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
+                                  <p><strong>Word Count:</strong> {this.state.wordCount}</p>
                                 </div>
                               </div>
                             </form>
@@ -301,21 +329,15 @@ class Profile extends Component {
 
                   </div>
                   {!this.state.edit &&
-                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                      <i className="large material-icons"> mode_edit </i>
-                    </Button>
+                    <Button id="edit" className="editButton" onClick={() => this.onClick()}>Edit</Button>
 
                   }
-                  {this.state.edit &&
-                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                      <i className="large material-icons"> check </i>
-                    </Button>
-                  }
+                  
                 </div>
               </div>
               <div className="mainContentBorder">
                 <div id="history">
-                  <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+                  <div id="historyTitle" className="subheader"><b>Your Piece History</b></div>
                   {this.state.history.length > 0 && this.state.history.map((p, i) => {
                     return (
                       //TODO STYLE THESE
@@ -326,7 +348,8 @@ class Profile extends Component {
                     )
                   })}
                   {this.state.history.length === 0 &&
-                    <p> Dancer has no piece history </p>
+                    <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
+                    
                   }
                 </div>
 
@@ -336,7 +359,7 @@ class Profile extends Component {
                       {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
                       {this.state.resume != null && (
                         <div>
-                          <a href={Util.API_URL_BASE + "users/me/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                          <a href={this.state.resume}>View PDF Resume</a>
                         </div>
                       )}
 
@@ -344,15 +367,18 @@ class Profile extends Component {
                   }
                   {this.state.edit &&
                     <section>
-                      <div> Upload your dance resume as a PDF. </div>
-                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                      <div> Upload your dance resume <b>AS A PDF.</b> </div>
+                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange}/>
                     </section>
                   }
                 </div>
-
+                
               </div>
+              
             </div>
-
+{this.state.edit &&
+  <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
+}
           </div>
         </div>
       </section>

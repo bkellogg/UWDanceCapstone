@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
-import FlatButton from 'material-ui/FlatButton';
+import Button from 'react-materialize/lib/Button';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
@@ -233,19 +233,15 @@ class Piece extends Component {
 
   render() {
     let musicianRow = []
-    //let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
     musicianRow = musicians.map((musician, i) => {
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
       )
     })
-    // for (let i = 0; i < numMusicians; i++) {
-    //   musicianRow.push(<MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} />)
-    // }
 
     let castRows = this.state.dancers.map((dancer, i) => {
-      return (<PersonRow p={dancer} piece={true} key={i} />)
+      return (<PersonRow p={dancer} piece={true} key={i} audition={1}/>)
     })
 
     let contactRows = this.state.dancers.map((dancer, i) => {
@@ -277,17 +273,17 @@ class Piece extends Component {
               {
                 !this.state.openCalendar &&
                 // Styling for toggle header is in general
-                <div className="toggleHeader">
+                <div className="toggleHeader" onClick={this.toggleCalendar}>
                   <h2 className="smallHeading">Calendar</h2>
-                  <i className="fas fa-chevron-down fa-lg" onClick={this.toggleCalendar}></i>
+                  <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
               }
               {
                 this.state.openCalendar &&
                 <section>
-                  <div className="toggleHeader">
+                  <div className="toggleHeader" onClick={this.toggleCalendar}>
                     <h2 className="smallHeading">Calendar</h2>
-                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCalendar}></i>
+                    <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
                   <Calendar />
                 </section>
@@ -297,18 +293,18 @@ class Piece extends Component {
               {
                 !this.state.openCast &&
                 // Styling for toggle header is in general
-                <div className="toggleHeader">
+                <div className="toggleHeader" onClick={this.toggleCast}>
                   <h2 className="smallHeading">My Cast</h2>
-                  <i className="fas fa-chevron-down fa-lg" onClick={this.toggleCast}></i>
+                  <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
               }
               {
                 this.state.openCast &&
                 <section>
 
-                  <div className="toggleHeader">
+                  <div className="toggleHeader" onClick={this.toggleCast}>
                     <h2 className="smallHeading">My Cast</h2>
-                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleCast}></i>
+                    <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
                   <div className="peopleList">
                     <table>
@@ -318,6 +314,7 @@ class Piece extends Component {
                           <th>Name</th>
                           <th className="bioOfUser">Bio</th>
                           <th className="userEmail">Email</th>
+                          <th></th>
                         </tr>
                         {castRows}
                       </tbody>
@@ -326,19 +323,16 @@ class Piece extends Component {
                   <div className="buttons">
                     {
                       !this.state.viewAvailability &&
-                      <FlatButton
-                        style={{ color: '#22A7E0', marginRight: '20px'}}
-                        onClick={this.viewAvailability}>
-                        View Cast Availability </FlatButton>
+                      <div className="toggleHeader" onClick={this.viewAvailability}>
+                        <h2 className="smallHeading">View Cast Availability</h2>
+                        <i className="fas fa-chevron-down fa-lg"></i>
+                      </div>
                     }
                     {
                       this.state.viewAvailability &&
-                      <div>
-                        <FlatButton
-                        style={{ color: '#22A7E0', marginRight: '20px'}}
-                        onClick={this.viewAvailability}>
-                          Hide Cast Availabiltiy </FlatButton>
-                        <p>View availability ay</p>
+                      <div className="toggleHeader" onClick={this.viewAvailability}>
+                        <h2 className="smallHeading">Hide Cast Availability</h2>
+                        <i className="fas fa-chevron-up fa-lg"></i>
                       </div>
                     }
                   </div>
@@ -348,17 +342,17 @@ class Piece extends Component {
             <div className="fullWidthCard">
               {
                 !this.state.openInfo &&
-                <div className="toggleHeader">
+                <div className="toggleHeader" onClick={this.toggleInfo}>
                   <h2 className="smallHeading">Information Sheet</h2>
-                  <i className="fas fa-chevron-down fa-lg" onClick={this.toggleInfo}></i>
+                  <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
               }
               {
                 this.state.openInfo &&
                 <section>
-                  <div className="toggleHeader">
+                  <div className="toggleHeader" onClick={this.toggleInfo}>
                     <h2 className="smallHeading">Information Sheet</h2>
-                    <i className="fas fa-chevron-up fa-lg" onClick={this.toggleInfo}></i>
+                    <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
                   <div className="peopleList">
                     <div className="choreoContact">
@@ -516,10 +510,16 @@ class Piece extends Component {
 
                     </div>
                   </div>
-                  <FlatButton
+
+                      <Button 
+                      className="saveButton" 
+                      onClick={this.setInfoSheet}>
+                      Save</Button>
+
+                  {/* <FlatButton
                         style={{ color: '#22A7E0', marginRight: '20px'}}
                         onClick={this.setInfoSheet}
-                        >Save Info Sheet</FlatButton>
+                        >Save Info Sheet</FlatButton> */}
                 </section>
               }
             </div>

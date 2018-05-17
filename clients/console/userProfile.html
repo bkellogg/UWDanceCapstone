@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>STAGE User Profile</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.1/datatables.min.css" />
+</head>
+
+<body>
+    <nav id='nav-bar'></nav>
+    <h1 class="user-name-loc"></h1>
+    <div class="image-loc"></div>
+    <h2>Bio</h2>
+    <div class="bio-content"></div>
+    <h2>Resume</h2>
+    <div class="resume-content"></div>
+    <input id="resume" type="button" value="Download Resume" onclick="getResume();" />
+    <div id="content"></div>
+    <h2>Change Role</h2>
+    <form class="roleChange-form">
+        <div class="role">
+            <select id="roleName">
+                <option id="role-input" value=''>
+                </option>
+            </select>
+        </div>
+        <button type="submit">Change Role</button>
+    </form>
+    <div class="js-error"></div>
+</body>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="js/common.js"></script>
+<script src="js/userProfile.js"></script>
+
+<script>
+    $(function () {
+        $("#nav-bar").load("navigation.html");
+    });
+</script>
+
+</html>

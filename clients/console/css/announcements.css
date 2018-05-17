@@ -1,0 +1,10 @@
+label {
+    display: block;
+    margin-top: 0.5em;
+}
+
+#announcement-message-input, #description-input {
+    border: 1px solid grey;
+    width: 50%;
+    height:25%;;
+}

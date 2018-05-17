@@ -14,7 +14,7 @@
 
 
 .table-drag-select{
-    width: 800px;
+    width: 100%;
 }
 
 
@@ -46,10 +46,6 @@
     display: block;
 }
 
-.formWrap{
-    padding-left: 2%;
-}
-
 Checkbox{
     color: red;
 }
@@ -72,3 +68,7 @@ RaisedButton:hover{
     color: white;
   }
 
+
+  .importantAvailabilityFormMessage{
+      color: #ef5350;
+  }

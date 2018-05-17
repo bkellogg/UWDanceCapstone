@@ -1,3 +1,13 @@
+SET GLOBAL sql_mode = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+
+CREATE TABLE Role (
+    RoleID INT AUTO_INCREMENT PRIMARY KEY,
+    RoleName VARCHAR(20) NOT NULL UNIQUE KEY,
+    RoleDisplayName varchar(25) NOT NULL UNIQUE KEY,
+    RoleLevel INT NOT NULL,
+    IsDeleted BOOLEAN DEFAULT FALSE NOT NULL
+);
+
 CREATE TABLE Users (
     UserID INT AUTO_INCREMENT PRIMARY KEY,
     FirstName VARCHAR(50) NOT NULL,
@@ -5,16 +15,16 @@ CREATE TABLE Users (
     Email VARCHAR(100) NOT NULL UNIQUE KEY,
     Bio VARCHAR(750) NOT NULL,
     PassHash BINARY(60) NOT NULL,
-    Role TINYINT NOT NULL,
+    RoleID INT NOT NULL,
     Active BOOLEAN NOT NULL,
-    CreatedAt DATETIME NOT NULL
+    CreatedAt DATETIME NOT NULL,
+    FOREIGN KEY (RoleID) REFERENCES Role(RoleID)
 );
 
 CREATE TABLE Auditions (
     AuditionID INT AUTO_INCREMENT PRIMARY KEY,
-    Name varchar (50) NOT NULL UNIQUE KEY,
-    Location VARCHAR(100) NOT NULL,
     Time DATETIME NOT NULL,
+    Location VARCHAR(100) NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL
@@ -32,19 +42,19 @@ CREATE TABLE ShowType (
 CREATE TABLE Shows (
     ShowID INT AUTO_INCREMENT PRIMARY KEY,
     ShowTypeID INT NOT NULL,
-    AuditionID INT,
+    AuditionID INT NULL,
     EndDate DATETIME NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
-    FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID),
     FOREIGN KEY (ShowTypeID) REFERENCES ShowType(ShowTypeID)
 );
 
 CREATE TABLE Pieces (
     PieceID INT AUTO_INCREMENT PRIMARY KEY,
-    PieceName varchar(50) NOT NULL UNIQUE KEY,
-    ShowID INT,
+    ChoreographerID INT,
+    PieceName varchar(50) NOT NULL,
+    ShowID INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
     CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL DEFAULT FALSE,
@@ -59,6 +69,15 @@ CREATE TABLE UserPiece (
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (PieceID) REFERENCES Pieces(PieceID)
+);
+
+CREATE TABLE UserPiecePending (
+    UserPiecePendingID INT AUTO_INCREMENT PRIMARY KEY,
+    UserID INT NOT NULL,
+    PieceID INT NOT NULL,
+    ExpiresAt DATETIME NOT NULL,
+    Status VARCHAR(15) NOT NULL,
+    IsDeleted BOOLEAN NOT NULL
 );
 
 CREATE TABLE UserAuditionAvailability (
@@ -79,7 +98,10 @@ CREATE TABLE UserAudition (
     AuditionID INT NOT NULL,
     UserID INT NOT NULL,
     AvailabilityID INT NOT NULL,
+    RegNum INT NOT NULL,
+    NumShows INT NOT NULL,
     CreatedAt DATETIME NOT NULL,
+    CreatedBy INT NOT NULL,
     IsDeleted BOOLEAN NOT NULL,
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (AuditionID) REFERENCES Auditions(AuditionID),
@@ -125,3 +147,14 @@ CREATE TABLE Announcements (
     FOREIGN KEY (CreatedBy) REFERENCES Users(UserID),
     FOREIGN KEY (AnnouncementTypeID) REFERENCES AnnouncementType(AnnouncementTypeID)
 );
+
+
+-- CREATE DEFAULT NECESSARY VALUES
+INSERT INTO Role (RoleName, RoleDisplayName, RoleLevel, IsDeleted) VALUES
+    ('admin', 'Administrator', 100, FALSE),
+    ('chor', 'Choreographer', 70, FALSE),
+    ('user', 'Dancer', 10, FALSE);
+
+INSERT INTO AnnouncementType
+    (AnnouncementTypeID, AnnouncementTypeName, AnnouncementTypeDesc, CreatedAt, CreatedBy, IsDeleted)
+    VALUES (1, 'admin', 'Announcement made by a UW STAGE Staff Admin', NOW(), 1, 0);

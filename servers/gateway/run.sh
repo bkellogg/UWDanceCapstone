@@ -30,6 +30,7 @@ echo >&2 "starting dance gateway server..."
 docker run -d \
 --name gateway \
 --network dancenet \
+--restart unless-stopped \
 -p 443:443 \
 -p 80:80 \
 -v /root/:/certs/dance/:ro \
@@ -50,4 +51,8 @@ docker run -d \
 -e ADMINCONSOLEPATH=/static/clients/console/ \
 -e FRONTENDPATH=/static/clients/frontend/build/ \
 -e ASSETSPATH=/static/assets/ \
+-e STAGE_ADMIN_FIRSTNAME=Brendan \
+-e STAGE_ADMIN_LASTNAME=Kellogg \
+-e STAGE_ADMIN_EMAIL=brendan6@uw.edu \
+-e STAGE_ADMIN_PASSWORD=$STAGE_ADMIN_PASSWORD \
 brendankellogg/dancegateway

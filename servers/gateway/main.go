@@ -1,14 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strings"
 
-	"github.com/gorilla/mux"
-
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/startup"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/handlers"
@@ -18,60 +17,105 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 )
 
+const UseAppINI = false
+
 func main() {
+
+	if UseAppINI {
+		settings, err := startup.ParseSettingsFromINI("")
+		if err != nil {
+			log.Fatalf("error parsing settings from ini: %v", err)
+		}
+		fmt.Println("successfully loaded app settings!")
+		fmt.Printf("%+v", settings)
+	}
+
 	// Gateway server environment variables
-	addr := getRequiredENVOrExit("ADDR", ":443")
-	httpRedirAddr := getRequiredENVOrExit("HTTPREDIRADDR", ":80")
-	tlsKey := getRequiredENVOrExit("TLSKEY", "")
-	tlsCert := getRequiredENVOrExit("TLSCERT", "")
-	sessionKey := getRequiredENVOrExit("SESSIONKEY", "")
+	addr := require("ADDR", ":443")
+	httpRedirAddr := require("HTTPREDIRADDR", ":80")
+	tlsKey := require("TLSKEY", "")
+	tlsCert := require("TLSCERT", "")
+	sessionKey := require("SESSIONKEY", "")
 
 	// MYSQL store environment variables
-	mySQLPass := getRequiredENVOrExit("MYSQLPASS", "")
-	mySQLAddr := getRequiredENVOrExit("MYSQLADDR", "")
-	mySQLDBName := getRequiredENVOrExit("MYSQLDBNAME", "DanceDB")
+	mySQLPass := require("MYSQLPASS", "")
+	mySQLAddr := require("MYSQLADDR", "")
+	mySQLDBName := require("MYSQLDBNAME", "DanceDB")
 
 	// Redis store environment variables
-	redisAddr := getRequiredENVOrExit("REDISADDR", "")
+	redisAddr := require("REDISADDR", "")
 
 	// Mail Info
-	mailUser := getRequiredENVOrExit("MAILUSER", "")
-	mailPass := getRequiredENVOrExit("MAILPASS", "")
-	templatesPath := getRequiredENVOrExit("TEMPLATESPATH", "")
+	mailUser := require("MAILUSER", "")
+	mailPass := require("MAILPASS", "")
 
-	resetPasswordClientPath := getRequiredENVOrExit("RESETPASSWORDCLIENTPATH", "")
-	adminConsolePath := getRequiredENVOrExit("ADMINCONSOLEPATH", "")
-	frontEndPath := getRequiredENVOrExit("FRONTENDPATH", "")
-	assetsPath := getRequiredENVOrExit("ASSETSPATH", "")
+	templatesPath := require("TEMPLATESPATH", "")
+	resetPasswordClientPath := require("RESETPASSWORDCLIENTPATH", "")
+	adminConsolePath := require("ADMINCONSOLEPATH", "")
+	frontEndPath := require("FRONTENDPATH", "")
+	assetsPath := require("ASSETSPATH", "")
+
+	// admin user info
+	adminFName := require("STAGE_ADMIN_FIRSTNAME", "")
+	adminLName := require("STAGE_ADMIN_LASTNAME", "")
+	adminEmail := require("STAGE_ADMIN_EMAIL", "")
+	adminPaswd := require("STAGE_ADMIN_PASSWORD", "")
+
+	// URL that the app is served from
+	// this will be used when generating links back to itself.
+	url := require("STAGE_HOST", "dasc.capstone.ischool.uw.edu")
+	appvars.StageURL = "https://" + url
 
 	// Open connections to the databases
 	db, err := models.NewDatabase("root", mySQLPass, mySQLAddr, mySQLDBName)
 	if err != nil {
 		log.Fatalf("error connecting to database: %v", err)
 	}
+
+	if err = db.BootstrapInitialAdminUser(adminFName, adminLName, adminEmail, adminPaswd); err != nil {
+		log.Fatalf("error bootstrapping initial admin user: %v", err)
+	}
+
 	redis := sessions.NewRedisStore(nil, appvars.DefaultSessionDuration, redisAddr)
 
 	notifier := notify.NewNotifier()
+	castingSession := notify.NewCastingSession(db, notifier)
 
-	mailContext := handlers.NewMailContext(mailUser, mailPass)
-	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials())
-	announcementContext := handlers.NewAnnoucementContext(db, notifier)
-	authorizer := middleware.NewHandlerAuthorizer(sessionKey, authContext.SessionsStore)
+	permChecker, err := models.NewPermissionChecker(db)
+	if err != nil {
+		log.Fatalf("error creating permission checker: %v", err)
+	}
 
-	baseRouter := mux.NewRouter()
+	mailContext := handlers.NewMailContext(mailUser, mailPass, permChecker)
+	authContext := handlers.NewAuthContext(sessionKey, templatesPath, redis, db, mailContext.AsMailCredentials(), permChecker)
+	announcementContext := handlers.NewAnnouncementContext(db, notifier, permChecker)
+	authorizer := middleware.NewHandlerAuthorizer(sessionKey, redis)
+
+	castingContext := handlers.NewCastingContext(permChecker,
+		castingSession,
+		templatesPath+"confirmation_tpl.html",
+		mailContext.AsMailCredentials())
+
+	baseRouter := middleware.NewAuthenticatedRouter(sessionKey, redis)
 	baseRouter.Handle(appvars.MailPath, authorizer.Authorize(mailContext.MailHandler))
 	baseRouter.HandleFunc(appvars.SessionsPath, authContext.UserSignInHandler)
 	baseRouter.HandleFunc(appvars.PasswordResetPath, authContext.PasswordResetHandler)
 	baseRouter.PathPrefix("/reset/").Handler(handlers.PreventDirListing(http.StripPrefix("/reset/", http.FileServer(http.Dir(resetPasswordClientPath)))))
 	baseRouter.PathPrefix("/admin").Handler(handlers.AddTrailingSlash(http.StripPrefix("/admin/", http.FileServer(http.Dir(adminConsolePath)))))
+	baseRouter.PathPrefix("/assets/tpl/").Handler(http.NotFoundHandler()) // don't serve the assets/tpl directory
 	baseRouter.PathPrefix("/assets/").Handler(handlers.PreventDirListing(http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsPath)))))
+	baseRouter.PathPrefix(appvars.BaseAPIPath + "/flushcasting").Handler(authorizer.Authorize(castingContext.FlushCastingHandler)).
+		Methods(http.MethodDelete)
+	baseRouter.PathPrefix(appvars.BaseAPIPath + "/castingstate").Handler(authorizer.Authorize(castingContext.DebugCastingStateHandler)).
+		Methods(http.MethodGet)
 
 	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()
 	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
 	announcementsRouter := baseRouter.PathPrefix(appvars.AnnouncementsPath).Subrouter()
-	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(announcementContext.AnnouncementsHandler))
 	announcementsRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.AnnouncementTypesHandler))
+	announcementsRouter.Handle(appvars.ResourceID, authorizer.Authorize(announcementContext.SpecificAnnouncementHandler))
+	announcementsRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(announcementContext.AnnouncementsHandler))
 	announcementsRouter.Handle("/dummy", authorizer.Authorize(announcementContext.DummyAnnouncementHandler))
 
 	usersRouter := baseRouter.PathPrefix(appvars.UsersPath).Subrouter()
@@ -79,27 +123,38 @@ func main() {
 	usersRouter.Handle(appvars.AllUsersPath, authorizer.Authorize(authContext.AllUsersHandler))
 	usersRouter.Handle(appvars.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
 	usersRouter.Handle(appvars.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
-	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler)).Methods("LINK", "UNLINK")
+	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler)).
+		Methods("LINK", "UNLINK")
+	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserObjectDispatcher))
 	usersRouter.Handle(appvars.UserMembershipObjectPath, authorizer.Authorize(authContext.UserMembershipActionDispatcher))
 
 	auditionRouter := baseRouter.PathPrefix(appvars.AuditionsPath).Subrouter()
 	auditionRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.AuditionsHandler))
 	auditionRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificAuditionHandler))
-	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificAuditionHandler))
+	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(castingContext.CastingHandlerDispatcher)).
+		Methods(http.MethodPut, http.MethodPatch, http.MethodPost)
+	auditionRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.AuditionObjectDispatcher))
 
 	showRouter := baseRouter.PathPrefix(appvars.ShowsPath).Subrouter()
 	showRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.ShowTypeHandler))
 	showRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.ShowsHandler))
 	showRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificShowHandler))
-	showRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ResourceForSpecificShowHandler))
+	showRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.ShowObjectDispatcher))
+	showRouter.Handle(appvars.ResourceIDObjectID, authorizer.Authorize(authContext.ShowAuditionRelationshipHandler)).
+		Methods("LINK", "UNLINK")
 
 	pieceRouter := baseRouter.PathPrefix(appvars.PiecesPath).Subrouter()
 	pieceRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.PiecesHandler))
 	pieceRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificPieceHandler))
+	pieceRouter.Handle(appvars.ResourceIDObject, authorizer.Authorize(authContext.PieceObjectHandler))
+	pieceRouter.Handle(appvars.ResourceIDObjectID, authorizer.Authorize(authContext.PieceObjectIDHandler))
+
+	rolesRouter := baseRouter.PathPrefix(appvars.RolesPath).Subrouter()
+	rolesRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.RolesHandler))
 
 	baseRouter.Handle(appvars.BaseAPIPath, http.NotFoundHandler())
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
-	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath + "index.html"))
+	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath)).Methods(http.MethodGet)
 
 	treatedRouter := middleware.EnsureHeaders(middleware.BlockIE(
 		middleware.LogErrors(baseRouter, db)))
@@ -121,7 +176,7 @@ func main() {
 
 // Gets the value of env from the environment or defaults it to the given
 // def. Exits the process if env and def are not set
-func getRequiredENVOrExit(env, def string) string {
+func require(env, def string) string {
 	if envVal := os.Getenv(env); len(envVal) != 0 {
 		return envVal
 	}

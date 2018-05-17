@@ -11,6 +11,10 @@
 /*COMPLETE PROFILE MESSAGE -- RED TONES*/
 .completeProfileBorderColor {
   border-left: 6px solid rgb(231, 76, 60);
+<<<<<<< HEAD
+=======
+  cursor: pointer
+>>>>>>> 04f8b6cf09e9a26af0e8e9e45acb620923e05850
 }
 
 .completeProfileCardColor{

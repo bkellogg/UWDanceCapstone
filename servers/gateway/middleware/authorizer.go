@@ -25,7 +25,7 @@ func NewHandlerAuthorizer(signingKey string, store sessions.Store) *HandlerAutho
 	}
 }
 
-// Authorize authorizes the provied handler with the current HandlerAuthorizer
+// Authorize authorizes the provided handler with the current HandlerAuthorizer
 func (aw *HandlerAuthorizer) Authorize(handler authenticatedHandler) *AuthorizedHandler {
 	return &AuthorizedHandler{
 		handler:    handler,
@@ -39,6 +39,10 @@ type AuthorizedHandler struct {
 	handler    authenticatedHandler
 	signingKey string
 	store      sessions.Store
+}
+
+func (a *AuthorizedHandler) Middleware(handler http.Handler) http.Handler {
+	return a
 }
 
 // ServeHTTP serves the request for the authorized handler.

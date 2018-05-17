@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="css/announcements.css">
+</head>
+
+<body>
+    <nav id='nav-bar'></nav>
+    <h1>Create New Announcement</h1>
+    <form class="announcement-form">
+        <div class="announcement-message">
+            <label for="announcement-message-input">Announecement Message</label>
+            <textarea name="announcement-message-input" id="announcement-message-input"></textarea>
+        </div>
+        <div class="announcementType">
+            <select id="announcementType">
+                <option id="announcementType-input" value=''>
+                    <strong>Announcement Type</strong>
+                </option>
+            </select>
+        </div>
+        <button type="submit">Create Announcement</button>
+    </form>
+    <div class="js-error"></div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/createNewAnnouncement.js"></script>
+<script>
+    $(function () {
+        $("#nav-bar").load("navigation.html");
+    });
+</script>
+
+</html>

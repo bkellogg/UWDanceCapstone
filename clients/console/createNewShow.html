@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.3/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css"></link>
+
+    <link rel="stylesheet" href="css/shows.css">
+</head>
+
+<body>
+    <nav id='nav-bar'></nav>
+    <h1>Create New Show</h1>
+    <form class="show-form">
+        <div class="showType">
+            <p>Select Concert:</p>
+            <select id="showType">
+                <option id="showType-input" value=''>
+                    <strong>Show Type</strong>
+                </option>
+            </select>
+        </div>
+        <div class="endDate">
+            <p>Show End Date:</p>
+            <input id="show-end-date" placeholder="Show End Date" />
+            <input id="show-end-time-input" placeholder="Show End Time">
+        </div>
+        <div class="audition-input">
+            <h2>Audition Information</h2>
+            <div class="audition-name">
+                <label for="audition-name-input">Audition Name</label>
+                <input id="audition-name-input" type="text">
+            </div>
+            <div class="location">
+                <label for="location">Location</label>
+                <input id="location-input" type="text">
+            </div>
+            <div class="audition-time">
+                <p>Audition Time:</p>
+                <input id="audition-date" placeholder="Audition Date" />
+                <input id="audition-time-input" placeholder="Audition Time">
+            </div>
+            <div class="quarter-name">
+                <p>Select Quarter:</p>
+                <select id="quarter-name-input">
+                    <option value=''>Quarter</option>
+                    <option value='autumn'>Autumn</option>
+                    <option value='winter'>Winter</option>
+                    <option value='spring'>Spring</option>
+                    <option value='summer'>Summer</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit">Create Show</button>
+    </form>
+    <div class="js-error"></div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.3/jquery.timepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/createNewShow.js"></script>
+
+<script>
+    $(function () {
+        $("#nav-bar").load("navigation.html");
+    });
+</script>
+
+</html>

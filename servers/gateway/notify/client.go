@@ -12,12 +12,12 @@ import (
 type WebSocketClient struct {
 	conns []*websocket.Conn
 	user  *models.User
-	mx    sync.RWMutex // necessary for safely removing specific connecitons
+	mx    sync.RWMutex // necessary for safely removing specific connections
 }
 
-// NewWebSocketClient creates a new websocket client from the
+// newWebSocketClient creates a new websocket client from the
 // given information.
-func NewWebSocketClient(u *models.User, c *websocket.Conn) *WebSocketClient {
+func newWebSocketClient(u *models.User, c *websocket.Conn) *WebSocketClient {
 	wsc := &WebSocketClient{
 		user: u,
 	}
@@ -43,22 +43,19 @@ func (c *WebSocketClient) hasConnections() bool {
 	return len(c.conns) > 0
 }
 
-// shouldRecieveEvent returns true if this client should recieve the
+// shouldReceiveEvent returns true if this client should receive the
 // given event.
-func (c *WebSocketClient) shouldRecieveEvent(e *WebSocketEvent) bool {
-	if e.EventType == EventTypeAnnouncement {
-		return true
-	}
-	return true // TODO: temp
+func (c *WebSocketClient) shouldReceiveEvent(e *WebSocketEvent) bool {
+	return c.user.ID == e.Recipient || e.Recipient < 1
 }
 
 // writeToAll writes the given WebSocketEvent to every connection
-// for this WebSocketClient if the client should recieve it.
+// for this WebSocketClient if the client should receive it.
 // Purges any connection that has errors when being written to.
 // Returns true if this WebSocketClient should be removed, false
 // if otherwise.
 func (c *WebSocketClient) writeToAll(e *WebSocketEvent) bool {
-	if !c.shouldRecieveEvent(e) {
+	if !c.shouldReceiveEvent(e) {
 		return false
 	}
 	for _, conn := range c.conns {
@@ -72,7 +69,11 @@ func (c *WebSocketClient) writeToAll(e *WebSocketEvent) bool {
 // removeConn removes the given websocket conn from this WebSocketClient.
 func (c *WebSocketClient) removeConn(connToRemove *websocket.Conn) {
 	connToRemove.Close()
-	newConns := make([]*websocket.Conn, 0, len(c.conns)-1)
+	newConnsLength := len(c.conns) - 1
+	if newConnsLength < 0 {
+		newConnsLength = 0
+	}
+	newConns := make([]*websocket.Conn, 0, newConnsLength)
 	c.mx.Lock()
 	defer c.mx.Unlock()
 	for _, conn := range c.conns {
