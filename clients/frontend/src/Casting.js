@@ -20,7 +20,7 @@ import './styling/CastingFlowTablet.css';
 import ArrowBackIcon from 'mdi-react/ArrowBackIcon';
 import ArrowForwardIcon from 'mdi-react/ArrowForwardIcon';
 
-const WEBSOCKET = new WebSocket("wss://" + Util.host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
+let WEBSOCKET;
 
 class Casting extends Component {
   constructor(props) {
@@ -41,40 +41,41 @@ class Casting extends Component {
       },
       open: true,
       error: false
-    }
+    };
+    WEBSOCKET = new WebSocket("wss://" + Util.host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
   };
 
   componentDidMount() {
     //this will take the message returned from the socket and store it in state
     WEBSOCKET.addEventListener("message", (event) => {
       //TODO only do this for casting socket updates
-      let update = JSON.parse(event.data)
+      let update = JSON.parse(event.data);
 
       this.setState({
         cast: update.data.cast,
         uncast : update.data.uncasted,
         contested : update.data.contested
-      })
+      });
 
-    })
-    this.getShow()
+    });
+    this.getShow();
   }
 
   getShow = () => {
     Util.makeRequest("shows/"+this.props.show, "", "GET", true)
     .then((res) => {
       if (res.ok) {
-        return res.json()
+        return res.json();
       }
       if (res.status === 401) {
-        Util.signOut()
+        Util.signOut();
       }
       return res.text().then((t) => Promise.reject(t));
     })
     .then( show => {
       this.setState({
         show: show,
-      })
+      });
     })
     .catch(err => {
       console.error(err)
@@ -86,7 +87,7 @@ class Casting extends Component {
     const stepIndex = this.state.stepIndex;
 
     if (stepIndex === 0){
-      this.updateCast()
+      this.updateCast();
     }
 
     if (stepIndex < 3) {
@@ -108,10 +109,10 @@ class Casting extends Component {
       Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.addToCast, "PATCH", true)
       .then(res => {
         if (res.ok) {
-          return res.text()
+          return res.text();
         }
         if (res.status === 401) {
-          Util.signOut()
+          Util.signOut();
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -121,10 +122,10 @@ class Casting extends Component {
       Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.dropFromCast, "PATCH", true)
         .then(res => {
           if (res.ok) {
-            return res.text()
+            return res.text();
           }
           if (res.status === 401) {
-            Util.signOut()
+            Util.signOut();
           }
           return res.text().then((t) => Promise.reject(t));
         })
@@ -153,15 +154,15 @@ class Casting extends Component {
     Util.makeRequest("auditions/" + this.props.audition + "/casting", "", "PUT", true)
     .then((res) => {
       if (res.ok) {
-        return res.text()
+        return res.text();
       }
       if (res.status === 401) {
-        Util.signOut()
+        Util.signOut();
       }
       if (res.status === 400) {
         this.setState({
           error: "This show is not currently casting. Contact your administrator if you believe this is inaccurate."
-        })
+        });
       }
       return res.text().then((t) => Promise.reject(t));
     })
@@ -171,13 +172,13 @@ class Casting extends Component {
       })
     )
     .catch(err => {
-      console.error(err)
+      console.error(err);
     })
   }
 
   cancelCast = () => {
     //sends the user  to the dashboard
-    window.location = "/"
+    window.location = "/";
   }
   
 

@@ -1,7 +1,6 @@
 export const headerAuthorization = "Authorization";
 
 export const host = "dasc.capstone.ischool.uw.edu";
-export const test = "10.19.104.173:4000"
 export const API_URL_BASE = "https://"+ host +"/api/v1/";
 
 
