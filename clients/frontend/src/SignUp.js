@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Button } from 'react-materialize';
 import * as Util from './util.js';
 import logo from './imgs/logoex.png'
-import SignUpExtra from './SignUpExtra.js'
 import './styling/SignIn.css';
 import './styling/SignUp.css';
 
@@ -46,8 +45,9 @@ class SignUp extends Component {
         Util.setLocalUser(JSON.stringify(data));
         this.setState({
           auth: data,
-          signUpExtra: true
+          // signUpExtra: true
         });
+        this.skip()
       })
       .catch((err) => {
         let error = err
@@ -162,14 +162,15 @@ class SignUp extends Component {
                     </div>
 
 
+
                   </div>
                 </div>
               }
 
-              {
+              {/* {
                 this.state.signUpExtra === true && this.state.auth != null &&
                 <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
-              }
+              } */}
             </div>
           </div>
         </div>

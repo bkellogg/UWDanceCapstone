@@ -1,13 +1,10 @@
 "use strict";
 refreshLocalUser();
-let auth = getAuth();
 
 var announcementForm = document.querySelector(".announcement-form");
 var errorBox = document.querySelector(".js-error");
 var announcementType = document.getElementById("announcementType");
 var message = document.getElementById("announcement-message-input");
-
-
 
 populateAnnouncementTypeOptions();
 
@@ -33,10 +30,9 @@ announcementForm.addEventListener("submit", function (evt) {
         })
 })
 
-
 // get announcement types
 function populateAnnouncementTypeOptions() {
-    fetch(API_URL_BASE + "announcements/types?includeDeleted=false&auth=" + auth)
+    makeRequest("announcements/types",{}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();

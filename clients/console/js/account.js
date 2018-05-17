@@ -24,6 +24,8 @@ changeBioFormWrapper.hide();
 var uploadResumeFormWrapper = $('.upload-resume-form');
 uploadResumeFormWrapper.hide();
 
+
+
 photoButton.addEventListener("click", () => {
     changePhotoFormWrapper.toggle();
     if ($('.change-bio-form').is(':visible')) {
@@ -57,39 +59,13 @@ if (!user.bio) {
 
 getImage();
 
+
 photoForm.addEventListener("submit", (evt) => {
     evt.preventDefault();
-    let file = document.querySelector("#photo-selector");
-    let data = new FormData();
-    data.append("image", file.files[0]);
-
-    let xhr = new XMLHttpRequest();
-
-    xhr.addEventListener("readystatechange", function () {
-        if (this.readyState === 4) {
-            console.log(this.responseText);
-        }
-    });
-
-    let photoResult = document.querySelector(".photo-result");
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status < 400) {
-                photoResult.textContent = xhr.responseText;
-                getImage();
-            } else {
-                photoResult.textContent = "ERROR: " + xhr.responseText;
-            }
-        }
-    };
-
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/photo");
-    xhr.setRequestHeader("Authorization", auth);
-    xhr.setRequestHeader("ImageFieldName", "image");
-
-    xhr.send(data);
+    uploadPhoto();
     $('#photo-selector').val('');
 });
+
 
 bioForm.addEventListener("submit", (evt) => {
     evt.preventDefault();
@@ -116,37 +92,10 @@ bioForm.addEventListener("submit", (evt) => {
         })
 });
 
+
 resumeForm.addEventListener("submit", (evt) => {
     evt.preventDefault();
-    let file = document.querySelector("#resume-selector");
-    let data = new FormData();
-    data.append("resume", file.files[0]);
-
-    let xhr = new XMLHttpRequest();
-
-    xhr.addEventListener("readystatechange", function () {
-        if (this.readyState === 4) {
-            console.log(this.responseText);
-        }
-    });
-
-    let resumeResult = document.querySelector(".resume-result");
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status < 400) {
-                resumeResult.textContent = xhr.responseText;
-            } else {
-                resumeResult.textContent = "ERROR: " + xhr.responseText;
-            }
-        }
-    };
-
-    xhr.open("POST", "https://dasc.capstone.ischool.uw.edu/api/v1/users/me/resume");
-    xhr.setRequestHeader("Authorization", auth);
-    xhr.setRequestHeader("ResumeFieldName", "resume");
-
-    xhr.send(data);
-
+    uploadResume();
     $('#resume-selector').val('');
 });
 
@@ -158,7 +107,7 @@ function getImage() {
         image.classList.add("profile-picture");
         imgLoc.appendChild(image);
     }
-    fetch(API_URL_BASE + "users/me/photo?auth=" + auth)
+    makeRequest("users/me/photo", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.blob();
@@ -176,9 +125,10 @@ function getImage() {
 
 }
 
+
 function getResume() {
     let resume = document.querySelector(".resume");
-    fetch(API_URL_BASE + "users/me/resume?auth=" + auth)
+    makeRequest("users/me/resume", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.blob();

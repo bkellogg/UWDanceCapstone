@@ -89,18 +89,18 @@ class Registration extends Component {
             </div>
             <br />
             <div className="row">
-              <div>2. You must be enrolled in a technique class during the quarter the production is occurring.<br />
+              <div>2. You must be enrolled in a <b>technique</b> class during the quarter the production is occurring.<br />
               </div>
               <br />
               <Checkbox
                 iconStyle={{ fill: '#22A7E0' }}
-                label="I confirm I am enrolled in a class for the quarter during which the show is occuring."
+                label="I confirm I am enrolled in a technique class for the quarter during which the show is occuring."
                 onClick={() => { this.setState({ clicked: !this.state.clicked }) }}
               />
             </div>
             <br />
             <div className="row">
-              <div><p>3. Availability [click & drag to indicate when you are <b>available</b> to rehearse]</p></div>
+              <div><p>3. Availability <b>[click & drag to indicate when you are <b className="importantAvailabilityFormMessage">AVAILABLE </b>to rehearse]</b></p></div>
               <Availability availability={this.setAvailability} />
             </div>
             <br />
@@ -123,7 +123,7 @@ class Registration extends Component {
           backgroundColor="#22A7E0"
           style={{ color: '#ffffff' }}
         >
-          Register </RaisedButton>
+          REGISTER </RaisedButton>
       </div>
 
     )
