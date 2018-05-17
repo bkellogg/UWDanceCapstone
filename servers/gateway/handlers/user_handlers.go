@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -296,10 +295,7 @@ func (ctx *AuthContext) handleUserRole(w http.ResponseWriter, r *http.Request, u
 	}
 	err := ctx.store.ChangeUserRole(userID, roleChange.RoleName)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return HTTPError("user not found", http.StatusNotFound)
-		}
-		return HTTPError("error changing user role: "+err.Error(), http.StatusInternalServerError)
+		return middleware.HTTPErrorFromDBErrorContext(err, "error changing user role")
 	}
 	return respondWithString(w, "user role updated", http.StatusOK)
 }
