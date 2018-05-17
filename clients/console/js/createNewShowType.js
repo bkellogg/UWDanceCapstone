@@ -2,20 +2,20 @@
 
 refreshLocalUser();
 
-var newAnnouncementTypeForm = document.querySelector(".newAnnouncementType-form");
+var newShowTypeForm = document.querySelector(".newShowType-form");
 var errorBox = document.querySelector(".js-error");
-var announcementTypeName = document.getElementById("announcementTypeName-input");
+var showTypeName = document.getElementById("showTypeName-input");
 var description = document.getElementById("description-input");
 
-getAnnouncementTypes()
+getShowTypes()
 
-newAnnouncementTypeForm.addEventListener("submit", function (evt) {
+newShowTypeForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
     var payload = {
-        "name": announcementTypeName.value,
+        "name": showTypeName.value,
         "desc": description.value,
     };
-    makeRequest("announcements/types", payload, "POST", true)
+    makeRequest("shows/types", payload, "POST", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -23,10 +23,9 @@ newAnnouncementTypeForm.addEventListener("submit", function (evt) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            alert("New announcement type successfully created.");
+            alert("New show type successfully created.");
             $('input').val('');
-            $('.newAnnouncementType-form')[0].reset();
-            location.reload();
+            $('.newShowType-form')[0].reset();
         })
         .catch((err) => {
             errorBox.textContent = err;
@@ -34,9 +33,9 @@ newAnnouncementTypeForm.addEventListener("submit", function (evt) {
 })
 
 
-// get announcement types
-function getAnnouncementTypes() {
-    makeRequest("announcements/types?inclueDeleted=false", {}, "GET", true)
+// get show types
+function getShowTypes() {
+    makeRequest("shows/types?includeDeleted-false", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -45,7 +44,7 @@ function getAnnouncementTypes() {
         })
         .then((data) => {
             $(data).each(function (index, value) {
-              $("ul").append("<li>"+ value.name + " - " + value.desc + "</li>")
+                $("ul").append("<li>" + value.name + " - " + value.desc + "</li>")
             });
         })
 

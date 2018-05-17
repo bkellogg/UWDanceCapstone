@@ -5,7 +5,8 @@
 
 const headerAuthorization = "Authorization";
 
-const API_URL_BASE = "https://dasc.capstone.ischool.uw.edu/api/v1/";
+const HOST = "dasc.capstone.ischool.uw.edu";
+const API_URL_BASE = "https://" + HOST + "/api/v1/";
 
 function saveAuth(auth) {
     localStorage.setItem("auth", auth);
@@ -71,4 +72,68 @@ function signout() {
     // user as invalid and clear their local storage entries anyway.
     clearAuthAndUser();
     window.location.href = "index.html";
+}
+
+
+
+function uploadResume() {
+    let file = document.querySelector("#resume-selector");
+    let data = new FormData();
+    data.append("resume", file.files[0]);
+
+    let xhr = new XMLHttpRequest();
+
+    let resumeResult = document.querySelector(".resume-result");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status < 400) {
+                resumeResult.textContent = xhr.responseText;
+            } else {
+                resumeResult.textContent = "ERROR: " + xhr.responseText;
+            }
+        }
+    };
+
+    xhr.open("POST", API_URL_BASE + "users/me/resume");
+    xhr.setRequestHeader("Authorization", auth);
+    xhr.setRequestHeader("ResumeFieldName", "resume");
+
+    xhr.send(data);
+}
+
+function uploadPhoto() {
+    let file = document.querySelector("#photo-selector");
+    let data = new FormData();
+    data.append("image", file.files[0]);
+
+    let xhr = new XMLHttpRequest();
+
+    let photoResult = document.querySelector(".photo-result");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status < 400) {
+                photoResult.textContent = xhr.responseText;
+                getImage();
+            } else {
+                photoResult.textContent = "ERROR: " + xhr.responseText;
+            }
+        }
+    };
+
+    xhr.open("POST", API_URL_BASE+ "users/me/photo");
+    xhr.setRequestHeader("Authorization", auth);
+    xhr.setRequestHeader("ImageFieldName", "image");
+
+    xhr.send(data);
+}
+
+function getQueryParam(param) {
+    let sPageURL = window.location.search.substring(1);
+    let sURLVariables = sPageURL.split('&');
+    for (let i = 0; i < sURLVariables.length; i++) {
+        let sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == param) {
+            return sParameterName[1];
+        }
+    }
 }

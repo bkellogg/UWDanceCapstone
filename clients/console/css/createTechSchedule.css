@@ -1,13 +1,11 @@
-.hidden {
-    display: none;
-}
 
-ul{
+  ul{
     list-style-type: none;
     padding: 0;
     margin: 0;
     margin-left: 1em;
   }
   li {
+    list-style-type: none;
     margin: 0.25em 0;
   }

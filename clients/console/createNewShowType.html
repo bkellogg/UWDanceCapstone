@@ -6,35 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="css/shows.css">
     <link rel="stylesheet" href="css/common.css">
 </head>
 
 <body>
     <nav id='nav-bar'></nav>
-    <h1>Create New User Role</h1>
-    <p> Current Roles:</p>
+    <h1>Create New Show Type</h1>
+    <p> Current Show Types:</p>
     <ul></ul>
-    <form class="newRole-form">
-        <div class="roleName">
-            <label for="roleName-input">Role Name</label>
-            <input id="roleName-input" type="text">
+    <form class="newShowType-form">
+        <div class="showTypeName">
+            <label for="showTypeName-input">Name of Show Type</label>
+            <input id="showTypeName-input" type="text" placeholder="Three Character Limit">
         </div>
-        <div class="displayName">
-            <label for="displayName-input">Display Name of Role</label>
-            <input id="displayName-input" type="text">
+        <div class="description">
+            <label for="description-input">Description</label>
+            <textarea name="description-input" id="description-input"></textarea>
         </div>
-        <div class="level">
-            <label for="level-input">Role Level</label>
-            <input id="level-input" type="number">
-        </div>
-        <button type="submit">Create Role</button>
+        <button type="submit">Create Show Type</button>
     </form>
     <div class="js-error"></div>
 
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="js/common.js"></script>
-<script src="js/createNewUserRoles.js"></script>
+<script src="js/createNewShowType.js"></script>
 
 <script>
     $(function () {
