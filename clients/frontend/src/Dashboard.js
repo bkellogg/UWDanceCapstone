@@ -165,8 +165,8 @@ class Dashboard extends Component {
     })
     let displayShows = this.props.shows.map((anncouncement, index) => {
       var moment = require('moment');
-      var auditionDay = moment(anncouncement.audition.time).format('MMM. d, YYYY');
-      var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
+      var auditionDay = moment(anncouncement.audition.time).format('MMM. Do, YYYY');
+      var auditionTime = moment(anncouncement.audition.time).format("hh:mm a");
       var auditionLink = anncouncement.name.split(' ').join('');
       return (
         <div key={index} className="announcement newAuditionBorderColor">
