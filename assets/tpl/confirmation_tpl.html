@@ -125,6 +125,9 @@
         font-weight: 600;
         color: #EA6336;
     }
+    .expiry-time {
+        font-weight: bold;
+    }
     </style>
 
 
@@ -144,7 +147,7 @@
                     <p>Congratulations! {{.ChorFName}} {{.ChorLName}} has cast you in their piece! Click <a class="link" href="{{.URL}}">here</a> to accept or reject the piece.</p>
                 </div>
                 <div>
-                    The invite to join this piece will expire on <p class="expiry-time">{{.ExpiryTime}}</p>.
+                    The invite to join this piece will expire on <p class="expiry-time">{{.ExpiryTime}}</p>
                     If you do not accept by that time, it will be assumed that you do not want to be in the piece and your invite will no longer be valid.
                 </div>
                 <!-- RESET PASSWORD BUTTON -->
