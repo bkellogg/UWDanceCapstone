@@ -501,6 +501,23 @@ func (store *Database) getUserRoleLevel(userID int64) (int, error) {
 	return role, nil
 }
 
+// SearchForUsers returns a slice of users that match any of the given filters.
+// Returns a DBError if one occurred.
+func (store *Database) SearchForUsers(email, firstName, lastName string, page int) ([]*User, *DBError) {
+	offset := getSQLPageOffset(page)
+	query := `SELECT DISTINCT * FROM Users U WHERE 1 = 1
+		AND U.Email LIKE ?
+		AND U.FirstName LIKE ?
+		AND U.LastName LIKE ?
+		AND U.Active = TRUE
+		LIMIT 25 OFFSET ?`
+	return handleUsersFromDatabase(store.db.Query(query,
+		"%"+email+"%",
+		"%"+firstName+"%",
+		"%"+lastName+"%",
+		offset))
+}
+
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
 func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, *DBError) {
 	if err != nil {
