@@ -2,7 +2,6 @@ package models
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -81,51 +80,44 @@ func (store *Database) AddUserToPiece(userID, pieceID int, markInvite bool, invi
 
 // ChangeUserRole sets the role of the given user ID to role.
 // Returns an error if one occurred.
-func (store *Database) ChangeUserRole(userID int, roleName string) error {
+func (store *Database) ChangeUserRole(userID int, roleName string) *DBError {
 	tx, err := store.db.Begin()
 	if err != nil {
-		return errors.New("error beginning transaction: " + err.Error())
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
 	}
+	defer tx.Rollback()
 
 	rows, err := tx.Query(`SELECT * FROM Role R WHERE R.RoleName = ?`, roleName)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return errors.New(appvars.ErrNoRoleFound)
-		}
-		return errors.New("error querying role: " + err.Error())
+		return NewDBError(fmt.Sprintf("error querying role: %v", err), http.StatusInternalServerError)
 	}
 	role := &Role{}
 	if rows.Next() {
 		err = rows.Scan(&role.ID, &role.Name, &role.DisplayName, &role.Level, &role.IsDeleted)
 		if err != nil {
-			return errors.New("error scanning role query into role: " + err.Error())
+			return NewDBError(fmt.Sprintf("error scanning row into role: %v", err), http.StatusInternalServerError)
 		}
 	} else {
-		return errors.New(appvars.ErrNoRoleFound)
+		return NewDBError(appvars.ErrNoRoleFound, http.StatusNotFound)
 	}
 	rows.Close()
 
 	rows, err = tx.Query(`SELECT * FROM Users U Where U.UserID = ?`, userID)
 	if err != nil {
-		tx.Rollback()
-		if err == sql.ErrNoRows {
-			return errors.New(appvars.ErrNoUserFound)
-		}
-		return errors.New("error querying user: " + err.Error())
+		return NewDBError(fmt.Sprintf("error querying for user: %v", err), http.StatusInternalServerError)
 	}
 	if !rows.Next() {
-		return errors.New(appvars.ErrNoUserFound)
+		return NewDBError(appvars.ErrNoUserFound, http.StatusNotFound)
 	}
 	rows.Close()
 
 	_, err = tx.Exec(`UPDATE Users U SET U.RoleID = ? WHERE U.UserID = ?`, role.ID, userID)
 	if err != nil {
-		tx.Rollback()
-		return errors.New("error updating user: " + err.Error())
+		return NewDBError(fmt.Sprintf("error updating user: %v", err), http.StatusInternalServerError)
 	}
 
 	if err = tx.Commit(); err != nil {
-		return errors.New("error committing transaction: " + err.Error())
+		return NewDBError(fmt.Sprintf("error committing transation: %v", err), http.StatusInternalServerError)
 	}
 	return nil
 }
@@ -499,6 +491,23 @@ func (store *Database) getUserRoleLevel(userID int64) (int, error) {
 		return -1, err
 	}
 	return role, nil
+}
+
+// SearchForUsers returns a slice of users that match any of the given filters.
+// Returns a DBError if one occurred.
+func (store *Database) SearchForUsers(email, firstName, lastName string, page int) ([]*User, *DBError) {
+	offset := getSQLPageOffset(page)
+	query := `SELECT DISTINCT * FROM Users U WHERE 1 = 1
+		AND U.Email LIKE ?
+		AND U.FirstName LIKE ?
+		AND U.LastName LIKE ?
+		AND U.Active = TRUE
+		LIMIT 25 OFFSET ?`
+	return handleUsersFromDatabase(store.db.Query(query,
+		"%"+email+"%",
+		"%"+firstName+"%",
+		"%"+lastName+"%",
+		offset))
 }
 
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
