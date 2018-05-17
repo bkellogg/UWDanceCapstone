@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import Dialog from 'material-ui/Dialog';
+import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './styling/General.css';
@@ -30,14 +31,7 @@ class Calendar extends Component {
       maxTime : MAXTIME,
       openSetRehearsal : false,
       openNewRehearsal : false,
-      events : [
-        {
-          id: 3,
-          title: 'Weekly Rehearsal',
-          start: new Date('2018-05-10 11:00 AM'),
-          end: new Date('2018-05-10 12:30 PM')
-        }
-      ]
+      events : []
     }
   };
 
@@ -110,7 +104,7 @@ class Calendar extends Component {
 
     let rehearsalObject = {
       id : latestID,
-      title : "Event Title",
+      title : this.state.rehearsalName,
       start : new Date(slotInfo.start),
       end : new Date(slotInfo.end)
     }
@@ -127,7 +121,7 @@ class Calendar extends Component {
     let slotInfo = this.state.slotInfo
     return (
       <section>
-        <BigCalendar style={{ height: "100%", width: "100%" }}
+        <BigCalendar style={{ height: "650px", width: "100%" }}
           selectable
           defaultDate={new Date()}
           defaultView='week'
@@ -163,7 +157,7 @@ class Calendar extends Component {
           onRequestClose={this.handleClose}
           >
           <div>
-            This rehearsal goes from {event.start.toLocaleTimeString()} to {event.end.toLocaleTimeString()}
+            This rehearsal goes from {moment(event.start).format("hh:mm A")} to {moment(event.end).format("hh:mm A")}
           </div>
         </Dialog>
 
@@ -190,7 +184,20 @@ class Calendar extends Component {
           onRequestClose={this.handleClose}
           >
           <div>
-            This rehearsal will go from {slotInfo.start.toLocaleTimeString()} to {slotInfo.end.toLocaleTimeString()} on {slotInfo.start.toLocaleDateString()}
+          <TextField
+              hintText="Rehearsal Name"
+              onChange={(event) => this.setState({
+                rehearsalName : event.target.value
+              })}
+            />
+            <br />
+            <br />
+            This rehearsal will go from 
+            <input type="time" name="start" value={moment(slotInfo.start).format("HH:mm")} />
+            to 
+            <input type="time" name="start" value={moment(slotInfo.end).format("HH:mm")} />
+            on 
+            <input type="date" name="date" value={moment(slotInfo.start).format('YYYY-MM-DD')} />
           </div>
         </Dialog>
       </section>

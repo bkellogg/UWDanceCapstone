@@ -20,7 +20,7 @@ import './styling/CastingFlowTablet.css';
 import ArrowBackIcon from 'mdi-react/ArrowBackIcon';
 import ArrowForwardIcon from 'mdi-react/ArrowForwardIcon';
 
-const WEBSOCKET = new WebSocket("wss://" + Util.HOST + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
+const WEBSOCKET = new WebSocket("wss://" + Util.host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
 
 class Casting extends Component {
   constructor(props) {
@@ -139,7 +139,7 @@ class Casting extends Component {
         return <SelectCast auditionID={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested} 
                            addToCast={add => {this.setState({addToCast:add})}} dropFromCast={drop => {this.setState({dropFromCast:drop})}}/>
       case 1:
-        return <CheckAvailability cast={this.state.cast} contested={this.state.contested}/>;
+        return <CheckAvailability cast={this.state.cast} contested={this.state.contested} auditionID={this.props.audition}/>;
       case 2:
         return <ResolveConflict audition={this.props.audition} cast={this.state.cast} uncast={this.state.uncast} contested={this.state.contested}/>;
       case 3:
@@ -258,7 +258,7 @@ class Casting extends Component {
           actions={[
             <FlatButton
               label="Cancel"
-              style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
+              style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px', textTransform: 'capitalize' }}
               primary={false}
               onClick={this.cancelCast}
             />,

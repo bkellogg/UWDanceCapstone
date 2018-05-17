@@ -99,7 +99,7 @@ class SelectCast extends Component {
               <table className="table" id="selectCastTable">
                 <tbody>
                   <tr className="categories">
-                    <th></th>
+                    <th className="avatarWrap"></th>
                     <th>#</th>
                     <th>Name</th>
                     <th>Pieces</th>

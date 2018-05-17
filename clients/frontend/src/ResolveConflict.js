@@ -54,7 +54,7 @@ class ResolveConflict extends Component {
                   <table id="conflictsTable">
                     <tbody>
                       <tr className="categories">
-                        <th></th>
+                        <th className="avatarWrap"></th>
                         <th>#</th>
                         <th>Dancer</th>
                         <th>Pieces</th>
@@ -83,7 +83,7 @@ class ResolveConflict extends Component {
                 <table id="yourCast">
                   <tbody>
                     <tr className="categories">
-                      <th></th>
+                      <th className="avatarWrap"></th>
                       <th>#</th>
                       <th>Dancer</th>
                       <th></th>
@@ -99,7 +99,7 @@ class ResolveConflict extends Component {
                 <table id="allDancersTable">
                   <tbody>
                     <tr className="categories">
-                      <th></th>
+                      <th className="avatarWrap"></th>
                       <th>#</th>
                       <th>Dancer</th>
                       <th></th>

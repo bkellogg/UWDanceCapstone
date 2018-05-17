@@ -158,14 +158,14 @@ class SignUpExtra extends Component {
   render() {
     return (
       <section className="signUpExtra">
-        <form className="authenticate">
+        <form className="authenticate"> )}
           <div className="extra-signup-input-field">
             <p>Bio (60 words or less)</p>
             <textarea id="textarea" name="bio" s={6} className="bioTextbox"  onChange={this.onKeyDown}></textarea>
             <p><strong>Word Count:</strong> {this.state.wordCount}</p>
           </div>
           <div className="extra-signup-input-field">
-            <p>Resume (PDF)</p>
+            <p>Resume <b>(PDF)</b></p>
             <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
           </div>
           <div className="extra-signup-input-field">
