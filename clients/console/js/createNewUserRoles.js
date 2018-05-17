@@ -1,7 +1,6 @@
 "use strict";
 
 refreshLocalUser();
-let auth = getAuth();
 
 var newRoleForm = document.querySelector(".newRole-form");
 var errorBox = document.querySelector(".js-error");
@@ -26,6 +25,7 @@ newRoleForm.addEventListener("submit", function (evt) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
+            alert("New user role successfully created.");
             location.reload();
         })
         .catch((err) => {
@@ -36,7 +36,7 @@ newRoleForm.addEventListener("submit", function (evt) {
 
 // get roles
 function getRoles() {
-    fetch(API_URL_BASE + "roles?auth=" + auth)
+    makeRequest("roles", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -45,7 +45,7 @@ function getRoles() {
         })
         .then((data) => {
             $(data).each(function (index, value) {
-              $("ul").append("<li>"+ value.displayName+ "</li>")
+                $("ul").append("<li>" + value.displayName + "</li>")
             });
         })
 }

@@ -59,9 +59,6 @@ class SetRehearsals extends Component {
         if (res.ok) {
           return res.text()
         }
-        if (res.status === 401) {
-          Util.signOut()
-        }
         return res.text().then((t) => Promise.reject(t));
       })
       .then(() => {
@@ -72,6 +69,9 @@ class SetRehearsals extends Component {
         });
       })
       .catch(err => {
+        this.setState({
+          castingError: err
+        })
         console.error(err)
       })
   }
@@ -302,6 +302,12 @@ class SetRehearsals extends Component {
                 onRequestClose={this.handleClose}
                 disabled={finished}
               >
+              {
+                this.state.castingError &&
+                <div>
+                  {this.state.castingError}
+                </div>
+              }
                 <div className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong> and there are <strong className="importantText">no conflicts</strong> with other choreographers. <br /> Your rehearsal start date is {this.state.startDate} and your rehearsal times are :
             <br />{rehearsalSchedule}<br />
                   <br /> </div>

@@ -1,7 +1,7 @@
 /*HEADER AND LEGEND WRAP*/
 .cardTitleWrap{
     display: inline-block;
-    width: 580px;
+    width: 100%;
     padding-bottom: 20px;
 }
 
@@ -23,24 +23,13 @@
     height: 20px;
     margin-left: 5px;
     margin-right: 5px;
+    display: inline-flex
 }
 
 .lightLegendColor, .mediumLegendColor, .darkLegendColor{
     width: 33px;
     height: 15px;
     display: inline-block;
-}
-
-.lightLegendColor{
-    background-color: red;
-}
-
-.mediumLegendColor{
-    background-color: blue;
-}
-
-.darkLegendColor{
-    background-color: black;
 }
 
 .colorIndicator{
@@ -54,13 +43,18 @@
     position: static;
 }
 
-.overlapDays, .daysSimple, .timesRow, .timeBlock, .colorIndicator{
+.overlapDays, .daysSimple, .timesRow, .timeBlock{
+    display: inline-block;
+    width: 100%
+}
+
+.colorIndicator{
     display: inline-block;
 }
 
     /*COLUMN WITH BLOCKS FOR EACH DAY MON-SUN*/
 .overlapDays{
-    width: 75px;  
+    width: 12.5%;  
 }
 
     /*AM-PM TIMES ON LEFT SIDE*/
@@ -72,13 +66,16 @@
 .timesSimple{
     height: 25px;
     font-size: 12px;
-    width: auto;
+    width: 100%;
+    padding-top: 5%;
+    text-align: center;
+    text-overflow: clip; 
     /* border-bottom: 0.5px solid rgb(219, 219, 219); */
 }
 
     /*INDIVIDUAL DAYS MON-SUN ON TOP*/
 .daysSimple {
-    width: 75px;
+    width: 12.5%;
     height: 25px;
     font-size: 12px;
     text-align: center;
@@ -87,6 +84,6 @@
     /*AVAILABILITY BLOCKS*/
 .overlapTimes {
     height: 25px;
-    width: auto;
+    width: 100%;
     border: 0.5px solid rgb(219, 219, 219);
 }

@@ -3,11 +3,16 @@
         font-size: 12px;
     }
 
+<<<<<<< HEAD
     .avatar, .dancerRank, .userRoleDisp, .avatar2{
         visibility: hidden;
-        position: absolute;
+        width: 0%;
+        clear: both;
+        display: none;
     }
 
+=======
+>>>>>>> 04f8b6cf09e9a26af0e8e9e45acb620923e05850
     .check{
         width: 20px;
     }
