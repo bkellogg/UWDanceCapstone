@@ -79,6 +79,28 @@ func (store *Database) UpdateAuditionByID(id int, updates *AuditionUpdate) *DBEr
 	return nil
 }
 
+// GetAuditionByShowID gets the audition that is for the given show. Returns a DBError
+// if an error occurred.
+func (store *Database) GetAuditionByShowID(id int, includeDeleted bool) (*Audition, *DBError) {
+	rows, err := store.db.Query(`SELECT S.AuditionID FROM Shows S WHERE S.ShowID = ?`, id)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error looking up audition id: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, NewDBError("given show does not exist", http.StatusBadRequest)
+	}
+	var audID int64
+	if err = rows.Scan(&audID); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error scanning result into audition id: %v", err), http.StatusInternalServerError)
+	}
+
+	if audID == 0 {
+		return nil, NewDBError("given show does not have an audition", http.StatusNotFound)
+	}
+	return store.GetAuditionByID(int(audID), includeDeleted)
+}
+
 // GetAuditionByID returns the audition with the given ID.
 func (store *Database) GetAuditionByID(id int, includeDeleted bool) (*Audition, *DBError) {
 	query := `SELECT * FROM Auditions A WHERE A.AuditionID = ?`

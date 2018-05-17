@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -38,7 +39,7 @@ func getIntParam(r *http.Request, param string) (int, *middleware.HTTPError) {
 	}
 	page, err := strconv.Atoi(paramVal)
 	if err != nil {
-		return -1, HTTPError("unparsable page number given", http.StatusBadRequest)
+		return -1, HTTPError(fmt.Sprintf("unparsable %s number given", param), http.StatusBadRequest)
 	}
 	return page, nil
 }
