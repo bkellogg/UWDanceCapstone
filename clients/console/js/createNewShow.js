@@ -9,10 +9,35 @@ var getLocation = document.getElementById("location-input");
 var quarter = document.getElementById("quarter-name-input");
 
 populateShowTypeOptions();
+createDateTimes();
 
+// Create date and time inputs
+function createDateTimes() {
+    $("#show-end-date").datepicker();
+    $("#show-end-time-input").timepicker();
+
+    $("#audition-date").datepicker();
+    $("#audition-time-input").timepicker();
+
+}
+/*
 
 showForm.addEventListener("submit", function (evt) {
-    var auditionTime = $("#datetimepicker2").data("DateTimePicker").viewDate();
+    var auditionDate = document.getElementById("audition-date");
+    var auditionTime = document.getElementById("audition-time-input");
+    //alert(auditionDate.value)
+    //alert(auditionTime.value)
+    //var fd = moment(auditionDate.value).format()
+    //alert(fd);
+    //alert(ft)
+})
+
+showForm2.addEventListener("submit", function (evt) {
+    var auditionDate = $("#audition-date");
+    var auditionTime = $(".audition-time-input");
+    console.log(auditionDate);
+    console.log(auditionTime);
+    console.log("swany");
     var finalAuditionTime = moment(auditionTime).format();
     evt.preventDefault();
     var payload = {
@@ -21,7 +46,7 @@ showForm.addEventListener("submit", function (evt) {
         "time": finalAuditionTime,
         "quarter": quarter.value
     }
-    makeRequest("auditions", payload, "POST", true)
+    makeRequest("aud$$$itions", payload, "POST", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -54,7 +79,7 @@ showForm.addEventListener("submit", function (evt) {
             errorBox.textContent = err;
         })
 })
-
+*/
 // get show types
 function populateShowTypeOptions() {
     makeRequest("shows/types?includeDeleted=false", {}, "GET", true)
@@ -73,13 +98,3 @@ function populateShowTypeOptions() {
         })
 
 }
-
-// Add datetimepicker
-$(function () {
-    $('#datetimepicker1').datetimepicker({
-        sideBySide: true
-    });
-    $('#datetimepicker2').datetimepicker({
-        sideBySide: true
-    });
-});
