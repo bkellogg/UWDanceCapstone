@@ -117,7 +117,7 @@ func main() {
 		Methods(http.MethodGet)
 
 	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()
-	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey)).Schemes("wss")
+	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
 	announcementsRouter := baseRouter.PathPrefix(appvars.AnnouncementsPath).Subrouter()
 	announcementsRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.AnnouncementTypesHandler))

@@ -11,6 +11,15 @@
     <h1>STAGE Annoucements Demo</h1>
     <p>WebSocket Status: <strong id="status"></strong> <span id="errors"></span></p>
     <p>Demo page app wide annoucements in STAGE using websockets.</p>
+
+    <form id="login-ws-form">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="text">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password">
+        <button type="submit">Connect</button>
+    </form>
+
     <div id="notifications"></div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
