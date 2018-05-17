@@ -20,6 +20,8 @@ import './styling/CastingFlowTablet.css';
 import ArrowBackIcon from 'mdi-react/ArrowBackIcon';
 import ArrowForwardIcon from 'mdi-react/ArrowForwardIcon';
 
+// define the websocket connection that the casting flow will use
+// to receive updates from the server.
 let WEBSOCKET;
 
 class Casting extends Component {
