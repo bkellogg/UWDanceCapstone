@@ -53,7 +53,7 @@ func (store *Database) InsertNewUserPieceInvite(userID, pieceID int, expiry time
 // and an error if one occurred.
 func (store *Database) ExpirePendingPieceInvites() (int64, *DBError) {
 	res, err := store.db.Exec(
-		`UPDATE UserPiecePending SET Status = ? WHERE IsDeleted = FALSE AND Status = ? AND ExpiresAt > NOW()`,
+		`UPDATE UserPiecePending SET Status = ? WHERE IsDeleted = FALSE AND Status = ? AND ExpiresAt < NOW()`,
 		appvars.CastStatusExpired, appvars.CastStatusPending)
 	if err != nil {
 		return 0, NewDBError(fmt.Sprintf("error marking pending user pieces as expired: %v", err), http.StatusInternalServerError)
