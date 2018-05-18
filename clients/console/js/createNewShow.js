@@ -14,31 +14,24 @@ createDateTimes();
 // Create date and time inputs
 function createDateTimes() {
     $("#show-end-date").datepicker();
-    $("#show-end-time-input").timepicker();
+    $("#show-end-time-input").timepicker({
+        timeFormat: 'H:i:s'
+    });
 
     $("#audition-date").datepicker();
-    $("#audition-time-input").timepicker();
+    $("#audition-time-input").timepicker({
+        timeFormat: 'H:i:s'
+    });
 
 }
-/*
+
 
 showForm.addEventListener("submit", function (evt) {
     var auditionDate = document.getElementById("audition-date");
     var auditionTime = document.getElementById("audition-time-input");
-    //alert(auditionDate.value)
-    //alert(auditionTime.value)
-    //var fd = moment(auditionDate.value).format()
-    //alert(fd);
-    //alert(ft)
-})
-
-showForm2.addEventListener("submit", function (evt) {
-    var auditionDate = $("#audition-date");
-    var auditionTime = $(".audition-time-input");
-    console.log(auditionDate);
-    console.log(auditionTime);
-    console.log("swany");
-    var finalAuditionTime = moment(auditionTime).format();
+    var auditionDateFormatted = moment(auditionDate.value).format();
+    var audDate = moment(auditionDateFormatted).format('YYYY-MM-DD');
+    var finalAuditionTime = audDate + "T" + auditionTime.value + "-07:00";
     evt.preventDefault();
     var payload = {
         "name": auditionName.value,
@@ -46,7 +39,7 @@ showForm2.addEventListener("submit", function (evt) {
         "time": finalAuditionTime,
         "quarter": quarter.value
     }
-    makeRequest("aud$$$itions", payload, "POST", true)
+    makeRequest("auditions", payload, "POST", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -54,8 +47,11 @@ showForm2.addEventListener("submit", function (evt) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            var showTime = $("#datetimepicker1").data("DateTimePicker").viewDate();
-            var finalShowTime = moment(showTime).format();
+            var showDate = document.getElementById("show-end-date");
+            var showTime = document.getElementById("show-end-time-input");
+            var showDateFormatted = moment(showDate.value).format();
+            var showDate = moment(showDateFormatted).format('YYYY-MM-DD');
+            var finalShowTime = showDate + "T" + showTime.value + "-07:00";
             let createShow = {
                 "typeName": showType.value,
                 "endDate": finalShowTime,
@@ -79,7 +75,7 @@ showForm2.addEventListener("submit", function (evt) {
             errorBox.textContent = err;
         })
 })
-*/
+
 // get show types
 function populateShowTypeOptions() {
     makeRequest("shows/types?includeDeleted=false", {}, "GET", true)

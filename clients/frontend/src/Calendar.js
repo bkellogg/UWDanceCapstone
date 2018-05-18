@@ -119,6 +119,7 @@ class Calendar extends Component {
   render() {
     let event = this.state.event
     let slotInfo = this.state.slotInfo
+    console.log(slotInfo)
     return (
       <section>
         <BigCalendar style={{ height: "650px", width: "100%" }}
@@ -193,11 +194,11 @@ class Calendar extends Component {
             <br />
             <br />
             This rehearsal will go from 
-            <input type="time" name="start" value={moment(slotInfo.start).format("HH:mm")} />
+            <input type="time" name="start" defaultValue={moment(slotInfo.start).format("HH:mm")}/>
             to 
-            <input type="time" name="start" value={moment(slotInfo.end).format("HH:mm")} />
+            <input type="time" name="start" defaultValue={moment(slotInfo.end).format("HH:mm")} />
             on 
-            <input type="date" name="date" value={moment(slotInfo.start).format('YYYY-MM-DD')} />
+            <input type="date" name="date" defaultValue={moment(slotInfo.start).format('YYYY-MM-DD')} />
           </div>
         </Dialog>
       </section>
