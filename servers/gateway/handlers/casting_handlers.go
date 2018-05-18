@@ -237,21 +237,15 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 		}
 		result.InviteCreated = true
 
-		expiryTimeHour := expiryTime.Hour()
-		expiryTimePeriod := "A.M."
+		expiryTimeHour, expiryTimeMinute, expiryTimeSecond, expiryTimePeriod := getNormalizedTimeParts(expiryTime)
 
-		if expiryTimeHour > 12 {
-			expiryTimeHour = expiryTimeHour - 12
-			expiryTimePeriod = "P.M."
-		}
-
-		expiryTimeFormat := fmt.Sprintf("%s, %s %d at %d:%d:%d %s",
+		expiryTimeFormat := fmt.Sprintf("%s, %s %d at %s:%s:%s %s",
 			expiryTime.Weekday().String(),
 			expiryTime.Month().String(),
 			expiryTime.Day(),
 			expiryTimeHour,
-			expiryTime.Minute(),
-			expiryTime.Second(),
+			expiryTimeMinute,
+			expiryTimeSecond,
 			expiryTimePeriod)
 		tplVars := &models.CastingConfVars{
 			Name:       user.FirstName,
@@ -285,4 +279,28 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 	} else {
 		result.Message = "user is already in this piece; invite not created and the email was not sent"
 	}
+}
+
+func getNormalizedTimeParts(time time.Time) (string, string, string, string) {
+	expiryTimeHour := time.Hour()
+	expiryTimePeriod := "A.M."
+
+	if expiryTimeHour > 12 {
+		expiryTimeHour = expiryTimeHour - 12
+		expiryTimePeriod = "P.M."
+	}
+
+	expiryTimeMinute := time.Minute()
+	expiryTimeMinuteString := strconv.Itoa(expiryTimeMinute)
+	if expiryTimeMinute/10 == 0 {
+		expiryTimeMinuteString = "0" + expiryTimeMinuteString
+	}
+
+	expiryTimeSecond := time.Second()
+	expiryTimeSecondString := strconv.Itoa(expiryTimeSecond)
+	if expiryTimeSecond/10 == 0 {
+		expiryTimeSecondString = "0" + expiryTimeSecondString
+	}
+
+	return strconv.Itoa(expiryTimeHour), expiryTimeMinuteString, expiryTimeSecondString, expiryTimePeriod
 }
