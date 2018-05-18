@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"sort"
 	"sync"
+	"time"
 
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 )
@@ -32,12 +34,13 @@ type CastingSession struct {
 	Casted         map[DancerID]map[Choreographer]struct{} `json:"casted"`             // all dancers that have been casted and who they're casted by
 	notifier       *Notifier                               `json:"-"`                  // notifier to use to send updates
 	mx             sync.RWMutex                            `json:"-"`                  // mutex to hold locks while modifying the session
+	lastUsedTime   time.Time                               `json:"-"`                  // stores the last time that this session was used
 }
 
 // NewCastingSession returns a casting session hooked up
 // to the given database.
 func NewCastingSession(db *models.Database, notifier *Notifier) *CastingSession {
-	return &CastingSession{
+	cs := &CastingSession{
 		HasBegun:       false,
 		Store:          db,
 		Dancers:        make(map[DancerID]*Dancer),
@@ -46,7 +49,10 @@ func NewCastingSession(db *models.Database, notifier *Notifier) *CastingSession 
 		Uncasted:       make(map[DancerID]struct{}),
 		Casted:         make(map[DancerID]map[Choreographer]struct{}),
 		notifier:       notifier,
+		lastUsedTime:   time.Now(),
 	}
+	go cs.beginJanitor()
+	return cs
 }
 
 // LoadFromAudition loads the the given casting session from
@@ -74,6 +80,7 @@ func (c *CastingSession) LoadFromAudition(id int) *middleware.HTTPError {
 	}
 
 	c.HasBegun = true
+	c.lastUsedTime = time.Now()
 
 	return nil
 }
@@ -87,11 +94,19 @@ func (c *CastingSession) GetClient(id int64) (*WebSocketClient, bool) {
 // Flush clears the current casting session and makes it ready to be used again.
 // Dumps all suers and states currently stored in the casting session.
 // Waits until all routines interacting with the session finish before flushing.
+// Safe for concurrent use.
 func (c *CastingSession) Flush() {
 	c.mx.Lock()
-	defer unlockLog(&c.mx, "flushing current casting state")
-	log.Printf("flushing current casting state...\n")
+	c.flush()
+	c.lastUsedTime = time.Now()
+	unlockLog(&c.mx, "flushing current casting state")
+}
 
+// Flush clears the current casting session and makes it ready to be used again.
+// Dumps all suers and states currently stored in the casting session.
+// Waits until all routines interacting with the session finish before flushing.
+func (c *CastingSession) flush() {
+	log.Printf("flushing current casting state...\n")
 	c.HasBegun = false
 	c.Audition = 0
 	c.Dancers = make(map[DancerID]*Dancer)
@@ -106,6 +121,7 @@ func (c *CastingSession) Flush() {
 func (c *CastingSession) AddChoreographer(chor *models.User) error {
 	c.mx.Lock()
 	defer unlockLog(&c.mx, fmt.Sprintf("adding choreographer with id %d", chor.ID))
+	c.lastUsedTime = time.Now()
 	log.Printf("adding choreographer with id %d...\n", chor.ID)
 
 	if !c.HasBegun {
@@ -132,6 +148,7 @@ func (c *CastingSession) AddChoreographer(chor *models.User) error {
 func (c *CastingSession) Handle(chorID int64, cu *ChoreographerUpdate) error {
 	c.mx.Lock()
 	defer unlockLog(&c.mx, fmt.Sprintf("handling update from choreographer: %d", chorID))
+	c.lastUsedTime = time.Now()
 	log.Printf("handling update from choreographer %d...\n", chorID)
 
 	if !c.choreographerExists(chorID) {
@@ -147,27 +164,29 @@ func (c *CastingSession) Handle(chorID int64, cu *ChoreographerUpdate) error {
 
 // ConfirmCast confirms the given choreographer's currently selected cast
 // if possible. Returns a slice of IDs that are the dancers that have
-// been casted by the choreographer. Returns an error if one occurred.
-func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, error) {
+// been casted by the choreographer, as well as the ID of the audition
+// that is being cast. Returns an error if one occurred.
+func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, int, error) {
 	c.mx.Lock()
 	defer unlockLog(&c.mx, fmt.Sprintf("confirming cast for %d", chorID))
+	c.lastUsedTime = time.Now()
 
 	if !c.HasBegun {
-		return nil, errors.New("casting session has not begun")
+		return nil, -1, errors.New("casting session has not begun")
 	}
 
 	chor := Choreographer(chorID)
 
 	// confirm that the choreographer is in the current casting session
 	if exists := c.choreographerExists(chorID); !exists {
-		return nil, errors.New("choreographer is not currently casting in this session")
+		return nil, -1, errors.New("choreographer is not currently casting in this session")
 	}
 
 	// confirm that the choreographer does not have any dancer that
 	// is contested.
 	for dancerID, _ := range c.ChorCast[chor] {
 		if _, isContested := c.dancerIsContested(dancerID); isContested {
-			return nil, errors.New("choreographer has dancers that are contested")
+			return nil, -1, errors.New("choreographer has dancers that are contested")
 		}
 	}
 
@@ -205,7 +224,27 @@ func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, error) {
 	// delete the choreographer from the casting session
 	delete(c.Choreographers, Choreographer(chorID))
 
-	return dancerIDSlice, c.sendUpdates()
+	// if the number of choreographers in the casting session
+	// is 0, clear it out.
+	if len(c.Choreographers) == 0 {
+		audition := c.Audition
+		c.flush()
+		return dancerIDSlice, audition, nil
+	}
+
+	return dancerIDSlice, c.Audition, c.sendUpdates()
+}
+
+// beginJanitor begins a janitor that performs some
+// maintenance operations on the casting session
+// such as flushing it if it hasn't been used in a while.
+func (c *CastingSession) beginJanitor() {
+	for {
+		if c.lastUsedTime.Before(time.Now().Add(time.Duration(-1)*appvars.CastingSessionResetTime)) && !c.HasBegun {
+			c.Flush()
+		}
+		time.Sleep(appvars.CastingSessionExpireReCheckDelay)
+	}
 }
 
 // handle handles the given choreographer update.

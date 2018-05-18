@@ -145,12 +145,12 @@ func (ctx *CastingContext) handleCastingUpdate(w http.ResponseWriter, r *http.Re
 
 // handlePostCasting handles requests to post casting
 func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	dancers, err := ctx.Session.ConfirmCast(u.ID)
+	dancers, castingAudID, err := ctx.Session.ConfirmCast(u.ID)
 	if err != nil {
 		return HTTPError(fmt.Sprintf("error posting casting: %v", err), http.StatusBadRequest)
 	}
 
-	show, dberr := ctx.Session.Store.GetShowByAuditionID(ctx.Session.Audition, false)
+	show, dberr := ctx.Session.Store.GetShowByAuditionID(castingAudID, false)
 	if dberr != nil {
 		return middleware.HTTPErrorFromDBErrorContext(dberr, "getting show by audition id")
 	}

@@ -9,6 +9,11 @@ const (
 
 	PieceInviteJanitorRecheckDelay = time.Hour
 
+	// time in which the casting session should reset
+	// after not being used
+	CastingSessionResetTime          = time.Hour
+	CastingSessionExpireReCheckDelay = time.Hour
+
 	CastStatusPending  = "pending"
 	CastStatusDeclined = "declined"
 	CastStatusAccepted = "accepted"
