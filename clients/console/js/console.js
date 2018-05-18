@@ -1,6 +1,6 @@
 "use strict";
 
-var header = document.querySelector(".header")
+var welcomeArea = document.getElementById("welcome")
 var signoutButton = document.querySelector(".js-signout-btn");
 
 var welcome = document.createElement("p");
@@ -10,13 +10,11 @@ var user = {};
 
 refreshLocalUser().then(() => {
     user = getLocalUser();
-    welcome.textContent = "Welcome " + user.firstName
-    header.appendChild(welcome);
+    welcome.textContent = "Welcome " + user.firstName + " " + user.lastName
+    welcomeArea.appendChild(welcome);
     accountLink.href = "account.html";
     accountLink.textContent = "Profile";
 });
-
-signoutButton.addEventListener("click", signout);
 
 $(".has-submenu ul").hide();
 $(".has-submenu > a").click(function() {
