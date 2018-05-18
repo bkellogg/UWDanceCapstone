@@ -230,7 +230,7 @@ class SetRehearsals extends Component {
                     <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
                     <p>First Rehearsal Date</p>
                     <div className="chooseRehearsalTimes">
-                      <input type="date" name="rehearsalStartDate" id="rehearsalStartDate" onChange={this.setStartDate} />
+                      <input type="date" name="rehearsalStartDate" id="rehearsalStartDate" defaultValue={moment().format('YYYY-MM-DD')} onChange={this.setStartDate} />
                     </div>
                     <p>Weekly Rehearsal Times</p>
                     {rehearsals}
