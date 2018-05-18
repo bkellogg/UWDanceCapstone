@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -119,8 +120,9 @@ func (store *Database) DeletePieceByID(id int) *DBError {
 	return NewDBError(fmt.Sprintf("error deleting piece: %v", err), http.StatusInternalServerError)
 }
 
-// GetPiecesByUserID gets all pieces the given user is in.
-func (store *Database) GetPiecesByUserID(id, page int, includeDeleted bool) ([]*Piece, *DBError) {
+// GetPiecesByUserID gets all pieces the given user is in. If showID is specified, then only pieces
+// the user is in in that show will be returned
+func (store *Database) GetPiecesByUserID(id, page, showID int, includeDeleted bool) ([]*Piece, *DBError) {
 	offset := getSQLPageOffset(page)
 	query := `SELECT DISTINCT P.PieceID, P.InfoSheetID, P.ChoreographerID ,P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy,
 	P.IsDeleted FROM Pieces P 
@@ -128,6 +130,9 @@ func (store *Database) GetPiecesByUserID(id, page int, includeDeleted bool) ([]*
 	WHERE UP.UserID = ?`
 	if !includeDeleted {
 		query += ` AND UP.IsDeleted = false`
+	}
+	if showID > 0 {
+		query += fmt.Sprintf(" AND P.ShowID = %s ", strconv.Itoa(showID))
 	}
 	query += ` LIMIT 25 OFFSET ?`
 	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
