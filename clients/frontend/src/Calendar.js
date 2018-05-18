@@ -116,13 +116,10 @@ class Calendar extends Component {
     })
   }
 
-  setStart = () => {
-
-  }
-
   render() {
     let event = this.state.event
     let slotInfo = this.state.slotInfo
+    console.log(slotInfo)
     return (
       <section>
         <BigCalendar style={{ height: "650px", width: "100%" }}
@@ -197,7 +194,7 @@ class Calendar extends Component {
             <br />
             <br />
             This rehearsal will go from 
-            <input type="time" name="start" deafultValue={moment(slotInfo.start).format("HH:mm")} onChange={this.setStart}/>
+            <input type="time" name="start" defaultValue={moment(slotInfo.start).format("HH:mm")}/>
             to 
             <input type="time" name="start" defaultValue={moment(slotInfo.end).format("HH:mm")} />
             on 
