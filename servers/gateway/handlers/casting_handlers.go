@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -173,31 +172,56 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
+	confResultChan := make(chan *models.CastingConfResult)
+
 	for _, id64 := range dancers {
-		go handleUserInvite(ctx, int(id64), u, piece)
+		go handleUserInvite(ctx, int(id64), u, piece, confResultChan)
 	}
-	return respond(w, dancers, http.StatusOK)
+
+	results := make([]*models.CastingConfResult, 0, len(dancers))
+
+	// wait until we have all of the results
+	for len(results) < len(dancers) {
+		res := <-confResultChan
+		results = append(results, res)
+	}
+	return respond(w, results, http.StatusOK)
 }
 
 // handleUserInvite handles creating an invite for the given dancerID for the given
 // piece and sending them an email
 // Intended to be used on its own goroutine so does not return an error but
 // logs all errors to standard out.
-func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piece *models.Piece) {
+// Sends result for user into the given result channel
+func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piece *models.Piece, resultChan chan *models.CastingConfResult) {
+	result := &models.CastingConfResult{
+		InviteCreated: false,
+		EmailSent:     false,
+		IsError:       false,
+	}
+	// send the result into the channel
+	defer func() {
+		resultChan <- result
+	}()
 	user, dberr := ctx.Session.Store.GetUserByID(dancerID, false)
 	if dberr != nil {
-		log.Printf("error getting user with dancerID %d: %s\n", dancerID, dberr.Message)
+		result.Message = fmt.Sprintf("error getting user with dancerID %d: %s\n", dancerID, dberr.Message)
+		result.IsError = true
 		return
 	}
+	result.Dancer = user
 
 	dberr = ctx.Session.Store.MarkInvite(dancerID, piece.ID, appvars.CastStatusExpired)
 	if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
-		log.Printf("error marking old invite as expired: %s", dberr.Message)
+		result.Message = fmt.Sprintf("could not mark old invite as expired: %s", dberr.Message)
+		result.IsError = true
+		return
 	}
 
 	inPiece, dberr := ctx.Session.Store.UserIsInPiece(dancerID, piece.ID)
 	if dberr != nil {
-		log.Printf("error determining if user is in piece: %s", dberr.Message)
+		result.Message = fmt.Sprintf("error determining if user is in piece: %s", dberr.Message)
+		result.IsError = true
 		return
 	}
 
@@ -207,8 +231,11 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 
 		dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, expiryTime)
 		if dberr != nil {
-			log.Printf("error creating new user piece pending entry: %v", dberr.Message)
+			result.Message = fmt.Sprintf("error creating new user piece pending entry: %v", dberr.Message)
+			result.IsError = true
+			return
 		}
+		result.InviteCreated = true
 
 		expiryTimeHour := expiryTime.Hour()
 		expiryTimePeriod := "A.M."
@@ -236,6 +263,7 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 
 		// do not send the email if we are in debug mode
 		if ctx.IsDebugMode {
+			result.Message = "debug mode enabled; email not sent"
 			return
 		}
 		message, err := mail.NewMessageFromTemplate(ctx.MailCredentials,
@@ -244,12 +272,17 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 			tplVars,
 			[]string{user.Email})
 		if err != nil {
-			log.Printf("error generating message from template: %v\n", err)
+			result.Message = fmt.Sprintf("error merging message into email template: %v\n", err)
+			result.IsError = true
 			return
 		}
 		if err = message.Send(); err != nil {
-			log.Printf("error sending message: %v", err)
+			result.Message = fmt.Sprintf("error sending email: %v", err)
+			result.IsError = true
 			return
 		}
+		result.EmailSent = true
+	} else {
+		result.Message = "user is already in this piece; invite not created and the email was not sent"
 	}
 }

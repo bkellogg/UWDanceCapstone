@@ -31,7 +31,9 @@ func NewDatabase(user, password, addr, dbName string) (*Database, error) {
 	if err != nil {
 		return nil, errors.New("error opening connection to store: " + err.Error())
 	}
-	return &Database{db: db}, nil
+	wrappedDB := &Database{db: db}
+	go wrappedDB.beginPieceInviteJanitor()
+	return wrappedDB, nil
 }
 
 // BootstrapInitialAdminUser adds an initial admin user with the given information
@@ -75,5 +77,19 @@ func (store *Database) LogError(err ErrorLog) {
 	if dbErr != nil {
 		log.Println("logging failed: " + dbErr.Error())
 		log.Println(err.Message)
+	}
+}
+
+// beginPieceInviteJanitor begins a never ending loop
+// that will check for expired pieces and mark them
+// as expired every x time defined by
+// appvars.PieceInviteJanitorRecheckDelay
+func (store *Database) beginPieceInviteJanitor() {
+	for {
+		_, err := store.ExpirePendingPieceInvites()
+		if err != nil {
+			log.Printf("invite janitor: error expiring pieces: %s", err.Message)
+		}
+		time.Sleep(appvars.PieceInviteJanitorRecheckDelay)
 	}
 }
