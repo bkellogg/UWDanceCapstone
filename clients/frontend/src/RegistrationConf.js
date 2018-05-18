@@ -61,7 +61,7 @@ class RegistrationConf extends Component {
                     <p id="successMessage">You have successfully registered for the show! Your assigned number is {this.props.regNum}.</p>
                     <p>Location: {this.props.audition.location}</p>
 
-                    <p>Audition starts at <Moment format="YYYY/MM/DD HH:mm">{this.props.audition.time}</Moment></p>
+                    <p>Audition starts at <Moment format="MM/DD HH:mm">{this.props.audition.time}</Moment></p>
                   </div>
                 </div>
               </div>

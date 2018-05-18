@@ -25,25 +25,25 @@ class AvailabilityOverlap extends Component {
       maxCast: this.props.filteredCast,
       dayTimes: [
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ]
       ]
     };
@@ -67,7 +67,7 @@ class AvailabilityOverlap extends Component {
     let dayTimes = this.state.dayTimes
     let newWeek = []
     dayTimes.map(days => {
-      newWeek.push([[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []])
+      newWeek.push([[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []])
       return newWeek
     })
     return newWeek
@@ -101,6 +101,7 @@ class AvailabilityOverlap extends Component {
             //now we only have valid start/end times and their location 
             let incrementIndex = startIndex //increment index is the index of our this.state.dayTimes[j][incrementIndex]
 
+            //bug?? cannot read property push or undefined, looks like an issue with a user not having any availability
             while (incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
               let currPlace = dayTimes[j][incrementIndex]
               currPlace.push({"id" : id, "name" : firstName})
