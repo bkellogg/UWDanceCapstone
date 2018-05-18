@@ -71,6 +71,7 @@ export function refreshLocalUser() {
 }
 
 export function signOut() {
+    makeRequest("sessions", {}, "DELETE", true);
     clearAuthAndUser();
     window.location.reload()
     window.location = "/"
