@@ -49,7 +49,7 @@ class Audition extends Component {
           currAvailability: audition.availability })
       })
       .catch(err => {
-        this.state.error({
+        this.setState({
           error: err
         })
         console.error(err)
@@ -99,7 +99,7 @@ class Audition extends Component {
       )
       .catch(err => {
         console.error(err)
-        this.state.error({
+        this.setState({
           error: err
         })
         Util.handleError(err)
