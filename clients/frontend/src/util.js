@@ -71,6 +71,7 @@ export function refreshLocalUser() {
 }
 
 export function signOut() {
+    makeRequest("sessions", {}, "DELETE", true);
     clearAuthAndUser();
     window.location.reload()
     window.location = "/"
@@ -82,9 +83,6 @@ export function uploadPhoto(val){
     data.append("image", file.files[0]);
     let xhr = new XMLHttpRequest();
 
-    xhr.addEventListener("readystatechange", function () {
-        
-    });
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
@@ -106,12 +104,6 @@ export function uploadResume(val){
     data.append("resume", file.files[0]);
 
     let xhr = new XMLHttpRequest();
-
-    xhr.addEventListener("readystatechange", function () {
-        if (this.readyState === 4) {
-            
-        }
-    });
 
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {

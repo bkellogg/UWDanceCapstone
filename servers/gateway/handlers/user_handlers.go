@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -25,8 +24,19 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	if httperror != nil {
 		return httperror
 	}
-	includeInactive := getIncludeInactiveParam(r)
-	users, dberr := ctx.store.GetAllUsers(page, includeInactive)
+	emailFilter := getStringParam(r, "email")
+	fNameFilter := getStringParam(r, "fname")
+	lNameFilter := getStringParam(r, "lname")
+
+	var users []*models.User
+	var dberr *models.DBError
+
+	if len(emailFilter) > 0 || len(fNameFilter) > 0 || len(lNameFilter) > 0 {
+		users, dberr = ctx.store.SearchForUsers(emailFilter, fNameFilter, lNameFilter, page)
+	} else {
+		users, dberr = ctx.store.GetAllUsers(page, getIncludeDeletedParam(r))
+	}
+
 	if dberr != nil {
 		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
@@ -285,10 +295,7 @@ func (ctx *AuthContext) handleUserRole(w http.ResponseWriter, r *http.Request, u
 	}
 	err := ctx.store.ChangeUserRole(userID, roleChange.RoleName)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return HTTPError("user not found", http.StatusNotFound)
-		}
-		return HTTPError("error changing user role: "+err.Error(), http.StatusInternalServerError)
+		return middleware.HTTPErrorFromDBErrorContext(err, "error changing user role")
 	}
 	return respondWithString(w, "user role updated", http.StatusOK)
 }

@@ -1,7 +1,10 @@
 package middleware
 
-import "net/http"
-import "github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
+import (
+	"net/http"
+
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
+)
 
 // HeaderAdder defines a handler that can have CORS added to it
 type HeaderAdder struct {
@@ -16,12 +19,19 @@ func EnsureHeaders(handler http.Handler) *HeaderAdder {
 
 // ServeHTTP adds the CORS headers to this CORSHandler and processes the request as normal.
 func (ha *HeaderAdder) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add(appvars.HeaderAccessControlAllowOrigin, appvars.CORSAllowedOrigins)
-	w.Header().Add(appvars.HeaderAccessControlAllowMethods, appvars.CORSAllowedMethods)
-	w.Header().Add(appvars.HeaderAccessControlAllowHeaders, appvars.CORSAllowedHeaders)
-	w.Header().Add(appvars.HeaderAccessControlExposeHeaders, appvars.CORSExposedHeaders)
+	// do not allow the auth query string param
+	// if the request is not an intended WSS
+	// connection.
+	if r.URL.Scheme != "wss" {
+		r.URL.Query().Del("auth")
+	}
 
-	w.Header().Add(appvars.HeaderStrictTransportSecurity, appvars.StrictTransportSecurity)
+	w.Header().Set(appvars.HeaderAccessControlAllowOrigin, appvars.CORSAllowedOrigins)
+	w.Header().Set(appvars.HeaderAccessControlAllowMethods, appvars.CORSAllowedMethods)
+	w.Header().Set(appvars.HeaderAccessControlAllowHeaders, appvars.CORSAllowedHeaders)
+	w.Header().Set(appvars.HeaderAccessControlExposeHeaders, appvars.CORSExposedHeaders)
+
+	w.Header().Set(appvars.HeaderStrictTransportSecurity, appvars.StrictTransportSecurity)
 
 	// Process the original request.
 	if r.Method != "OPTIONS" {

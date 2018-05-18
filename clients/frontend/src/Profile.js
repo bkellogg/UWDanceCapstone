@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
-import img from './imgs/defaultProfile.jpg';
 import AvatarEditorConsole from './AvatarEditorConsole';
 import { compose } from 'ramda';
 import './styling/Profile.css';
@@ -13,7 +12,7 @@ class Profile extends Component {
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
-      photoSrc: img,
+      photoSrc: null,
       bio: JSON.parse(localStorage.getItem("user")).bio,
       history: [],
       resume: null,
@@ -148,7 +147,7 @@ class Profile extends Component {
     let data = new FormData();
     data.append("image", img);
     let xhr = new XMLHttpRequest();
-    xhr.addEventListener("readystatechange", () => {
+    xhr.addEventListener("loadend", () => {
       this.getPhoto()
     });
     xhr.onreadystatechange = function () {
@@ -274,6 +273,7 @@ class Profile extends Component {
 
                   <div id="photoContainer" className="photoContainer">
                     {!this.state.edit &&
+
                       <img id="photo" alt="profile" src={this.state.photoSrc}></img>
                     }
                     {this.state.edit &&
@@ -294,8 +294,8 @@ class Profile extends Component {
                       {this.state.edit &&
                         <div id="editName">
                           <Row>
-                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname}/>
-                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname}/>
+                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
+                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
                           </Row>
                         </div>
                       }
@@ -329,15 +329,21 @@ class Profile extends Component {
 
                   </div>
                   {!this.state.edit &&
-                    <Button id="edit" className="editButton" onClick={() => this.onClick()}>Edit</Button>
+                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                      <i className="large material-icons"> mode_edit </i>
+                    </Button>
 
                   }
-                  
+                  {this.state.edit &&
+                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
+                      <i className="large material-icons"> check </i>
+                    </Button>
+                  }
                 </div>
               </div>
               <div className="mainContentBorder">
                 <div id="history">
-                  <div id="historyTitle" className="subheader"><b>Your Piece History</b></div>
+                  <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
                   {this.state.history.length > 0 && this.state.history.map((p, i) => {
                     return (
                       //TODO STYLE THESE
@@ -348,8 +354,7 @@ class Profile extends Component {
                     )
                   })}
                   {this.state.history.length === 0 &&
-                    <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
-                    
+                    <p> Dancer has no piece history </p>
                   }
                 </div>
 
@@ -367,18 +372,15 @@ class Profile extends Component {
                   }
                   {this.state.edit &&
                     <section>
-                      <div> Upload your dance resume <b>AS A PDF.</b> </div>
-                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange}/>
+                      <div> Upload your dance resume as a <b>PDF</b>. </div>
+                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
                     </section>
                   }
                 </div>
-                
+
               </div>
-              
             </div>
-{this.state.edit &&
-  <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
-}
+
           </div>
         </div>
       </section>
