@@ -6,20 +6,21 @@
             <i class="fa fa-caret-down"></i>
         </button>
         <div class="dropdown-content" id="users-dropdown">
-            <a href="getUsers.html">Manage Users</a>
+            <a href="getUsers.html">View All Users</a>
+            <a href="searchUsers.html">Search For Specific User</a>
             <a href="createNewUser.html">Create New User</a>
             <a href="createNewUserRole.html">Create New User Role</a>
         </div>
     </div>
     <div class="dropdown">
-            <button class="dropbtn">Shows
-                <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content" id="shows-dropdown">
-                <a href="createNewShow.html">Create New Show</a>
-                <a href="createNewShowType.html">Create New Show Type</a>
-            </div>
+        <button class="dropbtn">Shows
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content" id="shows-dropdown">
+            <a href="createNewShow.html">Create New Show</a>
+            <a href="createNewShowType.html">Create New Show Type</a>
         </div>
+    </div>
     <div class="dropdown">
         <button class="dropbtn">Announcements
             <i class="fa fa-caret-down"></i>
@@ -31,4 +32,7 @@
         </div>
     </div>
     <a href="account.html">Profile</a>
+    <div id="signout">
+        <button class="js-signout-btn" onClick="signout()">Sign Out</button>
+    </div>
 </div>
