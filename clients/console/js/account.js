@@ -3,7 +3,6 @@
 refreshLocalUser();
 
 let user = getLocalUser();
-let auth = getAuth();
 
 let content = document.querySelector(".content");
 let photoForm = document.querySelector(".change-photo-form");
@@ -58,6 +57,7 @@ if (!user.bio) {
 }
 
 getImage();
+getResume();
 
 
 photoForm.addEventListener("submit", (evt) => {
@@ -133,21 +133,18 @@ function getResume() {
             if (res.ok) {
                 return res.blob();
             }
+            if(res.status != 200) {
+                $("#resume").hide();
+            }
             return res.text().then((t) => Promise.reject(t));
         })
-        .then(showFile)
+        .then((data) => {
+            var link = URL.createObjectURL(data);
+            $("#resume").attr("href", link);
+        })
         .catch((err) => {
             let m = document.createElement("p");
             m.textContent = "resume unavailable: " + err;
             content.appendChild(m);
         });
 }
-
-
-function showFile(blob) {
-    var data2 = URL.createObjectURL(blob);
-    var link = document.createElement('a');
-    link.href = data2;
-    link.download = user.firstName + "_" + user.lastName + "_resume.pdf";
-    link.click();
-} 
