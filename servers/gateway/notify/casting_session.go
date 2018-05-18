@@ -240,7 +240,8 @@ func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, int, error) {
 // such as flushing it if it hasn't been used in a while.
 func (c *CastingSession) beginJanitor() {
 	for {
-		if c.lastUsedTime.Before(time.Now().Add(time.Duration(-1)*appvars.CastingSessionResetTime)) && !c.HasBegun {
+		if c.lastUsedTime.Before(time.Now().Add(time.Duration(-1)*appvars.CastingSessionResetTime)) && c.HasBegun {
+			log.Println("casting session non-use detected; flushing...")
 			c.Flush()
 		}
 		time.Sleep(appvars.CastingSessionExpireReCheckDelay)

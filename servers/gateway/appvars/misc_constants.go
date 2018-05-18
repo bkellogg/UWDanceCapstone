@@ -12,7 +12,7 @@ const (
 	// time in which the casting session should reset
 	// after not being used
 	CastingSessionResetTime          = time.Hour
-	CastingSessionExpireReCheckDelay = time.Hour
+	CastingSessionExpireReCheckDelay = time.Minute * 15
 
 	CastStatusPending  = "pending"
 	CastStatusDeclined = "declined"
