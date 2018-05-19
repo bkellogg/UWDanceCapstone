@@ -440,7 +440,7 @@ func (store *Database) DeletePieceRehearsals(pieceID int) *DBError {
 		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
 	}
 	defer tx.Rollback()
-	res, err := store.db.Exec(`UPDATE RehearsalTime RT SET RT.IsDeleted = TRUE WHERE RT.PieceID = ?`, pieceID)
+	res, err := tx.Exec(`UPDATE RehearsalTime RT SET RT.IsDeleted = TRUE WHERE RT.PieceID = ?`, pieceID)
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error marking rehearsal times as deleted: %v", err), http.StatusInternalServerError)
 	}
@@ -454,6 +454,37 @@ func (store *Database) DeletePieceRehearsals(pieceID int) *DBError {
 		return NewDBError(fmt.Sprintf("piece has no rehearsals to delete"), http.StatusNotFound)
 	}
 
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
+// UpdatePieceRehearsalsByID updates the rehearsal for the given piece and rehearsalID
+// to have the values of the given updates.
+func (store *Database) UpdatePieceRehearsalsByID(pieceID, rehearsalID int, updates *NewRehearsalTime) *DBError {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	res, err := tx.Exec(`UPDATE RehearsalTime RT SET
+		RT.Title = COALESCE(NULLIF(?, ''), Title),
+		RT.Start = ?, RT.End = ?
+		WHERE RT.PieceID = ? AND RT.RehearsalTimeID = ?`,
+		updates.Title, updates.Start, updates.End, pieceID, rehearsalID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error applying updates: %v", err), http.StatusInternalServerError)
+	}
+
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving num rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("no rehearsal time was found or there were no changes made", http.StatusNotFound)
+	}
 	if err = tx.Commit(); err != nil {
 		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
 	}

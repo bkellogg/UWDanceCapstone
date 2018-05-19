@@ -123,9 +123,22 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 			}
 			rehearsal, dberr := ctx.store.GetPieceRehearsalByID(pieceID, objectID, false)
 			if dberr != nil {
-				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting rehearsal by piece and reharsal id")
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting rehearsal by piece and rehearsal id")
 			}
 			return respond(w, rehearsal, http.StatusOK)
+		} else if r.Method == "PATCH" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			updates := &models.NewRehearsalTime{}
+			if err := receive(r, updates); err != nil {
+				return err
+			}
+			dberr := ctx.store.UpdatePieceRehearsalsByID(pieceID, objectID, updates)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error updating rehearsal by id")
+			}
+			return respondWithString(w, "rehearsal updated", http.StatusOK)
 		} else {
 			return objectTypeNotSupported()
 		}
