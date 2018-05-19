@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -146,12 +145,17 @@ func (ctx *CastingContext) handleCastingUpdate(w http.ResponseWriter, r *http.Re
 
 // handlePostCasting handles requests to post casting
 func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	dancers, err := ctx.Session.ConfirmCast(u.ID)
+	newRehearsals := models.NewRehearsalTimes{}
+	if dberr := receive(r, &newRehearsals); dberr != nil {
+		return dberr
+	}
+
+	dancers, castingAudID, err := ctx.Session.ConfirmCast(u.ID)
 	if err != nil {
 		return HTTPError(fmt.Sprintf("error posting casting: %v", err), http.StatusBadRequest)
 	}
 
-	show, dberr := ctx.Session.Store.GetShowByAuditionID(ctx.Session.Audition, false)
+	show, dberr := ctx.Session.Store.GetShowByAuditionID(castingAudID, false)
 	if dberr != nil {
 		return middleware.HTTPErrorFromDBErrorContext(dberr, "getting show by audition id")
 	}
@@ -166,6 +170,9 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 	if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
 		return middleware.HTTPErrorFromDBErrorContext(dberr, "error looking up existing piece")
 	}
+
+	pcr := &models.PostCastingResponse{}
+
 	if piece == nil {
 		piece, dberr = ctx.Session.Store.InsertNewPiece(np)
 		if dberr != nil {
@@ -173,31 +180,64 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	for _, id64 := range dancers {
-		go handleUserInvite(ctx, int(id64), u, piece)
+	rehearsals, dberr := ctx.Session.Store.InsertPieceRehearsals(u.ID, piece.ID, newRehearsals)
+	if dberr != nil {
+		pcr.Message = "failed to create piece rehearsals: " + err.Error()
+	} else {
+		pcr.Rehearsals = rehearsals
 	}
-	return respond(w, dancers, http.StatusOK)
+
+	confResultChan := make(chan *models.CastingConfResult)
+
+	for _, id64 := range dancers {
+		go handleUserInvite(ctx, int(id64), u, piece, confResultChan)
+	}
+
+	results := make([]*models.CastingConfResult, 0, len(dancers))
+
+	// wait until we have all of the results
+	for len(results) < len(dancers) {
+		res := <-confResultChan
+		results = append(results, res)
+	}
+	pcr.CastingResults = results
+	return respond(w, pcr, http.StatusOK)
 }
 
 // handleUserInvite handles creating an invite for the given dancerID for the given
 // piece and sending them an email
 // Intended to be used on its own goroutine so does not return an error but
 // logs all errors to standard out.
-func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piece *models.Piece) {
+// Sends result for user into the given result channel
+func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piece *models.Piece, resultChan chan *models.CastingConfResult) {
+	result := &models.CastingConfResult{
+		InviteCreated: false,
+		EmailSent:     false,
+		IsError:       false,
+	}
+	// send the result into the channel
+	defer func() {
+		resultChan <- result
+	}()
 	user, dberr := ctx.Session.Store.GetUserByID(dancerID, false)
 	if dberr != nil {
-		log.Printf("error getting user with dancerID %d: %s\n", dancerID, dberr.Message)
+		result.Message = fmt.Sprintf("error getting user with dancerID %d: %s\n", dancerID, dberr.Message)
+		result.IsError = true
 		return
 	}
+	result.Dancer = user
 
 	dberr = ctx.Session.Store.MarkInvite(dancerID, piece.ID, appvars.CastStatusExpired)
 	if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
-		log.Printf("error marking old invite as expired: %s", dberr.Message)
+		result.Message = fmt.Sprintf("could not mark old invite as expired: %s", dberr.Message)
+		result.IsError = true
+		return
 	}
 
 	inPiece, dberr := ctx.Session.Store.UserIsInPiece(dancerID, piece.ID)
 	if dberr != nil {
-		log.Printf("error determining if user is in piece: %s", dberr.Message)
+		result.Message = fmt.Sprintf("error determining if user is in piece: %s", dberr.Message)
+		result.IsError = true
 		return
 	}
 
@@ -207,24 +247,21 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 
 		dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, expiryTime)
 		if dberr != nil {
-			log.Printf("error creating new user piece pending entry: %v", dberr.Message)
+			result.Message = fmt.Sprintf("error creating new user piece pending entry: %v", dberr.Message)
+			result.IsError = true
+			return
 		}
+		result.InviteCreated = true
 
-		expiryTimeHour := expiryTime.Hour()
-		expiryTimePeriod := "A.M."
+		expiryTimeHour, expiryTimeMinute, expiryTimeSecond, expiryTimePeriod := getNormalizedTimeParts(expiryTime)
 
-		if expiryTimeHour > 12 {
-			expiryTimeHour = expiryTimeHour - 12
-			expiryTimePeriod = "P.M."
-		}
-
-		expiryTimeFormat := fmt.Sprintf("%s, %s %d at %d:%d:%d %s",
+		expiryTimeFormat := fmt.Sprintf("%s, %s %d at %s:%s:%s %s",
 			expiryTime.Weekday().String(),
 			expiryTime.Month().String(),
 			expiryTime.Day(),
 			expiryTimeHour,
-			expiryTime.Minute(),
-			expiryTime.Second(),
+			expiryTimeMinute,
+			expiryTimeSecond,
 			expiryTimePeriod)
 		tplVars := &models.CastingConfVars{
 			Name:       user.FirstName,
@@ -236,6 +273,7 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 
 		// do not send the email if we are in debug mode
 		if ctx.IsDebugMode {
+			result.Message = "debug mode enabled; email not sent"
 			return
 		}
 		message, err := mail.NewMessageFromTemplate(ctx.MailCredentials,
@@ -244,12 +282,41 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 			tplVars,
 			[]string{user.Email})
 		if err != nil {
-			log.Printf("error generating message from template: %v\n", err)
+			result.Message = fmt.Sprintf("error merging message into email template: %v\n", err)
+			result.IsError = true
 			return
 		}
 		if err = message.Send(); err != nil {
-			log.Printf("error sending message: %v", err)
+			result.Message = fmt.Sprintf("error sending email: %v", err)
+			result.IsError = true
 			return
 		}
+		result.EmailSent = true
+	} else {
+		result.Message = "user is already in this piece; invite not created and the email was not sent"
 	}
+}
+
+func getNormalizedTimeParts(time time.Time) (string, string, string, string) {
+	expiryTimeHour := time.Hour()
+	expiryTimePeriod := "A.M."
+
+	if expiryTimeHour > 12 {
+		expiryTimeHour = expiryTimeHour - 12
+		expiryTimePeriod = "P.M."
+	}
+
+	expiryTimeMinute := time.Minute()
+	expiryTimeMinuteString := strconv.Itoa(expiryTimeMinute)
+	if expiryTimeMinute/10 == 0 {
+		expiryTimeMinuteString = "0" + expiryTimeMinuteString
+	}
+
+	expiryTimeSecond := time.Second()
+	expiryTimeSecondString := strconv.Itoa(expiryTimeSecond)
+	if expiryTimeSecond/10 == 0 {
+		expiryTimeSecondString = "0" + expiryTimeSecondString
+	}
+
+	return strconv.Itoa(expiryTimeHour), expiryTimeMinuteString, expiryTimeSecondString, expiryTimePeriod
 }

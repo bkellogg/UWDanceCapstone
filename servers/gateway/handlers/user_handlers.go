@@ -116,7 +116,11 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 	objectType := mux.Vars(r)["object"]
 	switch objectType {
 	case "pieces":
-		pieces, err := ctx.store.GetPiecesByUserID(userID, page, includeDeleted)
+		showID, httperr := getIntParam(r, "show")
+		if httperr != nil {
+			return httperr
+		}
+		pieces, err := ctx.store.GetPiecesByUserID(userID, page, showID, includeDeleted)
 		if err != nil {
 			return HTTPError(err.Message, err.HTTPStatus)
 		}

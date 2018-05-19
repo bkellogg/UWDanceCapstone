@@ -10,7 +10,7 @@ import (
 // RehearsalTime defines how a rehearsal time
 // for a piece is defined
 type RehearsalTime struct {
-	ID        int       `json:"id"`
+	ID        int64     `json:"id"`
 	PieceID   int       `json:"pieceID"`
 	Title     string    `json:"title"`
 	Start     time.Time `json:"startTime"`
@@ -23,19 +23,15 @@ type RehearsalTime struct {
 // NewRehearsalTime defines the structure of a new
 // rehearsal time sent to the server.
 type NewRehearsalTime struct {
-	PieceID int       `json:"pieceID"`
-	Title   string    `json:"title"`
-	Start   time.Time `json:"startTime"`
-	End     time.Time `json:"endTime"`
+	Title string    `json:"title"`
+	Start time.Time `json:"startTime"`
+	End   time.Time `json:"endTime"`
 }
 
 // Validate validates the current new rehearsal time and
 // normalizes values as applicable. Returns an error if
 // one occurred.
 func (nrt *NewRehearsalTime) Validate() error {
-	if nrt.PieceID <= 0 {
-		return errors.New("rehearsal time must be for a valid piece")
-	}
 	if nrt.Start.IsZero() {
 		return errors.New("rehearsal time must have a valid start time")
 	}
@@ -54,7 +50,7 @@ func (nrt *NewRehearsalTime) Validate() error {
 }
 
 // NewRehearsalTimes defines a slice of NewRehearsalTimes
-type NewRehearsalTimes []*NewRehearsalTimes
+type NewRehearsalTimes []*NewRehearsalTime
 
 // Validate validates the NewRehearsalTimes and returns
 // an error if one occurred.

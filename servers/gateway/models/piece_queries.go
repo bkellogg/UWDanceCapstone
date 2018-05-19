@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -119,8 +120,9 @@ func (store *Database) DeletePieceByID(id int) *DBError {
 	return NewDBError(fmt.Sprintf("error deleting piece: %v", err), http.StatusInternalServerError)
 }
 
-// GetPiecesByUserID gets all pieces the given user is in.
-func (store *Database) GetPiecesByUserID(id, page int, includeDeleted bool) ([]*Piece, *DBError) {
+// GetPiecesByUserID gets all pieces the given user is in. If showID is specified, then only pieces
+// the user is in in that show will be returned
+func (store *Database) GetPiecesByUserID(id, page, showID int, includeDeleted bool) ([]*Piece, *DBError) {
 	offset := getSQLPageOffset(page)
 	query := `SELECT DISTINCT P.PieceID, P.InfoSheetID, P.ChoreographerID ,P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy,
 	P.IsDeleted FROM Pieces P 
@@ -128,6 +130,9 @@ func (store *Database) GetPiecesByUserID(id, page int, includeDeleted bool) ([]*
 	WHERE UP.UserID = ?`
 	if !includeDeleted {
 		query += ` AND UP.IsDeleted = false`
+	}
+	if showID > 0 {
+		query += fmt.Sprintf(" AND P.ShowID = %s ", strconv.Itoa(showID))
 	}
 	query += ` LIMIT 25 OFFSET ?`
 	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
@@ -314,6 +319,171 @@ func (store *Database) DeletePieceInfoSheet(pieceID int) *DBError {
 	_, err = tx.Exec(`UPDATE Pieces SET InfoSheetID = 0 WHERE PieceID = ?`, pieceID)
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error marking piece as having no info sheet: %v", err), http.StatusInternalServerError)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
+// InsertPieceRehearsals inserts the given rehearsals for the specified piece.
+// Returns the completed rehearsal timees or a DBError if one occurred.
+func (store *Database) InsertPieceRehearsals(userID int64, pieceID int, rehearsals NewRehearsalTimes) (RehearsalTimes, *DBError) {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	_, dberr := txGetPiece(tx, pieceID)
+	if dberr != nil {
+		return nil, dberr
+	}
+	createTime := time.Now()
+
+	rts := RehearsalTimes{}
+
+	for _, nr := range rehearsals {
+		rt := &RehearsalTime{}
+		rt.CreatedBy = userID
+		rt.CreatedAt = createTime
+		rt.IsDeleted = false
+		rt.Title = nr.Title
+		rt.End = nr.End
+		rt.Start = nr.Start
+		rt.PieceID = pieceID
+		res, err := tx.Exec(`INSERT INTO RehearsalTime
+			(PieceID, Title, Start, End, CreatedAt, CreatedBy, IsDeleted)
+			VALUES (?, ?, ?, ?, ?, ?, ?)`, pieceID, nr.Title, nr.Start, nr.End, createTime, userID, false)
+		if err != nil {
+			return nil, NewDBError(fmt.Sprintf("error inserting rehearsal time: %v", err), http.StatusInternalServerError)
+		}
+		insertID, err := res.LastInsertId()
+		if err != nil {
+			return nil, NewDBError(fmt.Sprintf("error fetching last insert id of rehearsal time: %v", err), http.StatusInternalServerError)
+		}
+		rt.ID = insertID
+		rts = append(rts, rt)
+	}
+	if err := tx.Commit(); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return rts, nil
+}
+
+// GetPieceRehearsals gets the rehearsals for the given piece. Returns a DBError
+// if one occurred.
+func (store *Database) GetPieceRehearsals(pieceID int) (RehearsalTimes, *DBError) {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return nil, dberr
+	}
+
+	rows, err := store.db.Query(`SELECT * FROM RehearsalTime RT
+		WHERE RT.PieceID = ? AND RT.IsDeleted = FALSE`, pieceID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error fetching rehearsal times: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+
+	rehearsals := RehearsalTimes{}
+	for rows.Next() {
+		rehearsal := &RehearsalTime{}
+		if err = rows.Scan(&rehearsal.ID, &rehearsal.PieceID, &rehearsal.Title,
+			&rehearsal.Start, &rehearsal.End, &rehearsal.CreatedAt,
+			&rehearsal.CreatedBy, &rehearsal.IsDeleted); err != nil {
+			return nil, NewDBError(fmt.Sprintf("error scanning row into rehearsal time: %v", err), http.StatusInternalServerError)
+		}
+		rehearsals = append(rehearsals, rehearsal)
+	}
+	return rehearsals, nil
+}
+
+// GetPieceRehearsalByID gets the rehearsal time of the given piece and rehearsal ID.
+// If the rehearsal ID does not match the pieceID no rehearsal time will returned.
+// Returns the a DBError if one occurred.
+func (store *Database) GetPieceRehearsalByID(pieceID, rehearsalID int, includeDeleted bool) (*RehearsalTime, *DBError) {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return nil, dberr
+	}
+
+	rows, err := store.db.Query(`SELECT * FROM RehearsalTime RT
+		WHERE RT.PieceID = ? AND RT.RehearsalTimeID = ? AND RT.IsDeleted = FALSE`, pieceID, rehearsalID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error fetching rehearsal times: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		return nil, NewDBError(fmt.Sprintf("no rehearsal found"), http.StatusNotFound)
+	}
+
+	rehearsal := &RehearsalTime{}
+	if err = rows.Scan(&rehearsal.ID, &rehearsal.PieceID, &rehearsal.Title,
+		&rehearsal.Start, &rehearsal.End, &rehearsal.CreatedAt,
+		&rehearsal.CreatedBy, &rehearsal.IsDeleted); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error scanning row into rehearsal time: %v", err), http.StatusInternalServerError)
+	}
+	return rehearsal, nil
+}
+
+// DeletePieceRehearsals deletes every rehearsal for the given piece.
+// Returns a DBError if one occurred.
+func (store *Database) DeletePieceRehearsals(pieceID int) *DBError {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return dberr
+	}
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+	res, err := tx.Exec(`UPDATE RehearsalTime RT SET RT.IsDeleted = TRUE WHERE RT.PieceID = ?`, pieceID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error marking rehearsal times as deleted: %v", err), http.StatusInternalServerError)
+	}
+
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error determining number of rows affected: %v", err), http.StatusInternalServerError)
+	}
+
+	if numAffected == 0 {
+		return NewDBError(fmt.Sprintf("piece has no rehearsals to delete"), http.StatusNotFound)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
+// UpdatePieceRehearsalsByID updates the rehearsal for the given piece and rehearsalID
+// to have the values of the given updates.
+func (store *Database) UpdatePieceRehearsalsByID(pieceID, rehearsalID int, updates *NewRehearsalTime) *DBError {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	res, err := tx.Exec(`UPDATE RehearsalTime RT SET
+		RT.Title = COALESCE(NULLIF(?, ''), Title),
+		RT.Start = ?, RT.End = ?
+		WHERE RT.PieceID = ? AND RT.RehearsalTimeID = ?`,
+		updates.Title, updates.Start, updates.End, pieceID, rehearsalID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error applying updates: %v", err), http.StatusInternalServerError)
+	}
+
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving num rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("no rehearsal time was found or there were no changes made", http.StatusNotFound)
 	}
 	if err = tx.Commit(); err != nil {
 		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
