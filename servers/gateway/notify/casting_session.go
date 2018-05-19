@@ -105,6 +105,8 @@ func (c *CastingSession) Flush() {
 // Flush clears the current casting session and makes it ready to be used again.
 // Dumps all suers and states currently stored in the casting session.
 // Waits until all routines interacting with the session finish before flushing.
+// This version should called when notifier locking is being handled
+// by the invoking logic.
 func (c *CastingSession) flush() {
 	log.Printf("flushing current casting state...\n")
 	c.HasBegun = false

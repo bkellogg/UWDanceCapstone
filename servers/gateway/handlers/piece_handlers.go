@@ -200,6 +200,42 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 		} else {
 			return methodNotAllowed()
 		}
+	case "rehearsals":
+		if r.Method == "POST" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			newRehearsals := models.NewRehearsalTimes{}
+			if err := receive(r, &newRehearsals); err != nil {
+				return err
+			}
+
+			rehearsals, dberr := ctx.store.InsertPieceRehearsals(u.ID, pieceID, newRehearsals)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error inserting piece rehearsals")
+			}
+			return respond(w, rehearsals, http.StatusCreated)
+		} else if r.Method == "GET" {
+			if !ctx.permChecker.UserCanSeePieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			rehearsals, dberr := ctx.store.GetPieceRehearsals(pieceID)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting piece rehearsal times")
+			}
+			return respond(w, rehearsals, http.StatusOK)
+		} else if r.Method == "DELETE" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			dberr := ctx.store.DeletePieceRehearsals(pieceID)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error deleteing piece rehearsal times")
+			}
+			return respondWithString(w, "piece rehearsal times deleted", http.StatusOK)
+		} else {
+			return methodNotAllowed()
+		}
 	default:
 		return objectTypeNotSupported()
 	}

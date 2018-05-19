@@ -326,6 +326,111 @@ func (store *Database) DeletePieceInfoSheet(pieceID int) *DBError {
 	return nil
 }
 
+// InsertPieceRehearsals inserts the given rehearsals for the specified piece.
+// Returns the completed rehearsal timees or a DBError if one occurred.
+func (store *Database) InsertPieceRehearsals(userID int64, pieceID int, rehearsals NewRehearsalTimes) (RehearsalTimes, *DBError) {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	_, dberr := txGetPiece(tx, pieceID)
+	if dberr != nil {
+		return nil, dberr
+	}
+	createTime := time.Now()
+
+	rts := RehearsalTimes{}
+
+	for _, nr := range rehearsals {
+		rt := &RehearsalTime{}
+		rt.CreatedBy = userID
+		rt.CreatedAt = createTime
+		rt.IsDeleted = false
+		rt.Title = nr.Title
+		rt.End = nr.End
+		rt.Start = nr.Start
+		rt.PieceID = pieceID
+		res, err := tx.Exec(`INSERT INTO RehearsalTime
+			(PieceID, Title, Start, End, CreatedAt, CreatedBy, IsDeleted)
+			VALUES (?, ?, ?, ?, ?, ?, ?)`, pieceID, nr.Title, nr.Start, nr.End, createTime, userID, false)
+		if err != nil {
+			return nil, NewDBError(fmt.Sprintf("error inserting rehearsal time: %v", err), http.StatusInternalServerError)
+		}
+		insertID, err := res.LastInsertId()
+		if err != nil {
+			return nil, NewDBError(fmt.Sprintf("error fetching last insert id of rehearsal time: %v", err), http.StatusInternalServerError)
+		}
+		rt.ID = insertID
+		rts = append(rts, rt)
+	}
+	if err := tx.Commit(); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return rts, nil
+}
+
+// GetPieceRehearsals gets the rehearsals for the given piece. Returns a DBError
+// if one occurred.
+func (store *Database) GetPieceRehearsals(pieceID int) (RehearsalTimes, *DBError) {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return nil, dberr
+	}
+
+	rows, err := store.db.Query(`SELECT * FROM RehearsalTime RT
+		WHERE RT.PieceID = ? AND RT.IsDeleted = FALSE`, pieceID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error fetching rehearsal times: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+
+	rehearsals := RehearsalTimes{}
+	for rows.Next() {
+		rehearsal := &RehearsalTime{}
+		if err = rows.Scan(&rehearsal.ID, &rehearsal.PieceID, &rehearsal.Title,
+			&rehearsal.Start, &rehearsal.End, &rehearsal.CreatedAt,
+			&rehearsal.CreatedBy, &rehearsal.IsDeleted); err != nil {
+			return nil, NewDBError(fmt.Sprintf("error scanning row into rehearsal time: %v", err), http.StatusInternalServerError)
+		}
+		rehearsals = append(rehearsals, rehearsal)
+	}
+	return rehearsals, nil
+}
+
+// DeletePieceRehearsals deletes every rehearsal for the given piece.
+// Returns a DBError if one occurred.
+func (store *Database) DeletePieceRehearsals(pieceID int) *DBError {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return dberr
+	}
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+	res, err := store.db.Exec(`UPDATE RehearsalTime RT SET RT.IsDeleted = TRUE WHERE RT.PieceID = ?`, pieceID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error marking rehearsal times as deleted: %v", err), http.StatusInternalServerError)
+	}
+
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error determining number of rows affected: %v", err), http.StatusInternalServerError)
+	}
+
+	if numAffected == 0 {
+		return NewDBError(fmt.Sprintf("piece has no rehearsals to delete"), http.StatusNotFound)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
 // handlePiecesFromDatabase compiles the given result and err into a slice of pieces or an error.
 func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, *DBError) {
 	if err != nil {
