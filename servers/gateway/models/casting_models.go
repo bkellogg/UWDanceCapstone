@@ -21,3 +21,11 @@ type CastingConfResult struct {
 	IsError       bool   `json:"isError"`
 	Message       string `json:"message,omitempty"`
 }
+
+// PostCastingResponse defines the structure of a post
+// casting request response
+type PostCastingResponse struct {
+	Message        string               `json:"message,omitempty"`
+	Rehearsals     RehearsalTimes       `json:"rehearsals"`
+	CastingResults []*CastingConfResult `json:"castingResults"`
+}

@@ -86,6 +86,11 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 		return HTTPError("unparsable user ID given: "+err.Error(), http.StatusBadRequest)
 	}
 	object := vars["object"]
+	objectIDString := vars["objectID"]
+	objectID, err := strconv.Atoi(objectIDString)
+	if err != nil {
+		return unparsableIDGiven()
+	}
 	switch object {
 	case "choreographer":
 		if r.Method != "PUT" {
@@ -116,6 +121,10 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		return respondWithString(w, "choreographer added", http.StatusOK)
+	case "rehearsal":
+		if r.Method == "GET" {
+
+		}
 	default:
 		return objectTypeNotSupported()
 	}

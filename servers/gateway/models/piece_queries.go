@@ -399,6 +399,13 @@ func (store *Database) GetPieceRehearsals(pieceID int) (RehearsalTimes, *DBError
 	return rehearsals, nil
 }
 
+// GetPieceRehearsalByID gets the rehearsal time of the given piece and rehearsal ID.
+// If the rehearsal ID does not match the pieceID no rehearsal time will returned.
+// Returns the a DBError if one occurred.
+func (store *Database) GetPieceRehearsalByID(pieceID, rehearsalID int, includeDeleted bool) (*RehearsalTime, *DBError) {
+	return nil, nil
+}
+
 // DeletePieceRehearsals deletes every rehearsal for the given piece.
 // Returns a DBError if one occurred.
 func (store *Database) DeletePieceRehearsals(pieceID int) *DBError {

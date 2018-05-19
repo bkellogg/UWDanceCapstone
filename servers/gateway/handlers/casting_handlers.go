@@ -145,6 +145,11 @@ func (ctx *CastingContext) handleCastingUpdate(w http.ResponseWriter, r *http.Re
 
 // handlePostCasting handles requests to post casting
 func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
+	newRehearsals := models.NewRehearsalTimes{}
+	if dberr := receive(r, &newRehearsals); dberr != nil {
+		return dberr
+	}
+
 	dancers, castingAudID, err := ctx.Session.ConfirmCast(u.ID)
 	if err != nil {
 		return HTTPError(fmt.Sprintf("error posting casting: %v", err), http.StatusBadRequest)
@@ -165,11 +170,21 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 	if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
 		return middleware.HTTPErrorFromDBErrorContext(dberr, "error looking up existing piece")
 	}
+
+	pcr := &models.PostCastingResponse{}
+
 	if piece == nil {
 		piece, dberr = ctx.Session.Store.InsertNewPiece(np)
 		if dberr != nil {
 			return middleware.HTTPErrorFromDBErrorContext(dberr, "inserting new piece when posting casting")
 		}
+	}
+
+	rehearsals, dberr := ctx.Session.Store.InsertPieceRehearsals(u.ID, piece.ID, newRehearsals)
+	if dberr != nil {
+		pcr.Message = "failed to create piece rehearsals: " + err.Error()
+	} else {
+		pcr.Rehearsals = rehearsals
 	}
 
 	confResultChan := make(chan *models.CastingConfResult)
@@ -185,7 +200,8 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		res := <-confResultChan
 		results = append(results, res)
 	}
-	return respond(w, results, http.StatusOK)
+	pcr.CastingResults = results
+	return respond(w, pcr, http.StatusOK)
 }
 
 // handleUserInvite handles creating an invite for the given dancerID for the given
