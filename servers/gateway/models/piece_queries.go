@@ -403,7 +403,29 @@ func (store *Database) GetPieceRehearsals(pieceID int) (RehearsalTimes, *DBError
 // If the rehearsal ID does not match the pieceID no rehearsal time will returned.
 // Returns the a DBError if one occurred.
 func (store *Database) GetPieceRehearsalByID(pieceID, rehearsalID int, includeDeleted bool) (*RehearsalTime, *DBError) {
-	return nil, nil
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return nil, dberr
+	}
+
+	rows, err := store.db.Query(`SELECT * FROM RehearsalTime RT
+		WHERE RT.PieceID = ? AND RT.RehearsalTimeID = ? AND RT.IsDeleted = FALSE`, pieceID, rehearsalID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error fetching rehearsal times: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		return nil, NewDBError(fmt.Sprintf("no rehearsal found"), http.StatusNotFound)
+	}
+
+	rehearsal := &RehearsalTime{}
+	if err = rows.Scan(&rehearsal.ID, &rehearsal.PieceID, &rehearsal.Title,
+		&rehearsal.Start, &rehearsal.End, &rehearsal.CreatedAt,
+		&rehearsal.CreatedBy, &rehearsal.IsDeleted); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error scanning row into rehearsal time: %v", err), http.StatusInternalServerError)
+	}
+	return rehearsal, nil
 }
 
 // DeletePieceRehearsals deletes every rehearsal for the given piece.

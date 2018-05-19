@@ -99,13 +99,8 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 		if !ctx.permChecker.UserCan(u, permissions.AddStaffToPiece) {
 			return permissionDenied()
 		}
-		choreographerIDString := vars["objectID"]
-		choreographerID, err := strconv.Atoi(choreographerIDString)
-		if err != nil {
-			return HTTPError("unparsable piece ID given: "+err.Error(), http.StatusBadRequest)
-		}
 
-		user, dberr := ctx.store.GetUserByID(choreographerID, false)
+		user, dberr := ctx.store.GetUserByID(objectID, false)
 		if err != nil {
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
@@ -116,14 +111,23 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 			return HTTPError("cannot add non choreographers as choreographers to pieces", http.StatusBadRequest)
 		}
 
-		dberr = ctx.store.AssignChoreographerToPiece(choreographerID, pieceID)
+		dberr = ctx.store.AssignChoreographerToPiece(objectID, pieceID)
 		if dberr != nil {
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		return respondWithString(w, "choreographer added", http.StatusOK)
-	case "rehearsal":
+	case "rehearsals":
 		if r.Method == "GET" {
-
+			if !ctx.permChecker.UserCanSeePieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			rehearsal, dberr := ctx.store.GetPieceRehearsalByID(pieceID, objectID, false)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting rehearsal by piece and reharsal id")
+			}
+			return respond(w, rehearsal, http.StatusOK)
+		} else {
+			return objectTypeNotSupported()
 		}
 	default:
 		return objectTypeNotSupported()
