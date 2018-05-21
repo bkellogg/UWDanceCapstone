@@ -30,9 +30,10 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 
 	var users []*models.User
 	var dberr *models.DBError
+	var numPages int
 
 	if len(emailFilter) > 0 || len(fNameFilter) > 0 || len(lNameFilter) > 0 {
-		users, dberr = ctx.store.SearchForUsers(emailFilter, fNameFilter, lNameFilter, page)
+		users, numPages, dberr = ctx.store.SearchForUsers(emailFilter, fNameFilter, lNameFilter, page)
 	} else {
 		users, dberr = ctx.store.GetAllUsers(page, getIncludeDeletedParam(r))
 	}
@@ -44,7 +45,7 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	if err != nil {
 		return HTTPError(err.Error(), http.StatusInternalServerError)
 	}
-	return respond(w, models.PaginateUserResponses(userResponses, page), http.StatusOK)
+	return respond(w, models.PaginateNumUserResponses(userResponses, page, numPages), http.StatusOK)
 }
 
 // SpecificUserHandler handles requests for a specific user

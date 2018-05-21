@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -495,7 +496,7 @@ func (store *Database) getUserRoleLevel(userID int64) (int, error) {
 
 // SearchForUsers returns a slice of users that match any of the given filters.
 // Returns a DBError if one occurred.
-func (store *Database) SearchForUsers(email, firstName, lastName string, page int) ([]*User, *DBError) {
+func (store *Database) SearchForUsers(email, firstName, lastName string, page int) ([]*User, int, *DBError) {
 	offset := getSQLPageOffset(page)
 	query := `SELECT DISTINCT * FROM Users U WHERE 1 = 1
 		AND U.Email LIKE ?
@@ -503,11 +504,28 @@ func (store *Database) SearchForUsers(email, firstName, lastName string, page in
 		AND U.LastName LIKE ?
 		AND U.Active = TRUE
 		LIMIT 25 OFFSET ?`
-	return handleUsersFromDatabase(store.db.Query(query,
+	users, dberr := handleUsersFromDatabase(store.db.Query(query,
 		"%"+email+"%",
 		"%"+firstName+"%",
 		"%"+lastName+"%",
 		offset))
+	if dberr != nil {
+		return nil, 0, dberr
+	}
+
+	res := store.db.QueryRow(`SELECT Count(DISTINCT(U.UserID)) FROM Users U WHERE 1 = 1
+		AND U.Email LIKE ?
+		AND U.FirstName LIKE ?
+		AND U.LastName LIKE ?
+		AND U.Active = TRUE`,
+		"%"+email+"%",
+		"%"+firstName+"%",
+		"%"+lastName+"%")
+	numResults := 0
+	if err := res.Scan(&numResults); err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error scanning number of results: %v", err), http.StatusInternalServerError)
+	}
+	return users, int(math.Ceil(float64(numResults) / 25.0)), nil
 }
 
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
