@@ -116,8 +116,18 @@ func (store *Database) AssignChoreographerToPiece(userID, pieceID int) *DBError 
 
 // DeletePieceByID marks the piece with the given ID as deleted.
 func (store *Database) DeletePieceByID(id int) *DBError {
-	_, err := store.db.Exec(`UPDATE Pieces SET IsDeleted = ? WHERE PieceID = ?`, true, id)
-	return NewDBError(fmt.Sprintf("error deleting piece: %v", err), http.StatusInternalServerError)
+	res, err := store.db.Exec(`UPDATE Pieces SET IsDeleted = ? WHERE PieceID = ?`, true, id)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error marking piece as deleted: %v", err), http.StatusInternalServerError)
+	}
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("either the show does not exist or it has already been deleted", http.StatusBadRequest)
+	}
+	return nil
 }
 
 // GetPiecesByUserID gets all pieces the given user is in. If showID is specified, then only pieces

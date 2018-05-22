@@ -306,6 +306,26 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 		} else {
 			return objectTypeNotSupported()
 		}
+	case "DELETE":
+		if objType == "pieces" {
+			if !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
+				return permissionDenied()
+			}
+			hasInvite, dberr := ctx.store.UserHasInviteForPiece(int64(userID), int64(objID))
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error looking up user's piece invites")
+			}
+			if !hasInvite {
+				return HTTPError("user does not have an invite for the given piece", http.StatusBadRequest)
+			}
+			dberr = ctx.store.MarkInvite(userID, objID, appvars.CastStatusDeclined)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, fmt.Sprintf("error marking invite as %s", appvars.CastStatusDeclined))
+			}
+			return respondWithString(w, "invite marked as declined", http.StatusOK)
+		} else {
+			return objectTypeNotSupported()
+		}
 	default:
 		return methodNotAllowed()
 	}

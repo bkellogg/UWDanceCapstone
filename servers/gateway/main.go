@@ -131,7 +131,7 @@ func main() {
 	usersRouter.Handle(appvars.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
 	usersRouter.Handle(appvars.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
 	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler)).
-		Methods("LINK", "UNLINK")
+		Methods("LINK", "UNLINK", "DELETE")
 	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserObjectDispatcher))
 	usersRouter.Handle(appvars.UserMembershipObjectPath, authorizer.Authorize(authContext.UserMembershipActionDispatcher))
 
