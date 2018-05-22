@@ -19,8 +19,7 @@ class SignUp extends Component {
       email: null,
       password: null,
       passwordConf: null,
-      auth: null,
-      signUpExtra: false
+      auth: null
     }
   };
 
@@ -126,8 +125,6 @@ class SignUp extends Component {
                   <p>{this.state.error}</p>
                 }
               </div>
-              {
-                this.state.signUpExtra === false &&
                 <div className="SignUp">
                   <div className="Input">
                     <form className="authenticate">
@@ -160,17 +157,8 @@ class SignUp extends Component {
                     <div className="link">
                       <a className="blueTextLink" onClick={this.goBack}> Sign In </a>
                     </div>
-
-
-
                   </div>
                 </div>
-              }
-
-              {/* {
-                this.state.signUpExtra === true && this.state.auth != null &&
-                <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
-              } */}
             </div>
           </div>
         </div>
