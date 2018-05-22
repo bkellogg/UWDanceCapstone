@@ -4,6 +4,7 @@ import * as Util from './util.js';
 import logo from './imgs/logoex.png'
 import './styling/SignIn.css';
 import './styling/SignUp.css';
+import './styling/Landing.css';
 
 class SignUp extends Component {
   constructor(props) {
@@ -110,9 +111,8 @@ class SignUp extends Component {
 
   render() {
     return (
-
-      <section className="signUp">
-        <div className="signUpLanding">
+      <section className="landingBackground">
+        <div>
         <i className="fas fa-arrow-circle-left fa-2x" onClick={this.toLanding}></i>
           <div className="functionality">
             <div className="signInUplogoWrap">
