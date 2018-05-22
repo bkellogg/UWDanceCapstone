@@ -222,9 +222,19 @@ func (store *Database) GetShowByAuditionID(id int, includeDeleted bool) (*Show, 
 }
 
 // DeleteShowByID marks the show with the given ID as deleted.
-func (store *Database) DeleteShowByID(id int) error {
-	_, err := store.db.Exec(`UPDATE Shows SET IsDeleted = ? WHERE ShowID = ?`, true, id)
-	return err
+func (store *Database) DeleteShowByID(id int) *DBError {
+	res, err := store.db.Exec(`UPDATE Shows SET IsDeleted = ? WHERE ShowID = ?`, true, id)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error marking the given show as deleted: %v", err), http.StatusInternalServerError)
+	}
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("either the show does not exist or it has already been deleted", http.StatusBadRequest)
+	}
+	return nil
 }
 
 // GetShowsByUserID returns a slice of shows that the given user is in, or an error
