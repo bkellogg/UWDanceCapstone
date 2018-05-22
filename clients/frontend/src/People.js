@@ -21,27 +21,46 @@ class People extends Component {
   }
 
   getPeople = () => {
-    //API route to get people in an audition will go here
-    //that route is down, so for now we are just getting the first 100 active people in the data
     //TODO deal with pages
-    //STYLING NOTE: if you want to show dummy data change this.props.show to 1
-    Util.makeRequest("shows/" + this.props.show + "/users", "", "GET", true)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
-        if (res.status === 401) {
-          Util.signOut()
-        }
-        return res.text().then((t) => Promise.reject(t));
-      })
-      .then(data => {
-        this.setState({ users: data.users })
-      })
-      .catch(err => {
-        console.log(err)
-        Util.handleError(err)
-      })
+    let pageNum = 1
+    while (pageNum >= 1) {
+      Util.makeRequest("shows/" + this.props.show + "/users", "", "GET", true)
+        .then(res => {
+          if (res.ok) {
+            return res.json()
+          }
+          if (res.status === 401) {
+            Util.signOut()
+            pageNum = 0
+          }
+          return res.text().then((t) => Promise.reject(t));
+        })
+        .then(data => {
+          if (data.users.length > 0) {
+            pageNum = pageNum + 1
+          } else {
+            pageNum = 0
+          }
+          //can do this either way bc the length will just be 0
+          let users = data.users
+          let currUsers = this.state.users
+          users.forEach(user => {
+            currUsers.push(user)
+          })
+          return currUsers
+        })
+        .then(currUsers => {
+          this.setState({ 
+            users: currUsers
+          })
+        })
+        .catch(err => {
+          pageNum = 0
+          console.log(err)
+          Util.handleError(err)
+        })
+        console.log(pageNum)
+    }
   }
 
   render() {
