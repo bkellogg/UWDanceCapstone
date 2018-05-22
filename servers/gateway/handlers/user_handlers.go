@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -35,7 +37,7 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	if len(emailFilter) > 0 || len(fNameFilter) > 0 || len(lNameFilter) > 0 {
 		users, numPages, dberr = ctx.store.SearchForUsers(emailFilter, fNameFilter, lNameFilter, page)
 	} else {
-		users, dberr = ctx.store.GetAllUsers(page, getIncludeDeletedParam(r))
+		users, numPages, dberr = ctx.store.GetAllUsers(page, getIncludeDeletedParam(r))
 	}
 
 	if dberr != nil {
@@ -183,6 +185,31 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return permissionDenied()
 		}
 		return ctx.handleUserRole(w, r, userID)
+	case "password":
+		if r.Method != "PATCH" {
+			return methodNotAllowed()
+		}
+		if !ctx.permChecker.UserIsAtLeast(u, appvars.PermAdmin) {
+			return permissionDenied()
+		}
+		newPassword := &models.PasswordResetRequest{}
+		if httpError := receive(r, newPassword); httpError != nil {
+			return httpError
+		}
+		if ok, err := sessions.ValidatePasswords(newPassword.Password, newPassword.PasswordConf); !ok {
+			return HTTPError(fmt.Sprintf("error validating passwords: %v", err), http.StatusBadRequest)
+		}
+		user, dberr := ctx.store.GetUserByID(userID, true)
+		if dberr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting user by id")
+		}
+		if err := user.SetPassword(newPassword.Password); err != nil {
+			return HTTPError(fmt.Sprintf("error setting password: %v", err), http.StatusInternalServerError)
+		}
+		if err := ctx.store.UpdatePasswordByID(userID, user.PassHash); dberr != nil {
+			return HTTPError(fmt.Sprintf("error saving password: %v", err), http.StatusInternalServerError)
+		}
+		return respondWithString(w, "user password updated", http.StatusOK)
 	default:
 		return objectTypeNotSupported()
 	}

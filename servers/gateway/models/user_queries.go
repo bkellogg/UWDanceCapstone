@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
@@ -227,15 +226,17 @@ func (store *Database) RemoveUserFromAudition(userID, audID int) *DBError {
 
 // GetAllUsers returns a slice of users of every user in the database, active or not.
 // Returns an error if one occurred
-func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, *DBError) {
-	offset := strconv.Itoa((page - 1) * 25)
-	query := `SELECT * FROM Users U `
-	if !includeInactive {
-		query += `WHERE U.Active = true `
+func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  "*",
+		Table: "Users U",
+		Page:  page,
 	}
-	query += `LIMIT 25 OFFSET ` + offset
+	if !includeInactive {
+		sqlStmnt.Where += `U.Active = TRUE`
+	}
 
-	return handleUsersFromDatabase(store.db.Query(query))
+	return store.processUserQuery(sqlStmnt)
 }
 
 // ContainsUser returns true if this database contains a user with the same
@@ -497,35 +498,13 @@ func (store *Database) getUserRoleLevel(userID int64) (int, error) {
 // SearchForUsers returns a slice of users that match any of the given filters.
 // Returns a DBError if one occurred.
 func (store *Database) SearchForUsers(email, firstName, lastName string, page int) ([]*User, int, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT * FROM Users U WHERE 1 = 1
-		AND U.Email LIKE ?
-		AND U.FirstName LIKE ?
-		AND U.LastName LIKE ?
-		AND U.Active = TRUE
-		LIMIT 25 OFFSET ?`
-	users, dberr := handleUsersFromDatabase(store.db.Query(query,
-		"%"+email+"%",
-		"%"+firstName+"%",
-		"%"+lastName+"%",
-		offset))
-	if dberr != nil {
-		return nil, 0, dberr
+	sqlStmnt := &SQLStatement{
+		Cols:  "*",
+		Table: "Users U",
+		Where: `1 = 1 AND U.Email LIKE ? AND U.FirstName LIKE ? AND U.LastName LIKE ? AND U.Active = TRUE`,
+		Page:  page,
 	}
-
-	res := store.db.QueryRow(`SELECT Count(DISTINCT(U.UserID)) FROM Users U WHERE 1 = 1
-		AND U.Email LIKE ?
-		AND U.FirstName LIKE ?
-		AND U.LastName LIKE ?
-		AND U.Active = TRUE`,
-		"%"+email+"%",
-		"%"+firstName+"%",
-		"%"+lastName+"%")
-	numResults := 0
-	if err := res.Scan(&numResults); err != nil {
-		return nil, 0, NewDBError(fmt.Sprintf("error scanning number of results: %v", err), http.StatusInternalServerError)
-	}
-	return users, int(math.Ceil(float64(numResults) / 25.0)), nil
+	return store.processUserQuery(sqlStmnt, "%"+email+"%", "%"+firstName+"%", "%"+lastName+"%")
 }
 
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
@@ -547,4 +526,29 @@ func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, *DBError) {
 		users = append(users, u)
 	}
 	return users, nil
+}
+
+// processUserQuery runs the query with the given args and returns a slice of users
+// that matched that query as well as the number of pages of users that matched
+// that query. Returns a DBError if an error occurred.
+func (store *Database) processUserQuery(sqlStmt *SQLStatement, args ...interface{}) ([]*User, int, *DBError) {
+	fmt.Println(sqlStmt.BuildQuery())
+	fmt.Println(sqlStmt.BuildCountQuery())
+	users, dberr := handleUsersFromDatabase(store.db.Query(sqlStmt.BuildQuery(), args...))
+	if dberr != nil {
+		return nil, 0, dberr
+	}
+	numResults := 0
+	rows, err := store.db.Query(sqlStmt.BuildCountQuery(), args...)
+	if err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error querying for number of results: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, 0, NewDBError("count query returned no results", http.StatusInternalServerError)
+	}
+	if err = rows.Scan(&numResults); err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error scanning rows into num results: %v", err), http.StatusInternalServerError)
+	}
+	return users, int(math.Ceil(float64(numResults) / 25.0)), nil
 }
