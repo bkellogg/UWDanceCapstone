@@ -54,8 +54,7 @@ class SetRehearsals extends Component {
   }
 
   postCasting = () => {
-
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", {}, "POST", true)
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.allRehearsals, "POST", true)
       .then((res) => {
         if (res.ok) {
           return res.text()
@@ -82,7 +81,6 @@ class SetRehearsals extends Component {
     let endDate = this.props.endDate
     let rehearsalBlocks = this.state.rehearsalSchedule
     let allRehearsals = []
-    //TODO add a check that at least one of the rehearsals starts on the correct day of the week for the start date?
 
     rehearsalBlocks.forEach((rehearsal, i) => {
       //we will update this if the rehearsal is not the same day as the start date
@@ -137,7 +135,9 @@ class SetRehearsals extends Component {
         allRehearsals.push(newRehearsalObject)
       }
     })
-    console.log(allRehearsals)
+    this.setState({
+      allRehearsals : allRehearsals
+    })
   }
 
   handleOpen = () => {
@@ -299,16 +299,22 @@ class SetRehearsals extends Component {
                 onRequestClose={this.handleClose}
                 disabled={finished}
               >
-                <div className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong> and there are <strong className="importantText">no conflicts</strong> with other choreographers. <br /> Your rehearsal start date is {this.state.startDate} and your rehearsal times are :
-            <br />{rehearsalSchedule}<br />
-                  <br /> </div>
+                <div className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong> and there are <strong className="importantText">no conflicts</strong> with other choreographers. 
+                <br /> 
+                <br />
+                Your rehearsal start date is {moment(this.state.startDate).format("dddd, MMMM Do YYYY")} and your rehearsal times are :
+                <br />
+                {rehearsalSchedule}
+                <br />
+                <br /> 
+                </div>
                 <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting.</p>
                 {
-                this.state.castingError &&
-                <div style={{backgroundColor: "#f9c79e", borderRadius: "5px"}}>
-                  {Util.titleCase(this.state.castingError)}
-                </div>
-              }
+                  this.state.castingError &&
+                  <div style={{backgroundColor: "#f9c79e", borderRadius: "5px"}}>
+                    {Util.titleCase(this.state.castingError)}
+                  </div>
+                }
               </Dialog>
 
             </div>

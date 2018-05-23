@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar';
-import moment from 'moment';
+//import moment from 'moment';
 import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
@@ -13,6 +13,8 @@ const MINTIME = new Date();
 MINTIME.setHours(8,30,0);
 const MAXTIME = new Date();
 MAXTIME.setHours(23,30,0);
+
+var moment = require('moment-timezone');
 
 class Calendar extends Component {
   constructor(props) {
@@ -31,7 +33,12 @@ class Calendar extends Component {
       maxTime : MAXTIME,
       openSetRehearsal : false,
       openNewRehearsal : false,
-      events : []
+      events : [{
+        id: 1,
+        title: "",
+        start: "2018-05-19T10:02:12Z",
+        end: "2018-05-19T14:02:12Z"
+      }]
     }
   };
 
@@ -41,10 +48,11 @@ class Calendar extends Component {
 
   formatEvents = () => {
     //TODO turn this into a route
-    let events = JSON.parse(localStorage.rehearsals)
+    let events = this.state.events
 
     let formattedEvents = []
     events.forEach((event) => {
+      console.log(moment.tz(event.start, 'America/Los_Angeles').format("L hh:mm a"))
       let start = new Date(event.start)
       let end = new Date(event.end)
       let tempEvent = {
@@ -55,6 +63,7 @@ class Calendar extends Component {
       }
       formattedEvents.push(tempEvent)
     })
+    console.log(formattedEvents)
     this.setState({
       events : formattedEvents
     })
@@ -119,7 +128,7 @@ class Calendar extends Component {
   render() {
     let event = this.state.event
     let slotInfo = this.state.slotInfo
-    console.log(slotInfo)
+    console.log(this.state.events)
     return (
       <section>
         <BigCalendar style={{ height: "650px", width: "100%" }}

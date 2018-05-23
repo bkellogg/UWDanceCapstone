@@ -152,12 +152,12 @@ class Dashboard extends Component {
         </div>
       )
     })
-    let displayAnnouncements = this.state.currAnnouncements.map((anncouncement, index) => {
+    let displayAnnouncements = this.state.currAnnouncements.map((announcement, index) => {
       return (
         <div key={index} className="announcement announcementBorderColor">
           {
             <div className="announcementCardColor">
-              <p className="announcementMessage"> {anncouncement.message} </p>
+              <p className="announcementMessage"> {announcement.message} </p>
             </div>
           }
         </div>
