@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import * as Util from './util';
 import BigCalendar from 'react-big-calendar';
-//import moment from 'moment';
+import moment from 'moment';
 import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
@@ -14,7 +15,6 @@ MINTIME.setHours(8,30,0);
 const MAXTIME = new Date();
 MAXTIME.setHours(23,30,0);
 
-var moment = require('moment-timezone');
 
 class Calendar extends Component {
   constructor(props) {
@@ -33,26 +33,35 @@ class Calendar extends Component {
       maxTime : MAXTIME,
       openSetRehearsal : false,
       openNewRehearsal : false,
-      events : [{
-        id: 1,
-        title: "",
-        start: "2018-05-19T10:02:12Z",
-        end: "2018-05-19T14:02:12Z"
-      }]
+      events : []
     }
   };
 
   componentWillMount() {
-    this.formatEvents()
+    this.getEvents()
   }
 
-  formatEvents = () => {
-    //TODO turn this into a route
-    let events = this.state.events
+  getEvents = () => {
+    Util.makeRequest("/pieces/" + this.props.pieceID + "/rehearsals", {}, "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(events => {
+      this.formatEvents(events)
+    })
+    .catch(err => {
+      console.error(err)
+    })
+  }
 
+  formatEvents = (events) => {
+    console.log(events)
     let formattedEvents = []
     events.forEach((event) => {
-      console.log(moment.tz(event.start, 'America/Los_Angeles').format("L hh:mm a"))
+      console.log(moment(event.start))
       let start = new Date(event.start)
       let end = new Date(event.end)
       let tempEvent = {
@@ -63,7 +72,6 @@ class Calendar extends Component {
       }
       formattedEvents.push(tempEvent)
     })
-    console.log(formattedEvents)
     this.setState({
       events : formattedEvents
     })
@@ -128,7 +136,6 @@ class Calendar extends Component {
   render() {
     let event = this.state.event
     let slotInfo = this.state.slotInfo
-    console.log(this.state.events)
     return (
       <section>
         <BigCalendar style={{ height: "650px", width: "100%" }}

@@ -289,7 +289,7 @@ class Piece extends Component {
                     <h2 className="smallHeading">Calendar</h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
-                  <Calendar />
+                  <Calendar pieceID={this.state.pieceID}/>
                 </section>
               }
             </div>

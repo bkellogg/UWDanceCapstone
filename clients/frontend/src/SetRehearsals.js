@@ -102,6 +102,8 @@ class SetRehearsals extends Component {
       if (rehearsalIndex === startDateIndex) { //hooray we don't have to calculate the date
         rehearsalObject.start = startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)] //times have to be formatted for moment we so get the index of our timeRef and get the formatted time using that
         rehearsalObject.end = startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)] //we use the same date bc no one rehearses at midnight
+        rehearsalObject.start = moment(rehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
+        rehearsalObject.end = moment(rehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
       } else {
         //here we get the DATE of the day of the week that is closest AFTER our start date
         //use that date to create our rehearsal object
@@ -114,6 +116,9 @@ class SetRehearsals extends Component {
 
         rehearsalObject.start = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
         rehearsalObject.end = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
+        //server formatting
+        rehearsalObject.start = moment(rehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
+        rehearsalObject.end = moment(rehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
         startDate = beginDate //need this in a sec
       }
 
@@ -132,12 +137,17 @@ class SetRehearsals extends Component {
         newRehearsalObject.start = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
         newRehearsalObject.end = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
 
+        //server formatting
+        //adds -08:00 at the end, will that be an issue?
+        newRehearsalObject.start = moment(newRehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
+        newRehearsalObject.end = moment(newRehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
         allRehearsals.push(newRehearsalObject)
       }
     })
     this.setState({
       allRehearsals : allRehearsals
     })
+    console.log(allRehearsals)
   }
 
   handleOpen = () => {
