@@ -32,10 +32,9 @@
 }
 
 img#photo, .fullWidthCard, .card2, .setTimes, .dancersList-filter, .overlapAvailabilityWrap, .choreographersSelecteCast, .restOfCast, .cardBody{
-        border: 0;
-    -webkit-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
-    -moz-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
-    box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+    border: 1px solid #c0c0c0;
+    border-radius: 5px;
+
 }
 
 .transparentCard{
@@ -84,7 +83,7 @@ h2{
 
 /*PEOPLE NAME WITH A LINK TO THEIR PROFILE*/
 .personNameLink{
-    color: #22A7E0;
+    color: rgb(0, 188, 212);
 }
 
 .personNameLink:hover{

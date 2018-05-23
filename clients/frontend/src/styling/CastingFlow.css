@@ -15,7 +15,7 @@
     float: right;
 }
 .back-button-styles-css:hover, .next-button-styles-css:hover{
-    background-color: #22A7E0 !important;
+    background-color: rgb(0, 188, 212) !important;
 }
 .steps{
     background-color: transparent !important;
@@ -68,7 +68,7 @@ th{
 
 .variableCastHeader {
     text-align: center;
-    border-bottom: 3px solid hsl(0, 0%, 45%);
+    border-bottom: 2px solid hsl(0, 0%, 45%);
 }
 
     /*YOUR CAST, CONFLICTS, UNCAST DANCERS DIVIDER*/
@@ -188,7 +188,7 @@ th{
 }
 
 .importantText{
-    color: #22A7E0;
+    color: rgb(0, 188, 212);
 }
 
 .warningText{

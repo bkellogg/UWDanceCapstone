@@ -1,6 +1,6 @@
 /*NEW AUDITION MESSAGE -- BLUE TONES*/
 .newAuditionBorderColor{
-  border-left: 6px solid rgb(52, 152, 219);
+  border-left: 6px solid rgb(0, 188, 212);
 }
 
 .auditionAnnouncementCardColor{
@@ -20,7 +20,7 @@
 
 /*CAST MESSAGE -- BLUE TONES*/
 .castBorderColor{
-  border-left: 6px solid rgb(52, 152, 219);
+  border-left: 6px solid rgb(0, 188, 212);
   background-color: rgb(235, 245, 251);
 }
 

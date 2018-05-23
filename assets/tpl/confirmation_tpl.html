@@ -5,170 +5,184 @@
     <meta name="viewport" content="width=device-width" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>You Have Been Casted</title>
+    <!-- <link rel="stylesheet" href="tempstyles.css"> -->
     <style>
-    /* SHARED STYLES */
-    .footer-text-wrapper,
-    .footer-img-wrapper,
-    .email-body {
-        padding-left: 10%;
-    }
+        /*CONFIRMATION TEMPLATE*/
 
-    .signature-top, 
-    .footer-bar {
-        margin-top: 10px;
-    }
+        /* BODY */
 
-    /* BODY */
-    body {
-        font-family: "Lato", "sans-serif";
-        margin-left: 15px;
-    }
+        body {
+            font-family: "Lato", "sans-serif";
+            font-size: 0.875em;
+            margin-left: 15px;
+            line-height: 1.375em;
+        }
 
-    /* EMAIL TEMPLATE  */
-    .email-template {
-        border-style: solid;
-        border-width: 1px;
-        border-color: #799FB0;
-        width: 600px;
-    }
+        .bodyWrap {
+            width: 100%;
+        }
 
-    /* HEADER BANNER */
-    .logo {
-        background-color: #799FB0;
-        padding-bottom: 10px;
-        padding-top: 40px;
-        text-align: center;
-        font-weight: 200;
-        font-size: 1.5em;
-        margin-bottom: 20px;
-        color: white;
-        /*font color*/
-    }
+        /* EMAIL TEMPLATE  */
 
-    /* EMAIL BODY*/
-    .email-body {
-        margin-top: 50px;
-        margin-bottom: 30px;
-        padding-right: 10%;
-        font-size: 0.875em;
-    }
+        .email-template {
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+            border: solid 1px #1C2C50;
+            max-width: 600px;
+            width: auto;
+        }
 
-    .raw-url {
-        margin-left: 10px;
-    }
+        /* HEADER & FOOTER  */
 
-    /* FUN NO-RESPONSE MESSAGE */
-    .no-response-message {
-        margin-top: 40px;
-        margin-bottom: 40px;
-    }
+        .banner,
+        .signature-wrapper {
+            background-color: #1C2C50;
+            padding-bottom: 10px;
+            padding-top: 20px;
+            padding-left: 8%;
+            margin-bottom: 20px;
+        }
 
-    .small-message {
-        color: #799FB0;
-        font-weight: 400;
+        .greeting {
+            color: white;
+            font-size: 1.4em;
+            font-weight: 400;
+        }
 
-    }
+        .stageLogo {
+            padding-left: 5%;
+            max-width: 200px;
+        }
 
-    /* FOOTER BANNER*/
-    .signature-wrapper {
-        background-color: #799FB0;
-        color: white;
-        font-size: 0.875em;
-    }
+        .uwdd {
+            padding-left: 8%;
+            color: white;
+            font-size: 1em;
+        }
 
-    .footer-text-wrapper {
-        padding-bottom: 15px;
-        padding-top: 10px;
-    }
+        /* EMAIL BODY*/
 
-    .footer-name {
-        font-weight: 600;
-    }
+        .email-body,
+        .signature-wrapper {
+            margin-top: 50px;
+            margin-bottom: 30px;
+            padding-left: 8%;
+            padding-right: 8%;
+        }
 
-    .footer-img-wrapper {
-        padding-bottom: 40px;
-    }
+        .raw-url {
+            margin-left: 10px;
+        }
 
-    .footer-img-wrapper {
-        display: inline-block;
-        size: 50%;
-    }
+        .main-content{
+            margin-bottom: 30px;
+        }
+        /* FUN NO-RESPONSE MESSAGE */
+
+        .no-response-message {
+            margin-top: 40px;
+            margin-bottom: 40px;
+
+        }
+
+        .small-message {
+            color: rgb(0, 188, 212);
+            font-weight: 400;
+
+        }
+
+        /* FOOTER*/
+
+        .signature-wrapper {
+            margin-bottom: 0;
+            padding-bottom: 30px;
+            padding-left: 0;
+        }
+
+        .signature {
+            color: rgb(255, 255, 255, .9);
+        }
+
+        /* LINKS */
+
+        .link {
+            color: #e65100;
+            font-weight: 600;
+        }
+
+        /*NEW SHOW*/
+
+        .audition-details {
+            padding: 10px;
+        }
+
+        .expiry-time {
+            font-weight: bold;
+            padding: 10px;
+        }
 
 
-    /* SPECIAL STYLES THAT GO IN DIFFERENT HTML FILES*/
-    /* BUTTON  IN passwordreset_tpl.html */
-    .reset-link-button {
-        background-color: #EA6336;
-        width: 110px;
-        margin-top: 30px;
-        margin-bottom: 30px;
-        padding: 2%;
-        border-radius: 10px;
-        color: white;
-        text-align: center;
-        font-weight: 100;
-        letter-spacing: .5px;
-        text-decoration: none;
-
-    }
-
-    /* LINKS */
-    .link{
-        color: #EA6336;
-        font-weight: 600;
-    }
-
-    .audition-details{
-        padding-left: 20px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        font-weight: 600;
-        color: #EA6336;
-    }
+        @media only screen and (max-width: 768px) {
+            body {
+                line-height: 1.25em;
+            }
+        }
     </style>
 
 
 </head>
 
 <body>
-        <!-- OVERALL FILE -->
+    <div class="bodyWrap">
+        <!-- WRAP  -->
         <div class="email-template">
-    
+
             <!-- HEADER BANNER -->
-            <div class="logo">STAGE</div>
-    
+
+            <div class="banner">
+                <h1 class="greeting">Hello, {{.Name}}.</h1>
+            </div>
+
             <!-- EMAIL BODY - SPLIT INTO SECTIONS -->
             <div class="email-body">
                 <div>
-                    <p>Hello {{.Name}}, </p>
-                    <p>Congratulations! {{.Choreographer}} has cast you in their piece! Click <a class="link" href="{{.URL}}">here</a> to accept or reject the piece.</p>
+                    <p>Congratulations! {{.ChorFName}} {{.ChorLName}} has cast you in their piece! Click
+                        <a class="link" href="{{.URL}}">here</a> to accept or reject the piece.</p>
                 </div>
                 <!-- RESET PASSWORD BUTTON -->
                 <div class="main-content">
                     <p>If you are unable to click on the link, please copy and paste this into your web browser:</p>
                     <div class="raw-url">{{.URL}}</div>
                 </div>
-    
-            <!-- MESSAGE -->
-            <div class="no-response-message">
-                    <p class = "small-message"><i>This mail inbox is not monitored. No one will reply to messages sent to this address, but feel free to have a conversation with yourself. <br><br> Note that you'll have to supply both sides of the conversation! :)</i></p>
+
+                <div class="expiration-time-msg">
+                        The invite to join this piece will expire on
+                        <p class="expiry-time"><b>{{.ExpiryTime}}</b></p>
+                        If you do not accept by that time, it will be assumed that you do not want to be in the piece and your invite will no longer
+                        be valid.
+                    </div>
+                    
+                <!-- MESSAGE -->
+                <div class="no-response-message">
+                    <p class="small-message">
+                        <i>This mail inbox is not monitored. No one will reply to messages sent to this address, but feel free
+                            to have a conversation with yourself.
+                            <br>
+                            <br> Note that you'll have to supply both sides of the conversation! :)</i>
+                    </p>
                 </div>
-    
+
             </div>
-    
+
             <!-- FOOTER BANNER -->
             <div class="signature-wrapper">
-                    <div class="footer-text-wrapper">
-                        <p>Thank you,</p>
-                        <p>UW STAGE Team</p>
-                    </div>
-                    <div class="footer-img-wrapper">
-                        <img src="https://dance.washington.edu/sites/dance/files/dance-dept-wordmark.png" alt="UW Department of Dance">
-                    </div>
-                </div>
-    
+                <img class="stageLogo" src="logoex.png" alt="STAGE Logo">
+            </div>
+
         </div>
-    </body>
+    </div>
+</body>
 
 
 </html>
