@@ -88,7 +88,6 @@ class SetRehearsals extends Component {
 
       //an array of these are going to be pushed up to the server 
       let rehearsalObject = {
-        //id: allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
         title: "Weekly Rehearsal"
       }
 
@@ -100,8 +99,8 @@ class SetRehearsals extends Component {
       }
 
       if (rehearsalIndex === startDateIndex) { //hooray we don't have to calculate the date
-        rehearsalObject.start = startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)] //times have to be formatted for moment we so get the index of our timeRef and get the formatted time using that
-        rehearsalObject.end = startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)] //we use the same date bc no one rehearses at midnight
+        rehearsalObject.start = startDate + "T" + rehearsal.startTime //times have to be formatted for moment we so get the index of our timeRef and get the formatted time using that
+        rehearsalObject.end = startDate + "T" + rehearsal.endTime //we use the same date bc no one rehearses at midnight
         rehearsalObject.start = moment(rehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
         rehearsalObject.end = moment(rehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
       } else {
@@ -114,8 +113,8 @@ class SetRehearsals extends Component {
           beginDate = moment(beginDate).add(1, 'week')
         }
 
-        rehearsalObject.start = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
-        rehearsalObject.end = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
+        rehearsalObject.start = beginDate.format("YYYYMMDD") + "T" + rehearsal.startTime
+        rehearsalObject.end = beginDate.format("YYYYMMDD") + "T" + rehearsal.endTime
         //server formatting
         rehearsalObject.start = moment(rehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
         rehearsalObject.end = moment(rehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
@@ -131,14 +130,12 @@ class SetRehearsals extends Component {
       while (date.isBefore(moment(endDate))) {
         date = moment(date).add(1, 'week')
         let newRehearsalObject = {
-          //id: allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
           title: "Weekly Rehearsal"
         }
-        newRehearsalObject.start = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
-        newRehearsalObject.end = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
-
+        newRehearsalObject.start = date.format("YYYYMMDD") + "T" + rehearsal.startTime
+        newRehearsalObject.end = date.format("YYYYMMDD") + "T" + rehearsal.endTime
+        console.log(moment(newRehearsalObject.start))
         //server formatting
-        //adds -08:00 at the end, will that be an issue?
         newRehearsalObject.start = moment(newRehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
         newRehearsalObject.end = moment(newRehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
         allRehearsals.push(newRehearsalObject)
