@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
 	"net/http"
@@ -178,9 +179,28 @@ func main() {
 	log.Printf("HTTP Redirect server is listen at http://%s\n", httpRedirAddr)
 	go http.ListenAndServe(httpRedirAddr, nil)
 
+	// define an http server with specific settings
+	// that are safer when using the go http server
+	// directly on the web.
 	server := http.Server{
-		Addr:         addr,
-		Handler:      treatedRouter,
+		Addr:    addr,
+		Handler: treatedRouter,
+		TLSConfig: &tls.Config{
+			PreferServerCipherSuites: true,
+			CurvePreferences: []tls.CurveID{
+				tls.CurveP256,
+				tls.X25519,
+			},
+			MinVersion: tls.VersionTLS12,
+			CipherSuites: []uint16{
+				tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
+				tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
+				tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			},
+		},
 		ReadTimeout:  time.Second * 5,
 		WriteTimeout: time.Second * 10,
 		IdleTimeout:  time.Second * 120,
