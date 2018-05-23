@@ -17,22 +17,6 @@
   overflow: scroll;
 }
 
-/*SKIP EXTRA SIGN UP INFO*/
-.signUpSkipButton{
-  background-color: transparent;
-  box-shadow: none;
-  color: #22A7E0;
-  cursor: pointer;
-}
-
-/*BIO FORM*/
-.bioTextbox{
-  display: block;
-}
-
-.extra-signup-input-field{
-  margin-bottom: 30px;
-}
 
 @media only screen and (max-width : 992px) {
   .SignUpLanding {
