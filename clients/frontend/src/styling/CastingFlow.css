@@ -172,6 +172,14 @@ th{
     display: flex;
 }
 
+.pickDateTime {
+    overflow: visible !important;
+}
+
+.singleField {
+    width: 33%
+}
+
 .selectField{
     position: relative;
     display: inline-block;
