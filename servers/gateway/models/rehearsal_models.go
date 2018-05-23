@@ -13,8 +13,8 @@ type RehearsalTime struct {
 	ID        int64     `json:"id"`
 	PieceID   int       `json:"pieceID"`
 	Title     string    `json:"title"`
-	Start     time.Time `json:"startTime"`
-	End       time.Time `json:"endTime"`
+	Start     time.Time `json:"start"`
+	End       time.Time `json:"end"`
 	CreatedAt time.Time `json:"createdAt"`
 	CreatedBy int64     `json:"createdBy"`
 	IsDeleted bool      `json:"isDeleted"`
@@ -24,8 +24,8 @@ type RehearsalTime struct {
 // rehearsal time sent to the server.
 type NewRehearsalTime struct {
 	Title string    `json:"title"`
-	Start time.Time `json:"startTime"`
-	End   time.Time `json:"endTime"`
+	Start time.Time `json:"start"`
+	End   time.Time `json:"end"`
 }
 
 // Validate validates the current new rehearsal time and
