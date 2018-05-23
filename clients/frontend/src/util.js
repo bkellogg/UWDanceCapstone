@@ -2,7 +2,7 @@ export const headerAuthorization = "Authorization";
 
 export const host = "dasc.capstone.ischool.uw.edu";
 export const API_URL_BASE = "https://"+ host +"/api/v1/";
-
+export const PAGEMAX = 10;
 
 export function saveAuth(auth) {
     localStorage.setItem("auth", auth);

@@ -22,44 +22,28 @@ class People extends Component {
 
   getPeople = () => {
     //TODO deal with pages
-    let pageNum = 1
-    while (pageNum >= 1) {
-      Util.makeRequest("shows/" + this.props.show + "/users", "", "GET", true)
-        .then(res => {
-          if (res.ok) {
-            return res.json()
-          }
-          if (res.status === 401) {
-            Util.signOut()
-            pageNum = 0
-          }
-          return res.text().then((t) => Promise.reject(t));
+    for(let i = 1; i < Util.PAGEMAX; i++) {
+      Util.makeRequest("shows/" + this.props.show + "/users?page=" + i, "", "GET", true)
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then(data => {
+        let currUsers = this.state.users
+        let newUsers = currUsers.concat(data.users)
+        this.setState({ 
+          users: newUsers
         })
-        .then(data => {
-          if (data.users.length > 0) {
-            pageNum = pageNum + 1
-          } else {
-            pageNum = 0
-          }
-          //can do this either way bc the length will just be 0
-          let users = data.users
-          let currUsers = this.state.users
-          users.forEach(user => {
-            currUsers.push(user)
-          })
-          return currUsers
-        })
-        .then(currUsers => {
-          this.setState({ 
-            users: currUsers
-          })
-        })
-        .catch(err => {
-          pageNum = 0
-          console.log(err)
-          Util.handleError(err)
-        })
-        console.log(pageNum)
+      })
+      .catch(err => {
+        console.log(err)
+        Util.handleError(err)
+      })
     }
   }
 

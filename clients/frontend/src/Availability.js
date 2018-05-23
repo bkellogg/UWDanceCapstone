@@ -44,7 +44,8 @@ class Availability extends Component {
                 [false, false, false, false, false, false, false, false],
                 [false, false, false, false, false, false, false, false],
                 [false, false, false, false, false, false, false, false]
-              ]
+              ],
+              availability: []
           };
     }
 
@@ -104,7 +105,6 @@ class Availability extends Component {
             let end = (parseInt(endTime.substring(0,2), 10) + 1).toString()
             endTime = end + "00"
           }
-          //another bug?
           if(this.state.cells[i]){
             if(this.state.cells[i][j]){
               let dayExists = false;
@@ -119,14 +119,11 @@ class Availability extends Component {
                 let currEndTime = a[dayLocation].times[a[dayLocation].times.length - 1].end
                 if (currEndTime === timeVal){
                   a[dayLocation].times[a[dayLocation].times.length - 1].end = endTime
-                } else {
-                  //this is where the bug is - cannot read property push of undefined
-                  if(a[dayLocation].time !== undefined) {
-                    a[dayLocation].time.push({
+                } else { 
+                    a[dayLocation].times.push({
                       "start" : timeVal,
                       "end" : endTime
-                    })
-                  }
+                    })  
                 }
               } else {
                 a.push({

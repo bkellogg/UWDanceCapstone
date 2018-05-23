@@ -68,9 +68,8 @@ class Main extends Component {
     };
   }
 
+  //only gets the first page
   getCurrShows = () => {
-    //TODO deal with the fact that there's going to be pages
-    //this is going to be HIGHLY COMPLEX, save for end
     Util.makeRequest("shows?page=1", {}, "GET", true).then(res => {
       if (res.ok) {
         return res.json()
