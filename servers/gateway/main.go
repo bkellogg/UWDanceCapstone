@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/startup"
 
@@ -33,27 +34,27 @@ func main() {
 	// Gateway server environment variables
 	addr := require("ADDR", ":443")
 	httpRedirAddr := require("HTTPREDIRADDR", ":80")
-	tlsKey := require("TLSKEY", "")
-	tlsCert := require("TLSCERT", "")
-	sessionKey := require("SESSIONKEY", "")
+	tlsKey := require("TLSKEY")
+	tlsCert := require("TLSCERT")
+	sessionKey := require("SESSIONKEY")
 
 	// MYSQL store environment variables
-	mySQLPass := require("MYSQLPASS", "")
-	mySQLAddr := require("MYSQLADDR", "")
+	mySQLPass := require("MYSQLPASS")
+	mySQLAddr := require("MYSQLADDR")
 	mySQLDBName := require("MYSQLDBNAME", "DanceDB")
 
 	// Redis store environment variables
-	redisAddr := require("REDISADDR", "")
+	redisAddr := require("REDISADDR")
 
 	// Mail Info
-	mailUser := require("MAILUSER", "")
-	mailPass := require("MAILPASS", "")
+	mailUser := require("MAILUSER")
+	mailPass := require("MAILPASS")
 
-	templatesPath := require("TEMPLATESPATH", "")
-	resetPasswordClientPath := require("RESETPASSWORDCLIENTPATH", "")
-	adminConsolePath := require("ADMINCONSOLEPATH", "")
-	frontEndPath := require("FRONTENDPATH", "")
-	assetsPath := require("ASSETSPATH", "")
+	templatesPath := require("TEMPLATESPATH")
+	resetPasswordClientPath := require("RESETPASSWORDCLIENTPATH")
+	adminConsolePath := require("ADMINCONSOLEPATH")
+	frontEndPath := require("FRONTENDPATH")
+	assetsPath := require("ASSETSPATH")
 
 	// determine if the app should be started in DEBUG mode
 	isDebug := require("STAGE_DEBUG", "false") == "true"
@@ -62,10 +63,10 @@ func main() {
 	}
 
 	// admin user info
-	adminFName := require("STAGE_ADMIN_FIRSTNAME", "")
-	adminLName := require("STAGE_ADMIN_LASTNAME", "")
-	adminEmail := require("STAGE_ADMIN_EMAIL", "")
-	adminPaswd := require("STAGE_ADMIN_PASSWORD", "")
+	adminFName := require("STAGE_ADMIN_FIRSTNAME")
+	adminLName := require("STAGE_ADMIN_LASTNAME")
+	adminEmail := require("STAGE_ADMIN_EMAIL")
+	adminPaswd := require("STAGE_ADMIN_PASSWORD")
 
 	// URL that the app is served from
 	// this will be used when generating links back to itself.
@@ -163,8 +164,11 @@ func main() {
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
 	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath)).Methods(http.MethodGet)
 
-	treatedRouter := middleware.EnsureHeaders(middleware.BlockIE(
-		middleware.LogErrors(baseRouter, db)))
+	treatedRouter := http.TimeoutHandler(
+		middleware.EnsureHeaders(middleware.BlockIE(
+			middleware.LogErrors(
+				baseRouter, db))),
+		time.Second*5, "request timeout")
 
 	// redirect HTTP requests to HTTPS when appropriate
 	// this needs to be done since the gateway server will need to
@@ -174,22 +178,37 @@ func main() {
 	log.Printf("HTTP Redirect server is listen at http://%s\n", httpRedirAddr)
 	go http.ListenAndServe(httpRedirAddr, nil)
 
+	server := http.Server{
+		Addr:         addr,
+		Handler:      treatedRouter,
+		ReadTimeout:  time.Second * 5,
+		WriteTimeout: time.Second * 10,
+		IdleTimeout:  time.Second * 120,
+	}
+
 	log.Printf("Gateway server is listen at https://%s...\n", addr)
 	if !strings.HasSuffix(addr, ":443") {
 		log.Println("WARNING: Gateway server listening on non-standard HTTPS port. HTTP Redirects only work when standard HTTP/S ports.")
 	}
-	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, treatedRouter))
+	log.Fatal(server.ListenAndServeTLS(tlsCert, tlsKey))
 }
 
 // Gets the value of env from the environment or defaults it to the given
 // def. Exits the process if env and def are not set
-func require(env, def string) string {
+func require(env string, def ...string) string {
+	if len(def) > 1 {
+		return ""
+	}
+	defVal := ""
+	if len(def) > 0 {
+		defVal = def[0]
+	}
 	if envVal := os.Getenv(env); len(envVal) != 0 {
 		return envVal
 	}
 	if len(def) != 0 {
-		log.Printf("no value for %s, defaulting to %s\n", env, def)
-		return def
+		log.Printf("no value for %s, defaulting to %s\n", env, defVal)
+		return defVal
 	}
 	log.Fatalf("no value for %s and no default set. Please set a value for %s\n", env, env)
 	return ""
