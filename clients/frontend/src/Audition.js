@@ -28,6 +28,7 @@ class Audition extends Component {
   }
 
   checkRegistration = () => {
+    let error = false
     Util
       .makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
       .then(res => {
@@ -37,9 +38,10 @@ class Audition extends Component {
         if (res.status === 401) {
           Util.signOut()
         }
-        return res
-          .text()
-          .then((t) => Promise.reject(t));
+        if (res.status !== 404) {
+          error = true
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then(audition => {
         this.setState({ 
@@ -49,9 +51,12 @@ class Audition extends Component {
           currAvailability: audition.availability })
       })
       .catch(err => {
-        this.setState({
-          error: err
-        })
+        if (error) {
+          let title = Util.titleCase(err)
+          this.setState({
+            error: title
+          })
+        }
         console.error(err)
         Util.handleError(err)
       })
@@ -78,6 +83,7 @@ class Audition extends Component {
     let body = {
       "days": this.state.availability
     }
+    let error = false
     Util.makeRequest("users/me/auditions/" + this.props.audition + "/availability", body, "PATCH", true)
       .then(res => {
         if (res.ok) {
@@ -85,6 +91,9 @@ class Audition extends Component {
         }
         if (res.status === 401) {
           Util.signOut()
+        }
+        if (res.status !== 404) {
+          error = true
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -98,10 +107,13 @@ class Audition extends Component {
         this.checkRegistration()
       )
       .catch(err => {
+        if (error) {
+          let title = Util.titleCase(err)
+          this.setState({
+            error: title
+          })
+        }
         console.error(err)
-        this.setState({
-          error: err
-        })
         Util.handleError(err)
       })
 
@@ -143,7 +155,9 @@ class Audition extends Component {
             }
             {
               this.state.error &&
-              <p>{this.state.error}</p>  
+              <div style={{backgroundColor: "#f9c79e", borderRadius: "5px"}}>
+                {this.state.error}
+              </div>  
             }
             <Snackbar
               open={this.state.open}

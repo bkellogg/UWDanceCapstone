@@ -31,7 +31,8 @@ class SetRehearsals extends Component {
       rehearsalSchedule: [],
       cast: [],
       contested: [],
-      filteredCast: []
+      filteredCast: [],
+      startDate: moment().format('YYYY-MM-DD')
     }
   };
 
@@ -89,7 +90,7 @@ class SetRehearsals extends Component {
 
       //an array of these are going to be pushed up to the server 
       let rehearsalObject = {
-        id: allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
+        //id: allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
         title: "Weekly Rehearsal"
       }
 
@@ -127,7 +128,7 @@ class SetRehearsals extends Component {
       while (date.isBefore(moment(endDate))) {
         date = moment(date).add(1, 'week')
         let newRehearsalObject = {
-          id: allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
+          //id: allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
           title: "Weekly Rehearsal"
         }
         newRehearsalObject.start = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
@@ -136,8 +137,7 @@ class SetRehearsals extends Component {
         allRehearsals.push(newRehearsalObject)
       }
     })
-    localStorage.setItem("rehearsals", JSON.stringify(allRehearsals))
-    //TODO add the server call!
+    console.log(allRehearsals)
   }
 
   handleOpen = () => {
@@ -190,9 +190,6 @@ class SetRehearsals extends Component {
 
   render() {
     let finished = this.state.finished
-    if (this.state.rehearsalSchedule.length === 0 || !this.state.startDate) {
-      finished = true
-    }
     let numRehearsals = this.state.numRehearsals
     let rehearsals = []
     for (let i = 0; i < numRehearsals; i++) {
@@ -302,16 +299,16 @@ class SetRehearsals extends Component {
                 onRequestClose={this.handleClose}
                 disabled={finished}
               >
-              {
-                this.state.castingError &&
-                <div>
-                  {this.state.castingError}
-                </div>
-              }
                 <div className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong> and there are <strong className="importantText">no conflicts</strong> with other choreographers. <br /> Your rehearsal start date is {this.state.startDate} and your rehearsal times are :
             <br />{rehearsalSchedule}<br />
                   <br /> </div>
                 <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting.</p>
+                {
+                this.state.castingError &&
+                <div style={{backgroundColor: "#f9c79e", borderRadius: "5px"}}>
+                  {Util.titleCase(this.state.castingError)}
+                </div>
+              }
               </Dialog>
 
             </div>
