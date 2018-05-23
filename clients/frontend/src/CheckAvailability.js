@@ -93,7 +93,7 @@ class CheckAvailability extends Component {
           <div className="pageContentWrap">
             <div className="castList">
               <div className="dancersList-filter">
-                <h2 className="smallHeading"> Filter by dancer </h2>
+                <h2 className="smallHeading"> Filter by dancer <i class="fas fa-question-circle"></i></h2>
                 <table id="checkAvailabilityTable">
                   <tbody>
                     <tr className="categories">
