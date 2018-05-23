@@ -241,6 +241,10 @@ class AvailabilityOverlap extends Component {
           <div className="cardTitleWrap">
             <div className="headerWrap">
               <h2 className="smallHeading">Availability</h2>
+              <div className="xtraInfo tooltip">
+                <i className="fas fa-question-circle"></i>
+                <span className="tooltiptext">You can <b className="emphasis">hover</b> and see who is availabile when.</span>
+              </div>
             </div>
             <div className="legend">
               <p className="colorIndicator">{minCast}/{this.props.filteredCast.length} available</p>

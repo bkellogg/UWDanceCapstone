@@ -231,7 +231,11 @@ class SetRehearsals extends Component {
               <div className="castList">
                 <div className="extraClass">
                   <div className="setTimes">
-                    <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
+                    <h2 className="smallHeading">Set Weekly Rehearsal Times</h2>
+                    <div className="xtraInfo tooltip">
+                      <i className="fas fa-question-circle"></i>
+                      <span className="tooltiptext">Pick the <b className="emphasis">first day</b> of rehearsal and then each <b className="emphasis">recurring</b> weekly slot. One-time rehearsals can be added from My Piece.</span>
+                    </div>
                     <p>First Rehearsal Date</p>
                     <div className="chooseRehearsalTimes">
                       <input type="date" name="rehearsalStartDate" id="rehearsalStartDate" defaultValue={moment().format('YYYY-MM-DD')} onChange={this.setStartDate} />
@@ -255,6 +259,10 @@ class SetRehearsals extends Component {
                   
                   <div className="choreographersSelectedCast setTimes">
                     <h2 className="smallHeading">Your Cast</h2>
+                    <div className="xtraInfo tooltip">
+                      <i className="fas fa-question-circle"></i>
+                      <span className="tooltiptext">This is your <b className="emphasis">final</b> cast list. They will all recieve an email with their casting.</span>
+                    </div>
                     <table>
                       <tbody>
                         <tr className="categories">
