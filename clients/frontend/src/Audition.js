@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
+import moment from 'moment';
 
 //components
 import Registration from './Registration';
@@ -19,14 +20,50 @@ class Audition extends Component {
       regNum: 0,
       open: false,
       openAvailability: false,
-      changeRegistration: false
+      changeRegistration: false,
+      auditionPassed: false
     }
   };
 
   componentWillMount() {
+    this.getAuditionInfo()
     this.checkRegistration()
   }
 
+  getAuditionInfo = () => {
+    Util.makeRequest("auditions/" + this.props.audition, {}, "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(audition => {
+      console.log(audition)
+      this.setState({ 
+        audition: audition
+      })
+      this.checkAuditionDate(audition)
+    })
+    .catch(err => {
+      console.error(err)
+      Util.handleError(err)
+    })
+  }
+
+  checkAuditionDate = (audition) => {
+    let auditionTime = moment(audition.time)
+    let today = moment()
+    if (!today.isBefore(auditionTime)) {
+      this.setState({
+        auditionPassed: true
+      })
+    }
+  }
+  
   checkRegistration = () => {
     let error = false
     Util
@@ -138,6 +175,12 @@ class Audition extends Component {
         <div className="mainView">
           <div className="pageContentWrap">
             <h1 id="auditionTitle">{this.props.name + " Audition Form"}</h1>
+            {
+              this.state.auditionPassed &&
+              <div className="auditionPassed">
+                The audition date has passed. Any information you enter here will not be considered during the casting process.
+              </div>
+            }
             {!this.state.registered && <Registration
               audition={this.props.audition}
               registered={() => this.checkRegistration()} />
@@ -155,7 +198,7 @@ class Audition extends Component {
             }
             {
               this.state.error &&
-              <div style={{backgroundColor: "#f9c79e", borderRadius: "5px"}}>
+              <div className="serverError">
                 {this.state.error}
               </div>  
             }

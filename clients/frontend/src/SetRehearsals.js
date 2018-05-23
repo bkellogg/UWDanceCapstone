@@ -318,7 +318,7 @@ class SetRehearsals extends Component {
                 <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting.</p>
                 {
                   this.state.castingError &&
-                  <div style={{backgroundColor: "#f9c79e", borderRadius: "5px"}}>
+                  <div className="serverError">
                     {Util.titleCase(this.state.castingError)}
                   </div>
                 }

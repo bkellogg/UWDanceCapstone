@@ -10,9 +10,9 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 const VIEWS = ['month', 'week', 'day']
 const MINTIME = new Date();
-MINTIME.setHours(8,30,0);
+MINTIME.setHours(8,0,0);
 const MAXTIME = new Date();
-MAXTIME.setHours(23,30,0);
+MAXTIME.setHours(23,0,0);
 
 
 class DancerPiece extends Component {
@@ -176,12 +176,12 @@ class DancerPiece extends Component {
                         <h2 className="smallHeading">Calendar</h2>
                         <i className="fas fa-chevron-up fa-lg"></i>
                       </div>
-                      <BigCalendar style={{ height: "650px", width: "100%" }}
+                      <BigCalendar style={{ height: "710px", width: "100%" }}
                         defaultDate={new Date()}
                         defaultView='week'
                         events={this.state.events}
                         views={VIEWS}
-                        step={60}
+                        step={30}
                         min={this.state.minTime}
                         max={this.state.maxTime}
                         onSelectEvent={event => this.onSelectExisting(event)}

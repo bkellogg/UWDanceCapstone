@@ -11,7 +11,14 @@
     margin-top: 10px;
 }
 
-
+.auditionPassed {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 20px;
+    border-radius: 5px;
+    text-align: center;
+    background-color: #f27e2a
+}
 
 .table-drag-select{
     width: 100%;
