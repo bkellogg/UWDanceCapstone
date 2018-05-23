@@ -99,8 +99,9 @@ class SetRehearsals extends Component {
       }
 
       if (rehearsalIndex === startDateIndex) { //hooray we don't have to calculate the date
-        rehearsalObject.start = startDate + "T" + rehearsal.startTime //times have to be formatted for moment we so get the index of our timeRef and get the formatted time using that
-        rehearsalObject.end = startDate + "T" + rehearsal.endTime //we use the same date bc no one rehearses at midnight
+        rehearsalObject.start = moment(startDate).format("YYYYMMDD") + "T" + rehearsal.startTime //times have to be formatted for moment we so get the index of our timeRef and get the formatted time using that
+        rehearsalObject.end = moment(startDate).format("YYYYMMDD") + "T" + rehearsal.endTime //we use the same date bc no one rehearses at midnight
+        //server formatting
         rehearsalObject.start = moment(rehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
         rehearsalObject.end = moment(rehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
       } else {
@@ -134,7 +135,7 @@ class SetRehearsals extends Component {
         }
         newRehearsalObject.start = date.format("YYYYMMDD") + "T" + rehearsal.startTime
         newRehearsalObject.end = date.format("YYYYMMDD") + "T" + rehearsal.endTime
-        console.log(moment(newRehearsalObject.start))
+
         //server formatting
         newRehearsalObject.start = moment(newRehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
         newRehearsalObject.end = moment(newRehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
@@ -144,7 +145,6 @@ class SetRehearsals extends Component {
     this.setState({
       allRehearsals : allRehearsals
     })
-    console.log(allRehearsals)
   }
 
   handleOpen = () => {
