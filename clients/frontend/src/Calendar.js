@@ -220,6 +220,7 @@ class Calendar extends Component {
           <div>
             <TextField
               defaultValue={event.title}
+              floatingLabelText="Rehearsal Name"
               onChange={(event) => this.setState({
                 rehearsalName : event.target.value
               })}

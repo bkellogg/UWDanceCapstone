@@ -141,9 +141,9 @@ class Dashboard extends Component {
       //check that the day of the audition hasn't passed
       let today = moment()
       let time = moment(announcement.audition.time).utcOffset('-0700')
-      if (!today.isBefore(time)) {
-        return []
-      }
+      // if (!today.isBefore(time)) {
+      //   return []
+      // }
       return (
         <div key={index} className="announcement newAuditionBorderColor">
           {
