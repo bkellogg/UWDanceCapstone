@@ -196,7 +196,7 @@ class AvailabilityOverlap extends Component {
         //this is the div with the specific time block
         let style = { "backgroundColor": color }
         if (j % 2 !== 0){
-          style = { "backgroundColor": color , "borderTop": "0px"}
+          style = { "backgroundColor": color , "borderTop": "0px", "borderBottomWidth": "2px"}
         }
         return (
           <div className="tooltip" key={j}>
