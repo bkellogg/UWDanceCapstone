@@ -11,6 +11,7 @@ import ResolveConflict from './ResolveConflict';
 import SetRehearsals from './SetRehearsals';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
@@ -21,6 +22,12 @@ import ArrowBackIcon from 'mdi-react/ArrowBackIcon';
 import ArrowForwardIcon from 'mdi-react/ArrowForwardIcon';
 
 const WEBSOCKET = new WebSocket("wss://" + Util.host + "/api/v1/updates?auth=" + localStorage.getItem("auth"));
+
+const themeStepper = createMuiTheme({
+  stepper: {
+      iconColor: 'rgb(0, 188, 212)'
+  }
+})
 
 class Casting extends Component {
   constructor(props) {
@@ -201,6 +208,7 @@ class Casting extends Component {
 
                 {/*This is the stepper styling - you can click the steps to go between them*/}
                 <div className="castingFlow" style={{ width: '100%', maxWidth: '100%', margin: 'auto', color: "red" }}>
+                <MuiThemeProvider theme={themeStepper.stepper}>
                   <Stepper linear={true} activeStep={stepIndex}>
                     <Step>
                       <StepButton className="steps" onClick={() => this.setState({ stepIndex: 0 })} >
@@ -223,6 +231,8 @@ class Casting extends Component {
                       </StepButton>
                     </Step>
                   </Stepper>
+                  </MuiThemeProvider>
+
 
                   {/*BUTTONS*/}
                   <div style={contentStyle}>
@@ -264,7 +274,7 @@ class Casting extends Component {
             />,
             <FlatButton
               label="Enter Casting"
-              style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+              style={{ backgroundColor: 'rgb(0, 188, 212)', color: '#ffffff' }}
               primary={false}
               keyboardFocused={true}
               onClick={this.enterCasting}

@@ -83,7 +83,7 @@ h2{
 
 /*PEOPLE NAME WITH A LINK TO THEIR PROFILE*/
 .personNameLink{
-    color: rgb(0, 188, 212);
+    color: #039be5;
 }
 
 .personNameLink:hover{
