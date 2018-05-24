@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import moment from 'moment';
 import PendingInvites from './PendingInvites';
+import Button from 'react-materialize/lib/Button';
 import './styling/General.css';
 
 //styling

@@ -130,6 +130,7 @@ class Calendar extends Component {
   }
 
   addRehearsal = () => {
+    console.log(this.state.slotInfo)
     let slotInfo = this.state.slotInfo
     let body = []
     let rehearsalObject = {
@@ -161,7 +162,34 @@ class Calendar extends Component {
   }
 
   modifyRehearsal = (event) => {
-
+    console.log(event)
+    let body = []
+    let rehearsalObject = {
+      title : this.state.rehearsalName,
+      start : moment(event.start).format("YYYY-MM-DDTHH:mm:ssZ"),
+      end : moment(event.end).format("YYYY-MM-DDTHH:mm:ssZ")
+    }
+    body.push(rehearsalObject)
+    // Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals", body, "POST", true)
+    // .then(res => {
+    //   if (res.ok) {
+    //     return res.json()
+    //   }
+    //   return res.text().then((t) => Promise.reject(t));
+    // })
+    // .then( res => {
+    //   this.setState({
+    //     openNewRehearsal : false,
+    //     rehearsalName: "Rehearsal"
+    //   })
+    //   this.getEvents()
+    // })
+    // .catch(err => {
+    //   this.setState({
+    //     addRehearsalError : err
+    //   })
+    //   console.error(err)
+    // })
   }
 
   render() {

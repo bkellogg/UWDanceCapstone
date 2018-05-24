@@ -238,6 +238,7 @@ class Piece extends Component {
   render() {
     let musicianRow = []
     let musicians = this.state.musicians
+    console.log(this.state.numMusicians)
     musicianRow = musicians.map((musician, i) => {
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
