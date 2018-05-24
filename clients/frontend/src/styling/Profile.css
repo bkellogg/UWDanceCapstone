@@ -22,7 +22,7 @@ h1#profileName{
 }
 
 .nameWrap, .resumeWrap{
-  /* width: 60%; */
+  width: 60%;
   position: relative;
   display: inline-block;
   vertical-align: bottom;
@@ -50,13 +50,14 @@ img#photo {
   width: auto;
 }
 
-.name, #editName {
+.name {
   z-index: 1;
   text-transform: capitalize;
 }
 
-.bio, #editBio{
+.bio{
   z-index: 2;
+  width: 80%;
 }
 
 .bio{
@@ -68,6 +69,13 @@ img#photo {
   /* box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;  */
 }
 
+#editName{
+  display: block;
+}
+
+#editBio{
+  display: block;
+}
 
 #historyTitle {
   margin-bottom:15px
@@ -103,19 +111,21 @@ img#photo {
   .header{
     border-bottom: none;
       padding-bottom: 0px;
-      text-align: center;
   }
   
   .nameWrap{
     margin-top: 25px;
     width: 100%;
-    text-align: center;
     padding-bottom: 25px;
     padding-top: 0;
   }
 
   .resumeWrap{
     position: relative;
+  }
+
+  .bio{
+    width: 100%;
   }
 
   img#photo {
@@ -125,4 +135,9 @@ img#photo {
     display: block;
     margin: auto;
   }
+
+  h1#profileName{
+    text-align: center;
+  }
+
 }
