@@ -532,8 +532,6 @@ func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, *DBError) {
 // that matched that query as well as the number of pages of users that matched
 // that query. Returns a DBError if an error occurred.
 func (store *Database) processUserQuery(sqlStmt *SQLStatement, args ...interface{}) ([]*User, int, *DBError) {
-	fmt.Println(sqlStmt.BuildQuery())
-	fmt.Println(sqlStmt.BuildCountQuery())
 	users, dberr := handleUsersFromDatabase(store.db.Query(sqlStmt.BuildQuery(), args...))
 	if dberr != nil {
 		return nil, 0, dberr
