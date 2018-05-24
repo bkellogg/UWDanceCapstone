@@ -37,26 +37,32 @@ class Profile extends Component {
     this.setCounts(this.state.bio);
 
     //TODO deal with the fact that there are going to be pages
-    Util.makeRequest("users/" + this.state.user.id + "/shows?history=all", {}, "GET", true)
-      .then((res) => {
-        if (res.ok) {
-          return res.json()
-        }
-        if (res.status === 401) {
-          Util.signOut()
-        }
-        return res.text().then((t) => Promise.reject(t));
-      })
-      .then((res) => {
-        this.setState({
-          history: res.shows
+    for(let i = 1; i < Util.PAGEMAX; i++) {
+      Util.makeRequest("users/" + this.state.user.id + "/shows?history=all&page=" + i, {}, "GET", true)
+        .then((res) => {
+          if (res.ok) {
+            return res.json()
+          }
+          if (res.status === 401) {
+            Util.signOut()
+          }
+          return res.text().then((t) => Promise.reject(t));
         })
-        this.formatHistory(res.shows)
-      })
-      .catch((err) => {
-        console.error(err);
-        Util.handleError(err)
-      })
+        .then((res) => {
+          let currHistory = this.state.history
+          let newHistory = currHistory.concat(res.shows)
+          this.setState({
+            history: newHistory
+          })
+          if(currHistory.length < newHistory.length){
+            this.formatHistory(newHistory)
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          Util.handleError(err)
+        })
+    }
   }
 
   formatHistory = (shows) => {
@@ -346,10 +352,8 @@ class Profile extends Component {
                   <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
                   {this.state.history.length > 0 && this.state.history.map((p, i) => {
                     return (
-                      //TODO STYLE THESE
                       <div className="showHistory" key={i}>
-                        <p>{p.name}</p>
-                        <p>{p.year}</p>
+                        <p>{p.name}, {p.year}</p>
                       </div>
                     )
                   })}

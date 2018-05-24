@@ -49,7 +49,7 @@ class Main extends Component {
     super(props);
     this.state = {
       user: JSON.parse(localStorage.user),
-      shows: null,
+      shows: [],
       routing: null,
       firstRender: true,
       showTypes: null,
@@ -68,9 +68,9 @@ class Main extends Component {
     };
   }
 
+  //only gets the first page
   getCurrShows = () => {
-    //TODO deal with the fact that there's going to be pages
-    Util.makeRequest("shows?history=all&includeDeleted=false", {}, "GET", true).then(res => {
+    Util.makeRequest("shows?page=1", {}, "GET", true).then(res => {
       if (res.ok) {
         return res.json()
       }
@@ -92,7 +92,7 @@ class Main extends Component {
   }
 
   getShowTypes = (shows) => {
-    Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true).then((res) => {
+    Util.makeRequest("shows/types", {}, "GET", true).then((res) => {
       if (res.ok) {
         return res.json()
       }
@@ -105,19 +105,14 @@ class Main extends Component {
     }).then((data) => {
       let showTypes = {};
       data.map(function (show) {
-        return showTypes[
-          show
-            .id
-            .toString()
-        ] = show.desc
+        return showTypes[show.id.toString()] = show.desc
       })
       return showTypes
     }).then((showTypes) => {
       this.setState({ showTypes: showTypes })
     }).then(() => {
-      shows.map(show => {
+      shows.forEach(show => {
         this.getAudition(show)
-        return this.state.currShows
       })
     }).catch(err => {
       console.log(err)
@@ -154,10 +149,7 @@ class Main extends Component {
   }
 
   getNavigation = () => {
-    let showNav = this
-      .state
-      .currShows
-      .map((show, index) => {
+    let showNav = this.state.currShows.map((show, index) => {
         return <NavigationElement key={index} user={this.state.user} showTitle={show.name} />
       })
 

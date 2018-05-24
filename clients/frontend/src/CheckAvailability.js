@@ -94,6 +94,10 @@ class CheckAvailability extends Component {
             <div className="castList">
               <div className="dancersList-filter">
                 <h2 className="smallHeading"> Filter by dancer </h2>
+                <div className="xtraInfo tooltip">
+                  <i className="fas fa-question-circle"></i>
+                  <span className="tooltiptext">You can <b className="emphasis">select</b> who's availability is being shown, <b className="emphasis">view</b> dancer availability comments, and <b className="emphasis">drop</b> them from your cast.</span>
+                </div>
                 <table id="checkAvailabilityTable">
                   <tbody>
                     <tr className="categories">

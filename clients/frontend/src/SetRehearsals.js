@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import Button from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
+import LinearProgress from 'material-ui/LinearProgress';
 import FlatButton from 'material-ui/FlatButton';
 import RehearsalRow from './RehearsalRow';
 import AvailabilityOverlap from './AvailabilityOverlap';
@@ -11,14 +12,14 @@ import './styling/General.css';
 import './styling/CastingFlow.css';
 import './styling/CastingFlowMobile.css';
 
-const timesFormatted = ["10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM"]
+const timesFormatted = ["10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM", "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM", "10:30 PM"]
 
 const daysFormatted = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 const daysRef = ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"]
 
 const timesRef = ["1000", "1030", "1100", "1130", "1200", "1230", "1300", "1330", "1400", "1430",
-  "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100"]
+  "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130"]
 
 class SetRehearsals extends Component {
   constructor(props) {
@@ -31,7 +32,10 @@ class SetRehearsals extends Component {
       rehearsalSchedule: [],
       cast: [],
       contested: [],
-      filteredCast: []
+      filteredCast: [],
+      startDate: moment().format('YYYY-MM-DD'),
+      progress: false,
+      successMessage: false,
     }
   };
 
@@ -53,8 +57,11 @@ class SetRehearsals extends Component {
   }
 
   postCasting = () => {
-
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", {}, "POST", true)
+    this.setState({
+      progress: true,
+      successMessage: false
+    })
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.allRehearsals, "POST", true)
       .then((res) => {
         if (res.ok) {
           return res.text()
@@ -66,11 +73,15 @@ class SetRehearsals extends Component {
           open: false,
           finished: true,
           finishedAdding: true,
+          progress: false,
+          successMessage: true
         });
+        setTimeout(() => {this.setState({successMessage: false})}, 2000)
       })
       .catch(err => {
         this.setState({
-          castingError: err
+          castingError: err,
+          progress: false
         })
         console.error(err)
       })
@@ -81,7 +92,6 @@ class SetRehearsals extends Component {
     let endDate = this.props.endDate
     let rehearsalBlocks = this.state.rehearsalSchedule
     let allRehearsals = []
-    //TODO add a check that at least one of the rehearsals starts on the correct day of the week for the start date?
 
     rehearsalBlocks.forEach((rehearsal, i) => {
       //we will update this if the rehearsal is not the same day as the start date
@@ -89,7 +99,6 @@ class SetRehearsals extends Component {
 
       //an array of these are going to be pushed up to the server 
       let rehearsalObject = {
-        id: allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
         title: "Weekly Rehearsal"
       }
 
@@ -101,8 +110,11 @@ class SetRehearsals extends Component {
       }
 
       if (rehearsalIndex === startDateIndex) { //hooray we don't have to calculate the date
-        rehearsalObject.start = startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)] //times have to be formatted for moment we so get the index of our timeRef and get the formatted time using that
-        rehearsalObject.end = startDate + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)] //we use the same date bc no one rehearses at midnight
+        rehearsalObject.start = moment(startDate).format("YYYYMMDD") + "T" + rehearsal.startTime //times have to be formatted for moment we so get the index of our timeRef and get the formatted time using that
+        rehearsalObject.end = moment(startDate).format("YYYYMMDD") + "T" + rehearsal.endTime //we use the same date bc no one rehearses at midnight
+        //server formatting
+        rehearsalObject.start = moment(rehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
+        rehearsalObject.end = moment(rehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
       } else {
         //here we get the DATE of the day of the week that is closest AFTER our start date
         //use that date to create our rehearsal object
@@ -113,8 +125,11 @@ class SetRehearsals extends Component {
           beginDate = moment(beginDate).add(1, 'week')
         }
 
-        rehearsalObject.start = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
-        rehearsalObject.end = beginDate.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
+        rehearsalObject.start = beginDate.format("YYYYMMDD") + "T" + rehearsal.startTime
+        rehearsalObject.end = beginDate.format("YYYYMMDD") + "T" + rehearsal.endTime
+        //server formatting
+        rehearsalObject.start = moment(rehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
+        rehearsalObject.end = moment(rehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
         startDate = beginDate //need this in a sec
       }
 
@@ -127,17 +142,20 @@ class SetRehearsals extends Component {
       while (date.isBefore(moment(endDate))) {
         date = moment(date).add(1, 'week')
         let newRehearsalObject = {
-          id: allRehearsals.length, //we're doing this based on length because if we used i we would only have unique ids for maybe two or three rehearsals and we need unique ids for every single one of these, and we are generating a bunch in a while loop later on
           title: "Weekly Rehearsal"
         }
-        newRehearsalObject.start = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.startTime)]
-        newRehearsalObject.end = date.format("L") + " " + timesFormatted[timesRef.indexOf(rehearsal.endTime)]
+        newRehearsalObject.start = date.format("YYYYMMDD") + "T" + rehearsal.startTime
+        newRehearsalObject.end = date.format("YYYYMMDD") + "T" + rehearsal.endTime
 
+        //server formatting
+        newRehearsalObject.start = moment(newRehearsalObject.start).format("YYYY-MM-DDTHH:mm:ssZ")
+        newRehearsalObject.end = moment(newRehearsalObject.end).format("YYYY-MM-DDTHH:mm:ssZ")
         allRehearsals.push(newRehearsalObject)
       }
     })
-    localStorage.setItem("rehearsals", JSON.stringify(allRehearsals))
-    //TODO add the server call!
+    this.setState({
+      allRehearsals : allRehearsals
+    })
   }
 
   handleOpen = () => {
@@ -190,9 +208,6 @@ class SetRehearsals extends Component {
 
   render() {
     let finished = this.state.finished
-    if (this.state.rehearsalSchedule.length === 0 || !this.state.startDate) {
-      finished = true
-    }
     let numRehearsals = this.state.numRehearsals
     let rehearsals = []
     for (let i = 0; i < numRehearsals; i++) {
@@ -227,7 +242,11 @@ class SetRehearsals extends Component {
               <div className="castList">
                 <div className="extraClass">
                   <div className="setTimes">
-                    <h2 className="smallHeading">Set Weekly Rehearsal Times</h2> {/*I think it's important to specify weekly rehearsals - they can set the tech/dress schedule late (from My Piece?)*/}
+                    <h2 className="smallHeading">Set Weekly Rehearsal Times</h2>
+                    <div className="xtraInfo tooltip">
+                      <i className="fas fa-question-circle"></i>
+                      <span className="tooltiptext">Pick the <b className="emphasis">first day</b> of rehearsal and then each <b className="emphasis">recurring</b> weekly slot. One-time rehearsals can be added from My Piece.</span>
+                    </div>
                     <p>First Rehearsal Date</p>
                     <div className="chooseRehearsalTimes">
                       <input type="date" name="rehearsalStartDate" id="rehearsalStartDate" defaultValue={moment().format('YYYY-MM-DD')} onChange={this.setStartDate} />
@@ -251,6 +270,10 @@ class SetRehearsals extends Component {
                   
                   <div className="choreographersSelectedCast setTimes">
                     <h2 className="smallHeading">Your Cast</h2>
+                    <div className="xtraInfo tooltip">
+                      <i className="fas fa-question-circle"></i>
+                      <span className="tooltiptext">This is your <b className="emphasis">final</b> cast list. They will all recieve an email with their casting.</span>
+                    </div>
                     <table>
                       <tbody>
                         <tr className="categories">
@@ -302,17 +325,38 @@ class SetRehearsals extends Component {
                 onRequestClose={this.handleClose}
                 disabled={finished}
               >
-              {
-                this.state.castingError &&
-                <div>
-                  {this.state.castingError}
+                <div className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong> and there are <strong className="importantText">no conflicts</strong> with other choreographers. 
+                <br /> 
+                <br />
+                Your rehearsal start date is {moment(this.state.startDate).format("dddd, MMMM Do YYYY")} and your rehearsal times are :
+                <br />
+                {rehearsalSchedule}
+                <br />
+                <br /> 
                 </div>
-              }
-                <div className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong> and there are <strong className="importantText">no conflicts</strong> with other choreographers. <br /> Your rehearsal start date is {this.state.startDate} and your rehearsal times are :
-            <br />{rehearsalSchedule}<br />
-                  <br /> </div>
-                <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting.</p>
+                <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting within <b>48 hours</b>.</p>
+                {
+                  this.state.castingError &&
+                  <div className="serverError">
+                    {Util.titleCase(this.state.castingError)}
+                  </div>
+                }
+                {
+                  this.state.progress &&
+                  <LinearProgress mode="indeterminate" />
+                }
               </Dialog>
+
+              <Dialog
+                title="Success"
+                open={this.state.successMessage}
+                modal={false}
+                onRequestClose={() => {this.setState({successMessage: false})}}
+              >
+                <p>Casting has been successfully posted. Your dancers will accept or decline in <strong className="importantText">48 hours.</strong></p>
+              </Dialog>
+              
+
 
             </div>
           </div>

@@ -11,14 +11,14 @@
 }
 
 .hamburger{
-    background-color: #27384A;
+    background-color: #1C2C50;
     height: 100%;
     width: 100%;
     position: relative;
 }
 
 .hamburgerButton{
-    background-color: #27384A;
+    background-color: #1C2C50;
     color: white;
 }
 
@@ -31,7 +31,7 @@
 
 .menuList{
     margin: 0;
-    background-color: #27384A;
+    background-color: #1C2C50;
     height: 100%;
     width: 100%;
 }

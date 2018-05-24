@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util';
-import RaisedButton from 'material-ui/RaisedButton';
+import PendingInvites from './PendingInvites';
 import './styling/General.css';
 
 //styling
@@ -114,50 +114,19 @@ class Dashboard extends Component {
       });
   }
 
-  acceptCasting = (pieceID) => {
-    Util.makeRequest("users/me/pieces/" + pieceID, "", "LINK", true)
-      .then((res) => {
-        if (res.ok) {
-          return res.text();
-        }
-        if (res.status === 401) {
-          Util.signOut()
-        }
-        return res.text().then((t) => Promise.reject(t));
-      })
-      .then(() => {
-        this.getUserPieces()
-      }
-      )
-      .catch((err) => {
-        console.log(err)
-      });
-  }
-
    render() {
     const pending = this.state.pending
     let pendingCasting = pending.map((piece, i) => {
       return (
-        <div key={i} className="announcement castBorderColor">
-          <p className="announcementMessage">Congratulations! You have been cast in {piece.name}. </p>
-          <div>
-            <RaisedButton
-              label="Accept"
-              className="acceptCastButton"
-              style={{ color: '#ffffff' }}
-              backgroundColor="#22A7E0"
-              onClick={() => this.acceptCasting(piece.id)}
-            />
-          </div>
-        </div>
+        <PendingInvites key={i} piece={piece}/>
       )
     })
-    let displayAnnouncements = this.state.currAnnouncements.map((anncouncement, index) => {
+    let displayAnnouncements = this.state.currAnnouncements.map((announcement, index) => {
       return (
         <div key={index} className="announcement announcementBorderColor">
           {
             <div className="announcementCardColor">
-              <p className="announcementMessage"> {anncouncement.message} </p>
+              <p className="announcementMessage"> {announcement.message} </p>
             </div>
           }
         </div>

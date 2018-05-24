@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as Util from './util';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import Dialog from 'material-ui/Dialog';
@@ -10,9 +11,10 @@ import './styling/General.css';
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 const VIEWS = ['month', 'week', 'day']
 const MINTIME = new Date();
-MINTIME.setHours(8,30,0);
+MINTIME.setHours(8,0,0);
 const MAXTIME = new Date();
-MAXTIME.setHours(23,30,0);
+MAXTIME.setHours(23,0,0);
+
 
 class Calendar extends Component {
   constructor(props) {
@@ -29,20 +31,40 @@ class Calendar extends Component {
       },
       minTime : MINTIME,
       maxTime : MAXTIME,
+      rehearsalName: "Rehearsal",
       openSetRehearsal : false,
       openNewRehearsal : false,
-      events : []
+      events : [],
+      getRehearsalError: false,
+      addRehearsalError: false,
+      deleteRehearsalError: false,
     }
   };
 
   componentWillMount() {
-    this.formatEvents()
+    this.getEvents()
   }
 
-  formatEvents = () => {
-    //TODO turn this into a route
-    let events = JSON.parse(localStorage.rehearsals)
+  getEvents = () => {
+    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals", {}, "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(events => {
+      this.formatEvents(events)
+    })
+    .catch(err => {
+      this.setState({
+        getRehearsalError : err
+      })
+      console.error(err)
+    })
+  }
 
+  formatEvents = (events) => {
     let formattedEvents = []
     events.forEach((event) => {
       let start = new Date(event.start)
@@ -63,7 +85,10 @@ class Calendar extends Component {
   handleClose = () => {
     this.setState({
       openSetRehearsal : false,
-      openNewRehearsal: false
+      openNewRehearsal: false,
+      addRehearsalError: false,
+      deleteRehearsalError: false,
+      getRehearsalError: false
     })
   }
 
@@ -99,30 +124,46 @@ class Calendar extends Component {
 
   addRehearsal = () => {
     let slotInfo = this.state.slotInfo
-    let events = this.state.events
-    let latestID = events[events.length - 1].id + 1
-
+    let body = []
     let rehearsalObject = {
-      id : latestID,
       title : this.state.rehearsalName,
-      start : new Date(slotInfo.start),
-      end : new Date(slotInfo.end)
+      start : moment(slotInfo.start).format("YYYY-MM-DDTHH:mm:ssZ"),
+      end : moment(slotInfo.end).format("YYYY-MM-DDTHH:mm:ssZ")
     }
-    events.push(rehearsalObject)
-
-    this.setState({
-      events : events,
-      openNewRehearsal : false
+    body.push(rehearsalObject)
+    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals", body, "POST", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then( res => {
+      this.setState({
+        openNewRehearsal : false
+      })
+      this.getEvents()
+    })
+    .catch(err => {
+      this.setState({
+        addRehearsalError : err
+      })
+      console.error(err)
     })
   }
 
   render() {
     let event = this.state.event
     let slotInfo = this.state.slotInfo
-    console.log(slotInfo)
     return (
       <section>
-        <BigCalendar style={{ height: "650px", width: "100%" }}
+        {
+          this.getRehearsalError &&
+          <div className="serverError">
+            Error getting piece rehearsals: {Util.titleCase(this.getRehearsalError)}
+          </div>
+        }
+        <BigCalendar style={{ height: "710px", width: "100%" }}
           selectable
           defaultDate={new Date()}
           defaultView='week'
@@ -160,6 +201,12 @@ class Calendar extends Component {
           <div>
             This rehearsal goes from {moment(event.start).format("hh:mm A")} to {moment(event.end).format("hh:mm A")}
           </div>
+          {
+            this.state.deleteRehearsalError &&
+            <div className="serverError">
+              Error setting rehearsal : {this.state.addRehearsalError}
+            </div>
+          }
         </Dialog>
 
         {/*this is the dialoge for adding a new one time rehearsal*/}
@@ -200,6 +247,12 @@ class Calendar extends Component {
             on 
             <input type="date" name="date" defaultValue={moment(slotInfo.start).format('YYYY-MM-DD')} />
           </div>
+          {
+            this.state.addRehearsalError &&
+            <div className="serverError">
+              Error setting rehearsal : {Util.titleCase(this.state.addRehearsalError)}
+            </div>
+          }
         </Dialog>
       </section>
     );

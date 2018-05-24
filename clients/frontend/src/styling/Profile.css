@@ -4,11 +4,6 @@
   position: relative;
 }
 
-.mainContentBorder{
-  border-top: 1px solid hsl(0, 0%, 45%);
-    padding-top: 25px;
-}
-
 .photoContainer {
   position: relative;
   display: inline-block;

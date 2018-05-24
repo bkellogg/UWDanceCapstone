@@ -96,6 +96,11 @@ class SelectCast extends Component {
         <div className="mainView mainContentView">
           <div className="pageContentWrap">
             <div className="fullWidthCard">
+              <h2 className="smallHeading">Select Cast</h2>
+              <div className="xtraInfo tooltip">
+                <i className="fas fa-question-circle"></i>
+                <span className="tooltiptext">You can <b className="emphasis">rank</b> your top choices and <b className="emphasis">view</b> dancer profiles. Click <b className="emphasis">next</b> to submit your choices.</span>
+              </div>
               <table className="table" id="selectCastTable">
                 <tbody>
                   <tr className="categories">

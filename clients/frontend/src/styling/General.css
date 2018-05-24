@@ -32,10 +32,9 @@
 }
 
 img#photo, .fullWidthCard, .card2, .setTimes, .dancersList-filter, .overlapAvailabilityWrap, .choreographersSelecteCast, .restOfCast, .cardBody{
-        border: 0;
-    -webkit-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
-    -moz-box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
-    box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+    border: 1px solid #c0c0c0;
+    border-radius: 5px;
+
 }
 
 .transparentCard{
@@ -82,9 +81,54 @@ h2{
     display: inline-block;
 }
 
+.xtraInfo{
+    display: inline-block
+}
+
+.tooltip {
+    position: relative;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 150px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.tooltip:hover .tooltiptext .emphasis {
+    color: rgb(34, 167, 224)
+}
+
 /*PEOPLE NAME WITH A LINK TO THEIR PROFILE*/
 .personNameLink{
-    color: #22A7E0;
+    color: rgb(0, 188, 212);
 }
 
 .personNameLink:hover{
@@ -93,6 +137,12 @@ h2{
 span.thumb.active{
     background-color: transparent
  }
+
+
+.serverError {
+    background-color: #f9c79e;
+    border-radius: 5px;
+}
 
  @media only screen and (max-width : 768px) {
     .avatar, .dancerRank, .userRoleDisp, .avatar2, .avatarWrap{
@@ -103,7 +153,6 @@ span.thumb.active{
     }
 
  }
-
 
 /*SUPER LARGE SCREEN SIZING*/
  @media only screen and (min-width : 1920px) {
