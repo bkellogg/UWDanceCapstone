@@ -20,7 +20,7 @@ html {
 }
 
 .btn, .btn-large{
-  background-color: #708090;
+  background-color: hsl(0, 0%, 45%);
 }
 
 .btn:hover{

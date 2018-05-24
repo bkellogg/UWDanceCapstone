@@ -144,6 +144,10 @@ span.thumb.active{
     border-radius: 5px;
 }
 
+hr{
+    visibility: hidden;
+}
+
  @media only screen and (max-width : 768px) {
     .avatar, .dancerRank, .userRoleDisp, .avatar2, .avatarWrap{
         visibility: hidden;
