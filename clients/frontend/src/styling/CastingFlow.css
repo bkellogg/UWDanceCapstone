@@ -172,10 +172,6 @@ th{
     display: flex;
 }
 
-.pickDateTime {
-    overflow: visible !important;
-}
-
 .singleField {
     width: 33%
 }

@@ -8,7 +8,7 @@ const timesRef = ["1000", "1030", "1100", "1130", "1200", "1230", "1300", "1330"
   "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130", "2200", "2230"]
 
 const timesFormatted = ["10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:00 PM", "", "2:00 PM", "", "3:00 PM", "", "4:00 PM", "",
-  "5:00 PM", "", "6:00 PM", "", "7:00 PM", "", "8:00 PM", "", "9:00 PM", "", "10:00 PM", ""]
+  "5:00 PM", "", "6:00 PM", "", "7:00 PM", "", "8:00 PM", "", "9:00 PM", "", "10:00 PM", "", "11:00 PM"]
 
 
 //const colors = ["#fff", "#9ABB3E", "#CC66AD", "#2B823D", "#6640BF", "#C8BA5B", "#7A2932", "#260D0D"] visually distinct, helpful for debugging
@@ -194,9 +194,13 @@ class AvailabilityOverlap extends Component {
         })
 
         //this is the div with the specific time block
+        let style = { "backgroundColor": color }
+        if (j % 2 !== 0){
+          style = { "backgroundColor": color , "borderTop": "0px"}
+        }
         return (
           <div className="tooltip" key={j}>
-            <div className="overlapTimes" style={{ "backgroundColor": color }}>
+            <div className="overlapTimes" style={style}>
               {
                 names.length > 0 &&
                 <span className="tooltiptext">{names}</span>
