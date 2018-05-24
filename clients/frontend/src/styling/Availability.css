@@ -18,3 +18,8 @@
 .timeLabel {
     text-align: right
 }
+
+.availabilityRow:nth-child(odd) {
+    border-bottom-color: #b6bbcc;
+    border-bottom-style: solid
+}

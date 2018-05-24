@@ -8,9 +8,9 @@ import './styling/Availability.css'
 const times = ["1000", "1030","1100","1130","1200","1230","1300", "1330", "1400","1430", 
 "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130", "2200", "2230"]
 
-const days = ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"]
+const days = ["sun", "mon", "tues", "wed", "thurs", "fri", "sat"]
 
-const daysRef = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+const daysRef = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
 class Availability extends Component {
     constructor(props){
@@ -173,16 +173,16 @@ class Availability extends Component {
       <TableDragSelect value={this.state.cells} onChange={this.handleChange}>
         <tr className="availabilityRow">
           <td disabled />
+          <td disabled>Sunday</td>
           <td disabled>Monday</td>
           <td disabled>Tuesday</td>
           <td disabled>Wednesday</td>
           <td disabled>Thursday</td>
           <td disabled>Friday</td>
           <td disabled>Saturday</td>
-          <td disabled>Sunday</td>
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">10:00AM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>10:00AM</td>
           <td />
           <td />
           <td />
@@ -202,7 +202,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">11:00AM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>11:00AM</td>
           <td />
           <td />
           <td />
@@ -222,7 +222,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">12:00PM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>12:00PM</td>
           <td />
           <td />
           <td />
@@ -242,7 +242,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">1:00PM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>1:00PM</td>
           <td />
           <td />
           <td />
@@ -262,7 +262,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">2:00PM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>2:00PM</td>
           <td />
           <td />
           <td />
@@ -282,7 +282,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">3:00PM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>3:00PM</td>
           <td />
           <td />
           <td />
@@ -302,7 +302,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">4:00PM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>4:00PM</td>
           <td />
           <td />
           <td />
@@ -322,7 +322,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">5:00PM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>5:00PM</td>
           <td />
           <td />
           <td />
@@ -342,7 +342,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">6:00PM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>6:00PM</td>
           <td />
           <td />
           <td />
@@ -362,7 +362,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">7:00PM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>7:00PM</td>
           <td />
           <td />
           <td />
@@ -382,7 +382,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">8:00PM </td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>8:00PM </td>
           <td />
           <td />
           <td />
@@ -402,7 +402,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">9:00PM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>9:00PM</td>
           <td />
           <td />
           <td />
@@ -422,7 +422,7 @@ class Availability extends Component {
           <td />
         </tr>
         <tr className="availabilityRow">
-          <td disabled className="timeLabel">10:00PM</td>
+          <td disabled className="timeLabel" style={{textAlign: "right"}}>10:00PM</td>
           <td />
           <td />
           <td />

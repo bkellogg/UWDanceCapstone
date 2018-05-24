@@ -102,7 +102,7 @@ class AvailabilityOverlap extends Component {
             let incrementIndex = startIndex //increment index is the index of our this.state.dayTimes[j][incrementIndex]
 
             //bug?? cannot read property push or undefined, looks like an issue with a user not having any availability
-            while (incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
+            while (incrementIndex !== (endIndex)) { //plus one added to include the end index
               let currPlace = dayTimes[j][incrementIndex]
               currPlace.push({"id" : id, "name" : firstName})
               incrementIndex++
