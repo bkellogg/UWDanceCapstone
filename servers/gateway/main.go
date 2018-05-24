@@ -165,11 +165,9 @@ func main() {
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
 	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath)).Methods(http.MethodGet)
 
-	treatedRouter := http.TimeoutHandler(
-		middleware.EnsureHeaders(middleware.BlockIE(
-			middleware.LogErrors(
-				baseRouter, db))),
-		time.Second*5, "request timeout")
+	treatedRouter := middleware.EnsureHeaders(middleware.BlockIE(
+		middleware.LogErrors(
+			baseRouter, db)))
 
 	// redirect HTTP requests to HTTPS when appropriate
 	// this needs to be done since the gateway server will need to
@@ -201,9 +199,10 @@ func main() {
 				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
 			},
 		},
-		ReadTimeout:  time.Second * 5,
-		WriteTimeout: time.Second * 10,
-		IdleTimeout:  time.Second * 120,
+		ReadHeaderTimeout: time.Second * 5,
+		ReadTimeout:       time.Second * 5,
+		WriteTimeout:      time.Second * 10,
+		IdleTimeout:       time.Second * 120,
 	}
 
 	log.Printf("Gateway server is listen at https://%s...\n", addr)

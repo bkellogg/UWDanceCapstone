@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -337,7 +338,7 @@ func (store *Database) DeletePieceInfoSheet(pieceID int) *DBError {
 }
 
 // InsertPieceRehearsals inserts the given rehearsals for the specified piece.
-// Returns the completed rehearsal timees or a DBError if one occurred.
+// Returns the completed rehearsal times or a DBError if one occurred.
 func (store *Database) InsertPieceRehearsals(userID int64, pieceID int, rehearsals NewRehearsalTimes) (RehearsalTimes, *DBError) {
 	tx, err := store.db.Begin()
 	if err != nil {
@@ -494,6 +495,34 @@ func (store *Database) UpdatePieceRehearsalsByID(pieceID, rehearsalID int, updat
 	}
 	if numAffected == 0 {
 		return NewDBError("no rehearsal time was found or there were no changes made", http.StatusNotFound)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
+// DeleteManyRehearsalsByID deletes all rehearsals that have IDs that are in the
+// rehearsals slice. Does not delete any rehearsal ID that does not match the given
+// piece ID. Returns a DBError if an error occurred.
+func (store *Database) DeleteManyRehearsalsByID(pieceID int, rehearsals []int) *DBError {
+	if len(rehearsals) == 0 {
+		return NewDBError("no rehearsal IDs given", http.StatusInternalServerError)
+	}
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+	query := `UPDATE RehearsalTime RT SET IsDeleted = TRUE WHERE RT.PieceID = ? AND (`
+	for _, rehearsalID := range rehearsals {
+		query += fmt.Sprintf(" RT.RehearsalTimeID = %d OR", rehearsalID)
+	}
+	query = strings.TrimSuffix(query, " OR")
+	query += `)`
+	_, err = tx.Exec(query, pieceID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error marking rehearsals as deleted: %v", err), http.StatusInternalServerError)
 	}
 	if err = tx.Commit(); err != nil {
 		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)

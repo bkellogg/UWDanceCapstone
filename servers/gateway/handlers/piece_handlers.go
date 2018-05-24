@@ -254,9 +254,18 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
 				return permissionDenied()
 			}
-			dberr := ctx.store.DeletePieceRehearsals(pieceID)
+			ids, err := getIDsParam(r)
+			if err != nil {
+				return HTTPError("invalid ids given", http.StatusBadRequest)
+			}
+			var dberr *models.DBError
+			if ids == nil {
+				dberr = ctx.store.DeletePieceRehearsals(pieceID)
+			} else {
+				dberr = ctx.store.DeleteManyRehearsalsByID(pieceID, ids)
+			}
 			if dberr != nil {
-				return middleware.HTTPErrorFromDBErrorContext(dberr, "error deleteing piece rehearsal times")
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error deleting piece rehearsal times")
 			}
 			return respondWithString(w, "piece rehearsal times deleted", http.StatusOK)
 		} else {
