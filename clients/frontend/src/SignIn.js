@@ -8,6 +8,7 @@ import FlatButton from 'material-ui/FlatButton';
 
 import TextField from 'material-ui/TextField';
 import './styling/SignIn.css';
+import './styling/Landing.css';
 
 
 class SignIn extends Component {
@@ -126,7 +127,7 @@ class SignIn extends Component {
     ];
 
     return (
-      <div className="logInLanding">
+      <div className="landingBackground">
         <i className="fas fa-arrow-circle-left fa-2x" onClick={this.toLanding}></i>
         <div className="functionality">
           <div className="signInUplogoWrap">

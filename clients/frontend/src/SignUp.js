@@ -4,6 +4,7 @@ import * as Util from './util.js';
 import logo from './imgs/logoex.png'
 import './styling/SignIn.css';
 import './styling/SignUp.css';
+import './styling/Landing.css';
 
 class SignUp extends Component {
   constructor(props) {
@@ -18,8 +19,7 @@ class SignUp extends Component {
       email: null,
       password: null,
       passwordConf: null,
-      auth: null,
-      signUpExtra: false
+      auth: null
     }
   };
 
@@ -110,9 +110,8 @@ class SignUp extends Component {
 
   render() {
     return (
-
-      <section className="signUp">
-        <div className="signUpLanding">
+      <section className="landingBackground">
+        <div>
         <i className="fas fa-arrow-circle-left fa-2x" onClick={this.toLanding}></i>
           <div className="functionality">
             <div className="signInUplogoWrap">
@@ -126,8 +125,6 @@ class SignUp extends Component {
                   <p>{this.state.error}</p>
                 }
               </div>
-              {
-                this.state.signUpExtra === false &&
                 <div className="SignUp">
                   <div className="Input">
                     <form className="authenticate">
@@ -160,16 +157,8 @@ class SignUp extends Component {
                     <div className="link">
                       <a className="blueTextLink" onClick={this.goBack}> Sign In </a>
                     </div>
-
-
                   </div>
                 </div>
-              }
-
-              {/* {
-                this.state.signUpExtra === true && this.state.auth != null &&
-                <SignUpExtra skip={this.skip} userID={this.state.auth.id} />
-              } */}
             </div>
           </div>
         </div>

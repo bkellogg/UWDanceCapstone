@@ -8,7 +8,7 @@ const timesRef = ["1000", "1030", "1100", "1130", "1200", "1230", "1300", "1330"
   "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130", "2200", "2230"]
 
 const timesFormatted = ["10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:00 PM", "", "2:00 PM", "", "3:00 PM", "", "4:00 PM", "",
-  "5:00 PM", "", "6:00 PM", "", "7:00 PM", "", "8:00 PM", "", "9:00 PM", "", "10:00 PM", ""]
+  "5:00 PM", "", "6:00 PM", "", "7:00 PM", "", "8:00 PM", "", "9:00 PM", "", "10:00 PM", "", "11:00 PM"]
 
 
 //const colors = ["#fff", "#9ABB3E", "#CC66AD", "#2B823D", "#6640BF", "#C8BA5B", "#7A2932", "#260D0D"] visually distinct, helpful for debugging
@@ -25,25 +25,25 @@ class AvailabilityOverlap extends Component {
       maxCast: this.props.filteredCast,
       dayTimes: [
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ],
         [
-          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
+          [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []
         ]
       ]
     };
@@ -67,7 +67,7 @@ class AvailabilityOverlap extends Component {
     let dayTimes = this.state.dayTimes
     let newWeek = []
     dayTimes.map(days => {
-      newWeek.push([[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []])
+      newWeek.push([[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []])
       return newWeek
     })
     return newWeek
@@ -101,7 +101,8 @@ class AvailabilityOverlap extends Component {
             //now we only have valid start/end times and their location 
             let incrementIndex = startIndex //increment index is the index of our this.state.dayTimes[j][incrementIndex]
 
-            while (incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
+            //bug?? cannot read property push or undefined, looks like an issue with a user not having any availability
+            while (incrementIndex !== (endIndex)) { //plus one added to include the end index
               let currPlace = dayTimes[j][incrementIndex]
               currPlace.push({"id" : id, "name" : firstName})
               incrementIndex++
@@ -193,9 +194,13 @@ class AvailabilityOverlap extends Component {
         })
 
         //this is the div with the specific time block
+        let style = { "backgroundColor": color }
+        if (j % 2 !== 0){
+          style = { "backgroundColor": color , "borderTop": "0px", "borderBottomWidth": "2px"}
+        }
         return (
           <div className="tooltip" key={j}>
-            <div className="overlapTimes" style={{ "backgroundColor": color }}>
+            <div className="overlapTimes" style={style}>
               {
                 names.length > 0 &&
                 <span className="tooltiptext">{names}</span>
@@ -240,6 +245,10 @@ class AvailabilityOverlap extends Component {
           <div className="cardTitleWrap">
             <div className="headerWrap">
               <h2 className="smallHeading">Availability</h2>
+              <div className="xtraInfo tooltip">
+                <i className="fas fa-question-circle"></i>
+                <span className="tooltiptext">You can <b className="emphasis">hover</b> and see who is availabile when.</span>
+              </div>
             </div>
             <div className="legend">
               <p className="colorIndicator">{minCast}/{this.props.filteredCast.length} available</p>
@@ -280,39 +289,25 @@ export default AvailabilityOverlap;
 
 
 /*Logic:
-
 We have an array of days [0 = sunday, 1 = monday, ect.]
 Inside of each day we have an array of times [0 = 1000, 1 = 1030, ect]
 Inside of each day we have an array of dancers who are UNAVAILABLE at that time (per their audition info) [uid, uid, uid]
-
 To make the thing, we go 
 for each day, denote a div
 for each time, make a div inside that div
 for each dancer in that time, increase the color intensity
-
 return the day div with smaller divs inside of it
-
 when someone wants to filter, we remake the whole thing? or we make one with everyone in it, store it permanently, and then 
 when they want to filter we simply remove all instances of that person from the thing
-
 if they want to add someone back, we can use the master one and just remove everyone who isn't checked (so like have an
 array of selected dancers, and remove everyone not in that list)
-
-
 to make it in the first place, we have each dancer with an availability blob that is an array of days
 each day has an array of times
 each time is an object with a start and end time, and they aren't guaranteed to be in order
-
 so we go for each day
 for each time 
 add their UID to the corresponding array
-
 so for each day, for each time, starting at the start time of the first time
 go through the dayTimes at that day and add the uid to the array while the end time != end time of the dancer
-
-
 then based on the length of the time array, generate the colors
-
 */
-
-

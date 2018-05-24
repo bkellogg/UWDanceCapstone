@@ -203,18 +203,41 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 
 	// only create a new invite if the user is not already in the piece.
 	if !inPiece {
-		dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, time.Now().Add(appvars.AcceptCastTime))
+		expiryTime := time.Now().Add(appvars.AcceptCastTime)
+
+		dberr = ctx.Session.Store.InsertNewUserPieceInvite(int(user.ID), piece.ID, expiryTime)
 		if dberr != nil {
 			log.Printf("error creating new user piece pending entry: %v", dberr.Message)
 		}
 
-		tplVars := &models.CastingConfVars{
-			Name:      user.FirstName,
-			ChorFName: chor.FirstName,
-			ChorLName: chor.LastName,
-			URL:       appvars.StageURL,
+		expiryTimeHour := expiryTime.Hour()
+		expiryTimePeriod := "A.M."
+
+		if expiryTimeHour > 12 {
+			expiryTimeHour = expiryTimeHour - 12
+			expiryTimePeriod = "P.M."
 		}
 
+		expiryTimeFormat := fmt.Sprintf("%s, %s %d at %d:%d:%d %s",
+			expiryTime.Weekday().String(),
+			expiryTime.Month().String(),
+			expiryTime.Day(),
+			expiryTimeHour,
+			expiryTime.Minute(),
+			expiryTime.Second(),
+			expiryTimePeriod)
+		tplVars := &models.CastingConfVars{
+			Name:       user.FirstName,
+			ChorFName:  chor.FirstName,
+			ChorLName:  chor.LastName,
+			ExpiryTime: expiryTimeFormat,
+			URL:        appvars.StageURL,
+		}
+
+		// do not send the email if we are in debug mode
+		if ctx.IsDebugMode {
+			return
+		}
 		message, err := mail.NewMessageFromTemplate(ctx.MailCredentials,
 			ctx.CastingTPLPath,
 			appvars.CastInPieceSubject,

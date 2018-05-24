@@ -9,9 +9,17 @@
 </head>
 
 <body>
+    <nav id='nav-bar'></nav>
     <h1>Active Announcements</h1>
+    <div class="active-announcements"></div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/announcements.js"></script>
+<script>
+    $(function () {
+        $("#nav-bar").load("navigation.html");
+    });
+</script>
+
 </html>

@@ -105,6 +105,7 @@ deployAPI () {
     -e STAGE_ADMIN_EMAIL=brendan6@uw.edu \
     -e STAGE_ADMIN_PASSWORD=$STAGE_ADMIN_PASSWORD \
     -e STAGE_HOST=localhost \
+    -e STAGE_DEBUG=true \
 	brendankellogg/dancegateway
 
     echo -e >&2 "${GREEN}Complete!${NC}"

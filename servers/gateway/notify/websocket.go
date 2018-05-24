@@ -60,9 +60,9 @@ type Notifier struct {
 func NewNotifier() *Notifier {
 	n := &Notifier{
 		clients:       make(map[int64]*WebSocketClient),
-		eventQ:        make(chan *WebSocketEvent),
-		newClientQ:    make(chan *WebSocketClient),
-		removeClientQ: make(chan *WebSocketClient),
+		eventQ:        make(chan *WebSocketEvent, 3),
+		newClientQ:    make(chan *WebSocketClient, 3),
+		removeClientQ: make(chan *WebSocketClient, 3),
 	}
 	go n.start()
 	return n

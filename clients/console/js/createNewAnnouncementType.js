@@ -1,7 +1,6 @@
 "use strict";
 
 refreshLocalUser();
-let auth = getAuth();
 
 var newAnnouncementTypeForm = document.querySelector(".newAnnouncementType-form");
 var errorBox = document.querySelector(".js-error");
@@ -24,6 +23,9 @@ newAnnouncementTypeForm.addEventListener("submit", function (evt) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
+            alert("New announcement type successfully created.");
+            $('input').val('');
+            $('.newAnnouncementType-form')[0].reset();
             location.reload();
         })
         .catch((err) => {
@@ -34,7 +36,7 @@ newAnnouncementTypeForm.addEventListener("submit", function (evt) {
 
 // get announcement types
 function getAnnouncementTypes() {
-    fetch(API_URL_BASE + "announcements/types?includeDeleted=false&auth=" + auth)
+    makeRequest("announcements/types?inclueDeleted=false", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -43,7 +45,7 @@ function getAnnouncementTypes() {
         })
         .then((data) => {
             $(data).each(function (index, value) {
-              $("ul").append("<li>"+ value.name + "</li>")
+              $("ul").append("<li>"+ value.name + " - " + value.desc + "</li>")
             });
         })
 

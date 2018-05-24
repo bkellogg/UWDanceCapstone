@@ -287,55 +287,74 @@ class Profile extends Component {
                   </div>
 
 
-                  <div className="nameAndBioWrap">
+                  <div className="nameWrap">
                     <div id="name" className="name">
 
                       {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
                       {this.state.edit &&
                         <div id="editName">
                           <Row>
-                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname}/>
-                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname}/>
+                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname} />
+                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} />
                           </Row>
                         </div>
                       }
                     </div>
+                  </div>
 
-                    <div id="bio" className="bio">
-                      <div className="subheader"><b>Dancer Bio:</b></div>
+                  <div className="resumeWrap">
+                    <div id="resume">
                       {!this.state.edit &&
                         <section>
-                          {this.state.bio !== "" && this.state.bio}
-                          {this.state.bio === "" && " Dancer has no bio"}
+                          {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                          {this.state.resume != null && (
+                            <div>
+                              <a href={this.state.resume}>View PDF Resume</a>
+                            </div>
+                          )}
+
                         </section>
                       }
                       {this.state.edit &&
-                        <div id="editBio">
-                          <div className="row">
-                            <form className="col s12">
-                              <div className="row">
-                                <div className="input-field col s12">
-                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
-                                  <p><strong>Word Count:</strong> {this.state.wordCount}</p>
-                                </div>
-                              </div>
-                            </form>
-                          </div>
-                        </div>
-
+                        <section>
+                          <div> Upload your dance resume <b>AS A PDF.</b> </div>
+                          <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                        </section>
                       }
-
                     </div>
-
                   </div>
                   {!this.state.edit &&
                     <Button id="edit" className="editButton" onClick={() => this.onClick()}>Edit</Button>
 
                   }
-                  
+
                 </div>
               </div>
               <div className="mainContentBorder">
+                <div id="bio" className="bio">
+                  <div className="subheader"><b>Dancer Bio:</b></div>
+                  {!this.state.edit &&
+                    <section>
+                      {this.state.bio !== "" && this.state.bio}
+                      {this.state.bio === "" && " Dancer has no bio"}
+                    </section>
+                  }
+                  {this.state.edit &&
+                    <div id="editBio">
+                      <div className="row">
+                        <form className="col s12">
+                          <div className="row">
+                            <div className="input-field col s12">
+                              <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
+                              <p><strong>Word Count:</strong> {this.state.wordCount}</p>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  }
+                </div>
+
                 <div id="history">
                   <div id="historyTitle" className="subheader"><b>Your Piece History</b></div>
                   {this.state.history.length > 0 && this.state.history.map((p, i) => {
@@ -349,36 +368,16 @@ class Profile extends Component {
                   })}
                   {this.state.history.length === 0 &&
                     <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
-                    
+
                   }
                 </div>
 
-                <div id="resume">
-                  {!this.state.edit &&
-                    <section>
-                      {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                      {this.state.resume != null && (
-                        <div>
-                          <a href={this.state.resume}>View PDF Resume</a>
-                        </div>
-                      )}
-
-                    </section>
-                  }
-                  {this.state.edit &&
-                    <section>
-                      <div> Upload your dance resume <b>AS A PDF.</b> </div>
-                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange}/>
-                    </section>
-                  }
-                </div>
-                
               </div>
-              
+
             </div>
-{this.state.edit &&
-  <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
-}
+            {this.state.edit &&
+              <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
+            }
           </div>
         </div>
       </section>

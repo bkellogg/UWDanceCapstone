@@ -4,7 +4,7 @@ package permissions
 const (
 	SendMail = 50
 
-	SeeAllUsers               = 10
+	SeeAllUsers               = 70
 	ModifyUsers               = 70
 	ChangeUserRole            = 100
 	DeleteUsers               = 70

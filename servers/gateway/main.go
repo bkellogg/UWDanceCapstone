@@ -55,6 +55,12 @@ func main() {
 	frontEndPath := require("FRONTENDPATH", "")
 	assetsPath := require("ASSETSPATH", "")
 
+	// determine if the app should be started in DEBUG mode
+	isDebug := require("STAGE_DEBUG", "false") == "true"
+	if isDebug {
+		log.Println("debug mode enabled")
+	}
+
 	// admin user info
 	adminFName := require("STAGE_ADMIN_FIRSTNAME", "")
 	adminLName := require("STAGE_ADMIN_LASTNAME", "")
@@ -94,7 +100,8 @@ func main() {
 	castingContext := handlers.NewCastingContext(permChecker,
 		castingSession,
 		templatesPath+"confirmation_tpl.html",
-		mailContext.AsMailCredentials())
+		mailContext.AsMailCredentials(),
+		isDebug)
 
 	baseRouter := middleware.NewAuthenticatedRouter(sessionKey, redis)
 	baseRouter.Handle(appvars.MailPath, authorizer.Authorize(mailContext.MailHandler))
@@ -110,7 +117,7 @@ func main() {
 		Methods(http.MethodGet)
 
 	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()
-	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
+	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey)).Schemes("wss")
 
 	announcementsRouter := baseRouter.PathPrefix(appvars.AnnouncementsPath).Subrouter()
 	announcementsRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.AnnouncementTypesHandler))

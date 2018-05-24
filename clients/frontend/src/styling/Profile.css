@@ -1,7 +1,13 @@
 .header, .mainContentBorder{
   width: 100%;
   padding: 2%;
+  padding-bottom: 0;
   position: relative;
+  margin-bottom: 15px;
+}
+
+.mainContentBorder{
+  padding-top: 25px;
 }
 
 .photoContainer {
@@ -11,12 +17,22 @@
   vertical-align: bottom;
 }
 
-.nameAndBioWrap{
-  width: 60%;
+h1#profileName{
+  font-size: 28px;
+}
+
+.nameWrap, .resumeWrap{
+  /* width: 60%; */
   position: relative;
   display: inline-block;
-  vertical-align: top;
+  vertical-align: bottom;
+}
 
+.resumeWrap{
+  text-align: right;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 
 .editButton {
@@ -28,7 +44,6 @@
 img#photo {
   width: 200px;
   height: 200px;
-  border-radius: 50%;
 }
 
 .name, .bio{
@@ -38,11 +53,14 @@ img#photo {
 .name, #editName {
   z-index: 1;
   text-transform: capitalize;
-  padding-bottom: 1%;
 }
 
 .bio, #editBio{
   z-index: 2;
+}
+
+.bio{
+  padding-bottom: 25px;
 }
 
 .card1, .card2, #photo{
@@ -59,7 +77,7 @@ img#photo {
   margin-bottom: 15px
 }
 
-#history, #resume {
+#history {
   margin-bottom:40px
 }
 
@@ -69,7 +87,7 @@ img#photo {
 }
 
 #firstName, #lastName{
-  margin-right: 10px
+  margin-right: 10px;
 }
 
 
@@ -85,14 +103,19 @@ img#photo {
   .header{
     border-bottom: none;
       padding-bottom: 0px;
+      text-align: center;
   }
   
-  .nameAndBioWrap{
+  .nameWrap{
     margin-top: 25px;
     width: 100%;
     text-align: center;
     padding-bottom: 25px;
     padding-top: 0;
+  }
+
+  .resumeWrap{
+    position: relative;
   }
 
   img#photo {
