@@ -15,6 +15,7 @@
 
 .completeProfileCardColor{
   background-color:rgb(253, 237, 236);
+  cursor: pointer;
 }
 
 /*CAST MESSAGE -- BLUE TONES*/
