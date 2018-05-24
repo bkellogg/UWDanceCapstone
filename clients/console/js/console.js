@@ -8,8 +8,9 @@ var user = [];
 
 var announcements = [];
 
+var combined = [];
 
-var shows = {};
+var shows = [];
 var showTypes = [];
 var finalShowInfo = [];
 
@@ -23,9 +24,8 @@ refreshLocalUser().then(() => {
 getAnnouncements();
 
 
-getActiveShows();
-getShowTypes();
-
+//getActiveShows();
+//getAuditionInfo(1);
 
 // get all active announcements
 function getAnnouncements() {
@@ -47,7 +47,7 @@ function getAnnouncements() {
 
 // Get Active Shows
 function getActiveShows() {
-    makeRequest("shows", {}, "GET", true)
+    makeRequest("shows/types?includeDeleted=false", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -55,13 +55,35 @@ function getActiveShows() {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            var showInfo = data.shows
-            $(showInfo).each(function (index, value) {
-                var show = {};
-                show["Show Type"] = value.typeID;
-                show["Audition ID"] = value.auditionID;
-                shows[value.id] = show
+            $(data).each(function (index, value) {
+                showTypes[value.id] = value.desc;
             });
+            console.log("1")
+        })
+        .then(() => {
+            makeRequest("shows", {}, "GET", true)
+                .then((res) => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                    return res.text().then((t) => Promise.reject(t));
+                })
+                .then((data) => {
+                    var showInfo = data.shows
+                    $(showInfo).each(function (index, value) {
+                        var show = {};
+                        show["showType"] = value.typeID;
+                        show["auditionID"] = value.auditionID;
+                        shows.push(show);
+                    });
+                    console.log("2")
+                })
+                .then(() => {
+                    $(shows).each(function (index, value) {
+                        value["showName"] = showTypes[value.showType];
+                    });
+                    console.log(shows)
+                })
         })
 }
 
@@ -92,9 +114,7 @@ function getAuditionInfo(auditionID) {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            $(data).each(function (index, value) {
-                console.log(value);
-            });
+            console.log("3");
         })
 }
 

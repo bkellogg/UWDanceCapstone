@@ -24,16 +24,20 @@ function getAnnouncements() {
         })
         .then((data) => {
             $(data.announcements).each(function (index, value) {
-                $(".active-announcements").append('<div class="announcements" id="message">' + value.message + '<button class="remove" id ="remove" onClick="deleteAnnouncement(this.id)">Remove</button></div>')
-                $("#message").attr("id", value.id)
-                $("#remove").attr("id", value.id)
+                var announcementInfo = [];
+                announcementInfo.push('<div class="announcements" id=' + value.id + '>' + value.message + '</div>');
+                announcementInfo.push('<button class="remove" id =' + value.id + ' onClick="deleteAnnouncement(this.id)">Remove</button>');
+                announcements.push(announcementInfo);
             });
+        })
+        .then(() => {
+            populateAnnouncementTable();
         })
 }
 
 function deleteAnnouncement(event) {
     makeRequest("announcements/" + event, {}, "DELETE", true)
-        .then(() =>{
+        .then(() => {
             location.reload();
         })
 }
@@ -61,7 +65,7 @@ announcementForm.addEventListener("submit", function (evt) {
 
 // get announcement types
 function populateAnnouncementTypeOptions() {
-    makeRequest("announcements/types",{}, "GET", true)
+    makeRequest("announcements/types", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.json();
@@ -76,4 +80,12 @@ function populateAnnouncementTypeOptions() {
             $('#announcementType').html(options);
         })
 
+}
+
+function populateAnnouncementTable() {
+    var rows = []
+    rows.push($.map(announcements, function (value, index) {
+        return '<tr><td>' + value[0] + '</td><td>' + value[1] + '</td></tr>';
+    }));
+    $('#active-announcements').html(rows.join(''));
 }

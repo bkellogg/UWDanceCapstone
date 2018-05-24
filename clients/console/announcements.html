@@ -20,6 +20,7 @@
                 <textarea name="announcement-message-input" id="announcement-message-input"></textarea>
             </div>
             <div class="announcementType">
+                <p>Announcement Type:</p>
                 <select id="announcementType">
                     <option id="announcementType-input" defaultValue='admin'></option>
                 </select>
@@ -29,7 +30,7 @@
         <div class="js-error"></div>
         <div class="active-announcements-wrap">
         <h2>Active Announcements</h2>
-        <div class="active-announcements"></div>
+        <table id="active-announcements" class="tablesorter"></table>
     </div>
     </div>
 </body>
