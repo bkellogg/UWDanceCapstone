@@ -108,17 +108,24 @@ class Calendar extends Component {
 
   deleteRehearsal = () => {
     let event = this.state.event
-    
-    //go through all events and delete the one with the same ID
-    let events = this.state.events
-    events.forEach((e, i) => {
-      if(e.id === event.id){
-        events.splice(i, i + 1)
+    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals?ids=" + event.id , {}, "DELETE", true)
+    .then(res => {
+      if (res.ok) {
+        return res.text()
       }
+      return res.text().then((t) => Promise.reject(t));
     })
-    this.setState({
-      events : events,
-      openSetRehearsal : false
+    .then( res => {
+      this.setState({
+        openSetRehearsal : false
+      })
+      this.getEvents()
+    })
+    .catch(err => {
+      this.setState({
+        deleteRehearsalError : err
+      })
+      console.error(err)
     })
   }
 
@@ -140,7 +147,8 @@ class Calendar extends Component {
     })
     .then( res => {
       this.setState({
-        openNewRehearsal : false
+        openNewRehearsal : false,
+        rehearsalName: "Rehearsal"
       })
       this.getEvents()
     })
@@ -150,6 +158,10 @@ class Calendar extends Component {
       })
       console.error(err)
     })
+  }
+
+  modifyRehearsal = (event) => {
+
   }
 
   render() {
@@ -178,7 +190,7 @@ class Calendar extends Component {
 
         {/*this is for deleting rehearsals that have been set*/}
         <Dialog
-          title={event.title}
+          title="Edit Rehearsal"
           actions={[
             <FlatButton
               label="Cancel"
@@ -190,21 +202,41 @@ class Calendar extends Component {
               label="Delete Rehearsal"
               style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
               primary={false}
-              keyboardFocused={true}
+              keyboardFocused={false}
               onClick={event => this.deleteRehearsal(event)}
             />,
+            <FlatButton
+              label="Save Changes"
+              style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+              primary={false}
+              keyboardFocused={false}
+              onClick={event => this.modifyRehearsal(event)}
+            />
           ]}
           modal={false}
           open={this.state.openSetRehearsal}
           onRequestClose={this.handleClose}
           >
           <div>
-            This rehearsal goes from {moment(event.start).format("hh:mm A")} to {moment(event.end).format("hh:mm A")}
+            <TextField
+              defaultValue={event.title}
+              onChange={(event) => this.setState({
+                rehearsalName : event.target.value
+              })}
+            />
+            <br />
+            <br />
+            This rehearsal goes from 
+            <input type="time" name="start" defaultValue={moment(event.start).format("HH:mm")}/>
+            to 
+            <input type="time" name="start" defaultValue={moment(event.end).format("HH:mm")} />
+            on 
+            <input type="date" name="date" defaultValue={moment(event.start).format('YYYY-MM-DD')} />
           </div>
           {
             this.state.deleteRehearsalError &&
             <div className="serverError">
-              Error setting rehearsal : {this.state.addRehearsalError}
+              Error deleting rehearsal : {this.state.addRehearsalError}
             </div>
           }
         </Dialog>
@@ -232,7 +264,7 @@ class Calendar extends Component {
           onRequestClose={this.handleClose}
           >
           <div>
-          <TextField
+            <TextField
               hintText="Rehearsal Name"
               onChange={(event) => this.setState({
                 rehearsalName : event.target.value
