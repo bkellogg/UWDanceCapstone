@@ -5,13 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/announcements.css">
+    <link rel="stylesheet" href="css/common.css">
     <title>STAGE Anncouncements</title>
 </head>
 
 <body>
     <nav id='nav-bar'></nav>
-    <h1>Active Announcements</h1>
-    <div class="active-announcements"></div>
+    <div class="page-wrap">
+        <h1>Announcements</h1>
+        <form class="announcement-form">
+            <div class="announcement-message">
+                <label class="new-announcement-message" for="announcement-message-input">New Announecement</label>
+                <textarea name="announcement-message-input" id="announcement-message-input"></textarea>
+            </div>
+            <div class="announcementType">
+                <select id="announcementType">
+                    <option id="announcementType-input" defaultValue='admin'></option>
+                </select>
+            </div>
+            <button id="search-submit" type="submit">Create Announcement</button>
+        </form>
+        <div class="js-error"></div>
+        <div class="active-announcements-wrap">
+        <h2>Active Announcements</h2>
+        <div class="active-announcements"></div>
+    </div>
+    </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="js/common.js"></script>

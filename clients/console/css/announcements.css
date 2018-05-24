@@ -3,8 +3,20 @@ label {
     margin-top: 0.5em;
 }
 
-#announcement-message-input, #description-input {
+#announcement-message-input {
     border: 1px solid grey;
     width: 50%;
-    height:25%;;
+    height: 80px;
+}
+
+.new-announcement-message{
+    margin-bottom: 5px;
+}
+
+.active-announcements-wrap{
+    margin-top: 30px;
+}
+
+#description-input{
+    height: 40px;
 }
