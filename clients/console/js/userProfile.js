@@ -8,6 +8,12 @@ var roleChangeForm = document.querySelector(".roleChange-form");
 var errorBox = document.querySelector(".js-error");
 var role = document.getElementById("roleName");
 
+
+var passwordChangeForm = document.querySelector(".password-change-form");
+var password = document.getElementById("password-input");
+var confPassword = document.getElementById("password-conf-input");
+var errorBoxPassword = document.querySelector(".js-error-password");
+
 let userID = getQueryParam("user");
 if (!userID) {
     // TODO HANDLE ME ===========
@@ -63,7 +69,7 @@ function getResume() {
             if (res.ok) {
                 return res.blob();
             }
-            if(res.status != 200) {
+            if (res.status != 200) {
                 $("#user-resume").hide();
             }
             return res.text().then((t) => Promise.reject(t));
@@ -112,3 +118,38 @@ roleChangeForm.addEventListener("submit", function (evt) {
             errorBox.textContent = err;
         })
 })
+
+
+passwordChangeForm.addEventListener("submit", function (evt) {
+    evt.preventDefault();
+    if (!validatePassword()) {
+        return;
+    }
+    let newPassword = {
+        "password": password.value,
+        "passwordConf": confPassword.value
+    }
+    makeRequest("users/" + userID + "/password", newPassword, "PATCH", true)
+        .then((data) => {
+            alert("Password successfully changed to " + password.value + ".");
+            location.reload();
+        })
+        .catch((err) => {
+            errorBoxPassword.textContent = err;
+        })
+})
+
+function validatePassword() {
+    var error;
+    if (password.value.length < 6) {
+        error = "Password must be at least 6 characters.";
+    } else if (password.value !== confPassword.value) {
+        error = "Passwords do not match."
+    }
+    if (error) {
+        errorBoxPassword.textContent = error;
+        return false;
+    }
+    errorBoxPassword.textContent = "";
+    return true;
+}

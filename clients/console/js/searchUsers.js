@@ -7,13 +7,13 @@ var errorBox = document.querySelector(".js-error");
 var fname = document.getElementById("fname-input");
 var lname = document.getElementById("lname-input");
 var email = document.getElementById("email-input");
+var noUsersArea = document.getElementById("no-users-found");
+var noUsersMessage = document.createElement("p");
 
-var allUsers = [];
-
-populateUserTable2();
+var allSearchedUsers = [];
 
 searchForm.addEventListener("submit", function (evt) {
-    allUsers = [];
+    allSearchedUsers = [];
     evt.preventDefault();
     makeRequest("users/all?email=" + email.value + "&fname=" + fname.value + "&lname=" + lname.value, {}, "GET", true)
         .then((res) => {
@@ -30,20 +30,40 @@ searchForm.addEventListener("submit", function (evt) {
                 user.push(value.lastName);
                 user.push(value.email);
                 user.push(value.role.displayName);
-                user.push('<a href="userProfile.html?user=' + value.id + '">Profile</a>');
-                allUsers.push(user);
+                user.push('<a href="userProfile.html?user=' + value.id + '"" target="_blank">Profile</a>');
+                allSearchedUsers.push(user);
             });
         })
         .then(() => {
-            populateUserTable2();
+            populateSearchedUsersTable();
             $('input').val('');
             $('.search-users-form')[0].reset();
+            document.getElementById("search-submit").disabled = true;
         })
 })
 
-function populateUserTable2() {
-    var tbl = $('#users_table').DataTable();
-    tbl.clear()
-    tbl.rows.add(allUsers);
-    tbl.draw();
+function populateSearchedUsersTable() {
+    var rows = []
+    rows.push('<tr data-sort-method="none">' +
+        '<th>ID</th>' +
+        '<th>First Name</th>' +
+        '<th>Last Name</th>' +
+        '<th>Email</th>' +
+        '<th>Role</th>' +
+        '<th>View Profile</th></tr>')
+    rows.push($.map(allSearchedUsers, function (value, index) {
+        return '<tr><td>' + value[0] + '</td><td>' + value[1] +
+            '</td><td>' + value[2] + '</td><td>' + value[3] +
+            '</td><td>' + value[4] + '</td><td>' + value[5] +
+            '</td><td></tr>';
+    }));
+    $('#users_table').html(rows.join(''));
+    new Tablesort(document.getElementById('users_table'));
+    $('#next').hide();
+    $('#previous').hide();
+    if (allSearchedUsers.length === 0) {
+        noUsersMessage.textContent = "No users found matching your search criteria."
+        noUsersArea.appendChild(noUsersMessage);
+    }
+    
 }

@@ -7,13 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>UW Stage Admin Console</title>
     <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/createNewUserRole.css">
 </head>
 
 <body>
     <nav id='nav-bar'></nav>
     <h1>Create New User Role</h1>
     <p> Current Roles:</p>
-    <ul></ul>
+    <table id="role_info" class="tablesorter"></table>
     <form class="newRole-form">
         <div class="roleName">
             <label for="roleName-input">Role Name</label>
@@ -24,7 +25,7 @@
             <input id="displayName-input" type="text">
         </div>
         <div class="level">
-            <label for="level-input">Role Level</label>
+            <label for="level-input">Permission Level</label>
             <input id="level-input" type="number">
         </div>
         <button type="submit">Create Role</button>
