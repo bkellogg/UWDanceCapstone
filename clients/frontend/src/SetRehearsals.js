@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import Button from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
+import LinearProgress from 'material-ui/LinearProgress';
 import FlatButton from 'material-ui/FlatButton';
 import RehearsalRow from './RehearsalRow';
 import AvailabilityOverlap from './AvailabilityOverlap';
@@ -32,7 +33,9 @@ class SetRehearsals extends Component {
       cast: [],
       contested: [],
       filteredCast: [],
-      startDate: moment().format('YYYY-MM-DD')
+      startDate: moment().format('YYYY-MM-DD'),
+      progress: false,
+      successMessage: false,
     }
   };
 
@@ -54,6 +57,10 @@ class SetRehearsals extends Component {
   }
 
   postCasting = () => {
+    this.setState({
+      progress: true,
+      successMessage: false
+    })
     Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.allRehearsals, "POST", true)
       .then((res) => {
         if (res.ok) {
@@ -66,11 +73,15 @@ class SetRehearsals extends Component {
           open: false,
           finished: true,
           finishedAdding: true,
+          progress: false,
+          successMessage: true
         });
+        setTimeout(() => {this.setState({successMessage: false})}, 2000)
       })
       .catch(err => {
         this.setState({
-          castingError: err
+          castingError: err,
+          progress: false
         })
         console.error(err)
       })
@@ -323,14 +334,29 @@ class SetRehearsals extends Component {
                 <br />
                 <br /> 
                 </div>
-                <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting.</p>
+                <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting within <b>48 hours</b>.</p>
                 {
                   this.state.castingError &&
                   <div className="serverError">
                     {Util.titleCase(this.state.castingError)}
                   </div>
                 }
+                {
+                  this.state.progress &&
+                  <LinearProgress mode="indeterminate" />
+                }
               </Dialog>
+
+              <Dialog
+                title="Success"
+                open={this.state.successMessage}
+                modal={false}
+                onRequestClose={() => {this.setState({successMessage: false})}}
+              >
+                <p>Casting has been successfully posted. Your dancers will accept or decline in <strong className="importantText">48 hours.</strong></p>
+              </Dialog>
+              
+
 
             </div>
           </div>

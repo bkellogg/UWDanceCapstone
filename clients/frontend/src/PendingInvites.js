@@ -76,7 +76,7 @@ class PendingInvites extends Component {
       {
         !this.state.accepted && !this.state.declined &&
         <div>
-          <p className="announcementMessage">Congratulations! You have been cast in {this.props.piece.name}. </p>
+          <p className="announcementMessage">Attention! You have been cast in {this.props.piece.name}. </p>
           <br />
           <p>
             The rehearsal schedule will go here.
