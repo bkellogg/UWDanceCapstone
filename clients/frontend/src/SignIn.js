@@ -116,10 +116,14 @@ class SignIn extends Component {
   render() {
     const actions = [
       <TextField
+        className="emailField"
+        style={{marginLeft: '10px', marginRight: '10px',  paddingLeft: '10px', width: '300px'}}
         hintText="Account Email"
         onChange={this.getEmail}
       />,
       <FlatButton
+        className="submitButton"
+        style={{color: 'white', marginLeft: '15px'}}
         label="Submit"
         primary={true}
         onClick={this.forgotPassword}
@@ -158,6 +162,9 @@ class SignIn extends Component {
                   <Button onClick={this.signIn}>Sign In</Button>
                 </div>
                 <div className="link">
+                <div>
+                <a className="blueTextLink" onClick={this.signUp}> Sign Up </a>
+                </div>
                   <a className="blueTextLink" onClick={this.handleOpen}> Forgot password? </a>
                   <div>
                     <Dialog
@@ -170,7 +177,6 @@ class SignIn extends Component {
                       Enter the email address associated with your account. You will receive an email with instructions on how to reset your password.
                 </Dialog>
                   </div>
-                  <a className="blueTextLink" onClick={this.signUp}> Sign Up </a>
                 </div>
 
               </div>

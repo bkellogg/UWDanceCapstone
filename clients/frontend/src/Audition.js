@@ -177,8 +177,8 @@ class Audition extends Component {
             <h1 id="auditionTitle">{this.props.name + " Audition Form"}</h1>
             {
               this.state.auditionPassed &&
-              <div className="auditionPassed">
-                The audition date has passed. Any information you enter here will not be considered during the casting process.
+              <div className="auditionPassedWrap">
+                <p className="auditionPassedMessage">The audition date has passed. Any information you enter here will not be considered during the casting process.</p>
               </div>
             }
             {!this.state.registered && <Registration

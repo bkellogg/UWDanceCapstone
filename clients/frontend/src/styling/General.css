@@ -123,7 +123,8 @@ h2{
 }
 
 .tooltip:hover .tooltiptext .emphasis {
-    text-decoration: underline;
+    color: #22A7E0;
+    font-weight: 400;
 }
 
 /*PEOPLE NAME WITH A LINK TO THEIR PROFILE*/
@@ -142,6 +143,11 @@ span.thumb.active{
 .serverError {
     background-color: #f9c79e;
     border-radius: 5px;
+}
+
+hr{
+    visibility: hidden;
+    color: red;
 }
 
  @media only screen and (max-width : 768px) {

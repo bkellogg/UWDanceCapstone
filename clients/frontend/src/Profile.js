@@ -345,7 +345,7 @@ class Profile extends Component {
                         <form className="col s12">
                           <div className="row">
                             <div className="input-field col s12">
-                              <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
+                              <textarea id="textarea1" style={{backgroundColor: 'white', height: '100px', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}} name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
                               <p><strong>Word Count:</strong> {this.state.wordCount}</p>
                             </div>
                           </div>

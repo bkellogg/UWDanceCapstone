@@ -52,12 +52,8 @@
 .cancelButton, .cancelButton:hover{
     background-color: transparent;
     box-shadow: none;
-    color: rgb(0, 188, 212);
+    color: #22A7E0;
     text-transform: capitalize;
-}
-
-.changeAvailabilityButton{
-    background-color: #708090;
 }
 
 .unregisterButton {
@@ -74,7 +70,7 @@
 }
 
 #number{
-    color: rgb(0, 188, 212);
+    color: #22A7E0;
     font-size: 120px;
     margin: 0;
     padding: 0;
