@@ -37,7 +37,8 @@ class Piece extends Component {
       costumeDesc : "",
       propsDesc : "",
       lightingDesc : "",
-      otherDesc : ""
+      otherDesc : "",
+      setError: false
     }
   };
 
@@ -135,6 +136,8 @@ class Piece extends Component {
       "otherNotes": this.state.otherDesc
     }
 
+    console.log(body)
+
     Util.makeRequest("pieces/" + this.state.pieceID + "/info", body, "POST", true)
     .then(res => {
       if (res.ok) {
@@ -151,13 +154,16 @@ class Piece extends Component {
         console.log(res)
     })
     .catch((err) => {
+      this.setState({
+        setError: err
+      })
       console.error(err)
     })
   }
 
   getPieceUsers = (pieceID) => {
     //TODO deal with pages
-    for(let i = 1; i < Util.PAGEMAX; i++) {
+    for(let i = 1; i <= Util.PAGEMAX; i++) {
       Util.makeRequest("pieces/" + pieceID + "/users?page=" + i, "", "GET", true)
         .then(res => {
           if (res.ok) {
@@ -237,13 +243,18 @@ class Piece extends Component {
 
   render() {
     let musicianRow = []
+    let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
-    console.log(this.state.numMusicians)
+
     musicianRow = musicians.map((musician, i) => {
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
       )
     })
+
+    for (let i = 0; i < numMusicians - musicians.length; i++) {
+      musicianRow.push(<MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={{name:"", phone:"", email:""}}/>)
+    }
 
     let castRows = this.state.dancers.map((dancer, i) => {
       return (<PersonRow p={dancer} piece={true} key={i} audition={1}/>)
@@ -393,7 +404,7 @@ class Piece extends Component {
                         onChange={this.handleChange('danceTitle')}
                         style={STYLES}
                       />
-                      <p>Dance Runtime:</p>
+                      <p><b>Dance Runtime:</b></p>
                       <TextField
                         id="runtime"
                         defaultValue={this.state.runtime}
@@ -521,10 +532,12 @@ class Piece extends Component {
                       onClick={this.setInfoSheet}>
                       Save</Button>
 
-                  {/* <FlatButton
-                        style={{ color: '#22A7E0', marginRight: '20px'}}
-                        onClick={this.setInfoSheet}
-                        >Save Info Sheet</FlatButton> */}
+                      {
+                        this.state.setError &&
+                        <div className="serverError">
+                          Error setting piece info sheet: {Util.titleCase(this.state.setError)}
+                        </div>
+                      }
                 </section>
               }
             </div>

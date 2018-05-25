@@ -87,7 +87,7 @@ class PersonRow extends Component {
             this.props.piece &&
             <td className="dropDancer">
               <Button 
-                backgroundColor="#708090"
+                backgroundcolor="#708090"
                 style={{color: '#ffffff', float: 'right'}}
                 onClick={() => this.dropFromCast()}> 
                 DROP </Button>

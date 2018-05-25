@@ -165,17 +165,15 @@ class Calendar extends Component {
 
   modifyRehearsal = (event) => {
     let slotInfo = this.state.slotInfo
-    console.log(this.state.slotInfo)
     let body = {
       title : this.state.rehearsalName,
       start : moment(slotInfo.start).format("YYYY-MM-DDTHH:mm:ssZ"),
       end : moment(slotInfo.end).format("YYYY-MM-DDTHH:mm:ssZ")
     }
-    console.log(typeof body.title)
-    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals/" + slotInfo.id, body, "POST", true)
+    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals/" + slotInfo.id, body, "PATCH", true)
     .then(res => {
       if (res.ok) {
-        return res.json()
+        return res.text()
       }
       return res.text().then((t) => Promise.reject(t));
     })
@@ -232,7 +230,6 @@ class Calendar extends Component {
   }
 
   render() {
-    let event = this.state.event
     let slotInfo = this.state.slotInfo
     return (
       <section>
@@ -310,7 +307,7 @@ class Calendar extends Component {
           {
             this.state.modifyRehearsalError &&
             <div className="serverError">
-              Error modifying rehearsal : {this.state.modifyRehearsalError}
+              Error modifying rehearsal : {Util.titleCase(this.state.modifyRehearsalError)}
             </div>
           }
         </Dialog>
