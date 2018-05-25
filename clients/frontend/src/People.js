@@ -22,7 +22,7 @@ class People extends Component {
 
   getPeople = () => {
     //TODO deal with pages
-    for(let i = 1; i < Util.PAGEMAX; i++) {
+    for(let i = 1; i <= Util.PAGEMAX; i++) {
       Util.makeRequest("shows/" + this.props.show + "/users?page=" + i, "", "GET", true)
       .then(res => {
         if (res.ok) {
@@ -34,6 +34,7 @@ class People extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .then(data => {
+        console.log(data)
         let currUsers = this.state.users
         let newUsers = currUsers.concat(data.users)
         this.setState({ 
