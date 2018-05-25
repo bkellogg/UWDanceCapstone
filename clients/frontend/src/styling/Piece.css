@@ -6,6 +6,11 @@ td.userEmail{
     padding-left: 10px;
 }
 
+.textField{
+    background-color: white !important;
+    
+}
+
 @media only screen 
 and (max-width : 1024px)  {
     .userBioDisp, .bioOfUser{
