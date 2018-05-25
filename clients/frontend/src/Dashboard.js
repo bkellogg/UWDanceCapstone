@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import moment from 'moment';
 import PendingInvites from './PendingInvites';
-import Button from 'react-materialize/lib/Button';
 import './styling/General.css';
-
+import { Button } from 'react-materialize';
 //styling
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';
@@ -156,7 +155,9 @@ class Dashboard extends Component {
                 <p> <b>Date:</b> {auditionDay} </p>
                 <p> <b>Time:</b> {auditionTime} </p>
                 <p> <b>Location:</b> {announcement.audition.location} </p>
-                <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
+                <div className="buttons">
+                <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link></Button>
+                </div>
               </div>
             </div>
           }

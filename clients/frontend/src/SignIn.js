@@ -116,10 +116,14 @@ class SignIn extends Component {
   render() {
     const actions = [
       <TextField
+        className="emailField"
+        style={{marginLeft: '10px', marginRight: '10px',  paddingLeft: '10px', width: '300px'}}
         hintText="Account Email"
         onChange={this.getEmail}
       />,
       <FlatButton
+        className="submitButton"
+        style={{color: 'white', marginLeft: '15px'}}
         label="Submit"
         primary={true}
         onClick={this.forgotPassword}

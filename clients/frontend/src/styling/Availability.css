@@ -20,5 +20,17 @@
 }
 
 .availabilityRow:nth-child(odd) {
-    border-bottom: 2px solid #989fb7
+    border-bottom: 2px solid #ccced3
+}
+
+.availabilityTableDragDown{
+    width: 700px;
+}
+
+@media only screen and (max-width : 1043px)  {
+
+    .availabilityTableDragDown{
+        width: 100%;
+    }
+    
 }

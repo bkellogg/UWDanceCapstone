@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
+import img from './imgs/defaultProfile.jpg';
 import AvatarEditorConsole from './AvatarEditorConsole';
 import { compose } from 'ramda';
 import './styling/Profile.css';
@@ -12,7 +13,7 @@ class Profile extends Component {
     this.state = {
       user: JSON.parse(localStorage.getItem("user")),
       auth: localStorage.getItem("auth"),
-      photoSrc: null,
+      photoSrc: img,
       bio: JSON.parse(localStorage.getItem("user")).bio,
       history: [],
       resume: null,
@@ -37,32 +38,26 @@ class Profile extends Component {
     this.setCounts(this.state.bio);
 
     //TODO deal with the fact that there are going to be pages
-    for(let i = 1; i < Util.PAGEMAX; i++) {
-      Util.makeRequest("users/" + this.state.user.id + "/shows?history=all&page=" + i, {}, "GET", true)
-        .then((res) => {
-          if (res.ok) {
-            return res.json()
-          }
-          if (res.status === 401) {
-            Util.signOut()
-          }
-          return res.text().then((t) => Promise.reject(t));
+    Util.makeRequest("users/" + this.state.user.id + "/shows?history=all", {}, "GET", true)
+      .then((res) => {
+        if (res.ok) {
+          return res.json()
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res.text().then((t) => Promise.reject(t));
+      })
+      .then((res) => {
+        this.setState({
+          history: res.shows
         })
-        .then((res) => {
-          let currHistory = this.state.history
-          let newHistory = currHistory.concat(res.shows)
-          this.setState({
-            history: newHistory
-          })
-          if(currHistory.length < newHistory.length){
-            this.formatHistory(newHistory)
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          Util.handleError(err)
-        })
-    }
+        this.formatHistory(res.shows)
+      })
+      .catch((err) => {
+        console.error(err);
+        Util.handleError(err)
+      })
   }
 
   formatHistory = (shows) => {
@@ -153,7 +148,7 @@ class Profile extends Component {
     let data = new FormData();
     data.append("image", img);
     let xhr = new XMLHttpRequest();
-    xhr.addEventListener("loadend", () => {
+    xhr.addEventListener("readystatechange", () => {
       this.getPhoto()
     });
     xhr.onreadystatechange = function () {
@@ -279,7 +274,6 @@ class Profile extends Component {
 
                   <div id="photoContainer" className="photoContainer">
                     {!this.state.edit &&
-
                       <img id="photo" alt="profile" src={this.state.photoSrc}></img>
                     }
                     {this.state.edit &&
@@ -293,98 +287,97 @@ class Profile extends Component {
                   </div>
 
 
-                  <div className="nameAndBioWrap">
+                  <div className="nameWrap">
                     <div id="name" className="name">
 
                       {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
                       {this.state.edit &&
                         <div id="editName">
                           <Row>
-                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} />
-                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} />
+                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname} />
+                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} />
                           </Row>
                         </div>
                       }
                     </div>
+                  </div>
 
-                    <div id="bio" className="bio">
-                      <div className="subheader"><b>Dancer Bio:</b></div>
+                  <div className="resumeWrap">
+                    <div id="resume">
                       {!this.state.edit &&
                         <section>
-                          {this.state.bio !== "" && this.state.bio}
-                          {this.state.bio === "" && " Dancer has no bio"}
+                          {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                          {this.state.resume != null && (
+                            <div>
+                              <a href={this.state.resume}>View PDF Resume</a>
+                            </div>
+                          )}
+
                         </section>
                       }
                       {this.state.edit &&
-                        <div id="editBio">
-                          <div className="row">
-                            <form className="col s12">
-                              <div className="row">
-                                <div className="input-field col s12">
-                                  <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
-                                  <p><strong>Word Count:</strong> {this.state.wordCount}</p>
-                                </div>
-                              </div>
-                            </form>
-                          </div>
-                        </div>
-
+                        <section>
+                          <div> Upload your dance resume <b>AS A PDF.</b> </div>
+                          <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                        </section>
                       }
-
                     </div>
-
                   </div>
                   {!this.state.edit &&
-                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                      <i className="large material-icons"> mode_edit </i>
-                    </Button>
+                    <Button id="edit" className="editButton" onClick={() => this.onClick()}>Edit</Button>
 
                   }
-                  {this.state.edit &&
-                    <Button id="edit" className="btn-floating btn-large" onClick={() => this.onClick()}>
-                      <i className="large material-icons"> check </i>
-                    </Button>
-                  }
+
                 </div>
               </div>
               <div className="mainContentBorder">
+                <div id="bio" className="bio">
+                  <div className="subheader"><b>Dancer Bio:</b></div>
+                  {!this.state.edit &&
+                    <section>
+                      {this.state.bio !== "" && this.state.bio}
+                      {this.state.bio === "" && " Dancer has no bio"}
+                    </section>
+                  }
+                  {this.state.edit &&
+                    <div id="editBio">
+                      <div className="row">
+                        <form className="col s12">
+                          <div className="row">
+                            <div className="input-field col s12">
+                              <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
+                              <p><strong>Word Count:</strong> {this.state.wordCount}</p>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  }
+                </div>
+
                 <div id="history">
-                  <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+                  <div id="historyTitle" className="subheader"><b>Your Piece History</b></div>
                   {this.state.history.length > 0 && this.state.history.map((p, i) => {
                     return (
+                      //TODO STYLE THESE
                       <div className="showHistory" key={i}>
-                        <p>{p.name}, {p.year}</p>
+                        <p>{p.name}</p>
+                        <p>{p.year}</p>
                       </div>
                     )
                   })}
                   {this.state.history.length === 0 &&
-                    <p> Dancer has no piece history </p>
-                  }
-                </div>
+                    <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
 
-                <div id="resume">
-                  {!this.state.edit &&
-                    <section>
-                      {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                      {this.state.resume != null && (
-                        <div>
-                          <a href={this.state.resume} target="_blank">View PDF Resume</a>
-                        </div>
-                      )}
-
-                    </section>
-                  }
-                  {this.state.edit &&
-                    <section>
-                      <div> Upload your dance resume as a <b>PDF</b>. </div>
-                      <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
-                    </section>
                   }
                 </div>
 
               </div>
-            </div>
 
+            </div>
+            {this.state.edit &&
+              <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
+            }
           </div>
         </div>
       </section>
