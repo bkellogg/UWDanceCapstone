@@ -116,11 +116,11 @@ class Dashboard extends Component {
       });
   }
 
-   render() {
+  render() {
     const pending = this.state.pending
     let pendingCasting = pending.map((piece, i) => {
       return (
-        <PendingInvites key={i} piece={piece}/>
+        <PendingInvites key={i} piece={piece} />
       )
     })
     let displayAnnouncements = this.state.currAnnouncements.map((announcement, index) => {
@@ -148,49 +148,49 @@ class Dashboard extends Component {
         <div key={index} className="announcement newAuditionBorderColor">
           {
             <div className="auditionAnnouncementCardColor">
-              <div className="showTitle">
-                <h2 className="auditionHeading">Audition for the {announcement.name}</h2>
-              </div>
               <div className="showInformation">
-                <p> <b>Date:</b> {auditionDay} </p>
-                <p> <b>Time:</b> {auditionTime} </p>
-                <p> <b>Location:</b> {announcement.audition.location} </p>
-                <div className="buttons">
-                <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link></Button>
+                <h2 className="auditionHeading">Audition for the {announcement.name}</h2>
+
+                  <p> <b>Date:</b> {auditionDay} </p>
+                  <p> <b>Time:</b> {auditionTime} </p>
+                  <p> <b>Location:</b> {announcement.audition.location} </p>
+
+                </div>
+                <div className="buttonToSignUp">
+                  <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link></Button>
+                </div>
+              </div>
+              }
+        </div>
+      )
+          })
+          return (
+      <section className='main' >
+            <div className="mainView">
+              <div className="pageContentWrap">
+                <div className='dashboard'>
+                  <div id='welcome'>
+                    <h1> Welcome, {this.state.user.firstName}!</h1>
+                  </div>
+                  <div id='announcements'>
+                    {pendingCasting}
+                    {this.state.user.bio === "" &&
+                      <div className="announcement completeProfileBorderColor" onClick={() => window.location = "/profile"}>
+                        <div className="completeProfileCardColor">
+                          <p className="announcementMessage"> Please complete your profile. </p>
+                        </div>
+                      </div>
+                    }
+                    {displayAnnouncements}
+                    {displayShows}
+                  </div>
                 </div>
               </div>
             </div>
-          }
-        </div>
-      )
-    })
-    return (
-      <section className='main' >
-        <div className="mainView">
-          <div className="pageContentWrap">
-            <div className='dashboard'>
-              <div id='welcome'>
-                <h1> Welcome, {this.state.user.firstName}!</h1>
-              </div>
-              <div id='announcements'>
-                {pendingCasting}
-                {this.state.user.bio === "" &&
-                  <div className="announcement completeProfileBorderColor" onClick={ () => window.location = "/profile"}>
-                    <div className="completeProfileCardColor">
-                      <p className="announcementMessage"> Please complete your profile. </p>
-                    </div>
-                  </div>
-                }
-                {displayAnnouncements}
-                {displayShows}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    )
-  }
-}
-
-
+          </section>
+          )
+        }
+      }
+      
+      
 export default Dashboard;
