@@ -79,7 +79,7 @@ class PersonRow extends Component {
             </td>
           }
           <td>
-          {p.email}
+          <a href={"mailto:" + p.email}>{p.email}</a>
           </td>
           {
             this.props.piece &&
