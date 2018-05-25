@@ -15,6 +15,16 @@ body{
   margin-bottom: 10px;
 }
 
+label.short-input{
+  width: 100px;
+  display: inline-block;
+}
+
+label.long-input{
+  width: 150px;
+  display: inline-block;
+}
+
 /*ALL CARDS*/
 .dashboardAnnouncement, .profile-wrap, .search-users, .signup-form, .newRole-form, .show-form, .newShowType-form, .active-shows-card, .newAnnouncementType-form{
   background-color: #f6f8fc;
