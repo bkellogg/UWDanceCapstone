@@ -5,7 +5,8 @@
 }
 
 .navbar a {
-    float: left;
+    display: inline-block;
+    vertical-align: top;
     font-size: 16px;
     color: white;
     text-align: center;

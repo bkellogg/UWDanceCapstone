@@ -133,6 +133,7 @@ class Calendar extends Component {
   }
 
   addRehearsal = () => {
+    console.log(this.state.slotInfo)
     let slotInfo = this.state.slotInfo
     let body = []
     let rehearsalObject = {

@@ -312,9 +312,7 @@ class Piece extends Component {
     let musicianRow = []
     let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
-
     let availability = <AvailabilityOverlap filteredCast={this.state.filteredCast} cast={this.state.dancerAvailabilityList} contested={[]} />
-
     musicianRow = musicians.map((musician, i) => {
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
@@ -522,7 +520,7 @@ class Piece extends Component {
 
                       <p><b>Music title(s): </b></p>
                       <TextField
-                      className="textField"
+                        className="textField"
                         id="musicTitle"
                         defaultValue={this.state.musicTitle}
                         onChange={this.handleChange('musicTitle')}
@@ -540,7 +538,7 @@ class Piece extends Component {
 
                       <p><b>Music Source:</b></p>
                       <TextField
-                      className="textField"
+                        className="textField"
                         id="musicSource"
                         defaultValue={this.state.musicSource}
                         onChange={this.handleChange('musicSource')}
@@ -576,7 +574,7 @@ class Piece extends Component {
                       }
                       <p><b>Rehearsal Schedule:</b></p>
                       <TextField
-                      className="textField"
+                        className="textField"
                         id="rehearsalSchedule"
                         defaultValue={this.state.rehearsalSchedule}
                         onChange={this.handleChange('rehearsalSchedule')}
@@ -586,7 +584,7 @@ class Piece extends Component {
                     <div className="notes">
                       <p><b>Choreographers Notes:</b> </p>
                       <TextField
-                      className="textField"
+                        className="textField"
                         id="choreoNotes"
                         defaultValue={this.state.choreoNotes}
                         multiLine={true}
@@ -596,7 +594,7 @@ class Piece extends Component {
 
                       <p><b>Costume Descriptions: </b> </p>
                       <TextField
-                      className="textField"
+                        className="textField"
                         id="costumeDesc"
                         defaultValue={this.state.costumeDesc}
                         multiLine={true}
@@ -606,7 +604,7 @@ class Piece extends Component {
 
                       <p><b>Props/Scenic Items Descriptions:</b> </p>
                       <TextField
-                      className="textField"
+                        className="textField"
                         id="propsDesc"
                         defaultValue={this.state.propsDesc}
                         multiLine={true}
@@ -616,7 +614,7 @@ class Piece extends Component {
 
                       <p><b>Lighting Description: </b></p>
                       <TextField
-                      className="textField"
+                        className="textField"
                         id="lightingDesc"
                         defaultValue={this.state.lightingDesc}
                         multiLine={true}
@@ -626,7 +624,7 @@ class Piece extends Component {
 
                       <p><b>Other special needs: </b> </p>
                       <TextField
-                      className="textField"
+                        className="textField"
                         id="otherDesc"
                         defaultValue={this.state.otherDesc}
                         multiLine={true}

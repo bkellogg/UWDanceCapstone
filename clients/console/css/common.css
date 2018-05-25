@@ -15,16 +15,27 @@ body{
   margin-bottom: 10px;
 }
 
+label.short-input{
+  width: 100px;
+  display: inline-block;
+}
+
+label.long-input{
+  width: 150px;
+  display: inline-block;
+}
+
 /*ALL CARDS*/
-.search-users, .signup-form, .newRole-form, .show-form, .newShowType-form, .active-announcements, .active-shows-card, .newAnnouncementType-form{
+.dashboardAnnouncement, .profile-wrap, .search-users, .signup-form, .newRole-form, .show-form, .newShowType-form, .active-shows-card, .newAnnouncementType-form{
   background-color: #f6f8fc;
   padding: 10px;
+  padding-left: 25px;
   border: 1px solid #d8d8d8;
   width: 60%;
   margin-bottom: 25px;
 }
 
-.active-announcements{
+.dashboardAnnouncement{
   background-color: rgb(253, 237, 236);
 }
 
@@ -90,12 +101,13 @@ h2.showName{
 
 
 /*BUTTONS*/
-.delete, #search-submit{
+.delete, #search-submit, #signin{
   height: 30px;
   background-color: #22A7E0;
   color: white;
   font-size: 13px;
   font-weight: 500;
+  border: 1px solid rgb(7, 95, 133); 
   border-radius: 3px;
   width: 120px;
 }

@@ -162,6 +162,9 @@ class SignIn extends Component {
                   <Button onClick={this.signIn}>Sign In</Button>
                 </div>
                 <div className="link">
+                <div>
+                <a className="blueTextLink" onClick={this.signUp}> Sign Up </a>
+                </div>
                   <a className="blueTextLink" onClick={this.handleOpen}> Forgot password? </a>
                   <div>
                     <Dialog
@@ -174,7 +177,6 @@ class SignIn extends Component {
                       Enter the email address associated with your account. You will receive an email with instructions on how to reset your password.
                 </Dialog>
                   </div>
-                  <a className="blueTextLink" onClick={this.signUp}> Sign Up </a>
                 </div>
 
               </div>
