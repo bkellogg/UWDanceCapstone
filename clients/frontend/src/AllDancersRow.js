@@ -320,7 +320,7 @@ class AllDancersRow extends Component {
                     {
                         this.props.resolveNotYourCast &&
                         <Button
-                            backgroundColor="#708090"
+                            backgroundcolor="#708090"
                             style={{ color: '#ffffff', float: 'right' }}
                             onClick={() => this.addToCast(1)}>
                             ADD </Button>
@@ -329,7 +329,7 @@ class AllDancersRow extends Component {
                         this.props.resolveYourCast &&
                         <Button
                             className="addDropButton"
-                            backgroundColor="#708090"
+                            backgroundcolor="#708090"
                             style={{ color: '#ffffff', float: 'right' }}
                             onClick={() => this.dropFromCast()}>
                             DROP </Button>

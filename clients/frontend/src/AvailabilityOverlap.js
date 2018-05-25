@@ -50,6 +50,7 @@ class AvailabilityOverlap extends Component {
   };
 
   componentWillMount() {
+    console.log(this.props)
     this.setState({
       dayTimes: this.getAllDancerOverlap(this.props.filteredCast)
     })
@@ -59,6 +60,7 @@ class AvailabilityOverlap extends Component {
     this.setState({
       cast: props.cast,
       filteredCast: props.filteredCast,
+      contested: props.contested,
       dayTimes: this.getAllDancerOverlap(props.filteredCast)
     })
   }
@@ -76,9 +78,9 @@ class AvailabilityOverlap extends Component {
   getAllDancerOverlap = (filteredCast) => {
 
     let dayTimes = this.flushDayTimes()
-
+    console.log(this.props.cast)
     this.props.cast.forEach((dancer, i) => { //go through each dancer
-
+      console.log(dancer)
       let days = dancer.dancer.availability.days
       let id = dancer.dancer.user.id
       let firstName = dancer.dancer.user.firstName
@@ -172,7 +174,6 @@ class AvailabilityOverlap extends Component {
 
   render() {
     const dayTimes = this.state.dayTimes
-
     //generate the overlap days from the state
     let overlapDays = dayTimes.map((days, i) => {
 

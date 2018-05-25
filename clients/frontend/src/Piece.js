@@ -7,6 +7,7 @@ import MenuItem from 'material-ui/MenuItem';
 import MusicianRow from './MusicianRow';
 import Calendar from './Calendar';
 import PersonRow from './PersonRow';
+import AvailabilityOverlap from './AvailabilityOverlap';
 import './styling/Piece.css';
 import './styling/General.css';
 
@@ -38,13 +39,16 @@ class Piece extends Component {
       propsDesc : "",
       lightingDesc : "",
       otherDesc : "",
-      setError: false
+      setError: false,
+      dancerAvailabilityList: [],
+      filteredCast: []
     }
   };
 
   componentWillMount() {
     //get info about everyone in the piece
     this.getPieceID()
+    this.getAuditionID()
   }
 
   getPieceID = () => {
@@ -159,6 +163,29 @@ class Piece extends Component {
     })
   }
 
+  getAuditionID = () => {
+    Util.makeRequest("shows/" + this.props.show + "/audition", {}, "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res
+        .text()
+        .then((t) => Promise.reject(t));
+    })
+    .then(audition => {
+      this.setState({
+        auditionID : audition.id
+      })
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  }
+
   getPieceUsers = (pieceID) => {
     //TODO deal with pages
     for(let i = 1; i <= Util.PAGEMAX; i++) {
@@ -189,11 +216,49 @@ class Piece extends Component {
   }
 
   getDancerAvailability = () => {
-    
+    let dancers = this.state.dancers
+    let dancerAvailabilityList = []
+    let filteredCast = []
+    dancers.forEach(dancer => {
+      filteredCast.push(dancer.id)
+      let dancerAvailability = {
+        dancer : {
+          user : dancer,
+          availability: []
+        }
+      }
+      Util.makeRequest("users/" + dancer.id + "/auditions/" + this.state.auditionID + "/availability", {}, "GET", true)
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res
+          .text()
+          .then((t) => Promise.reject(t));
+      })
+      .then(availability => {
+        dancerAvailability.dancer.availability = availability
+        dancerAvailabilityList.push(dancerAvailability)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+    })
+
+    this.setState({
+      dancerAvailabilityList : dancerAvailabilityList,
+      filteredCast: filteredCast
+    })
   }
 
   viewAvailability = () => {
     let view = this.state.viewAvailability
+    if (!view) {
+      this.getDancerAvailability()
+    }
     this.setState({
       viewAvailability: !view
     })
@@ -248,6 +313,8 @@ class Piece extends Component {
     let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
 
+    let availability = <AvailabilityOverlap filteredCast={this.state.filteredCast} cast={this.state.dancerAvailabilityList} contested={[]} />
+
     musicianRow = musicians.map((musician, i) => {
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
@@ -274,8 +341,6 @@ class Piece extends Component {
         </tr>
       )
     })
-
-    console.log(this.state.dancers)
     return (
       <section className="main">
         <div className="mainView">
@@ -351,10 +416,13 @@ class Piece extends Component {
                     }
                     {
                       this.state.viewAvailability &&
-                      <div className="toggleHeader" onClick={this.viewAvailability}>
-                        <h2 className="smallHeading">Hide Cast Availability</h2>
-                        <i className="fas fa-chevron-up fa-lg"></i>
-                      </div>
+                      <section>
+                        <div className="toggleHeader" onClick={this.viewAvailability}>
+                          <h2 className="smallHeading">Hide Cast Availability</h2>
+                          <i className="fas fa-chevron-up fa-lg"></i>
+                        </div>
+                        {availability}
+                      </section>
                     }
                   </div>
                 </section>
