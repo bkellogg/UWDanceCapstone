@@ -16,7 +16,7 @@ body{
 }
 
 /*ALL CARDS*/
-.dashboardAnnouncement, .search-users, .signup-form, .newRole-form, .show-form, .newShowType-form, .active-shows-card, .newAnnouncementType-form{
+.dashboardAnnouncement, .profile-wrap, .search-users, .signup-form, .newRole-form, .show-form, .newShowType-form, .active-shows-card, .newAnnouncementType-form{
   background-color: #f6f8fc;
   padding: 10px;
   border: 1px solid #d8d8d8;
