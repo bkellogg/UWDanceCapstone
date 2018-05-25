@@ -29,6 +29,7 @@ label.long-input{
 .dashboardAnnouncement, .profile-wrap, .search-users, .signup-form, .newRole-form, .show-form, .newShowType-form, .active-shows-card, .newAnnouncementType-form{
   background-color: #f6f8fc;
   padding: 10px;
+  padding-left: 25px;
   border: 1px solid #d8d8d8;
   width: 60%;
   margin-bottom: 25px;

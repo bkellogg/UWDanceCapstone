@@ -1,0 +1,12 @@
+.img-bio-wrap{
+    display: inline-block;
+    position: relative;
+}
+
+.image-loc, .bio-wrap{
+    display: inline-block;
+}
+
+.bio-wrap{
+    margin-left: 25px;
+}
