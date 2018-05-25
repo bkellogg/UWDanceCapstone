@@ -127,7 +127,7 @@ class Registration extends Component {
         <RaisedButton
           onClick={this.handleRegister}
           disabled={disabled}
-          backgroundColor="rgb(0, 188, 212)"
+          backgroundColor="#22A7E0"
           style={{ color: '#ffffff' }}
         >
           REGISTER </RaisedButton>
