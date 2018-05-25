@@ -19,17 +19,15 @@ class PersonRow extends Component {
   }
 
   dropFromCast = () => {
-    let castBody = {
-        "action": "remove",
-        "drops" : [this.props.p.id]
-    }
-
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", castBody, "PATCH", true)
+    Util.makeRequest("users/" + this.props.p.id + "/pieces/" + this.props.pieceID, {}, "UNLINK", true)
     .then(res => {
       if (res.ok) {
         return res.text()
       }
       return res.text().then((t) => Promise.reject(t));
+    })
+    .then(res => {
+      this.props.updateCast()
     })
   }
 
@@ -87,7 +85,7 @@ class PersonRow extends Component {
             this.props.piece &&
             <td className="dropDancer">
               <Button 
-                backgroundColor="#708090"
+                backgroundcolor="#708090"
                 style={{color: '#ffffff', float: 'right'}}
                 onClick={() => this.dropFromCast()}> 
                 DROP </Button>

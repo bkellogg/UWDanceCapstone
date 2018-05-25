@@ -7,6 +7,7 @@ import MenuItem from 'material-ui/MenuItem';
 import MusicianRow from './MusicianRow';
 import Calendar from './Calendar';
 import PersonRow from './PersonRow';
+import AvailabilityOverlap from './AvailabilityOverlap';
 import './styling/Piece.css';
 import './styling/General.css';
 
@@ -37,13 +38,17 @@ class Piece extends Component {
       costumeDesc : "",
       propsDesc : "",
       lightingDesc : "",
-      otherDesc : ""
+      otherDesc : "",
+      setError: false,
+      dancerAvailabilityList: [],
+      filteredCast: []
     }
   };
 
   componentWillMount() {
     //get info about everyone in the piece
     this.getPieceID()
+    this.getAuditionID()
   }
 
   getPieceID = () => {
@@ -151,13 +156,39 @@ class Piece extends Component {
         console.log(res)
     })
     .catch((err) => {
+      this.setState({
+        setError: err
+      })
+      console.error(err)
+    })
+  }
+
+  getAuditionID = () => {
+    Util.makeRequest("shows/" + this.props.show + "/audition", {}, "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res
+        .text()
+        .then((t) => Promise.reject(t));
+    })
+    .then(audition => {
+      this.setState({
+        auditionID : audition.id
+      })
+    })
+    .catch((err) => {
       console.error(err)
     })
   }
 
   getPieceUsers = (pieceID) => {
     //TODO deal with pages
-    for(let i = 1; i < Util.PAGEMAX; i++) {
+    for(let i = 1; i <= Util.PAGEMAX; i++) {
       Util.makeRequest("pieces/" + pieceID + "/users?page=" + i, "", "GET", true)
         .then(res => {
           if (res.ok) {
@@ -184,8 +215,50 @@ class Piece extends Component {
     }
   }
 
+  getDancerAvailability = () => {
+    let dancers = this.state.dancers
+    let dancerAvailabilityList = []
+    let filteredCast = []
+    dancers.forEach(dancer => {
+      filteredCast.push(dancer.id)
+      let dancerAvailability = {
+        dancer : {
+          user : dancer,
+          availability: []
+        }
+      }
+      Util.makeRequest("users/" + dancer.id + "/auditions/" + this.state.auditionID + "/availability", {}, "GET", true)
+      .then(res => {
+        if (res.ok) {
+          return res.json()
+        }
+        if (res.status === 401) {
+          Util.signOut()
+        }
+        return res
+          .text()
+          .then((t) => Promise.reject(t));
+      })
+      .then(availability => {
+        dancerAvailability.dancer.availability = availability
+        dancerAvailabilityList.push(dancerAvailability)
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+    })
+
+    this.setState({
+      dancerAvailabilityList : dancerAvailabilityList,
+      filteredCast: filteredCast
+    })
+  }
+
   viewAvailability = () => {
     let view = this.state.viewAvailability
+    if (!view) {
+      this.getDancerAvailability()
+    }
     this.setState({
       viewAvailability: !view
     })
@@ -237,16 +310,21 @@ class Piece extends Component {
 
   render() {
     let musicianRow = []
+    let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
-    console.log(this.state.numMusicians)
+    let availability = <AvailabilityOverlap filteredCast={this.state.filteredCast} cast={this.state.dancerAvailabilityList} contested={[]} />
     musicianRow = musicians.map((musician, i) => {
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
       )
     })
 
+    for (let i = 0; i < numMusicians - musicians.length; i++) {
+      musicianRow.push(<MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={{name:"", phone:"", email:""}}/>)
+    }
+
     let castRows = this.state.dancers.map((dancer, i) => {
-      return (<PersonRow p={dancer} piece={true} key={i} audition={1}/>)
+      return (<PersonRow p={dancer} piece={true} key={i} pieceID={this.state.pieceID} updateCast={() => {this.setState({dancers: []}); this.getPieceUsers(this.state.pieceID)}}/>)
     })
 
     let contactRows = this.state.dancers.map((dancer, i) => {
@@ -280,16 +358,25 @@ class Piece extends Component {
                 // Styling for toggle header is in general
                 <div className="toggleHeader" onClick={this.toggleCalendar}>
                   <h2 className="smallHeading">Calendar</h2>
+                  <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">Add rehearsals by <b className="emphasis">clicking & dragging</b> on the calendar. Select events by <b className="emphasis">clicking</b> on the rehearsal name. </span>
+                  </div>
                   <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
               }
               {
                 this.state.openCalendar &&
                 <section>
+                  <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">Add rehearsals by <b className="emphasis">clicking & dragging</b> on the calendar. Select events by <b className="emphasis">clicking</b> on the rehearsal name. </span>
+                  </div>
                   <div className="toggleHeader" onClick={this.toggleCalendar}>
                     <h2 className="smallHeading">Calendar</h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
+                  <p>Access the full tech schedule here: {<a href="http://staff.washington.edu/peterb5/Prod%20Shed/ProdScheds.html">UW Dance Production Site</a>}</p>
                   <Calendar pieceID={this.state.pieceID}/>
                 </section>
               }
@@ -299,6 +386,10 @@ class Piece extends Component {
                 !this.state.openCast &&
                 // Styling for toggle header is in general
                 <div className="toggleHeader" onClick={this.toggleCast}>
+                  <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">You can <b className="emphasis">drop</b> dancers from your cast here, and view <b className="emphasis">cast availability</b></span>
+                  </div>
                   <h2 className="smallHeading">My Cast</h2>
                   <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
@@ -306,8 +397,11 @@ class Piece extends Component {
               {
                 this.state.openCast &&
                 <section>
-
                   <div className="toggleHeader" onClick={this.toggleCast}>
+                  <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">You can <b className="emphasis">drop</b> dancers from your cast here, and view <b className="emphasis">cast availability</b></span>
+                  </div>
                     <h2 className="smallHeading">My Cast</h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
@@ -335,10 +429,13 @@ class Piece extends Component {
                     }
                     {
                       this.state.viewAvailability &&
-                      <div className="toggleHeader" onClick={this.viewAvailability}>
-                        <h2 className="smallHeading">Hide Cast Availability</h2>
-                        <i className="fas fa-chevron-up fa-lg"></i>
-                      </div>
+                      <section>
+                        <div className="toggleHeader" onClick={this.viewAvailability}>
+                          <h2 className="smallHeading">Hide Cast Availability</h2>
+                          <i className="fas fa-chevron-up fa-lg"></i>
+                        </div>
+                        {availability}
+                      </section>
                     }
                   </div>
                 </section>
@@ -348,6 +445,10 @@ class Piece extends Component {
               {
                 !this.state.openInfo &&
                 <div className="toggleHeader" onClick={this.toggleInfo}>
+                  <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">Fill out this info sheet with <b className="emphasis">piece details</b>. Some information has been auto-filled for you.</span>
+                  </div>
                   <h2 className="smallHeading">Information Sheet</h2>
                   <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
@@ -356,6 +457,10 @@ class Piece extends Component {
                 this.state.openInfo &&
                 <section>
                   <div className="toggleHeader" onClick={this.toggleInfo}>
+                    <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">Fill out this info sheet with <b className="emphasis">piece details</b>. Some information has been auto-filled for you.</span>
+                  </div>
                     <h2 className="smallHeading">Information Sheet</h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
@@ -395,9 +500,9 @@ class Piece extends Component {
                         onChange={this.handleChange('danceTitle')}
                         style={STYLES}
                       />
-                      <p>Dance Runtime:</p>
+                      <p><b>Dance Runtime:</b></p>
                       <TextField
-                        className="textField" 
+                        className="textField"
                         id="runtime"
                         defaultValue={this.state.runtime}
                         onChange={this.handleChange('runtime')}
@@ -424,7 +529,7 @@ class Piece extends Component {
 
                       <p><b>Performed By:</b></p>
                       <TextField
-                        className="textField"
+                      className="textField"
                         id="musicPerformer"
                         defaultValue={this.state.musicPerformer}
                         onChange={this.handleChange('musicPerformer')}
@@ -535,10 +640,12 @@ class Piece extends Component {
                       onClick={this.setInfoSheet}>
                       Save</Button>
 
-                  {/* <FlatButton
-                        style={{ color: '#22A7E0', marginRight: '20px'}}
-                        onClick={this.setInfoSheet}
-                        >Save Info Sheet</FlatButton> */}
+                      {
+                        this.state.setError &&
+                        <div className="serverError">
+                          Error setting piece info sheet: {Util.titleCase(this.state.setError)}
+                        </div>
+                      }
                 </section>
               }
             </div>

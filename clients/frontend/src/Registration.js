@@ -131,6 +131,8 @@ class Registration extends Component {
           style={{ color: '#ffffff' }}
         >
           REGISTER </RaisedButton>
+
+          
       </div>
 
     )
