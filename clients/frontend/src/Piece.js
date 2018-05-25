@@ -136,8 +136,6 @@ class Piece extends Component {
       "otherNotes": this.state.otherDesc
     }
 
-    console.log(body)
-
     Util.makeRequest("pieces/" + this.state.pieceID + "/info", body, "POST", true)
     .then(res => {
       if (res.ok) {
@@ -257,7 +255,7 @@ class Piece extends Component {
     }
 
     let castRows = this.state.dancers.map((dancer, i) => {
-      return (<PersonRow p={dancer} piece={true} key={i} audition={1}/>)
+      return (<PersonRow p={dancer} piece={true} key={i} pieceID={this.state.pieceID} updateCast={() => {this.setState({dancers: []}); this.getPieceUsers(this.state.pieceID)}}/>)
     })
 
     let contactRows = this.state.dancers.map((dancer, i) => {
@@ -301,6 +299,7 @@ class Piece extends Component {
                     <h2 className="smallHeading">Calendar</h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
+                  <p>Access the full tech schedule here: {<a href="http://staff.washington.edu/peterb5/Prod%20Shed/ProdScheds.html">UW Dance Production Site</a>}</p>
                   <Calendar pieceID={this.state.pieceID}/>
                 </section>
               }

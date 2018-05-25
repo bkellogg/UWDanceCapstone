@@ -19,17 +19,15 @@ class PersonRow extends Component {
   }
 
   dropFromCast = () => {
-    let castBody = {
-        "action": "remove",
-        "drops" : [this.props.p.id]
-    }
-
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", castBody, "PATCH", true)
+    Util.makeRequest("users/" + this.props.p.id + "/pieces/" + this.props.pieceID, {}, "UNLINK", true)
     .then(res => {
       if (res.ok) {
         return res.text()
       }
       return res.text().then((t) => Promise.reject(t));
+    })
+    .then(res => {
+      this.props.updateCast()
     })
   }
 
