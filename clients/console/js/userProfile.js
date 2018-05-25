@@ -14,6 +14,9 @@ var password = document.getElementById("password-input");
 var confPassword = document.getElementById("password-conf-input");
 var errorBoxPassword = document.querySelector(".js-error-password");
 
+var showHistory = [];
+var showTypes = [];
+
 let userID = getQueryParam("user");
 if (!userID) {
     // TODO HANDLE ME ===========
@@ -22,6 +25,7 @@ if (!userID) {
 
 populateRoleOptions();
 getResume();
+getShowHistory();
 
 let user;
 makeRequest("users/" + userID, {}, "GET", true)
@@ -152,4 +156,57 @@ function validatePassword() {
     }
     errorBoxPassword.textContent = "";
     return true;
+}
+
+
+// Get user's show history 
+function getShowHistory() {
+    makeRequest("shows/types?includeDeleted=false", {}, "GET", true)
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+            return res.text().then((t) => Promise.reject(t));
+        })
+        .then((data) => {
+            $(data).each(function (index, value) {
+                showTypes[value.id] = value.desc;
+            });
+        })
+        .then(() => {
+            makeRequest("users/" + userID + "/shows?history=all", {}, "GET", true)
+                .then((res) => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                    return res.text().then((t) => Promise.reject(t));
+                })
+                .then((data) => {
+                    var showInfo = data.shows
+                    $(showInfo).each(function (index, value) {
+                        var show = {};
+                        show["showYear"] = value.createdAt;
+                        show["showID"] = value.id
+                        show["showType"] = value.typeID;
+                        showHistory.push(show);
+                    });
+                })
+                .then(() => {
+                    $(showHistory).each(function (index, value) {
+                        value["showName"] = showTypes[value.showType];
+                    });
+                })
+                .then(() => {
+                    $(showHistory).each(function (index, value) {
+
+                        populateShowHistory(value, index);
+                    })
+                })
+        })
+}
+
+function populateShowHistory(value, index) {
+    var showYear = moment(value.showYear).format('YYYY');
+    $(".show-history-content").append('<div class="show-history-card" id=' + index + '><p>'
+        + value.showName + '</p><p>' + showYear + '</p></div>')
 }
