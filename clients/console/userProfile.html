@@ -15,23 +15,47 @@
     <div class="image-loc"></div>
     <h2>Bio</h2>
     <div class="bio-content"></div>
+    <h2>Email</h2>
+    <div class="user-email-loc"></div>
+    <h2>Show History</h2>
+    <div class="show-history-content"></div>
     <h2>Resume</h2>
     <div class="resume-content"></div>
     <a href="" id="user-resume" target="_blank">View Resume</a>
     <div id="content"></div>
-    <h2>Change Role</h2>
-    <form class="roleChange-form">
-        <div class="role">
-            <select id="roleName">
-                <option id="role-input" value=''>
-                </option>
-            </select>
-        </div>
-        <button type="submit">Change Role</button>
-    </form>
-    <div class="js-error"></div>
+    <div class="role-change">
+        <h2>Change Role</h2>
+        <form class="roleChange-form">
+            <div class="role">
+                <select id="roleName">
+                    <option id="role-input" value=''>
+                    </option>
+                </select>
+            </div>
+            <button type="submit">Change Role</button>
+        </form>
+        <div class="js-error"></div>
+    </div>
+    <div class="password-change">
+        <h2>Change Password</h2>
+        <form class="password-change-form">
+            <div class="password">
+                <div class="password">
+                    <label for="password-input">Password</label>
+                    <input id="password-input" type="password">
+                </div>
+                <div class="password-conf">
+                    <label for="password-conf-input">Confirm Password</label>
+                    <input id="password-conf-input" type="password">
+                </div>
+            </div>
+            <button type="submit">Change Password</button>
+        </form>
+        <div class="js-error-password"></div>
+    </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/userProfile.js"></script>
 
