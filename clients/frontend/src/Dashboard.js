@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import moment from 'moment';
 import PendingInvites from './PendingInvites';
+import Button from 'react-materialize/lib/Button';
 import './styling/General.css';
 //styling
 import { Link } from 'react-router-dom';
@@ -140,9 +141,9 @@ class Dashboard extends Component {
       //check that the day of the audition hasn't passed
       let today = moment()
       let time = moment(announcement.audition.time).utcOffset('-0700')
-      // if (!today.isBefore(time)) {
-      //   return []
-      // }
+      if (!today.isBefore(time)) {
+        return []
+      }
       return (
         <div key={index} className="announcement newAuditionBorderColor">
           {
