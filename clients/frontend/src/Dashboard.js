@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import * as Util from './util';
-import RaisedButton from 'material-ui/RaisedButton';
+import moment from 'moment';
+import PendingInvites from './PendingInvites';
+import Button from 'react-materialize/lib/Button';
 import './styling/General.css';
-
 //styling
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';
@@ -105,6 +106,7 @@ class Dashboard extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .then(pieces => {
+        console.log(pieces)
         this.setState({
           pending: pieces
         })
@@ -114,72 +116,48 @@ class Dashboard extends Component {
       });
   }
 
-  acceptCasting = (pieceID) => {
-    Util.makeRequest("users/me/pieces/" + pieceID, "", "LINK", true)
-      .then((res) => {
-        if (res.ok) {
-          return res.text();
-        }
-        if (res.status === 401) {
-          Util.signOut()
-        }
-        return res.text().then((t) => Promise.reject(t));
-      })
-      .then(() => {
-        this.getUserPieces()
-      }
-      )
-      .catch((err) => {
-        console.log(err)
-      });
-  }
-
    render() {
     const pending = this.state.pending
     let pendingCasting = pending.map((piece, i) => {
       return (
-        <div key={i} className="announcement castBorderColor">
-          <p className="announcementMessage">Congratulations! You have been cast in {piece.name}. </p>
-          <div>
-            <RaisedButton
-              label="Accept"
-              className="acceptCastButton"
-              style={{ color: '#ffffff' }}
-              backgroundColor="#22A7E0"
-              onClick={() => this.acceptCasting(piece.id)}
-            />
-          </div>
-        </div>
+        <PendingInvites key={i} piece={piece}/>
       )
     })
-    let displayAnnouncements = this.state.currAnnouncements.map((anncouncement, index) => {
+    let displayAnnouncements = this.state.currAnnouncements.map((announcement, index) => {
       return (
         <div key={index} className="announcement announcementBorderColor">
           {
             <div className="announcementCardColor">
-              <p className="announcementMessage"> {anncouncement.message} </p>
+              <p className="announcementMessage"> {announcement.message} </p>
             </div>
           }
         </div>
       )
     })
-    let displayShows = this.props.shows.map((anncouncement, index) => {
-      var moment = require('moment');
-      var auditionDay = moment(anncouncement.audition.time).format('MMM. d, YYYY');
-      var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
-      var auditionLink = anncouncement.name.split(' ').join('');
+    let displayShows = this.props.shows.map((announcement, index) => {
+      let auditionDay = moment(announcement.audition.time).format('MMM. Do, YYYY');
+      let auditionTime = moment(announcement.audition.time).utcOffset('-0700').format("hh:mm a");
+      let auditionLink = announcement.name.split(' ').join('');
+      //check that the day of the audition hasn't passed
+      let today = moment()
+      let time = moment(announcement.audition.time).utcOffset('-0700')
+      if (!today.isBefore(time)) {
+        return []
+      }
       return (
         <div key={index} className="announcement newAuditionBorderColor">
           {
             <div className="auditionAnnouncementCardColor">
               <div className="showTitle">
-                <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
+                <h2 className="auditionHeading">Audition for the {announcement.name}</h2>
               </div>
               <div className="showInformation">
                 <p> <b>Date:</b> {auditionDay} </p>
                 <p> <b>Time:</b> {auditionTime} </p>
-                <p> <b>Location:</b> {anncouncement.audition.location} </p>
-                <Link to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link>
+                <p> <b>Location:</b> {announcement.audition.location} </p>
+                <div className="buttons">
+                <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link></Button>
+                </div>
               </div>
             </div>
           }

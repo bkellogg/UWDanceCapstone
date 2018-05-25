@@ -157,27 +157,31 @@ class Piece extends Component {
 
   getPieceUsers = (pieceID) => {
     //TODO deal with pages
-    Util.makeRequest("pieces/" + pieceID + "/users", "", "GET", true)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
-        if (res.status === 401) {
-          Util.signOut()
-        }
-        return res
-          .text()
-          .then((t) => Promise.reject(t));
-      })
-      .then(piece => {
-        this.setState({
-          choreographer: piece.choreographer,
-          dancers: piece.dancers
+    for(let i = 1; i < Util.PAGEMAX; i++) {
+      Util.makeRequest("pieces/" + pieceID + "/users?page=" + i, "", "GET", true)
+        .then(res => {
+          if (res.ok) {
+            return res.json()
+          }
+          if (res.status === 401) {
+            Util.signOut()
+          }
+          return res
+            .text()
+            .then((t) => Promise.reject(t));
         })
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+        .then(piece => {
+          let currDancers = this.state.dancers
+          let newDancers = currDancers.concat(piece.dancers)
+          this.setState({
+            choreographer: piece.choreographer,
+            dancers: newDancers
+          })
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    }
   }
 
   viewAvailability = () => {
@@ -234,6 +238,7 @@ class Piece extends Component {
   render() {
     let musicianRow = []
     let musicians = this.state.musicians
+    console.log(this.state.numMusicians)
     musicianRow = musicians.map((musician, i) => {
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
@@ -285,7 +290,7 @@ class Piece extends Component {
                     <h2 className="smallHeading">Calendar</h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
-                  <Calendar />
+                  <Calendar pieceID={this.state.pieceID}/>
                 </section>
               }
             </div>

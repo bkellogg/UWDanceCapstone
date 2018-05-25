@@ -1,0 +1,102 @@
+/*CONFIRMATION TEMPLATE*/
+/* BODY */
+body {
+    font-family: "Lato", "sans-serif";
+    font-size: 0.875em;
+    margin-left: 15px;
+    line-height: 1.375em;
+}
+
+.bodyWrap{
+    width: 100%;
+}
+
+/* EMAIL TEMPLATE  */
+.email-template {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    border: solid 1px #1C2C50;
+    max-width: 600px;
+    width: auto;
+}
+
+/* HEADER & FOOTER  */
+.banner, .signature-wrapper {
+    background-color:#1C2C50;
+    padding-bottom: 10px;
+    padding-top: 20px;
+    padding-left: 8%;
+    margin-bottom: 20px;
+}
+
+.greeting{
+    color: white;
+    font-size: 1.4em;
+    font-weight: 400;
+}
+
+.stageLogo{
+    padding-left: 5%;
+    max-width: 200px;
+}
+
+.uwdd{
+    padding-left: 8%;
+    color: white;
+    font-size: 1em;
+}
+
+/* EMAIL BODY*/
+.email-body, .signature-wrapper {
+    margin-top: 50px;
+    margin-bottom: 30px;
+    padding-left: 8%;
+    padding-right: 8%;
+}
+
+.raw-url {
+    margin-left: 10px;
+}
+
+/* FUN NO-RESPONSE MESSAGE */
+.no-response-message {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    
+}
+
+.small-message {
+    color:  rgb(0, 188, 212);
+    font-weight: 400;
+
+}
+
+/* FOOTER*/
+.signature-wrapper{
+    margin-bottom: 0;
+    padding-bottom: 30px;
+    padding-left: 0;
+}
+
+.signature{
+    color: rgb(255, 255, 255, .9);
+}
+
+/* LINKS */
+.link{
+    color: #e65100;
+    font-weight: 600;
+}
+
+/*NEW SHOW*/
+.audition-details, .reset-link, .expiry-time{
+    padding: 10px;
+}
+
+
+@media only screen and (max-width : 768px) {
+    body{
+    line-height: 1.25em;
+}
+}

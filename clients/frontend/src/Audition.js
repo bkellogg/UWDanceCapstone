@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
+import moment from 'moment';
 
 //components
 import Registration from './Registration';
@@ -19,15 +20,52 @@ class Audition extends Component {
       regNum: 0,
       open: false,
       openAvailability: false,
-      changeRegistration: false
+      changeRegistration: false,
+      auditionPassed: false
     }
   };
 
   componentWillMount() {
+    this.getAuditionInfo()
     this.checkRegistration()
   }
 
+  getAuditionInfo = () => {
+    Util.makeRequest("auditions/" + this.props.audition, {}, "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      if (res.status === 401) {
+        Util.signOut()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(audition => {
+      console.log(audition)
+      this.setState({ 
+        audition: audition
+      })
+      this.checkAuditionDate(audition)
+    })
+    .catch(err => {
+      console.error(err)
+      Util.handleError(err)
+    })
+  }
+
+  checkAuditionDate = (audition) => {
+    let auditionTime = moment(audition.time)
+    let today = moment()
+    if (!today.isBefore(auditionTime)) {
+      this.setState({
+        auditionPassed: true
+      })
+    }
+  }
+  
   checkRegistration = () => {
+    let error = false
     Util
       .makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)
       .then(res => {
@@ -37,9 +75,10 @@ class Audition extends Component {
         if (res.status === 401) {
           Util.signOut()
         }
-        return res
-          .text()
-          .then((t) => Promise.reject(t));
+        if (res.status !== 404) {
+          error = true
+        }
+        return res.text().then((t) => Promise.reject(t));
       })
       .then(audition => {
         this.setState({ 
@@ -49,9 +88,12 @@ class Audition extends Component {
           currAvailability: audition.availability })
       })
       .catch(err => {
-        this.state.error({
-          error: err
-        })
+        if (error) {
+          let title = Util.titleCase(err)
+          this.setState({
+            error: title
+          })
+        }
         console.error(err)
         Util.handleError(err)
       })
@@ -78,6 +120,7 @@ class Audition extends Component {
     let body = {
       "days": this.state.availability
     }
+    let error = false
     Util.makeRequest("users/me/auditions/" + this.props.audition + "/availability", body, "PATCH", true)
       .then(res => {
         if (res.ok) {
@@ -85,6 +128,9 @@ class Audition extends Component {
         }
         if (res.status === 401) {
           Util.signOut()
+        }
+        if (res.status !== 404) {
+          error = true
         }
         return res.text().then((t) => Promise.reject(t));
       })
@@ -98,10 +144,13 @@ class Audition extends Component {
         this.checkRegistration()
       )
       .catch(err => {
+        if (error) {
+          let title = Util.titleCase(err)
+          this.setState({
+            error: title
+          })
+        }
         console.error(err)
-        this.state.error({
-          error: err
-        })
         Util.handleError(err)
       })
 
@@ -126,6 +175,12 @@ class Audition extends Component {
         <div className="mainView">
           <div className="pageContentWrap">
             <h1 id="auditionTitle">{this.props.name + " Audition Form"}</h1>
+            {
+              this.state.auditionPassed &&
+              <div className="auditionPassedWrap">
+                <p className="auditionPassedMessage">The audition date has passed. Any information you enter here will not be considered during the casting process.</p>
+              </div>
+            }
             {!this.state.registered && <Registration
               audition={this.props.audition}
               registered={() => this.checkRegistration()} />
@@ -143,7 +198,9 @@ class Audition extends Component {
             }
             {
               this.state.error &&
-              <p>{this.state.error}</p>  
+              <div className="serverError">
+                {this.state.error}
+              </div>  
             }
             <Snackbar
               open={this.state.open}

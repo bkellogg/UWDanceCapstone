@@ -50,7 +50,11 @@ class ResolveConflict extends Component {
               {
                 conflictsRow.length > 0 &&
                 <div>
-                  <h2 className="conflictMessage">Conflicts between you and other choreographers.</h2> 
+                  <h2 className="conflictMessage">Conflicts between you and other choreographers.</h2>
+                  <div className="xtraInfo tooltip">
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">Conflicts happen when the number of choreographers who cast a dancer <b className="emphasis">exceed</b> the number of pieces that dancer can be in. </span>
+                  </div> 
                   <table id="conflictsTable">
                     <tbody>
                       <tr className="categories">
@@ -69,7 +73,13 @@ class ResolveConflict extends Component {
               }
               {
                 conflictsRow.length === 0 &&
-                <h2 className="conflictMessage">There are no conflicts between you and other choreographers</h2>
+                <section>
+                  <h2 className="conflictMessage">There are no conflicts between you and other choreographers</h2>
+                  <div className="xtraInfo tooltip">
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">Conflicts happen when the number of choreographers who cast a dancer <b className="emphasis">exceed</b> the number of pieces that dancer can be in. You can <b className="emphasis">drop</b> dancers to resolve conflicts.</span>
+                  </div>
+                </section>
               }
                 </div>
             </div>
@@ -80,6 +90,10 @@ class ResolveConflict extends Component {
             <div className="castList-v2 cardAddMargin">
               <div className="choreographersSelecteCast">
                 <h2 className="smallHeading"> Your cast </h2>
+                <div className="xtraInfo tooltip">
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext"> This is your current cast. You can still <b className="emphasis">drop</b> dancers.</span>
+                  </div>
                 <table id="yourCast">
                   <tbody>
                     <tr className="categories">
@@ -96,6 +110,10 @@ class ResolveConflict extends Component {
               <div className="castList-v2">
               <div className="restOfCast">
                 <h2 className="smallHeading"> All dancers </h2>
+                <div className="xtraInfo tooltip">
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">This is everyone who auditioned. You can <b className="emphasis">add</b> them to your cast.</span>
+                  </div>
                 <table id="allDancersTable">
                   <tbody>
                     <tr className="categories">

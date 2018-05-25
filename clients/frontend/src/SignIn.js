@@ -8,6 +8,7 @@ import FlatButton from 'material-ui/FlatButton';
 
 import TextField from 'material-ui/TextField';
 import './styling/SignIn.css';
+import './styling/Landing.css';
 
 
 class SignIn extends Component {
@@ -115,10 +116,14 @@ class SignIn extends Component {
   render() {
     const actions = [
       <TextField
+        className="emailField"
+        style={{marginLeft: '10px', marginRight: '10px',  paddingLeft: '10px', width: '300px'}}
         hintText="Account Email"
         onChange={this.getEmail}
       />,
       <FlatButton
+        className="submitButton"
+        style={{color: 'white', marginLeft: '15px'}}
         label="Submit"
         primary={true}
         onClick={this.forgotPassword}
@@ -126,7 +131,7 @@ class SignIn extends Component {
     ];
 
     return (
-      <div className="logInLanding">
+      <div className="landingBackground">
         <i className="fas fa-arrow-circle-left fa-2x" onClick={this.toLanding}></i>
         <div className="functionality">
           <div className="signInUplogoWrap">

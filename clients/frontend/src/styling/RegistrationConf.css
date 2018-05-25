@@ -56,10 +56,6 @@
     text-transform: capitalize;
 }
 
-.changeAvailabilityButton{
-    background-color: #708090;
-}
-
 .unregisterButton {
     background-color: #ef5350;
 }

@@ -17,10 +17,6 @@
 .back-button-styles-css:hover, .next-button-styles-css:hover{
     background-color: #22A7E0 !important;
 }
-.steps{
-    background-color: transparent !important;
-    color: red !important;
-}
 
 /*SELECT CAST*/
 td{
@@ -68,7 +64,7 @@ th{
 
 .variableCastHeader {
     text-align: center;
-    border-bottom: 3px solid hsl(0, 0%, 45%);
+    border-bottom: 2px solid hsl(0, 0%, 45%);
 }
 
     /*YOUR CAST, CONFLICTS, UNCAST DANCERS DIVIDER*/
@@ -136,6 +132,8 @@ th{
     margin: 0;
     padding-top: 10px;
     padding-bottom: 30px;
+    display: inline-block;
+    padding-right: 7px
 }
 
 
@@ -168,6 +166,10 @@ th{
     position: relative;
     width: 100%;
     display: flex;
+}
+
+.singleField {
+    width: 33%
 }
 
 .selectField{
@@ -208,50 +210,20 @@ th{
     margin-top: 25px;
 }
 
-
-
-/**Hover over exclamation point**/
-.tooltip {
-    position: relative;
-}
-
-.tooltip .tooltiptext {
-    visibility: hidden;
-    width: 120px;
-    background-color: #555;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -60px;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.tooltip .tooltiptext::after {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: #555 transparent transparent transparent;
-}
-
-.tooltip:hover .tooltiptext {
-    visibility: visible;
-    opacity: 1;
-}
-
 /*SHARED*/
 .smallHeading{
     font-size: 15px;
     font-weight: 500;
     padding-bottom: 20px;
+    width: auto;
+    display: inline-block;
+    padding-right: 7px
 }
 
+.addDropButton{
+    background-color: hsl(0, 0%, 45%) !important;
+}
+
+.addDropButton:hover{
+    background-color: #22A7E0 !important;
+}

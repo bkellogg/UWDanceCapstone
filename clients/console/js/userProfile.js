@@ -15,6 +15,7 @@ if (!userID) {
 }
 
 populateRoleOptions();
+getResume();
 
 let user;
 makeRequest("users/" + userID, {}, "GET", true)
@@ -57,28 +58,25 @@ makeRequest("users/" + userID + "/photo", {}, "GET", true)
 
 
 function getResume() {
-    let resume = document.querySelector(".resume");
     makeRequest("users/" + userID + "/resume", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
                 return res.blob();
             }
+            if(res.status != 200) {
+                $("#user-resume").hide();
+            }
             return res.text().then((t) => Promise.reject(t));
         })
-        .then(showFile)
+        .then((data) => {
+            var link = URL.createObjectURL(data);
+            $("#user-resume").attr("href", link);
+        })
         .catch((err) => {
             let m = document.createElement("p");
             m.textContent = "resume unavailable: " + err;
             content.appendChild(m);
         });
-}
-
-function showFile(blob) {
-    var data2 = URL.createObjectURL(blob);
-    var link = document.createElement('a');
-    link.href = data2;
-    link.download = "resume.pdf";
-    link.click();
 }
 
 // get roles

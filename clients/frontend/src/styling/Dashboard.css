@@ -1,6 +1,6 @@
 /*NEW AUDITION MESSAGE -- BLUE TONES*/
 .newAuditionBorderColor{
-  border-left: 6px solid rgb(52, 152, 219);
+  border-left: 6px solid #22A7E0;
 }
 
 .auditionAnnouncementCardColor{
@@ -9,33 +9,29 @@
 }
 
 /*COMPLETE PROFILE MESSAGE -- RED TONES*/
-.completeProfileBorderColor {
+.completeProfileBorderColor, .announcementBorderColor {
   border-left: 6px solid rgb(231, 76, 60);
-<<<<<<< HEAD
-=======
-  cursor: pointer
->>>>>>> 04f8b6cf09e9a26af0e8e9e45acb620923e05850
 }
 
-.completeProfileCardColor{
+.completeProfileCardColor, .announcementCardColor{
   background-color:rgb(253, 237, 236);
 }
 
 /*CAST MESSAGE -- BLUE TONES*/
 .castBorderColor{
-  border-left: 6px solid rgb(52, 152, 219);
+  border-left: 6px solid #22A7E0;
   background-color: rgb(235, 245, 251);
 }
 
 
 /*GENERAL MESSAGE -- PURPLE TONES*/
-.announcementBorderColor {
+/* .announcementBorderColor {
   border-left: 6px solid rgb(142, 68, 173);
 }
 
 .announcementCardColor{
   background-color: rgb(245, 238, 248);
-}
+} */
 
 .announcement {
   margin-top: 20px;
@@ -59,8 +55,11 @@
 .auditionHeading{
   font-size: 16px;
   font-weight: 500;
-  color: #e65100;
   padding-bottom: 10px;
+}
+
+.linkTurnedIntoButton{
+  color: white;
 }
 
 @media only screen and (max-width : 992px) {

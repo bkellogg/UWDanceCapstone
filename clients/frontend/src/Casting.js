@@ -227,6 +227,7 @@ class Casting extends Component {
                     </Step>
                   </Stepper>
 
+
                   {/*BUTTONS*/}
                   <div style={contentStyle}>
                     <div style={{ marginTop: 12 }}>
