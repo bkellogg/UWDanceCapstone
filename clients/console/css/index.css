@@ -1,6 +1,16 @@
 body {
     margin:0px;
     text-align: center;
+    background-color: #27384A;
+    color: white;
+}
+
+.main-header{
+    margin-top: 150px;
+}
+
+.stage-logo{
+    width: 200px;
 }
 
 .signin-form {
@@ -10,11 +20,12 @@ body {
 
 h1 {
     text-align: center;
-    font-size: 300%;
+    font-size: 40px;
+    font-weight: 500;
 }
 
 .email, .password {
-    text-align: center;
+    text-align: left;
     padding-left: 1em;
     padding-right: 1em;
 }
@@ -57,5 +68,5 @@ img {
 }
 
 .reset-password a {
-    color: blue;
+    color: white;
 }
