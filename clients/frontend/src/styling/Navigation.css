@@ -56,11 +56,11 @@ Button{
 }
 
 .signOutDesktop{
-    position: absolute;
+    position: fixed;
     width: 100%;
     text-align: center;
-    height: 7%;
-    bottom: 7%;
+    height: 50px;
+    bottom: 50px;
 }
 
 .desktopSignOutButton{
