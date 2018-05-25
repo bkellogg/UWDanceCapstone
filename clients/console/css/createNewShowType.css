@@ -1,0 +1,10 @@
+#showTypeName-input, #description-input{
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+#description-input{
+    width: 200px;
+    height: 50px;
+}

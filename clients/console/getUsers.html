@@ -6,37 +6,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>STAGE Users</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.1/datatables.min.css" />
     <link rel="stylesheet" href="css/getUsers.css">
 </head>
 
 <body>
     <nav id='nav-bar'></nav>
-    <h1>Users</h1>
-    <table id="users_table" class="display">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>View Profile</th>
-            </tr>
-        </thead>
-        <tfoot>
+    <div class="page-wrap">
+        <h1>Users</h1>
+        <div class="search-users">
+            <p class="important-message">Search for users by any combination of first name, last name, and email. At least one field must be used.</p>
 
-        </tfoot>
-    </table>
+            <form class="search-users-form">
+                <div class="fname">
+                    <label for="fname-input">First Name</label>
+                    <input id="fname-input" type="text">
+                </div>
+                <div class="lname">
+                    <label for="lname-input">Last Name</label>
+                    <input id="lname-input" type="text">
+                </div>
+                <div class="email">
+                    <label for="email-input">Email</label>
+                    <input id="email-input" type="text">
+                </div>
+                <button id="search-submit" type="submit" disabled="true">Search</button>
+            </form>
+            <div class="js-error"></div>
+        </div>
+        <table id="users_table" class="tablesorter"></table>
+        <div id="no-users-found"></div>
+    </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.0.2/tablesort.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.0.2/sorts/tablesort.number.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/getUsers.js"></script>
+<script src="js/searchUsers.js"></script>
 <script>
     $(function () {
         $("#nav-bar").load("navigation.html");
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#fname-input, #lname-input, #email-input").bind("change keyup",
+            function () {
+                if ($("#fname-input").val() == "" && $("#lname-input").val() == "" && $("#email-input").val() == "") {
+                    document.getElementById("search-submit").disabled = true;
+                } else {
+                    document.getElementById("search-submit").disabled = false;
+                }
+            });
     });
 </script>
 

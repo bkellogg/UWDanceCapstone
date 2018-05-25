@@ -1,3 +1,64 @@
+body{
+  margin: 0;
+  padding: 0;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-size: 14px;
+}
+
+.page-wrap{
+  padding: 20px;
+}
+
+/*INPUT FIELDS*/
+.fname, .lname, .email, #search-submit, .password, .passwordconf, .role, .roleName, .displayName, .level, .audition-name, .building, .room, .quarter-name, .showTypeName, .description, .announcementType, .announcementTypeName{
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/*ALL CARDS*/
+.search-users, .signup-form, .newRole-form, .show-form, .newShowType-form, .active-announcements, .active-shows-card, .newAnnouncementType-form{
+  background-color: #f6f8fc;
+  padding: 10px;
+  border: 1px solid #d8d8d8;
+  width: 60%;
+  margin-bottom: 25px;
+}
+
+.active-announcements{
+  background-color: rgb(253, 237, 236);
+}
+
+.important-message{
+  color: #e65100;
+  font-weight: 600;
+
+}
+
+/*TABLE*/
+table {
+  border-spacing: 0;
+  width: 100%;
+  border: 1px solid #d8d8d8;
+}
+
+th {
+  cursor: pointer;
+}
+
+th, td {
+  text-align: left;
+  padding: 16px;
+}
+
+tr:nth-child(even) {
+  background-color: #f6f8fc
+}
+
+/*ROLE INFO CARD, SHOW TYPE CARD*/
+#role_info, #show_type_info{
+  width: 60%;
+}
+
 .hidden {
     display: none;
 }
@@ -11,3 +72,35 @@ ul{
   li {
     margin: 0.25em 0;
   }
+
+
+/*TYPOGRAPHY*/
+h1{
+  font-size: 26px;
+}
+
+h2{
+  font-size: 16px;
+}
+
+h2.showName{
+  font-size: 16px;
+}
+
+
+
+/*BUTTONS*/
+.delete, #search-submit{
+  height: 30px;
+  background-color: #22A7E0;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 3px;
+  width: 120px;
+}
+
+.delete:hover, #search-submit:hover{
+  background-color: rgb(54, 172, 223);
+}
+

@@ -1,13 +1,14 @@
 <link rel="stylesheet" href="css/navigation.css">
+<link rel="stylesheet" href="css/common.css">
 <div class="navbar">
+    <!-- <img src="img/logoex.png" alt="STAGE Logo" height="42" width="auto"> -->
     <a href="console.html">Home</a>
     <div class="dropdown">
         <button class="dropbtn">Users
             <i class="fa fa-caret-down"></i>
         </button>
         <div class="dropdown-content" id="users-dropdown">
-            <a href="getUsers.html">View All Users</a>
-            <a href="searchUsers.html">Search For Specific User</a>
+            <a href="getUsers.html">Manage Users</a>
             <a href="createNewUser.html">Create New User</a>
             <a href="createNewUserRole.html">Create New User Role</a>
         </div>
@@ -17,6 +18,7 @@
             <i class="fa fa-caret-down"></i>
         </button>
         <div class="dropdown-content" id="shows-dropdown">
+            <a href="shows.html">Active Shows</a>
             <a href="createNewShow.html">Create New Show</a>
             <a href="createNewShowType.html">Create New Show Type</a>
         </div>
@@ -26,12 +28,11 @@
             <i class="fa fa-caret-down"></i>
         </button>
         <div class="dropdown-content" id="announcements-downdown">
-            <a href="announcements.html">Show Active Announcements</a>
-            <a href="createNewAnnouncement.html">Create New Announcement</a>
+            <a href="announcements.html">Active Announcements</a>
             <a href="createNewAnnouncementType.html">Create New Announcement Type</a>
         </div>
     </div>
-    <a href="account.html">Profile</a>
+    <a href="help.html">Help</a>
     <div id="signout">
         <button class="js-signout-btn" onClick="signout()">Sign Out</button>
     </div>
