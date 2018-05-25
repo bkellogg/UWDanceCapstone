@@ -174,22 +174,6 @@ class StaticProfile extends Component {
                       <h1 id="profileName">{this.state.user.firstName} {this.state.user.lastName}</h1>
                     </div>
                   </div>
-
-                  <div className="resumeWrap">
-                    <div id="resume">
-                      <section>
-                        {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                        {this.state.resume != null && (
-                          <div>
-                            <a href={Util.API_URL_BASE + "users/" + this.state.userID + "/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
-                          </div>
-                        )}
-
-                      </section>
-                    </div>
-                    </div>
-                    
-
                     </div>
 
 
@@ -202,6 +186,19 @@ class StaticProfile extends Component {
                           {this.state.user.bio === "" && " Dancer has no bio"}
                         </section>
                       </div>
+                      <div className="resumeWrap">
+                    <div id="resume">
+                      <section>
+                        {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                        {this.state.resume != null && (
+                          <div>
+                            <a href={Util.API_URL_BASE + "users/" + this.state.userID + "/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                          </div>
+                        )}
+
+                      </section>
+                    </div>
+                    </div>
                   <div id="history">
                     <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
                     {this.state.history.length > 0 && this.state.history.map((p, i) => {

@@ -30,6 +30,7 @@ h1#profileName{
 
 .editButton {
   position: absolute;
+  padding-bottom: 20px;
   top: 0;
   right: 0;
 }
@@ -126,6 +127,7 @@ img#photo {
     height: 200px;
     display: block;
     margin: auto;
+    margin-top: 40px;
   }
 
   h1#profileName{
