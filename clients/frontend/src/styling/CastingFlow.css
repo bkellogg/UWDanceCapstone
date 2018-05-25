@@ -210,6 +210,11 @@ th{
     margin-top: 25px;
 }
 
+.postCastingLarge{
+    background-color: #22A7E0 !important;
+    height: 50px;
+}
+
 /*SHARED*/
 .smallHeading{
     font-size: 15px;
