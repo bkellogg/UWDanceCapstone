@@ -1,6 +1,7 @@
 "use strict";
 
 let nameLoc = document.querySelector(".user-name-loc");
+let emailLoc = document.querySelector(".user-email-loc");
 let bioContent = document.querySelector(".bio-content");
 let imgLoc = document.querySelector(".image-loc");
 
@@ -38,6 +39,7 @@ makeRequest("users/" + userID, {}, "GET", true)
     .then((data) => {
         nameLoc.textContent = data.firstName + " " + data.lastName + " (" + data.role.displayName + ")";
         bioContent.textContent = data.bio;
+        emailLoc.textContent = data.email;
     })
     .catch((error) => {
         console.error(error);

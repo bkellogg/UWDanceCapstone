@@ -11,7 +11,7 @@ class AvatarEditorConsole extends Component {
     position: { x: 0.5, y: 0.5 },
     scale: 1,
     rotate: 0,
-    borderRadius: 200,
+    borderRadius: 0,
     preview: null,
     width: 200,
     height: 200,

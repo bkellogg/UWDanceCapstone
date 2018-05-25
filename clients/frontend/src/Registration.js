@@ -17,9 +17,14 @@ import './styling/Audition.css';
 const styles = {
   customWidthText: {
     width: 500,
+    paddingLeft: '10px'
   },
   customWidth: {
     width: 80,
+    backgroundColor: 'white',
+    border: '1px solid lightgray',
+    borderRadius: '5px',
+    paddingLeft: '5px'
   }
 };
 
@@ -93,7 +98,7 @@ class Registration extends Component {
               </div>
               <br />
               <Checkbox
-                iconStyle={{ fill: '#22A7E0' }}
+                labelStyle={{fontSize: "14px", fontWeight: '500', color: 'hsl(0, 0%, 29%)'}}
                 label="I confirm I am enrolled in a technique class for the quarter during which the show is occuring."
                 onClick={() => { this.setState({ clicked: !this.state.clicked }) }}
               />
@@ -107,11 +112,13 @@ class Registration extends Component {
             <div className="row">
               <div><p>4. Please indicate any additional notes below</p></div>
               <TextField
+                className="textField"
                 name="comments"
                 onChange={this.addComment}
                 multiLine={true}
                 style={styles.customWidthText}
                 rows={2}
+                hintText="EX: I am not available on Saturday, April 29th"
               />
             </div>
 

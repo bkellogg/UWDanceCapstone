@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import './styling/CastingFlow.css';
 import './styling/General.css';
 import img from './imgs/defaultProfile.jpg';
-import Button from 'material-ui/RaisedButton';
+// import Button from 'material-ui/RaisedButton';
+import { Button } from 'react-materialize';
+
 import Checkbox from 'material-ui/Checkbox';
 
 
@@ -326,6 +328,7 @@ class AllDancersRow extends Component {
                     {
                         this.props.resolveYourCast &&
                         <Button
+                            className="addDropButton"
                             backgroundColor="#708090"
                             style={{ color: '#ffffff', float: 'right' }}
                             onClick={() => this.dropFromCast()}>
@@ -334,7 +337,7 @@ class AllDancersRow extends Component {
                     {
                         this.props.resolveConflict &&
                         <Button
-                            backgroundColor="#708090"
+                            className="addDropButton"
                             style={{ color: '#ffffff', float: 'right' }}
                             onClick={() => this.dropFromCast()}>
                             DROP </Button>
@@ -342,7 +345,8 @@ class AllDancersRow extends Component {
                     {
                         this.props.checkAvailability &&
                         <Button
-                            backgroundColor="#708090"
+                            className="addDropButton"
+                            // backgroundColor="#708090"
                             style={{ color: '#ffffff', float: 'right' }}
                             onClick={() => this.dropFromCast()}>
                             DROP </Button>

@@ -20,11 +20,11 @@ html {
 }
 
 .btn, .btn-large{
-  background-color: #708090;
+  background-color: hsl(0, 0%, 45%);
 }
 
 .btn:hover{
-  background-color: rgb(0, 188, 212);
+  background-color: #22A7E0;
   color: white;
 }
 

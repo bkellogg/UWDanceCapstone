@@ -133,7 +133,7 @@ class StaticProfile extends Component {
 
   getUser = () => {
     Util.makeRequest("users/" + this.state.userID, "", "GET", true)
-    .then((res) => {
+      .then((res) => {
         if (res.ok) {
           return res.json();
         }
@@ -141,85 +141,94 @@ class StaticProfile extends Component {
           Util.signOut()
         }
         return res.text().then((t) => Promise.reject(t));
-    })
-    .then(user => {
+      })
+      .then(user => {
         this.setState({
-            user : user
+          user: user
         })
-    })
-    .catch((err) => {
+      })
+      .catch((err) => {
         console.error(err)
         Util.handleError(err)
-    });
+      });
   }
 
   render() {
     return (
       <section className="main">
         <div className="mainView">
-          <h1 className="pagetitle">Dancer Profile </h1>
+          <div className="pageContentWrap">
+            <h1 className="pagetitle">Dancer Profile </h1>
 
-          <div className="card1">
-            {/* FIRST CARD */}
-            <div className="wrap">
-              <div className="header">
-                <div className="photoContainerWrap">
+            <div className="fullWidthCard">
+              {/* FIRST CARD */}
+              <div className="wrap">
+                <div className="header">
                   <div id="photoContainer" className="photoContainer">
                     <img id="photo" alt="profile" src={this.state.photoSrc}></img>
                   </div>
-                </div>
 
-                <div className="nameAndBioWrap">
-                  <div id="name" className="name">
-                    <h1 id="profileName">{this.state.user.firstName} {this.state.user.lastName}</h1>
+
+                  <div className="nameWrap">
+                    <div id="name" className="name">
+                      <h1 id="profileName">{this.state.user.firstName} {this.state.user.lastName}</h1>
+                    </div>
                   </div>
-                  <div id="bio" className="bio">
-                    <div className="subheader"><b>Dancer Bio:</b></div>
+
+                  <div className="resumeWrap">
+                    <div id="resume">
                       <section>
-                        {this.state.user.bio !== "" && this.state.user.bio}
-                        {this.state.user.bio === "" && " Dancer has no bio"}
+                        {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                        {this.state.resume != null && (
+                          <div>
+                            <a href={Util.API_URL_BASE + "users/" + this.state.userID + "/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                          </div>
+                        )}
+
                       </section>
                     </div>
-                </div>
-              </div>
-            </div>
-            <div className="mainContentBorder">
-              <div id="history">
-                <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
-                {this.state.history.length > 0 && this.state.history.map((p, i) => {
-                  return (
-                    //TODO STYLE THESE
-                    <div className="showHistory" key={i}>
-                      <p>{p.name}</p>
-                      <p>{p.year}</p>
                     </div>
-                  )
-                })}
-                {this.state.history.length === 0 &&
-                  <p> Dancer has no piece history </p>
-                }
-              </div>
+                    
 
-              <div id="resume">
-                  <section>
-                    {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                    {this.state.resume != null && (
-                      <div>
-                        <a href={Util.API_URL_BASE + "users/" + this.state.userID + "/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
+                    </div>
+
+
+                </div>
+                <div className="mainContentBorder">
+                <div id="bio" className="bio">
+                        <div className="subheader"><b>Dancer Bio:</b></div>
+                        <section>
+                          {this.state.user.bio !== "" && this.state.user.bio}
+                          {this.state.user.bio === "" && " Dancer has no bio"}
+                        </section>
                       </div>
-                    )}
+                  <div id="history">
+                    <div id="historyTitle" className="subheader"><b>Piece History:</b></div>
+                    {this.state.history.length > 0 && this.state.history.map((p, i) => {
+                      return (
+                        //TODO STYLE THESE
+                        <div className="showHistory" key={i}>
+                          <p>{p.name}</p>
+                          <p>{p.year}</p>
+                        </div>
+                      )
+                    })}
+                    {this.state.history.length === 0 &&
+                      <p> Dancer has no piece history </p>
+                    }
+                  </div>
 
-                  </section>
+
+
+                </div>
+
+
               </div>
-
             </div>
-
-
           </div>
-        </div>
       </section>
-    );
-  };
-}
-
+        );
+      };
+    }
+    
 export default StaticProfile;

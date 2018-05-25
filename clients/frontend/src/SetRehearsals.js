@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util';
-import Button from 'material-ui/RaisedButton';
+import { Button } from 'react-materialize';
 import Dialog from 'material-ui/Dialog';
 import LinearProgress from 'material-ui/LinearProgress';
 import FlatButton from 'material-ui/FlatButton';
@@ -288,8 +288,9 @@ class SetRehearsals extends Component {
                   <div className="postCastingWrap">
                     <div className="postCasting">
                       <Button
+                        className="postCastingLarge"
                         backgroundColor="#22A7E0"
-                        style={{ color: '#ffffff', width: '100%', height: '50' }}
+                        style={{ color: '#ffffff', width: '100%', height: '60' }}
                         onClick={this.handleOpen}
                         disabled={finished}>
                         POST CASTING</Button>
@@ -333,8 +334,8 @@ class SetRehearsals extends Component {
                 {rehearsalSchedule}
                 <br />
                 <br /> 
+                An email will be sent to your cast with these times, and they will accept or decline their casting within <b className="importantText warningText">48 hours</b>.
                 </div>
-                <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting within <b>48 hours</b>.</p>
                 {
                   this.state.castingError &&
                   <div className="serverError">
