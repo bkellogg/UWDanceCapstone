@@ -360,12 +360,20 @@ class Piece extends Component {
                 // Styling for toggle header is in general
                 <div className="toggleHeader" onClick={this.toggleCalendar}>
                   <h2 className="smallHeading">Calendar</h2>
+                  <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">Add rehearsals by <b className="emphasis">clicking & dragging</b> on the calendar. Select events by <b className="emphasis">clicking</b> on the rehearsal name. </span>
+                  </div>
                   <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
               }
               {
                 this.state.openCalendar &&
                 <section>
+                  <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">Add rehearsals by <b className="emphasis">clicking & dragging</b> on the calendar. Select events by <b className="emphasis">clicking</b> on the rehearsal name. </span>
+                  </div>
                   <div className="toggleHeader" onClick={this.toggleCalendar}>
                     <h2 className="smallHeading">Calendar</h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
@@ -380,6 +388,10 @@ class Piece extends Component {
                 !this.state.openCast &&
                 // Styling for toggle header is in general
                 <div className="toggleHeader" onClick={this.toggleCast}>
+                  <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">You can <b className="emphasis">drop</b> dancers from your cast here, and view <b className="emphasis">cast availability</b></span>
+                  </div>
                   <h2 className="smallHeading">My Cast</h2>
                   <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
@@ -387,8 +399,11 @@ class Piece extends Component {
               {
                 this.state.openCast &&
                 <section>
-
                   <div className="toggleHeader" onClick={this.toggleCast}>
+                  <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">You can <b className="emphasis">drop</b> dancers from your cast here, and view <b className="emphasis">cast availability</b></span>
+                  </div>
                     <h2 className="smallHeading">My Cast</h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
@@ -432,6 +447,10 @@ class Piece extends Component {
               {
                 !this.state.openInfo &&
                 <div className="toggleHeader" onClick={this.toggleInfo}>
+                  <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">Fill out this info sheet with <b className="emphasis">piece details</b>. Some information has been auto-filled for you.</span>
+                  </div>
                   <h2 className="smallHeading">Information Sheet</h2>
                   <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
@@ -440,6 +459,10 @@ class Piece extends Component {
                 this.state.openInfo &&
                 <section>
                   <div className="toggleHeader" onClick={this.toggleInfo}>
+                    <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">Fill out this info sheet with <b className="emphasis">piece details</b>. Some information has been auto-filled for you.</span>
+                  </div>
                     <h2 className="smallHeading">Information Sheet</h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
