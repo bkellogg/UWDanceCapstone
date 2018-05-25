@@ -14,7 +14,7 @@ const timesFormatted = ["10:00 AM", "", "11:00 AM", "", "12:00 PM", "", "1:00 PM
 //const colors = ["#fff", "#9ABB3E", "#CC66AD", "#2B823D", "#6640BF", "#C8BA5B", "#7A2932", "#260D0D"] visually distinct, helpful for debugging
 //const colors = ["#fff", "#D6E0F5", "#ADC2EB", "#85A3E0", "#5C85D6", "#3366CC", "#2952A3", "#1F3D7A", "#142952"]
 
-const colors = ["#fff", "#e3eaf8", "#c8d6f2", "#adc2eb","#91aee4","#7699de","#5b85d7", "#4071d0",  "#2f60bf","#2852a4", 
+const colors = ["#fff", "#c8d6f2", "#adc2eb","#91aee4","#7699de","#5b85d7", "#4071d0",  "#2f60bf","#2852a4", 
 "#214489", "#1b376d", "#142952", "#0d1b37", "#070e1b", "#000"]
 
 class AvailabilityOverlap extends Component {

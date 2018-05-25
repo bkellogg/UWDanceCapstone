@@ -118,6 +118,7 @@ class Registration extends Component {
                 multiLine={true}
                 style={styles.customWidthText}
                 rows={2}
+                hintText="EX: I am not available on Saturday, April 29th"
               />
             </div>
 

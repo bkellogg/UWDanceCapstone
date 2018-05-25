@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import * as Util from './util';
+import moment from 'moment';
 import PendingInvites from './PendingInvites';
+import Button from 'react-materialize/lib/Button';
 import './styling/General.css';
-import { Button } from 'react-materialize';
 //styling
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';
@@ -105,6 +106,7 @@ class Dashboard extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .then(pieces => {
+        console.log(pieces)
         this.setState({
           pending: pieces
         })
@@ -132,22 +134,27 @@ class Dashboard extends Component {
         </div>
       )
     })
-    let displayShows = this.props.shows.map((anncouncement, index) => {
-      var moment = require('moment');
-      var auditionDay = moment(anncouncement.audition.time).format('MMM. Do, YYYY');
-      var auditionTime = moment(anncouncement.audition.time).utcOffset('-0700').format("hh:mm a");
-      var auditionLink = anncouncement.name.split(' ').join('');
+    let displayShows = this.props.shows.map((announcement, index) => {
+      let auditionDay = moment(announcement.audition.time).format('MMM. Do, YYYY');
+      let auditionTime = moment(announcement.audition.time).utcOffset('-0700').format("hh:mm a");
+      let auditionLink = announcement.name.split(' ').join('');
+      //check that the day of the audition hasn't passed
+      let today = moment()
+      let time = moment(announcement.audition.time).utcOffset('-0700')
+      // if (!today.isBefore(time)) {
+      //   return []
+      // }
       return (
         <div key={index} className="announcement newAuditionBorderColor">
           {
             <div className="auditionAnnouncementCardColor">
               <div className="showTitle">
-                <h2 className="auditionHeading">Audition for the {anncouncement.name}</h2>
+                <h2 className="auditionHeading">Audition for the {announcement.name}</h2>
               </div>
               <div className="showInformation">
                 <p> <b>Date:</b> {auditionDay} </p>
                 <p> <b>Time:</b> {auditionTime} </p>
-                <p> <b>Location:</b> {anncouncement.audition.location} </p>
+                <p> <b>Location:</b> {announcement.audition.location} </p>
                 <div className="buttons">
                 <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link></Button>
                 </div>

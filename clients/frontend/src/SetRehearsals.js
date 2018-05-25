@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util';
-import Button from 'material-ui/RaisedButton';
+import { Button } from 'react-materialize';
 import Dialog from 'material-ui/Dialog';
 import LinearProgress from 'material-ui/LinearProgress';
 import FlatButton from 'material-ui/FlatButton';
@@ -289,7 +289,7 @@ class SetRehearsals extends Component {
                     <div className="postCasting">
                       <Button
                         backgroundColor="#22A7E0"
-                        style={{ color: '#ffffff', width: '100%', height: '50' }}
+                        style={{ color: '#ffffff', width: '100%', height: '60' }}
                         onClick={this.handleOpen}
                         disabled={finished}>
                         POST CASTING</Button>
