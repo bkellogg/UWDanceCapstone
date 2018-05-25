@@ -7,32 +7,38 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>UW Stage Admin Console</title>
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/common.css">
 
 </head>
 
 <body>
-    <h1>UW Stage Admin Console Login</h1>
-    <form class="signin-form">
-        <!-- <div class="imgcontainer">
+    <div class="page-wrap">
+        <div class="main-header">
+            <img class="stage-logo" src="/img/logoex.png" alt="STAGE Logo">
+            <h1>Admin Console Login</h1>
+        </div>
+        <form class="signin-form">
+            <!-- <div class="imgcontainer">
             <img src="img/admin_temp.jpg" alt="Admin" class="admin">
         </div> -->
 
-        <div class="email">
-            <h2>Email:</h2>
-            <input id="email-input" type="text" placeholder="Enter Email">
+            <div class="email">
+                <p>Email:</p>
+                <input id="email-input" type="text" placeholder="Enter Email">
+            </div>
+
+            <div class="password">
+                <p>Password:</p>
+                <input id="password-input" type="password" placeholder="Enter Password">
+            </div>
+
+            <input type="submit" id="signin" value="Sign In" disabled="disabled" />
+        </form>
+
+        <div class="js-error"></div>
+        <div class="reset-password">
+            <a href="./reset.html">Forgot Password?</a>
         </div>
-
-        <div class="password">
-            <h2>Password:</h2>
-            <input id="password-input" type="password" placeholder="Enter Password">
-        </div>
-
-        <input type="submit" id="signin" value="Sign In" disabled="disabled" />
-    </form>
-
-    <div class="js-error"></div>
-    <div class="reset-password">
-        <a href="./reset.html">Forgot Password?</a>
     </div>
 </body>
 

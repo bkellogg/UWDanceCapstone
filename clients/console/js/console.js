@@ -31,7 +31,7 @@ function getAnnouncements() {
         })
         .then((data) => {
             $(data.announcements).each(function (index, value) {
-                $(".active-announcements").append('<div class="announcements" id="message">' + value.message + '</div>')
+                $(".active-announcements").append('<div class="announcements dashboardAnnouncement" id="message">' + value.message + '</div>')
                 $("#message").attr("id", value.id)
                 $("#remove").attr("id", value.id)
             });
