@@ -227,6 +227,7 @@ class Casting extends Component {
                     </Step>
                   </Stepper>
 
+
                   {/*BUTTONS*/}
                   <div style={contentStyle}>
                     <div style={{ marginTop: 12 }}>
@@ -261,7 +262,7 @@ class Casting extends Component {
           actions={[
             <FlatButton
               label="Cancel"
-              style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px', textTransform: 'capitalize' }}
+              style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px', textTransform: "none" }}
               primary={false}
               onClick={this.cancelCast}
             />,

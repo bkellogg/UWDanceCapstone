@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactAvatarEditor from 'react-avatar-editor'
 import Dropzone from 'react-dropzone'
 import "./styling/General.css"
+import "./styling/AvatarEditorConsole.css"
 
 class AvatarEditorConsole extends Component {
   state = {
@@ -10,7 +11,7 @@ class AvatarEditorConsole extends Component {
     position: { x: 0.5, y: 0.5 },
     scale: 1,
     rotate: 0,
-    borderRadius: 200,
+    borderRadius: 0,
     preview: null,
     width: 200,
     height: 200,
@@ -91,6 +92,7 @@ class AvatarEditorConsole extends Component {
   render() {
     return (
       <div>
+        <div className="photoContainer">
         <Dropzone
           onDrop={this.handleDrop}
           disableClick
@@ -112,6 +114,8 @@ class AvatarEditorConsole extends Component {
             />
           </div>
         </Dropzone>
+        </div>
+        <div className="nameWrap">
         <br />
         <p>New File:</p>
         <input name="newImage" type="file" onChange={this.handleNewImage} />
@@ -132,6 +136,7 @@ class AvatarEditorConsole extends Component {
         <button onClick={this.rotateLeft}>Left</button>
         <button onClick={this.rotateRight}>Right</button>
         </p>
+        </div>
         {/* <br />
         <br />
         <input type="button" onClick={this.handleSave} value="Preview" />

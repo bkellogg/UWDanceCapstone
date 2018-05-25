@@ -7,6 +7,8 @@ var errorBox = document.querySelector(".js-error");
 var announcementTypeName = document.getElementById("announcementTypeName-input");
 var description = document.getElementById("description-input");
 
+var announcementTypes = [];
+
 getAnnouncementTypes()
 
 newAnnouncementTypeForm.addEventListener("submit", function (evt) {
@@ -45,8 +47,24 @@ function getAnnouncementTypes() {
         })
         .then((data) => {
             $(data).each(function (index, value) {
-              $("ul").append("<li>"+ value.name + " - " + value.desc + "</li>")
+                var announcementInfo = [];
+                announcementInfo.push(value.name);
+                announcementInfo.push(value.desc)
+                announcementTypes.push(announcementInfo)
             });
         })
+        .then(() => {
+            populateAnnouncementTypeTable();
+        })
+}
 
+function populateAnnouncementTypeTable() {
+    var rows = []
+    rows.push('<tr>' +
+        '<th>Announcement Name</th>' +
+        '<th>Announcement Description</th></tr>')
+    rows.push($.map(announcementTypes, function (value, index) {
+        return '<tr><td>' + value[0] + '</td><td>' + value[1] + '</td></tr>';
+    }));
+    $('#announcement_type_info').html(rows.join(''));
 }

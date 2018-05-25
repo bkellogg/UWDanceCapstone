@@ -2,7 +2,7 @@ export const headerAuthorization = "Authorization";
 
 export const host = "dasc.capstone.ischool.uw.edu";
 export const API_URL_BASE = "https://"+ host +"/api/v1/";
-
+export const PAGEMAX = 1;
 
 export function saveAuth(auth) {
     localStorage.setItem("auth", auth);
@@ -71,10 +71,20 @@ export function refreshLocalUser() {
 }
 
 export function signOut() {
+    makeRequest("sessions", {}, "DELETE", true);
     clearAuthAndUser();
     window.location.reload()
     window.location = "/"
 }
+
+export function titleCase (str) {
+    if ((str===null) || (str===''))
+         return false;
+    else
+     str = str.toString();
+  
+   return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+  }
 
 export function uploadPhoto(val){
     let file = val;
@@ -82,9 +92,6 @@ export function uploadPhoto(val){
     data.append("image", file.files[0]);
     let xhr = new XMLHttpRequest();
 
-    xhr.addEventListener("readystatechange", function () {
-        
-    });
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
@@ -106,12 +113,6 @@ export function uploadResume(val){
     data.append("resume", file.files[0]);
 
     let xhr = new XMLHttpRequest();
-
-    xhr.addEventListener("readystatechange", function () {
-        if (this.readyState === 4) {
-            
-        }
-    });
 
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {

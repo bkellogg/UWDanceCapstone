@@ -38,8 +38,8 @@ body,html {
   width: auto;
   max-width: 500px;
   display: inline-block;
-  padding: 50px;
-  margin: 2%;
+  padding: 35px;
+  margin: 1%;
   margin-bottom: 8%;
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -58,6 +58,20 @@ body,html {
 
 Button {
   margin: 10px;
+}
+
+/*FORGOT PASSWORD*/
+.submitButton{
+  background-color: hsl(0, 0%, 45%) !important;
+}
+
+.submitButton:hover{
+  background-color: #22A7E0 !important;
+}
+
+.emailField{
+  border: 1px solid lightgrey;
+  border-radius: 5px;
 }
 
 .link{

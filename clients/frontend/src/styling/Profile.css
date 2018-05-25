@@ -1,12 +1,13 @@
 .header, .mainContentBorder{
   width: 100%;
   padding: 2%;
+  padding-bottom: 0;
   position: relative;
+  margin-bottom: 15px;
 }
 
 .mainContentBorder{
-  border-top: 1px solid hsl(0, 0%, 45%);
-    padding-top: 25px;
+  padding-top: 25px;
 }
 
 .photoContainer {
@@ -16,16 +17,20 @@
   vertical-align: bottom;
 }
 
-.nameAndBioWrap{
+h1#profileName{
+  font-size: 28px;
+}
+
+.nameWrap, .resumeWrap{
   width: 60%;
   position: relative;
   display: inline-block;
-  vertical-align: top;
-  padding-top: 100px;
+  vertical-align: bottom;
 }
 
 .editButton {
   position: absolute;
+  padding-bottom: 20px;
   top: 0;
   right: 0;
 }
@@ -33,21 +38,29 @@
 img#photo {
   width: 200px;
   height: 200px;
-  border-radius: 50%;
 }
 
 .name, .bio{
   width: auto;
 }
 
-.name, #editName {
+.name {
   z-index: 1;
   text-transform: capitalize;
-  padding-bottom: 1%;
 }
 
-.bio, #editBio{
+.email {
+  text-transform: lowercase;
+  text-align: left;
+}
+
+.bio{
   z-index: 2;
+  width: 80%;
+}
+
+.bio, .resumeWrap{
+  padding-bottom: 25px;
 }
 
 .card1, .card2, #photo{
@@ -55,6 +68,13 @@ img#photo {
   /* box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;  */
 }
 
+#editName{
+  display: block;
+}
+
+#editBio{
+  display: block;
+}
 
 #historyTitle {
   margin-bottom:15px
@@ -64,7 +84,7 @@ img#photo {
   margin-bottom: 15px
 }
 
-#history, #resume {
+#history {
   margin-bottom:40px
 }
 
@@ -74,7 +94,7 @@ img#photo {
 }
 
 #firstName, #lastName{
-  margin-right: 10px
+  margin-right: 10px;
 }
 
 
@@ -92,19 +112,30 @@ img#photo {
       padding-bottom: 0px;
   }
   
-  .nameAndBioWrap{
+  .nameWrap{
     margin-top: 25px;
     width: 100%;
-    text-align: center;
     padding-bottom: 25px;
     padding-top: 0;
+  }
+
+  .resumeWrap{
+    position: relative;
+  }
+
+  .bio{
+    width: 100%;
   }
 
   img#photo {
     width: 200px;
     height: 200px;
-    border-radius: 50%;
     display: block;
     margin: auto;
+    margin-top: 40px;
+  }
+
+  h1#profileName, .email{
+    text-align: center;
   }
 }

@@ -27,7 +27,7 @@ function getUsers() {
                 user.push(value.lastName);
                 user.push(value.email);
                 user.push(value.role.displayName);
-                user.push('<a href="userProfile.html?user=' + value.id + '">Profile</a>');
+                user.push('<a href="userProfile.html?user=' + value.id + '" target="_blank">Profile</a>');
                 allUsers.push(user);
             });
         })
@@ -41,14 +41,24 @@ function getUsers() {
 }
 
 function populateUserTable() {
-    $('#users_table').DataTable({
-        "data": allUsers,
-        "paging": false,
-        "IDisplayLength": 25,
-        "bFilter": false,
-        "bInfo": false
-    });
+    var rows = []
+    rows.push('<tr data-sort-method="none">' + 
+    '<th>ID</th>' + 
+    '<th>First Name</th>' + 
+    '<th>Last Name</th>' + 
+    '<th>Email</th>' + 
+    '<th>Role</th>' +
+    '<th>View Profile</th></tr>')
+    rows.push($.map(allUsers, function (value, index) {
+        return '<tr><td>' + value[0] + '</td><td>' + value[1] +
+            '</td><td>' + value[2] + '</td><td>' + value[3] +
+            '</td><td>' + value[4] + '</td><td>' + value[5] +
+            '</td><td></tr>';
+    }));
+    $('#users_table').html(rows.join(''));
+    new Tablesort(document.getElementById('users_table'));
 }
+
 
 function createNextLink(pageNum) {
     var nextPage = document.createElement("a");
@@ -67,6 +77,3 @@ function createPreviousLink(pageNum) {
     prevPage.href = "getUsers.html?page=" + (Number(pageNum) - 1);
     document.body.appendChild(prevPage);
 }
-
-
-// https://{{url}}/api/v1/users/all?page=1&email=brendan6@uw.edu&fname=brendan&lname=kellogg

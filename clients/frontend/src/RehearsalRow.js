@@ -8,25 +8,25 @@ import './styling/CastingFlowMobile.css';
 
 const dateStyle = {
   customDateStyle: {
-    width: 'auto',
+    width: "100%",
     minWidth: 125,
-    fontSize: 14
+    fontSize: 14,
   },
 };
 
 const styles = {
   customTimeStyle: {
-    width: 'auto',
-    minWidth: 110,
-    fontSize: 13
+    width: "100%",
+    minWidth: 125,
+    fontSize: 13,
   },
 };
 
 const times = ["1000", "1030", "1100", "1130", "1200", "1230", "1300", "1330", "1400", "1430",
-  "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100"]
+  "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130", "2200", "2230"]
 
 const formattedTimes = ["10:00am", "10:30am", "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM",
-  "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM"]
+  "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM", "5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM", "10:00 PM", "10:30 PM"]
 
 class RehearsalRow extends Component {
   constructor(props) {
@@ -116,7 +116,6 @@ class RehearsalRow extends Component {
           <br />
           <div className="singleField">
             <SelectField
-              className="selectField"
               maxHeight={300}
               style={styles.customTimeStyle}
               floatingLabelText="Start Time"
@@ -132,7 +131,6 @@ class RehearsalRow extends Component {
           <br />
           <div className="singleField">
             <SelectField
-              className="selectField"
               maxHeight={300}
               style={styles.customTimeStyle}
               floatingLabelText="End Time"

@@ -10,7 +10,7 @@ import Profile from './Profile';
 import Casting from './Casting';
 import MobileNavigationElement from './MobileNavigation';
 import NavigationElement from './NavigationElement';
-import DancerPiece from './DancerPiece';
+import DancerPieceWrapper from './DancerPieceWrapper';
 import StaticProfile from './StaticProfile';
 import { Button } from 'react-materialize';
 import Drawer from 'material-ui/Drawer';
@@ -23,6 +23,7 @@ import './styling/Main.css';
 import './styling/Navigation.css';
 import './styling/MobileNavigation.css';
 import './styling/General.css';
+import AuditionRegistrationList from './AuditionRegistrationList';
 
 
 const style = {
@@ -49,7 +50,7 @@ class Main extends Component {
     super(props);
     this.state = {
       user: JSON.parse(localStorage.user),
-      shows: null,
+      shows: [],
       routing: null,
       firstRender: true,
       showTypes: null,
@@ -68,9 +69,9 @@ class Main extends Component {
     };
   }
 
+  //only gets the first page
   getCurrShows = () => {
-    //TODO deal with the fact that there's going to be pages
-    Util.makeRequest("shows?history=all&includeDeleted=false", {}, "GET", true).then(res => {
+    Util.makeRequest("shows?page=1", {}, "GET", true).then(res => {
       if (res.ok) {
         return res.json()
       }
@@ -92,7 +93,7 @@ class Main extends Component {
   }
 
   getShowTypes = (shows) => {
-    Util.makeRequest("shows/types?includeDeleted=true", {}, "GET", true).then((res) => {
+    Util.makeRequest("shows/types", {}, "GET", true).then((res) => {
       if (res.ok) {
         return res.json()
       }
@@ -105,19 +106,14 @@ class Main extends Component {
     }).then((data) => {
       let showTypes = {};
       data.map(function (show) {
-        return showTypes[
-          show
-            .id
-            .toString()
-        ] = show.desc
+        return showTypes[show.id.toString()] = show.desc
       })
       return showTypes
     }).then((showTypes) => {
       this.setState({ showTypes: showTypes })
     }).then(() => {
-      shows.map(show => {
+      shows.forEach(show => {
         this.getAudition(show)
-        return this.state.currShows
       })
     }).catch(err => {
       console.log(err)
@@ -154,10 +150,7 @@ class Main extends Component {
   }
 
   getNavigation = () => {
-    let showNav = this
-      .state
-      .currShows
-      .map((show, index) => {
+    let showNav = this.state.currShows.map((show, index) => {
         return <NavigationElement key={index} user={this.state.user} showTitle={show.name} />
       })
 
@@ -198,7 +191,7 @@ class Main extends Component {
               <div className="hamburger">
                 <div className="mobileNavLogoWrap">
                   <RaisedButton
-                    backgroundColor="#27384A"
+                    backgroundColor="#1C2C50"
                     className="hamburgerButton"
                     style={style}
                     onClick={this.handleToggle}>
@@ -232,7 +225,7 @@ class Main extends Component {
 
                   <Link to="/faq">
                     <MenuItem onClick={this.handleClose}>
-                      <p className="mobileNavItem">FAQ</p>
+                      <p className="mobileNavItem">Help</p>
                     </MenuItem>
                   </Link>
                 </div>
@@ -254,6 +247,7 @@ class Main extends Component {
             .state
             .currShows
             .map((show, i) => {
+              console.log(show)
               let showName = show.name
               let path = "/" + showName
                 .split(' ')
@@ -271,7 +265,7 @@ class Main extends Component {
                   key={i + "piece"}
                   exact
                   path={path + "/piece"}
-                  render={props => <DancerPiece {...props} name={show.name} audition={show.auditionID} />} />
+                  render={props => <DancerPieceWrapper {...props} name={show.name} showID={show.show} audition={show.auditionID} />} />
 
                 routes.push(route1)
                 routes.push(route2)
@@ -307,9 +301,20 @@ class Main extends Component {
                     audition={show.auditionID}
                     show={show.show} />} />
 
+                let route4 = <Route
+                  key={i + "choreoaudition"}
+                  exact
+                  path={path + "/audition"}
+                  render={props => <AuditionRegistrationList
+                    {...props}
+                    name={show.name}
+                    audition={show.auditionID}
+                    show={show.show} />} />
+
                 routes.push(route1)
                 routes.push(route2)
                 routes.push(route3)
+                routes.push(route4)
               } else { //admin
 
                 let route1 = <Route

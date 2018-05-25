@@ -26,15 +26,18 @@ class NavigationElement extends Component {
                     }
                     {/*Choreographer*/}
                     {this.state.role === 70 && 
-                        <li className="dropDown"><Link to={{pathname:address + "/casting"}}>Casting</Link></li> &&
-                        <li className="dropDown"><Link to={{pathname:address + "/people"}}>People</Link></li>
+                        <section>
+                            <li className="dropDown"><Link to={{pathname:address + "/casting"}}>Casting</Link></li>
+                            <li className="dropDown"><Link to={{pathname:address + "/people"}}>People</Link></li> 
+                            <li className="dropDown"><Link to={{pathname:address + "/audition"}}>Audition</Link></li>
+                        </section>
                     }
                     {/*Admin*/}
                     {this.state.role === 100 && 
                         <section>
-                        <li className="dropDown"><Link to={{pathname:address + "/casting"}}>Casting</Link></li> 
-                        <li className="dropDown"><Link to={{pathname:address + "/people"}}>People</Link></li>
-                        <li className="dropDown"><Link to={{pathname: address + "/audition"}}>Audition</Link></li>
+                            <li className="dropDown"><Link to={{pathname:address + "/casting"}}>Casting</Link></li> 
+                            <li className="dropDown"><Link to={{pathname:address + "/people"}}>People</Link></li>
+                            <li className="dropDown"><Link to={{pathname: address + "/audition"}}>Audition</Link></li>
                         </section>
                     }
                     <li className="dropDown"><Link to={{pathname:address + "/piece"}}>My Piece</Link></li>

@@ -21,11 +21,9 @@ class People extends Component {
   }
 
   getPeople = () => {
-    //API route to get people in an audition will go here
-    //that route is down, so for now we are just getting the first 100 active people in the data
     //TODO deal with pages
-    //STYLING NOTE: if you want to show dummy data change this.props.show to 1
-    Util.makeRequest("shows/" + this.props.show + "/users", "", "GET", true)
+    for(let i = 1; i <= Util.PAGEMAX; i++) {
+      Util.makeRequest("shows/" + this.props.show + "/users?page=" + i, "", "GET", true)
       .then(res => {
         if (res.ok) {
           return res.json()
@@ -36,12 +34,18 @@ class People extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .then(data => {
-        this.setState({ users: data.users })
+        console.log(data)
+        let currUsers = this.state.users
+        let newUsers = currUsers.concat(data.users)
+        this.setState({ 
+          users: newUsers
+        })
       })
       .catch(err => {
         console.log(err)
         Util.handleError(err)
       })
+    }
   }
 
   render() {
@@ -54,7 +58,7 @@ class People extends Component {
       <section className="main">
         <div className="mainView">
           <div className="pageContentWrap">
-            <h1>People</h1>
+            <h1>{this.props.name}: People</h1>
             <div className="fullWidthCard">
               <div className="wrap">
                 <div className="peopleList">

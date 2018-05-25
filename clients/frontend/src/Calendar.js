@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import * as Util from './util';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import Dialog from 'material-ui/Dialog';
@@ -10,9 +11,10 @@ import './styling/General.css';
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 const VIEWS = ['month', 'week', 'day']
 const MINTIME = new Date();
-MINTIME.setHours(8,30,0);
+MINTIME.setHours(8,0,0);
 const MAXTIME = new Date();
-MAXTIME.setHours(23,30,0);
+MAXTIME.setHours(23,0,0);
+
 
 class Calendar extends Component {
   constructor(props) {
@@ -29,20 +31,41 @@ class Calendar extends Component {
       },
       minTime : MINTIME,
       maxTime : MAXTIME,
+      rehearsalName: "Rehearsal",
       openSetRehearsal : false,
       openNewRehearsal : false,
-      events : []
+      events : [],
+      getRehearsalError: false,
+      addRehearsalError: false,
+      deleteRehearsalError: false,
+      modifyRehearsalError: false
     }
   };
 
   componentWillMount() {
-    this.formatEvents()
+    this.getEvents()
   }
 
-  formatEvents = () => {
-    //TODO turn this into a route
-    let events = JSON.parse(localStorage.rehearsals)
+  getEvents = () => {
+    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals", {}, "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(events => {
+      this.formatEvents(events)
+    })
+    .catch(err => {
+      this.setState({
+        getRehearsalError : err
+      })
+      console.error(err)
+    })
+  }
 
+  formatEvents = (events) => {
     let formattedEvents = []
     events.forEach((event) => {
       let start = new Date(event.start)
@@ -63,13 +86,17 @@ class Calendar extends Component {
   handleClose = () => {
     this.setState({
       openSetRehearsal : false,
-      openNewRehearsal: false
+      openNewRehearsal: false,
+      addRehearsalError: false,
+      deleteRehearsalError: false,
+      getRehearsalError: false,
+      modifyRehearsalError : false
     })
   }
 
-  onSelectExisting = (event) => {
+  onSelectExisting = (slotInfo) => {
     this.setState({
-      event : event,
+      slotInfo : slotInfo,
       openSetRehearsal : true
     })
   }
@@ -82,47 +109,138 @@ class Calendar extends Component {
   }
 
   deleteRehearsal = () => {
-    let event = this.state.event
-    
-    //go through all events and delete the one with the same ID
-    let events = this.state.events
-    events.forEach((e, i) => {
-      if(e.id === event.id){
-        events.splice(i, i + 1)
+    let slotInfo = this.state.slotInfo
+    console.log()
+    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals?ids=" + slotInfo.id , {}, "DELETE", true)
+    .then(res => {
+      if (res.ok) {
+        return res.text()
       }
+      return res.text().then((t) => Promise.reject(t));
     })
-    this.setState({
-      events : events,
-      openSetRehearsal : false
+    .then( res => {
+      this.setState({
+        openSetRehearsal : false
+      })
+      this.getEvents()
+    })
+    .catch(err => {
+      this.setState({
+        deleteRehearsalError : err
+      })
+      console.error(err)
     })
   }
 
   addRehearsal = () => {
+    console.log(this.state.slotInfo)
     let slotInfo = this.state.slotInfo
-    let events = this.state.events
-    let latestID = events[events.length - 1].id + 1
-
+    let body = []
     let rehearsalObject = {
-      id : latestID,
       title : this.state.rehearsalName,
-      start : new Date(slotInfo.start),
-      end : new Date(slotInfo.end)
+      start : moment(slotInfo.start).format("YYYY-MM-DDTHH:mm:ssZ"),
+      end : moment(slotInfo.end).format("YYYY-MM-DDTHH:mm:ssZ")
     }
-    events.push(rehearsalObject)
+    body.push(rehearsalObject)
+    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals", body, "POST", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then( res => {
+      this.setState({
+        openNewRehearsal : false,
+        rehearsalName: "Rehearsal"
+      })
+      this.getEvents()
+    })
+    .catch(err => {
+      this.setState({
+        addRehearsalError : err
+      })
+      console.error(err)
+    })
+  }
 
+  modifyRehearsal = (event) => {
+    let slotInfo = this.state.slotInfo
+    let body = {
+      title : this.state.rehearsalName,
+      start : moment(slotInfo.start).format("YYYY-MM-DDTHH:mm:ssZ"),
+      end : moment(slotInfo.end).format("YYYY-MM-DDTHH:mm:ssZ")
+    }
+    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals/" + slotInfo.id, body, "PATCH", true)
+    .then(res => {
+      if (res.ok) {
+        return res.text()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then( res => {
+      this.setState({
+        openSetRehearsal: false,
+        openNewRehearsal : false,
+        rehearsalName: "Rehearsal"
+      })
+      this.getEvents()
+    })
+    .catch(err => {
+      this.setState({
+        modifyRehearsalError : err
+      })
+      console.error(err)
+    })
+  }
+
+  newStart = (e) => {
+    let time = e.target.value
+    let date = moment(this.state.slotInfo.start).format('YYYY-MM-DD')
+    let newStart = date + "T" + time
+    newStart = new Date(moment(newStart).format("YYYY-MM-DDTHH:mm:ssZ"))
+    let slotInfo = this.state.slotInfo
+    slotInfo.start = newStart
     this.setState({
-      events : events,
-      openNewRehearsal : false
+      slotInfo: slotInfo
+    })
+  }
+
+  newEnd = (e) => {
+    let time = e.target.value
+    let date = moment(this.state.slotInfo.start).format('YYYY-MM-DD')
+    let newEnd = date + "T" + time
+    newEnd = new Date(moment(newEnd).format("YYYY-MM-DDTHH:mm:ssZ"))
+    let slotInfo = this.state.slotInfo
+    slotInfo.end = newEnd
+    this.setState({
+      slotInfo: slotInfo
+    })
+  }
+
+  newDate = (e) => {
+    let date = e.target.value
+    let slotInfo = this.state.slotInfo
+    let startTime = moment(slotInfo.start).format("HH:mm")
+    let endTime = moment(slotInfo.end).format("HH:mm")
+    slotInfo.start = new Date(moment(date + "T" + startTime).format("YYYY-MM-DDTHH:mm:ssZ"))
+    slotInfo.end = new Date(moment(date + "T" + endTime).format("YYYY-MM-DDTHH:mm:ssZ"))
+    this.setState({
+      slotInfo : slotInfo
     })
   }
 
   render() {
-    let event = this.state.event
     let slotInfo = this.state.slotInfo
-    console.log(slotInfo)
     return (
       <section>
-        <BigCalendar style={{ height: "650px", width: "100%" }}
+        {
+          this.getRehearsalError &&
+          <div className="serverError">
+            Error getting piece rehearsals: {Util.titleCase(this.getRehearsalError)}
+          </div>
+        }
+        <BigCalendar style={{ height: "710px", width: "100%" }}
           selectable
           defaultDate={new Date()}
           defaultView='week'
@@ -131,13 +249,13 @@ class Calendar extends Component {
           step={30}
           min={this.state.minTime}
           max={this.state.maxTime}
-          onSelectEvent={event => this.onSelectExisting(event)}
+          onSelectEvent={slotInfo => this.onSelectExisting(slotInfo)}
           onSelectSlot={slotInfo => this.onSelectNew(slotInfo)}
         />
 
         {/*this is for deleting rehearsals that have been set*/}
         <Dialog
-          title={event.title}
+          title="Edit Rehearsal"
           actions={[
             <FlatButton
               label="Cancel"
@@ -149,17 +267,50 @@ class Calendar extends Component {
               label="Delete Rehearsal"
               style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
               primary={false}
-              keyboardFocused={true}
+              keyboardFocused={false}
               onClick={event => this.deleteRehearsal(event)}
             />,
+            <FlatButton
+              label="Save Changes"
+              style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+              primary={false}
+              keyboardFocused={false}
+              onClick={event => this.modifyRehearsal(event)}
+            />
           ]}
           modal={false}
           open={this.state.openSetRehearsal}
           onRequestClose={this.handleClose}
           >
           <div>
-            This rehearsal goes from {moment(event.start).format("hh:mm A")} to {moment(event.end).format("hh:mm A")}
+            <TextField
+              defaultValue={slotInfo.title}
+              floatingLabelText="Rehearsal Name"
+              onChange={(event) => this.setState({
+                rehearsalName : event.target.value
+              })}
+            />
+            <br />
+            <br />
+            This rehearsal goes from 
+            <input type="time" name="start" defaultValue={moment(slotInfo.start).format("HH:mm")} onChange={this.newStart}/>
+            to 
+            <input type="time" name="start" defaultValue={moment(slotInfo.end).format("HH:mm")} onChange={this.newEnd}/>
+            on 
+            <input type="date" name="date" defaultValue={moment(slotInfo.start).format('YYYY-MM-DD')} onChange={this.newDate}/>
           </div>
+          {
+            this.state.deleteRehearsalError &&
+            <div className="serverError">
+              Error deleting rehearsal : {this.state.addRehearsalError}
+            </div>
+          }
+          {
+            this.state.modifyRehearsalError &&
+            <div className="serverError">
+              Error modifying rehearsal : {Util.titleCase(this.state.modifyRehearsalError)}
+            </div>
+          }
         </Dialog>
 
         {/*this is the dialoge for adding a new one time rehearsal*/}
@@ -185,7 +336,8 @@ class Calendar extends Component {
           onRequestClose={this.handleClose}
           >
           <div>
-          <TextField
+            <TextField
+              style={{border: '1px solid lightgray', borderRadius: '5px', padding: '10px'}}
               hintText="Rehearsal Name"
               onChange={(event) => this.setState({
                 rehearsalName : event.target.value
@@ -194,12 +346,18 @@ class Calendar extends Component {
             <br />
             <br />
             This rehearsal will go from 
-            <input type="time" name="start" defaultValue={moment(slotInfo.start).format("HH:mm")}/>
+            <input type="time" name="start" defaultValue={moment(slotInfo.start).format("HH:mm")} onChange={this.newStart}/>
             to 
-            <input type="time" name="start" defaultValue={moment(slotInfo.end).format("HH:mm")} />
+            <input type="time" name="start" defaultValue={moment(slotInfo.end).format("HH:mm")} onChange={this.newEnd}/>
             on 
-            <input type="date" name="date" defaultValue={moment(slotInfo.start).format('YYYY-MM-DD')} />
+            <input type="date" name="date" defaultValue={moment(slotInfo.start).format('YYYY-MM-DD')} onChange={this.newDate}/>
           </div>
+          {
+            this.state.addRehearsalError &&
+            <div className="serverError">
+              Error setting rehearsal : {Util.titleCase(this.state.addRehearsalError)}
+            </div>
+          }
         </Dialog>
       </section>
     );

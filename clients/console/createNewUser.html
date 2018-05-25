@@ -10,26 +10,27 @@
 
 <body>
     <nav id='nav-bar'></nav>
+    <div class="page-wrap">
     <h1>Create New User</h1>
     <form class="signup-form">
         <div class="fname">
-            <label for="fname-input">First Name</label>
+            <label class="long-input" for="fname-input">First Name</label>
             <input id="fname-input" type="text">
         </div>
         <div class="lname">
-            <label for="lname-input">Last Name</label>
+            <label class="long-input" for="lname-input">Last Name</label>
             <input id="lname-input" type="text">
         </div>
         <div class="email">
-            <label for="email-input">Email</label>
+            <label class="long-input" for="email-input">Email</label>
             <input id="email-input" type="text">
         </div>
         <div class="password">
-            <label for="password-input">Password</label>
+            <label class="long-input" for="password-input">Password</label>
             <input id="password-input" type="password">
         </div>
         <div class="passwordconf">
-            <label for="passwordconf-input">Confirm Password</label>
+            <label class="long-input" for="passwordconf-input">Confirm Password</label>
             <input id="passwordconf-input" type="password">
         </div>
         <div class="role">
@@ -38,9 +39,10 @@
                 </option>
             </select>
         </div>
-        <button type="submit" isabled="disabled">Create User</button>
+        <button id="search-submit" type="submit" isabled="disabled">Create User</button>
     </form>
     <div class="js-error"></div>
+</div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="js/common.js"></script>

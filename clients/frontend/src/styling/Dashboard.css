@@ -6,14 +6,16 @@
 .auditionAnnouncementCardColor{
   padding: 15px 25px;
   background-color: rgb(235, 245, 251);
+  width: 100%;
+  position: relative;
 }
 
 /*COMPLETE PROFILE MESSAGE -- RED TONES*/
-.completeProfileBorderColor {
+.completeProfileBorderColor, .announcementBorderColor {
   border-left: 6px solid rgb(231, 76, 60);
 }
 
-.completeProfileCardColor{
+.completeProfileCardColor, .announcementCardColor{
   background-color:rgb(253, 237, 236);
 }
 
@@ -25,13 +27,13 @@
 
 
 /*GENERAL MESSAGE -- PURPLE TONES*/
-.announcementBorderColor {
+/* .announcementBorderColor {
   border-left: 6px solid rgb(142, 68, 173);
 }
 
 .announcementCardColor{
   background-color: rgb(245, 238, 248);
-}
+} */
 
 .announcement {
   margin-top: 20px;
@@ -55,11 +57,39 @@
 .auditionHeading{
   font-size: 16px;
   font-weight: 500;
-  color: #e65100;
   padding-bottom: 10px;
 }
 
-@media only screen and (max-width : 992px) {
+.showInformation{
+  position: relative;
+  display: inline-block;
+}
+
+.buttonToSignUp{
+  text-align: right;
+  position: absolute;
+  display: inline-block;
+  vertical-align: bottom;
+  right: 0;
+  bottom: 0;
+  margin-bottom: 25px;
+  margin-right: 15px;
+}
+
+.linkTurnedIntoButton{
+  color: white;
+}
+
+
+@media only screen and (max-width : 768px) {
+
+  .buttonToSignUp{
+    text-align: left;
+    position: relative;
+    display: block;
+    margin-bottom: 25px;
+    margin-right: 15px;
+  }
 
     .dashboard {
       padding-left: 0;
