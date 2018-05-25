@@ -51,6 +51,7 @@ img#photo {
 
 .email {
   text-transform: lowercase;
+  text-align: left;
 }
 
 .bio{
@@ -134,8 +135,7 @@ img#photo {
     margin-top: 40px;
   }
 
-  h1#profileName, email{
+  h1#profileName, .email{
     text-align: center;
   }
-
 }
