@@ -10,7 +10,7 @@ import Profile from './Profile';
 import Casting from './Casting';
 import MobileNavigationElement from './MobileNavigation';
 import NavigationElement from './NavigationElement';
-import DancerPiece from './DancerPiece';
+import DancerPieceWrapper from './DancerPieceWrapper';
 import StaticProfile from './StaticProfile';
 import { Button } from 'react-materialize';
 import Drawer from 'material-ui/Drawer';
@@ -23,6 +23,7 @@ import './styling/Main.css';
 import './styling/Navigation.css';
 import './styling/MobileNavigation.css';
 import './styling/General.css';
+import AuditionRegistrationList from './AuditionRegistrationList';
 
 
 const style = {
@@ -246,6 +247,7 @@ class Main extends Component {
             .state
             .currShows
             .map((show, i) => {
+              console.log(show)
               let showName = show.name
               let path = "/" + showName
                 .split(' ')
@@ -263,7 +265,7 @@ class Main extends Component {
                   key={i + "piece"}
                   exact
                   path={path + "/piece"}
-                  render={props => <DancerPiece {...props} name={show.name} audition={show.auditionID} />} />
+                  render={props => <DancerPieceWrapper {...props} name={show.name} showID={show.show} audition={show.auditionID} />} />
 
                 routes.push(route1)
                 routes.push(route2)
@@ -299,9 +301,20 @@ class Main extends Component {
                     audition={show.auditionID}
                     show={show.show} />} />
 
+                let route4 = <Route
+                  key={i + "choreoaudition"}
+                  exact
+                  path={path + "/audition"}
+                  render={props => <AuditionRegistrationList
+                    {...props}
+                    name={show.name}
+                    audition={show.auditionID}
+                    show={show.show} />} />
+
                 routes.push(route1)
                 routes.push(route2)
                 routes.push(route3)
+                routes.push(route4)
               } else { //admin
 
                 let route1 = <Route

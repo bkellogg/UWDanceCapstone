@@ -58,7 +58,7 @@ class People extends Component {
       <section className="main">
         <div className="mainView">
           <div className="pageContentWrap">
-            <h1>People</h1>
+            <h1>{this.props.name}: People</h1>
             <div className="fullWidthCard">
               <div className="wrap">
                 <div className="peopleList">
