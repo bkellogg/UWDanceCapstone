@@ -549,6 +549,7 @@ class Piece extends Component {
 
                       <p><b>If music will be performed live, number of musicians: </b> </p>
                       <SelectField
+                        style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', width: '90px', paddingLeft: '10px'}}
                         defaultValue={this.state.numMusicians}
                         value={this.state.numMusicians}
                         onChange={this.handleChangeMusician}
@@ -650,7 +651,7 @@ class Piece extends Component {
                 </section>
               }
             </div>
-            </section>
+            </section>  
             }
           </div>
         </div>
