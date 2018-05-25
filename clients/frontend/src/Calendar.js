@@ -336,6 +336,7 @@ class Calendar extends Component {
           >
           <div>
             <TextField
+              style={{border: '1px solid lightgray', borderRadius: '5px', padding: '10px'}}
               hintText="Rehearsal Name"
               onChange={(event) => this.setState({
                 rehearsalName : event.target.value

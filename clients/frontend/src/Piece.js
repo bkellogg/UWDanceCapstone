@@ -376,6 +376,7 @@ class Piece extends Component {
                       <p><b>Choreographer's Name:</b> {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
                       <p><b>Choreographer's Phone Number:</b></p>
                       <TextField
+                        className="textField"
                         id="choreographerPhone"
                         defaultValue={this.state.choreographerPhone}
                         onChange={this.handleChange('choreographerPhone')}
@@ -400,6 +401,7 @@ class Piece extends Component {
                     <div className="pieceInfo">
                       <p><b>Dance Title: </b></p>
                       <TextField
+                        className="textField"
                         id="danceTitle"
                         defaultValue={this.state.danceTitle}
                         onChange={this.handleChange('danceTitle')}
@@ -407,6 +409,7 @@ class Piece extends Component {
                       />
                       <p><b>Dance Runtime:</b></p>
                       <TextField
+                        className="textField" 
                         id="runtime"
                         defaultValue={this.state.runtime}
                         onChange={this.handleChange('runtime')}
@@ -415,6 +418,7 @@ class Piece extends Component {
 
                       <p><b>Composer(s):</b></p>
                       <TextField
+                        className="textField"
                         id="composer"
                         defaultValue={this.state.composer}
                         onChange={this.handleChange('composer')}
@@ -423,6 +427,7 @@ class Piece extends Component {
 
                       <p><b>Music title(s): </b></p>
                       <TextField
+                        className="textField"
                         id="musicTitle"
                         defaultValue={this.state.musicTitle}
                         onChange={this.handleChange('musicTitle')}
@@ -431,6 +436,7 @@ class Piece extends Component {
 
                       <p><b>Performed By:</b></p>
                       <TextField
+                        className="textField"
                         id="musicPerformer"
                         defaultValue={this.state.musicPerformer}
                         onChange={this.handleChange('musicPerformer')}
@@ -439,6 +445,7 @@ class Piece extends Component {
 
                       <p><b>Music Source:</b></p>
                       <TextField
+                        className="textField"
                         id="musicSource"
                         defaultValue={this.state.musicSource}
                         onChange={this.handleChange('musicSource')}
@@ -473,6 +480,7 @@ class Piece extends Component {
                       }
                       <p><b>Rehearsal Schedule:</b></p>
                       <TextField
+                        className="textField"
                         id="rehearsalSchedule"
                         defaultValue={this.state.rehearsalSchedule}
                         onChange={this.handleChange('rehearsalSchedule')}
@@ -482,6 +490,7 @@ class Piece extends Component {
                     <div className="notes">
                       <p><b>Choreographers Notes:</b> </p>
                       <TextField
+                        className="textField"
                         id="choreoNotes"
                         defaultValue={this.state.choreoNotes}
                         multiLine={true}
@@ -491,6 +500,7 @@ class Piece extends Component {
 
                       <p><b>Costume Descriptions: </b> </p>
                       <TextField
+                        className="textField"
                         id="costumeDesc"
                         defaultValue={this.state.costumeDesc}
                         multiLine={true}
@@ -500,6 +510,7 @@ class Piece extends Component {
 
                       <p><b>Props/Scenic Items Descriptions:</b> </p>
                       <TextField
+                        className="textField"
                         id="propsDesc"
                         defaultValue={this.state.propsDesc}
                         multiLine={true}
@@ -509,6 +520,7 @@ class Piece extends Component {
 
                       <p><b>Lighting Description: </b></p>
                       <TextField
+                        className="textField"
                         id="lightingDesc"
                         defaultValue={this.state.lightingDesc}
                         multiLine={true}
@@ -518,6 +530,7 @@ class Piece extends Component {
 
                       <p><b>Other special needs: </b> </p>
                       <TextField
+                        className="textField"
                         id="otherDesc"
                         defaultValue={this.state.otherDesc}
                         multiLine={true}

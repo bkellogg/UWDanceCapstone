@@ -140,4 +140,10 @@ img#photo {
     text-align: center;
   }
 
+  .bioEditTextField{
+    background-color: white !important;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+  }
+
 }
