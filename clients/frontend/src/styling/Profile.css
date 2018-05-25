@@ -49,6 +49,10 @@ img#photo {
   text-transform: capitalize;
 }
 
+.email {
+  text-transform: lowercase;
+}
+
 .bio{
   z-index: 2;
   width: 80%;
@@ -130,9 +134,8 @@ img#photo {
     margin-top: 40px;
   }
 
-  h1#profileName{
+  h1#profileName, email{
     text-align: center;
   }
-
 
 }

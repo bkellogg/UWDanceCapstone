@@ -225,7 +225,7 @@ class Main extends Component {
 
                   <Link to="/faq">
                     <MenuItem onClick={this.handleClose}>
-                      <p className="mobileNavItem">FAQ</p>
+                      <p className="mobileNavItem">Help</p>
                     </MenuItem>
                   </Link>
                 </div>

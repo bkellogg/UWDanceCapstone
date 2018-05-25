@@ -261,6 +261,7 @@ class Profile extends Component {
   handleBioChange = e => this.setCounts(e.target.value);
 
   render() {
+    let email = this.state.user.email
     return (
       <section className="main">
         <div className="mainView">
@@ -290,7 +291,13 @@ class Profile extends Component {
                   <div className="nameWrap">
                     <div id="name" className="name">
 
-                      {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+                      {
+                        !this.state.edit && 
+                        <div>
+                          <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>
+                          <p className="email"><a href={"mailto:" + this.state.user.email}>{email}</a></p>
+                        </div>
+                      }
                       {this.state.edit &&
                         <div id="editName">
                           <Row>
@@ -340,6 +347,7 @@ class Profile extends Component {
                           {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
                           {this.state.resume != null && (
                             <div>
+                              <div className="subheader"><b>Dancer Resume:</b></div>
                               <a href={this.state.resume}>View PDF Resume</a>
                             </div>
                           )}
