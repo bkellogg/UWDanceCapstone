@@ -8,6 +8,8 @@ var roleName = document.getElementById("roleName-input");
 var displayName = document.getElementById("displayName-input");
 var level = document.getElementById("level-input");
 
+var roles = [];
+
 getRoles();
 
 newRoleForm.addEventListener("submit", function (evt) {
@@ -45,8 +47,26 @@ function getRoles() {
         })
         .then((data) => {
             $(data).each(function (index, value) {
-                $("ul").append("<li>" + value.displayName + "</li>")
+                var roleInfo = [];
+                roleInfo.push(value.name);
+                roleInfo.push(value.displayName);
+                roleInfo.push(value.level);
+                roles.push(roleInfo);
             });
+        })
+        .then(() => {
+            populateRoleTable();
         })
 }
 
+function populateRoleTable() {
+    var rows = []
+    rows.push('<tr>' +
+        '<th>Role Name</th>' +
+        '<th>Role Display Name</th>' +
+        '<th>Permission Level</th></tr>')
+    rows.push($.map(roles, function (value, index) {
+        return '<tr><td>' + value[0] + '</td><td>' + value[1] + '</td><td>' + value[2] + '</td></tr>';
+    }));
+    $('#role_info').html(rows.join(''));
+}

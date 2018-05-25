@@ -7,6 +7,8 @@ var errorBox = document.querySelector(".js-error");
 var showTypeName = document.getElementById("showTypeName-input");
 var description = document.getElementById("description-input");
 
+var showTypes = [];
+
 getShowTypes()
 
 newShowTypeForm.addEventListener("submit", function (evt) {
@@ -44,8 +46,24 @@ function getShowTypes() {
         })
         .then((data) => {
             $(data).each(function (index, value) {
-                $("ul").append("<li>" + value.name + " - " + value.desc + "</li>")
+                var showInfo = [];
+                showInfo.push(value.name);
+                showInfo.push(value.desc)
+                showTypes.push(showInfo)
             });
         })
+        .then(() => {
+            populateShowTypeTable();
+        })
+}
 
+function populateShowTypeTable() {
+    var rows = []
+    rows.push('<tr>' +
+        '<th>Show Name</th>' +
+        '<th>Show Description</th></tr>')
+    rows.push($.map(showTypes, function (value, index) {
+        return '<tr><td>' + value[0] + '</td><td>' + value[1] + '</td></tr>';
+    }));
+    $('#show_type_info').html(rows.join(''));
 }

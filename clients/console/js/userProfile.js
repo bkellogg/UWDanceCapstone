@@ -1,12 +1,22 @@
 "use strict";
 
 let nameLoc = document.querySelector(".user-name-loc");
+let emailLoc = document.querySelector(".user-email-loc");
 let bioContent = document.querySelector(".bio-content");
 let imgLoc = document.querySelector(".image-loc");
 
 var roleChangeForm = document.querySelector(".roleChange-form");
 var errorBox = document.querySelector(".js-error");
 var role = document.getElementById("roleName");
+
+
+var passwordChangeForm = document.querySelector(".password-change-form");
+var password = document.getElementById("password-input");
+var confPassword = document.getElementById("password-conf-input");
+var errorBoxPassword = document.querySelector(".js-error-password");
+
+var showHistory = [];
+var showTypes = [];
 
 let userID = getQueryParam("user");
 if (!userID) {
@@ -16,6 +26,7 @@ if (!userID) {
 
 populateRoleOptions();
 getResume();
+getShowHistory();
 
 let user;
 makeRequest("users/" + userID, {}, "GET", true)
@@ -28,6 +39,7 @@ makeRequest("users/" + userID, {}, "GET", true)
     .then((data) => {
         nameLoc.textContent = data.firstName + " " + data.lastName + " (" + data.role.displayName + ")";
         bioContent.textContent = data.bio;
+        emailLoc.textContent = data.email;
     })
     .catch((error) => {
         console.error(error);
@@ -63,7 +75,7 @@ function getResume() {
             if (res.ok) {
                 return res.blob();
             }
-            if(res.status != 200) {
+            if (res.status != 200) {
                 $("#user-resume").hide();
             }
             return res.text().then((t) => Promise.reject(t));
@@ -112,3 +124,91 @@ roleChangeForm.addEventListener("submit", function (evt) {
             errorBox.textContent = err;
         })
 })
+
+
+passwordChangeForm.addEventListener("submit", function (evt) {
+    evt.preventDefault();
+    if (!validatePassword()) {
+        return;
+    }
+    let newPassword = {
+        "password": password.value,
+        "passwordConf": confPassword.value
+    }
+    makeRequest("users/" + userID + "/password", newPassword, "PATCH", true)
+        .then((data) => {
+            alert("Password successfully changed to " + password.value + ".");
+            location.reload();
+        })
+        .catch((err) => {
+            errorBoxPassword.textContent = err;
+        })
+})
+
+function validatePassword() {
+    var error;
+    if (password.value.length < 6) {
+        error = "Password must be at least 6 characters.";
+    } else if (password.value !== confPassword.value) {
+        error = "Passwords do not match."
+    }
+    if (error) {
+        errorBoxPassword.textContent = error;
+        return false;
+    }
+    errorBoxPassword.textContent = "";
+    return true;
+}
+
+
+// Get user's show history 
+function getShowHistory() {
+    makeRequest("shows/types?includeDeleted=false", {}, "GET", true)
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+            return res.text().then((t) => Promise.reject(t));
+        })
+        .then((data) => {
+            $(data).each(function (index, value) {
+                showTypes[value.id] = value.desc;
+            });
+        })
+        .then(() => {
+            makeRequest("users/" + userID + "/shows?history=all", {}, "GET", true)
+                .then((res) => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                    return res.text().then((t) => Promise.reject(t));
+                })
+                .then((data) => {
+                    var showInfo = data.shows
+                    $(showInfo).each(function (index, value) {
+                        var show = {};
+                        show["showYear"] = value.createdAt;
+                        show["showID"] = value.id
+                        show["showType"] = value.typeID;
+                        showHistory.push(show);
+                    });
+                })
+                .then(() => {
+                    $(showHistory).each(function (index, value) {
+                        value["showName"] = showTypes[value.showType];
+                    });
+                })
+                .then(() => {
+                    $(showHistory).each(function (index, value) {
+
+                        populateShowHistory(value, index);
+                    })
+                })
+        })
+}
+
+function populateShowHistory(value, index) {
+    var showYear = moment(value.showYear).format('YYYY');
+    $(".show-history-content").append('<div class="show-history-card" id=' + index + '><p>'
+        + value.showName + '</p><p>' + showYear + '</p></div>')
+}

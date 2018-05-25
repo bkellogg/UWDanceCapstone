@@ -91,12 +91,12 @@ h2{
 
 .tooltip .tooltiptext {
     visibility: hidden;
-    width: 150px;
+    width: 200px;
     background-color: #555;
     color: #fff;
     text-align: center;
     border-radius: 6px;
-    padding: 5px 0;
+    padding: 10px;
     position: absolute;
     z-index: 1;
     bottom: 125%;
@@ -123,12 +123,12 @@ h2{
 }
 
 .tooltip:hover .tooltiptext .emphasis {
-    color: rgb(34, 167, 224)
+    text-decoration: underline;
 }
 
 /*PEOPLE NAME WITH A LINK TO THEIR PROFILE*/
 .personNameLink{
-    color: rgb(0, 188, 212);
+    color: #039be5;
 }
 
 .personNameLink:hover{

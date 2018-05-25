@@ -17,10 +17,6 @@
 .back-button-styles-css:hover, .next-button-styles-css:hover{
     background-color: rgb(0, 188, 212) !important;
 }
-.steps{
-    background-color: transparent !important;
-    color: red !important;
-}
 
 /*SELECT CAST*/
 td{
