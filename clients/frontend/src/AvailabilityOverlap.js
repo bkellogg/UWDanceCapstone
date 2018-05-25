@@ -262,9 +262,6 @@ class AvailabilityOverlap extends Component {
           </div>
           <div className="availabilityCalendar">
             <div className="timeBlock">
-              {/* <div className="timesRow">
-                {timesSimple}
-              </div> */}
               <div className="daysHeader">
                 {daysSimple}
               </div>

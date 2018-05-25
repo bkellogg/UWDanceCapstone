@@ -270,6 +270,8 @@ class Piece extends Component {
         </tr>
       )
     })
+
+    console.log(this.state.dancers)
     return (
       <section className="main">
         <div className="mainView">
