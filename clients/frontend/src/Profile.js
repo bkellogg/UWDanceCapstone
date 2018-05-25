@@ -301,28 +301,6 @@ class Profile extends Component {
                       }
                     </div>
                   </div>
-
-                  <div className="resumeWrap">
-                    <div id="resume">
-                      {!this.state.edit &&
-                        <section>
-                          {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                          {this.state.resume != null && (
-                            <div>
-                              <a href={this.state.resume}>View PDF Resume</a>
-                            </div>
-                          )}
-
-                        </section>
-                      }
-                      {this.state.edit &&
-                        <section>
-                          <div> Upload your dance resume <b>AS A PDF.</b> </div>
-                          <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
-                        </section>
-                      }
-                    </div>
-                  </div>
                   {!this.state.edit &&
                     <Button id="edit" className="editButton" onClick={() => this.onClick()}>Edit</Button>
 
@@ -354,6 +332,28 @@ class Profile extends Component {
                     </div>
                   }
                 </div>
+
+                <div className="resumeWrap">
+                    <div id="resume">
+                      {!this.state.edit &&
+                        <section>
+                          {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                          {this.state.resume != null && (
+                            <div>
+                              <a href={this.state.resume}>View PDF Resume</a>
+                            </div>
+                          )}
+
+                        </section>
+                      }
+                      {this.state.edit &&
+                        <section>
+                          <div> Upload your dance resume <b>AS A PDF.</b> </div>
+                          <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                        </section>
+                      }
+                    </div>
+                  </div>
 
                 <div id="history">
                   <div id="historyTitle" className="subheader"><b>Your Piece History</b></div>

@@ -191,7 +191,7 @@ class Main extends Component {
               <div className="hamburger">
                 <div className="mobileNavLogoWrap">
                   <RaisedButton
-                    backgroundColor="#27384A"
+                    backgroundColor="#1C2C50"
                     className="hamburgerButton"
                     style={style}
                     onClick={this.handleToggle}>

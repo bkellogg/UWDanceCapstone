@@ -28,13 +28,6 @@ h1#profileName{
   vertical-align: bottom;
 }
 
-.resumeWrap{
-  text-align: right;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-
 .editButton {
   position: absolute;
   top: 0;
@@ -60,7 +53,7 @@ img#photo {
   width: 80%;
 }
 
-.bio{
+.bio, .resumeWrap{
   padding-bottom: 25px;
 }
 
