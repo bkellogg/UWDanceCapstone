@@ -31,13 +31,13 @@
 }
 
 .navbar a:hover, .dropdown:hover .dropbtn {
-    background-color:rgb(0, 188, 212);
+    background-color:#22A7E0;
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: rgb(0, 188, 212);
+    background-color: #22A7E0;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
@@ -53,7 +53,7 @@
 }
 
 .dropdown-content a:hover {
-    background-color: rgb(0, 171, 194);
+    background-color: rgb(54, 172, 223);
 }
 
 .dropdown:hover .dropdown-content {

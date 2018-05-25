@@ -72,8 +72,8 @@ function getAuditionInfo(auditionID, index) {
             var location = shows[index].location;
             var showID = shows[index].showID
 
-            $(".active-shows").append('<div class="active-shows-card" id=' + index + '><p>'
-                + showName + '</p><p>Audition Information</p><p>Date: ' + auditionDay + '</p><p>Time: ' +
+            $(".active-shows").append('<div class="active-shows-card" id=' + index + '><h2 class="showName">'
+                + showName + '</h2><p>Audition Information</p><p>Date: ' + auditionDay + '</p><p>Time: ' +
                 auditionTime + '</p><p>Location: ' + location + '</p><button class="delete" id =' +
                 showID + ' onClick="deleteShow(this.id)">Delete Show</button></div>')
         })
