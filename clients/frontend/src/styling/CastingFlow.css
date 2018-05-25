@@ -15,7 +15,7 @@
     float: right;
 }
 .back-button-styles-css:hover, .next-button-styles-css:hover{
-    background-color: rgb(0, 188, 212) !important;
+    background-color: #22A7E0 !important;
 }
 
 /*SELECT CAST*/
@@ -190,7 +190,7 @@ th{
 }
 
 .importantText{
-    color: rgb(0, 188, 212);
+    color: #22A7E0;
 }
 
 .warningText{
@@ -220,3 +220,10 @@ th{
     padding-right: 7px
 }
 
+.addDropButton{
+    background-color: hsl(0, 0%, 45%) !important;
+}
+
+.addDropButton:hover{
+    background-color: #22A7E0 !important;
+}

@@ -3,7 +3,6 @@ import * as Util from './util';
 import moment from 'moment';
 import PendingInvites from './PendingInvites';
 import './styling/General.css';
-import { Button } from 'react-materialize';
 //styling
 import { Link } from 'react-router-dom';
 import './styling/Dashboard.css';

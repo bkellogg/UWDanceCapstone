@@ -45,7 +45,7 @@ Button{
 }
 
 .dropDown:hover, .li:active, .hoverColor:hover{
-    background-color: rgb(0, 188, 212);
+    background-color: #22A7E0;
 }
 
 .hoverColor{
