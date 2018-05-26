@@ -59,7 +59,7 @@ Button{
     position: fixed;
     width: 100%;
     text-align: center;
-    height: 50px;
+    height: 75px;
     bottom: 55px;
 }
 
@@ -75,6 +75,8 @@ Button{
         width: 100%;
         text-align: center;
         vertical-align: bottom;
+        height: 75px;
+        bottom: 0px
     }
     
 }
