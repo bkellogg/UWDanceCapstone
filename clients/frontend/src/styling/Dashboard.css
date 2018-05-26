@@ -1,11 +1,13 @@
 /*NEW AUDITION MESSAGE -- BLUE TONES*/
 .newAuditionBorderColor{
-  border-left: 6px solid #22A7E0;
+  border-left: 6px solid rgb(52, 152, 219);
 }
 
 .auditionAnnouncementCardColor{
   padding: 15px 25px;
   background-color: rgb(235, 245, 251);
+  width: 100%;
+  position: relative;
 }
 
 /*COMPLETE PROFILE MESSAGE -- RED TONES*/
@@ -19,7 +21,7 @@
 
 /*CAST MESSAGE -- BLUE TONES*/
 .castBorderColor{
-  border-left: 6px solid #22A7E0;
+  border-left: 6px solid rgb(52, 152, 219);
   background-color: rgb(235, 245, 251);
 }
 
@@ -58,11 +60,36 @@
   padding-bottom: 10px;
 }
 
+.showInformation{
+  position: relative;
+  display: inline-block;
+}
+
+.buttonToSignUp{
+  text-align: right;
+  position: absolute;
+  display: inline-block;
+  vertical-align: bottom;
+  right: 0;
+  bottom: 0;
+  margin-bottom: 25px;
+  margin-right: 15px;
+}
+
 .linkTurnedIntoButton{
   color: white;
 }
 
-@media only screen and (max-width : 992px) {
+
+@media only screen and (max-width : 768px) {
+
+  .buttonToSignUp{
+    text-align: left;
+    position: relative;
+    display: block;
+    margin-bottom: 25px;
+    margin-right: 15px;
+  }
 
     .dashboard {
       padding-left: 0;

@@ -154,7 +154,7 @@ class DancerPiece extends Component {
             {
               this.state.error && 
               <div>
-                You don't have a piece yet! Cast some dancers to get started :) 
+                You have not been cast in a piece yet.
               </div>
             }
             {

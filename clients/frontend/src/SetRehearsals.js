@@ -288,6 +288,7 @@ class SetRehearsals extends Component {
                   <div className="postCastingWrap">
                     <div className="postCasting">
                       <Button
+                        className="postCastingLarge"
                         backgroundColor="#22A7E0"
                         style={{ color: '#ffffff', width: '100%', height: '60' }}
                         onClick={this.handleOpen}
@@ -333,8 +334,8 @@ class SetRehearsals extends Component {
                 {rehearsalSchedule}
                 <br />
                 <br /> 
+                An email will be sent to your cast with these times, and they will accept or decline their casting within <b className="importantText warningText">48 hours</b>.
                 </div>
-                <p className="importantText warningText">An email will be sent to your cast with these times, and they will accept or decline their casting within <b>48 hours</b>.</p>
                 {
                   this.state.castingError &&
                   <div className="serverError">

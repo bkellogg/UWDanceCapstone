@@ -28,15 +28,9 @@ h1#profileName{
   vertical-align: bottom;
 }
 
-.resumeWrap{
-  text-align: right;
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-
 .editButton {
   position: absolute;
+  padding-bottom: 20px;
   top: 0;
   right: 0;
 }
@@ -55,12 +49,17 @@ img#photo {
   text-transform: capitalize;
 }
 
+.email {
+  text-transform: lowercase;
+  text-align: left;
+}
+
 .bio{
   z-index: 2;
   width: 80%;
 }
 
-.bio{
+.bio, .resumeWrap{
   padding-bottom: 25px;
 }
 
@@ -131,13 +130,12 @@ img#photo {
   img#photo {
     width: 200px;
     height: 200px;
-    border-radius: 50%;
     display: block;
     margin: auto;
+    margin-top: 40px;
   }
 
-  h1#profileName{
+  h1#profileName, .email{
     text-align: center;
   }
-
 }

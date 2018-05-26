@@ -1,3 +1,12 @@
 .js-signout-btn {
   float: right;
 }
+
+.welcome-message{
+  font-size: 24px;
+}
+
+.announcements{
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

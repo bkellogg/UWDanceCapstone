@@ -261,6 +261,7 @@ class Profile extends Component {
   handleBioChange = e => this.setCounts(e.target.value);
 
   render() {
+    let email = this.state.user.email
     return (
       <section className="main">
         <div className="mainView">
@@ -290,7 +291,13 @@ class Profile extends Component {
                   <div className="nameWrap">
                     <div id="name" className="name">
 
-                      {!this.state.edit && <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>}
+                      {
+                        !this.state.edit && 
+                        <div>
+                          <h1 id="profileName">{this.state.fname} {this.state.lname}</h1>
+                          <p className="email"><a href={"mailto:" + this.state.user.email}>{email}</a></p>
+                        </div>
+                      }
                       {this.state.edit &&
                         <div id="editName">
                           <Row>
@@ -298,28 +305,6 @@ class Profile extends Component {
                             <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} />
                           </Row>
                         </div>
-                      }
-                    </div>
-                  </div>
-
-                  <div className="resumeWrap">
-                    <div id="resume">
-                      {!this.state.edit &&
-                        <section>
-                          {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                          {this.state.resume != null && (
-                            <div>
-                              <a href={this.state.resume}>View PDF Resume</a>
-                            </div>
-                          )}
-
-                        </section>
-                      }
-                      {this.state.edit &&
-                        <section>
-                          <div> Upload your dance resume <b>AS A PDF.</b> </div>
-                          <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
-                        </section>
                       }
                     </div>
                   </div>
@@ -345,7 +330,7 @@ class Profile extends Component {
                         <form className="col s12">
                           <div className="row">
                             <div className="input-field col s12">
-                              <textarea id="textarea1" name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
+                              <textarea id="textarea1" style={{backgroundColor: 'white', height: '100px', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}} name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
                               <p><strong>Word Count:</strong> {this.state.wordCount}</p>
                             </div>
                           </div>
@@ -354,6 +339,29 @@ class Profile extends Component {
                     </div>
                   }
                 </div>
+
+                <div className="resumeWrap">
+                    <div id="resume">
+                      {!this.state.edit &&
+                        <section>
+                          {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                          {this.state.resume != null && (
+                            <div>
+                              <div className="subheader"><b>Dancer Resume:</b></div>
+                              <a href={this.state.resume}>View PDF Resume</a>
+                            </div>
+                          )}
+
+                        </section>
+                      }
+                      {this.state.edit &&
+                        <section>
+                          <div> Upload your dance resume <b>AS A PDF.</b> </div>
+                          <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
+                        </section>
+                      }
+                    </div>
+                  </div>
 
                 <div id="history">
                   <div id="historyTitle" className="subheader"><b>Your Piece History</b></div>

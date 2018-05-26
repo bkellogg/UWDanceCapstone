@@ -34,20 +34,29 @@ class MobileNavigationElement extends Component {
                         }
                         {/*Choreographer*/}
                         {this.state.role === 70 &&
-                            <li>
-                                <Link to={{ pathname: address + "/casting" }}>
-                                    <MenuItem onClick={this.props.handleClose} s>
-                                        <p className="mobileNavItem" >Casting</p>
-                                    </MenuItem>
-                                </Link>
-                            </li> &&
-                            <li>
-                                <Link to={{ pathname: address + "/people" }}>
-                                    <MenuItem onClick={this.props.handleClose}>
-                                        <p className="mobileNavItem" >People</p>
-                                    </MenuItem>
-                                </Link>
-                            </li>
+                            <section>
+                                <li>
+                                    <Link to={{ pathname: address + "/casting" }}>
+                                        <MenuItem onClick={this.props.handleClose}>
+                                            <p className="mobileNavItem" >Casting</p>
+                                        </MenuItem>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to={{ pathname: address + "/audition" }}>
+                                        <MenuItem onClick={this.props.handleClose}>
+                                            <p className="mobileNavItem">Audition</p>
+                                        </MenuItem>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to={{ pathname: address + "/people" }}>
+                                        <MenuItem onClick={this.props.handleClose}>
+                                            <p className="mobileNavItem" >People</p>
+                                        </MenuItem>
+                                    </Link>
+                                </li>
+                            </section>
                         }
                         {/*Admin*/}
                         {this.state.role === 100 &&

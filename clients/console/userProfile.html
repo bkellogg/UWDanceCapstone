@@ -6,32 +6,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>STAGE User Profile</title>
+    <link rel="stylesheet" href="css/userProfile.css">
+    <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/b-1.5.1/datatables.min.css" />
 </head>
 
 <body>
     <nav id='nav-bar'></nav>
-    <h1 class="user-name-loc"></h1>
-    <div class="image-loc"></div>
-    <h2>Bio</h2>
-    <div class="bio-content"></div>
-    <h2>Resume</h2>
-    <div class="resume-content"></div>
-    <a href="" id="user-resume" target="_blank">View Resume</a>
-    <div id="content"></div>
-    <h2>Change Role</h2>
-    <form class="roleChange-form">
-        <div class="role">
-            <select id="roleName">
-                <option id="role-input" value=''>
-                </option>
-            </select>
+
+    <div class="page-wrap">
+        <h1 class="user-name-loc"></h1>
+        <div class="profile-wrap">
+            <div class="img-bio-resume">
+                <div class="image-loc"></div>
+                <div class="bio-wrap">
+                    <h2>Bio</h2>
+                    <div class="bio-content"></div>
+                </div>
+              <div>
+                <h2>Email</h2>
+    <div class="user-email-loc"></div>
+              </div>
+                <div class="resume-wrap">
+                    <h2>Resume</h2>
+                    <div class="resume-content"></div>
+                    <a href="" id="user-resume" target="_blank">View Resume</a>
+                </div>
+            </div>
+
+            <h2>Show History</h2>
+            <div class="show-history-content"></div>
+            <div id="content"></div>
+            <div class="role-change">
+                <h2>Change Role</h2>
+                <form class="roleChange-form">
+                    <div class="role">
+                        <select id="roleName">
+                            <option id="role-input" value=''>
+                            </option>
+                        </select>
+                    </div>
+                    <button type="submit">Change Role</button>
+                </form>
+                <div class="js-error"></div>
+            </div>
+            <div class="password-change">
+                <h2>Change Password</h2>
+                <form class="password-change-form">
+                    <div class="password">
+                        <div class="password">
+                            <label class="long-input" for="password-input">Password</label>
+                            <input id="password-input" type="password">
+                        </div>
+                        <div class="password-conf">
+                            <label class="long-input" for="password-conf-input">Confirm Password</label>
+                            <input id="password-conf-input" type="password">
+                        </div>
+                    </div>
+                    <button type="submit">Change Password</button>
+                </form>
+                <div class="js-error-password"></div>
+            </div>
         </div>
-        <button type="submit">Change Role</button>
-    </form>
-    <div class="js-error"></div>
+    </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/userProfile.js"></script>
 

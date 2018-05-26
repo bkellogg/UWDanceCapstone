@@ -5,11 +5,14 @@ var showForm = document.querySelector(".show-form");
 var errorBox = document.querySelector(".js-error");
 var showType = document.getElementById("showType");
 var auditionName = document.getElementById("audition-name-input");
-var getLocation = document.getElementById("location-input");
+var getBuilding = document.getElementById("building-input");
+var getRoom = document.getElementById("room-input");
 var quarter = document.getElementById("quarter-name-input");
 
 populateShowTypeOptions();
 createDateTimes();
+
+var showTypeNames = {};
 
 // Create date and time inputs
 function createDateTimes() {
@@ -35,7 +38,7 @@ showForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
     var payload = {
         "name": auditionName.value,
-        "location": getLocation.value,
+        "location": getBuilding.value + " " + getRoom.value,
         "time": finalAuditionTime,
         "quarter": quarter.value
     }
@@ -66,7 +69,7 @@ showForm.addEventListener("submit", function (evt) {
                 })
         })
         .then((data) => {
-            alert("Show Successfully Created" )
+            alert("Show Successfully Created")
             $('input').val('');
             $('.show-form')[0].reset();
             return data;
@@ -89,8 +92,16 @@ function populateShowTypeOptions() {
             var options = '<option value=""><strong>Show Type</strong></option>';
             $(data).each(function (index, value) {
                 options += '<option value="' + value.name + '">' + value.desc + '</option>';
+                showTypeNames[value.name] = value.desc;
             });
             $('#showType').html(options);
         })
 
 }
+
+$(document).ready(function () {
+    $("#showType").on("change", function () {
+        var defaultAudName = showTypeNames[$(this).val()]
+        $("#audition-name-input").val(defaultAudName + " Audition");
+    })
+});
