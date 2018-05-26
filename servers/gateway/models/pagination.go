@@ -101,6 +101,7 @@ func PaginatePieces(pieces []*Piece, page int) *PaginatedPieces {
 // pages of announcements.
 type PaginatedAnnouncementResponses struct {
 	Page          int                     `json:"page"`
+	NumPages      int                     `json:"numPages,omitempty"`
 	Announcements []*AnnouncementResponse `json:"announcements"`
 }
 
@@ -110,6 +111,16 @@ func PaginateAnnouncementResponses(announcements []*AnnouncementResponse, page i
 	return &PaginatedAnnouncementResponses{
 		Announcements: announcements,
 		Page:          page,
+	}
+}
+
+// PaginateAnnouncementResponses returns the given slice of pieces and the page as well as
+// the number of pages as a PaginatedAnnouncements struct.
+func PaginateNumAnnouncementResponses(announcements []*AnnouncementResponse, page, numPages int) *PaginatedAnnouncementResponses {
+	return &PaginatedAnnouncementResponses{
+		Announcements: announcements,
+		Page:          page,
+		NumPages:      numPages,
 	}
 }
 

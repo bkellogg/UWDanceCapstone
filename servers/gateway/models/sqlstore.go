@@ -100,13 +100,14 @@ func (store *Database) beginPieceInviteJanitor() {
 type SQLStatement struct {
 	Cols  string
 	Table string
+	Join  string
 	Where string
 	Page  int
 }
 
 func (ss *SQLStatement) BuildQuery() string {
-	return fmt.Sprintf("SELECT %s FROM %s WHERE %s LIMIT 25 OFFSET %d",
-		ss.Cols, ss.Table, ss.Where, getSQLPageOffset(ss.Page))
+	return fmt.Sprintf("SELECT %s FROM %s %s WHERE %s LIMIT 25 OFFSET %d",
+		ss.Cols, ss.Table, ss.Join, ss.Where, getSQLPageOffset(ss.Page))
 }
 
 func (ss *SQLStatement) BuildCountQuery() string {
