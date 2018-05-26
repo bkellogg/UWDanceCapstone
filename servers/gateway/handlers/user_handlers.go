@@ -189,7 +189,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		if r.Method != "PATCH" {
 			return methodNotAllowed()
 		}
-		if !ctx.permChecker.UserIsAtLeast(u, appvars.PermAdmin) {
+		if !ctx.permChecker.UserIsAtLeast(u, appvars.PermAdmin) || !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
 			return permissionDenied()
 		}
 		newPassword := &models.PasswordResetRequest{}

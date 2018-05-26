@@ -265,17 +265,26 @@ func (pc *PermissionChecker) UserCanAddToAudition(u *User, target int64) bool {
 // UserCanModifyUser returns true if the given user can modify the target user,
 // false if otherwise.
 func (pc *PermissionChecker) UserCanModifyUser(u *User, target int64) bool {
+	if target == 1 && u.ID != 1 {
+		return false
+	}
 	return pc.userHasPermissionTo(u, target, permissions.ModifyUsers)
 }
 
 // UserCanDeleteUser returns true if the given user can delete the target user,
 // false if otherwise.
 func (pc *PermissionChecker) UserCanDeleteUser(u *User, target int64) bool {
+	if target == 1 && u.ID != 1 {
+		return false
+	}
 	return pc.userHasPermissionTo(u, target, permissions.DeleteUsers)
 }
 
-// userHasPermissionTo returns if the
+// userHasPermissionTo returns if the user has permission to perform the given action on the given target
 func (pc *PermissionChecker) userHasPermissionTo(u *User, target int64, action int) bool {
+	if target == 1 && u.ID != 1 {
+		return false
+	}
 	if u.ID == target {
 		return true
 	}
