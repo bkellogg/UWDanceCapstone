@@ -140,7 +140,7 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 			}
 			return respondWithString(w, "rehearsal updated", http.StatusOK)
 		} else {
-			return objectTypeNotSupported()
+			return methodNotAllowed()
 		}
 	default:
 		return objectTypeNotSupported()

@@ -113,7 +113,7 @@ func (npis *NewPieceInfoSheet) Validate() error {
 	npis.OtherNotes = strings.TrimSpace(npis.OtherNotes)
 
 	if len(npis.ChorPhone) < 10 || len(npis.ChorPhone) > 11 {
-		return errors.New("piece musician must have a valid phone number")
+		return errors.New("choreographer must have a valid phone number")
 	}
 	if len(npis.Title) == 0 || len(npis.Title) > 25 {
 		return errors.New("title must exist and be fewer than 25 characters")

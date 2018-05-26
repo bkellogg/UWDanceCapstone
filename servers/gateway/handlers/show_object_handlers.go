@@ -47,7 +47,7 @@ func (ctx *AuthContext) getPiecesForShow(w http.ResponseWriter, r *http.Request,
 	if err != nil {
 		return unparsableIDGiven()
 	}
-	if ctx.permChecker.UserCan(u, permissions.SeePieces) {
+	if !ctx.permChecker.UserCan(u, permissions.SeePieces) {
 		return permissionDenied()
 	}
 	includeDeleted := getIncludeDeletedParam(r)
