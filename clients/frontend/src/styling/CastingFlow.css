@@ -20,7 +20,7 @@
 
 /*SELECT CAST*/
 td{
-    padding: 0;
+    padding: 10px;
     padding-top: 10px;
     padding-bottom: 10px;
     border: none;
@@ -34,7 +34,7 @@ tr{
     /* TABLE HEADERS - THIS IS SHARED CODE*/
 th{
     color: hsl(0, 0%, 45%);   
-    padding:0;
+    padding:10px;
     border: none;
     font-weight: 500;
     font-size: 13px;

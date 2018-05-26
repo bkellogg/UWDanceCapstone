@@ -27,9 +27,10 @@ td.userEmail{
     width: 95%
 }
 
+
 @media only screen 
 and (max-width : 1024px)  {
-    .userBioDisp, .bioOfUser{
+    .userBioDisp, .bioOfUser, .userRole, .userRoleDisp{
         visibility: hidden;
         width: 0%;
         clear: both;

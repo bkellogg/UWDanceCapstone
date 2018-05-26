@@ -28,7 +28,7 @@ class DancerPiece extends Component {
       minTime : MINTIME,
       maxTime : MAXTIME,
       openCast : false,
-      openCalendar: false,
+      openCalendar: true,
       events : [],
       dancers : [],
       getRehearsalError: [],
@@ -184,7 +184,7 @@ class DancerPiece extends Component {
                   <h2 className="smallHeading">Calendar</h2>
                   <i className="fas fa-chevron-up fa-lg"></i>
                 </div>
-                <p>Access the full tech schedule here: {<a href="http://staff.washington.edu/peterb5/Prod%20Shed/ProdScheds.html">UW Dance Production Site</a>}</p>
+                <p>Access the full tech schedule here: {<a href="http://staff.washington.edu/peterb5/Prod%20Shed/ProdScheds.html" target="_blank">UW Dance Production Site</a>}</p>
                 <BigCalendar style={{ height: "710px", width: "100%" }}
                   defaultDate={new Date()}
                   defaultView='week'

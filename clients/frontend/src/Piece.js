@@ -23,7 +23,7 @@ class Piece extends Component {
       dancers: [],
       openInfo: false,
       openCast: false,
-      openCalendar: false,
+      openCalendar: true,
       error : false,
       choreographerPhone : "",
       danceTitle : "",
@@ -375,11 +375,11 @@ class Piece extends Component {
                     <i className="fas fa-question-circle"></i>
                     <span className="tooltiptext">Add rehearsals by <b className="emphasis">clicking & dragging</b> on the calendar. Select events by <b className="emphasis">clicking</b> on the rehearsal name. </span>
                   </div>
-                  <div className="toggleHeader" onClick={this.toggleCalendar}>
+                  <div className="toggleHeader clickable" onClick={this.toggleCalendar}>
                     <h2 className="smallHeading">Calendar</h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
-                  <p>Access the full tech schedule here: {<a href="http://staff.washington.edu/peterb5/Prod%20Shed/ProdScheds.html">UW Dance Production Site</a>}</p>
+                  <p>Access the full tech schedule here: {<a href="http://staff.washington.edu/peterb5/Prod%20Shed/ProdScheds.html" target="_blank">UW Dance Production Site</a>}</p>
                   <Calendar pieceID={this.state.pieceID}/>
                 </section>
               }
@@ -388,7 +388,7 @@ class Piece extends Component {
               {
                 !this.state.openCast &&
                 // Styling for toggle header is in general
-                <div className="toggleHeader" onClick={this.toggleCast}>
+                <div className="toggleHeader clickable" onClick={this.toggleCast}>
                   <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
                     <i className="fas fa-question-circle"></i>
                     <span className="tooltiptext">You can <b className="emphasis">drop</b> dancers from your cast here, and view <b className="emphasis">cast availability</b></span>
@@ -400,7 +400,7 @@ class Piece extends Component {
               {
                 this.state.openCast &&
                 <section>
-                  <div className="toggleHeader" onClick={this.toggleCast}>
+                  <div className="toggleHeader clickable" onClick={this.toggleCast}>
                   <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
                     <i className="fas fa-question-circle"></i>
                     <span className="tooltiptext">You can <b className="emphasis">drop</b> dancers from your cast here, and view <b className="emphasis">cast availability</b></span>
@@ -412,8 +412,9 @@ class Piece extends Component {
                     <table>
                       <tbody>
                         <tr className="categories">
-                          <th className="avatar2"></th>
+                          {/* <th className="avatar2"></th> */}
                           <th>Name</th>
+                          <th className= "userRole">Role</th>
                           <th className="bioOfUser">Bio</th>
                           <th className="userEmail">Email</th>
                           <th></th>
@@ -425,7 +426,7 @@ class Piece extends Component {
                   <div className="buttons">
                     {
                       !this.state.viewAvailability &&
-                      <div className="toggleHeader" onClick={this.viewAvailability}>
+                      <div className="toggleHeader clickable" onClick={this.viewAvailability}>
                         <h2 className="smallHeading">View Cast Availability</h2>
                         <i className="fas fa-chevron-down fa-lg"></i>
                       </div>
@@ -433,7 +434,7 @@ class Piece extends Component {
                     {
                       this.state.viewAvailability &&
                       <section>
-                        <div className="toggleHeader" onClick={this.viewAvailability}>
+                        <div className="toggleHeader clickable" onClick={this.viewAvailability}>
                           <h2 className="smallHeading">Hide Cast Availability</h2>
                           <i className="fas fa-chevron-up fa-lg"></i>
                         </div>
@@ -447,7 +448,7 @@ class Piece extends Component {
             <div className="fullWidthCard">
               {
                 !this.state.openInfo &&
-                <div className="toggleHeader" onClick={this.toggleInfo}>
+                <div className="toggleHeader clickable" onClick={this.toggleInfo}>
                   <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
                     <i className="fas fa-question-circle"></i>
                     <span className="tooltiptext">Fill out this info sheet with <b className="emphasis">piece details</b>. Some information has been auto-filled for you.</span>
@@ -459,7 +460,7 @@ class Piece extends Component {
               {
                 this.state.openInfo &&
                 <section>
-                  <div className="toggleHeader" onClick={this.toggleInfo}>
+                  <div className="toggleHeader clickable" onClick={this.toggleInfo}>
                     <div className="xtraInfo tooltip" style={{float: "left", paddingRight: "5px"}}>
                     <i className="fas fa-question-circle"></i>
                     <span className="tooltiptext">Fill out this info sheet with <b className="emphasis">piece details</b>. Some information has been auto-filled for you.</span>

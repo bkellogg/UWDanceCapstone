@@ -43,11 +43,15 @@ class Calendar extends Component {
   };
 
   componentWillMount() {
-    this.getEvents()
+    this.getEvents(this.props.pieceID)
   }
 
-  getEvents = () => {
-    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals", {}, "GET", true)
+  componentWillReceiveProps(props){
+    this.getEvents(props.pieceID)
+  }
+
+  getEvents = (pieceID) => {
+    Util.makeRequest("pieces/" + pieceID + "/rehearsals", {}, "GET", true)
     .then(res => {
       if (res.ok) {
         return res.json()
@@ -97,7 +101,8 @@ class Calendar extends Component {
   onSelectExisting = (slotInfo) => {
     this.setState({
       slotInfo : slotInfo,
-      openSetRehearsal : true
+      openSetRehearsal : true,
+      rehearsalName: slotInfo.title
     })
   }
 
@@ -110,7 +115,6 @@ class Calendar extends Component {
 
   deleteRehearsal = () => {
     let slotInfo = this.state.slotInfo
-    console.log()
     Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals?ids=" + slotInfo.id , {}, "DELETE", true)
     .then(res => {
       if (res.ok) {
@@ -122,7 +126,7 @@ class Calendar extends Component {
       this.setState({
         openSetRehearsal : false
       })
-      this.getEvents()
+      this.getEvents(this.props.pieceID)
     })
     .catch(err => {
       this.setState({
@@ -133,7 +137,6 @@ class Calendar extends Component {
   }
 
   addRehearsal = () => {
-    console.log(this.state.slotInfo)
     let slotInfo = this.state.slotInfo
     let body = []
     let rehearsalObject = {
@@ -154,7 +157,7 @@ class Calendar extends Component {
         openNewRehearsal : false,
         rehearsalName: "Rehearsal"
       })
-      this.getEvents()
+      this.getEvents(this.props.pieceID)
     })
     .catch(err => {
       this.setState({
@@ -184,7 +187,7 @@ class Calendar extends Component {
         openNewRehearsal : false,
         rehearsalName: "Rehearsal"
       })
-      this.getEvents()
+      this.getEvents(this.props.pieceID)
     })
     .catch(err => {
       this.setState({
