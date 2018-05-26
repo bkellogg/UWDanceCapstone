@@ -253,15 +253,14 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 		}
 		result.InviteCreated = true
 
-		expiryTimeHour, expiryTimeMinute, expiryTimeSecond, expiryTimePeriod := getNormalizedTimeParts(expiryTime)
+		expiryTimeHour, expiryTimeMinute, _, expiryTimePeriod := getNormalizedTimeParts(expiryTime)
 
-		expiryTimeFormat := fmt.Sprintf("%s, %s %d at %s:%s:%s %s",
+		expiryTimeFormat := fmt.Sprintf("%s, %s %d at %s:%s %s",
 			expiryTime.Weekday().String(),
 			expiryTime.Month().String(),
 			expiryTime.Day(),
 			expiryTimeHour,
 			expiryTimeMinute,
-			expiryTimeSecond,
 			expiryTimePeriod)
 		tplVars := &models.CastingConfVars{
 			Name:       user.FirstName,

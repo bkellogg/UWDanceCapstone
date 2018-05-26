@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -101,4 +102,23 @@ func getRoleParam(r *http.Request) string {
 // getNumShowsParam gets the value of the shows query parameter
 func getNumShowsParam(r *http.Request) (int, error) {
 	return strconv.Atoi(getStringParam(r, "shows"))
+}
+
+// getIDsParam parses a comma delimited list on ints
+// at the ids query param
+func getIDsParam(r *http.Request) ([]int, error) {
+	idsString := getStringParam(r, "ids")
+	if len(idsString) == 0 {
+		return nil, nil
+	}
+	idsSlice := strings.Split(strings.Replace(idsString, " ", "", -1), ",")
+	res := make([]int, 0, len(idsSlice))
+	for _, idString := range idsSlice {
+		id, err := strconv.Atoi(idString)
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, id)
+	}
+	return res, nil
 }

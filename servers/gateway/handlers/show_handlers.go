@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -77,10 +76,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 		if err == nil {
 			return respondWithString(w, "show deleted", http.StatusOK)
 		}
-		if err == sql.ErrNoRows {
-			return objectNotFound("show")
-		}
-		return HTTPError("error deleting show: "+err.Error(), http.StatusInternalServerError)
+		return middleware.HTTPErrorFromDBErrorContext(err, "error deleting show")
 	default:
 		return methodNotAllowed()
 	}

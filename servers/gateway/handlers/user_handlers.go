@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 	"github.com/gorilla/mux"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
@@ -30,11 +32,12 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 
 	var users []*models.User
 	var dberr *models.DBError
+	var numPages int
 
 	if len(emailFilter) > 0 || len(fNameFilter) > 0 || len(lNameFilter) > 0 {
-		users, dberr = ctx.store.SearchForUsers(emailFilter, fNameFilter, lNameFilter, page)
+		users, numPages, dberr = ctx.store.SearchForUsers(emailFilter, fNameFilter, lNameFilter, page)
 	} else {
-		users, dberr = ctx.store.GetAllUsers(page, getIncludeDeletedParam(r))
+		users, numPages, dberr = ctx.store.GetAllUsers(page, getIncludeDeletedParam(r))
 	}
 
 	if dberr != nil {
@@ -44,7 +47,7 @@ func (ctx *AuthContext) AllUsersHandler(w http.ResponseWriter, r *http.Request, 
 	if err != nil {
 		return HTTPError(err.Error(), http.StatusInternalServerError)
 	}
-	return respond(w, models.PaginateUserResponses(userResponses, page), http.StatusOK)
+	return respond(w, models.PaginateNumUserResponses(userResponses, page, numPages), http.StatusOK)
 }
 
 // SpecificUserHandler handles requests for a specific user
@@ -182,6 +185,31 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 			return permissionDenied()
 		}
 		return ctx.handleUserRole(w, r, userID)
+	case "password":
+		if r.Method != "PATCH" {
+			return methodNotAllowed()
+		}
+		if !ctx.permChecker.UserIsAtLeast(u, appvars.PermAdmin) || !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
+			return permissionDenied()
+		}
+		newPassword := &models.PasswordResetRequest{}
+		if httpError := receive(r, newPassword); httpError != nil {
+			return httpError
+		}
+		if ok, err := sessions.ValidatePasswords(newPassword.Password, newPassword.PasswordConf); !ok {
+			return HTTPError(fmt.Sprintf("error validating passwords: %v", err), http.StatusBadRequest)
+		}
+		user, dberr := ctx.store.GetUserByID(userID, true)
+		if dberr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting user by id")
+		}
+		if err := user.SetPassword(newPassword.Password); err != nil {
+			return HTTPError(fmt.Sprintf("error setting password: %v", err), http.StatusInternalServerError)
+		}
+		if err := ctx.store.UpdatePasswordByID(userID, user.PassHash); dberr != nil {
+			return HTTPError(fmt.Sprintf("error saving password: %v", err), http.StatusInternalServerError)
+		}
+		return respondWithString(w, "user password updated", http.StatusOK)
 	default:
 		return objectTypeNotSupported()
 	}
@@ -275,6 +303,26 @@ func (ctx *AuthContext) UserMemberShipHandler(w http.ResponseWriter, r *http.Req
 			}
 			function = ctx.store.RemoveUserFromAudition
 			message = "user removed from audition"
+		} else {
+			return objectTypeNotSupported()
+		}
+	case "DELETE":
+		if objType == "pieces" {
+			if !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
+				return permissionDenied()
+			}
+			hasInvite, dberr := ctx.store.UserHasInviteForPiece(int64(userID), int64(objID))
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error looking up user's piece invites")
+			}
+			if !hasInvite {
+				return HTTPError("user does not have an invite for the given piece", http.StatusBadRequest)
+			}
+			dberr = ctx.store.MarkInvite(userID, objID, appvars.CastStatusDeclined)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, fmt.Sprintf("error marking invite as %s", appvars.CastStatusDeclined))
+			}
+			return respondWithString(w, "invite marked as declined", http.StatusOK)
 		} else {
 			return objectTypeNotSupported()
 		}

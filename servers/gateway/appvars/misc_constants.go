@@ -18,4 +18,5 @@ const (
 	CastStatusDeclined = "declined"
 	CastStatusAccepted = "accepted"
 	CastStatusExpired  = "expired"
+	CastStatusDeleted  = "deleted"
 )

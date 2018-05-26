@@ -159,13 +159,28 @@ func (pc *PermissionChecker) UserCanSeeUsersInShow(u *User, show int) bool {
 // UserCanSeeUsersInPiece returns true if the given user can see users
 // inside of the given piece.
 func (pc *PermissionChecker) UserCanSeeUsersInPiece(u *User, piece int) bool {
-	return pc.UserCan(u, permissions.SeeAllUsers)
+	if pc.UserCan(u, permissions.SeeAllUsers) {
+		return pc.UserCan(u, permissions.SeeAllUsers)
+	}
+
+	ok, err := pc.db.UserIsInPiece(int(u.ID), piece)
+	if err != nil {
+		log.Printf("error determining if user is in piece: %s", err.Message)
+	}
+	return ok
 }
 
 // UserCanSeePieceInfo returns true if the given user can see the
 // given piece's info sheet.
 func (pc *PermissionChecker) UserCanSeePieceInfo(u *User, piece int) bool {
-	return pc.UserIsAtLeast(u, appvars.PermChoreographer)
+	if pc.UserCan(u, appvars.PermChoreographer) {
+		return true
+	}
+	ok, err := pc.db.UserIsInPiece(int(u.ID), piece)
+	if err != nil {
+		log.Printf("error determining if user is in piece: %s", err.Message)
+	}
+	return ok
 }
 
 // UserCanSeePieceInfo returns true if the given user can see the
@@ -250,17 +265,26 @@ func (pc *PermissionChecker) UserCanAddToAudition(u *User, target int64) bool {
 // UserCanModifyUser returns true if the given user can modify the target user,
 // false if otherwise.
 func (pc *PermissionChecker) UserCanModifyUser(u *User, target int64) bool {
+	if target == 1 && u.ID != 1 {
+		return false
+	}
 	return pc.userHasPermissionTo(u, target, permissions.ModifyUsers)
 }
 
 // UserCanDeleteUser returns true if the given user can delete the target user,
 // false if otherwise.
 func (pc *PermissionChecker) UserCanDeleteUser(u *User, target int64) bool {
+	if target == 1 && u.ID != 1 {
+		return false
+	}
 	return pc.userHasPermissionTo(u, target, permissions.DeleteUsers)
 }
 
-// userHasPermissionTo returns if the
+// userHasPermissionTo returns if the user has permission to perform the given action on the given target
 func (pc *PermissionChecker) userHasPermissionTo(u *User, target int64, action int) bool {
+	if target == 1 && u.ID != 1 {
+		return false
+	}
 	if u.ID == target {
 		return true
 	}

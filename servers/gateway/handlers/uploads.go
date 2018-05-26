@@ -75,7 +75,6 @@ func saveImageFromRequest(r *http.Request, userID int) *middleware.HTTPError {
 		return HTTPError(err.Error(), http.StatusInternalServerError)
 	}
 	defer f.Close()
-
 	// encode the resized image into the newly created file
 	err = jpeg.Encode(f, resizedImage, nil)
 	return nil

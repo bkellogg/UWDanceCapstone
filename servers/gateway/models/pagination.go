@@ -21,8 +21,9 @@ func PaginateUsers(users []*User, page int) *PaginatedUsers {
 // back to the client for requests that can contain multiple
 // pages of UserResponse.
 type PaginatedUserResponses struct {
-	Page  int             `json:"page"`
-	Users []*UserResponse `json:"users"`
+	Page     int             `json:"page"`
+	NumPages int             `json:"numPages,omitempty"`
+	Users    []*UserResponse `json:"users"`
 }
 
 // PaginateUsers returns the given slice of users and the page
@@ -31,6 +32,16 @@ func PaginateUserResponses(users []*UserResponse, page int) *PaginatedUserRespon
 	return &PaginatedUserResponses{
 		Users: users,
 		Page:  page,
+	}
+}
+
+// PaginateNumUsers returns the given slice of users and the page
+// as a PaginatedUsers struct.
+func PaginateNumUserResponses(users []*UserResponse, page, numPages int) *PaginatedUserResponses {
+	return &PaginatedUserResponses{
+		Users:    users,
+		Page:     page,
+		NumPages: numPages,
 	}
 }
 

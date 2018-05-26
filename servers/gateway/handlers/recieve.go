@@ -18,7 +18,7 @@ func receive(r *http.Request, v interface{}) *middleware.HTTPError {
 	if !strings.HasPrefix(contentType, appvars.ContentTypeJSON) {
 		return HTTPError(fmt.Sprintf("`%s` is not a supported Content-Type; must be `%s`",
 			contentType,
-			appvars.ContentTypeJSONUTF8),
+			appvars.ContentTypeJSON),
 			http.StatusBadRequest)
 	}
 

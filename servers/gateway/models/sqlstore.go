@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -92,4 +93,26 @@ func (store *Database) beginPieceInviteJanitor() {
 		}
 		time.Sleep(appvars.PieceInviteJanitorRecheckDelay)
 	}
+}
+
+// SQLStatement represents a very basic
+// sql statement builder
+type SQLStatement struct {
+	Cols  string
+	Table string
+	Where string
+	Page  int
+}
+
+func (ss *SQLStatement) BuildQuery() string {
+	return fmt.Sprintf("SELECT %s FROM %s WHERE %s LIMIT 25 OFFSET %d",
+		ss.Cols, ss.Table, ss.Where, getSQLPageOffset(ss.Page))
+}
+
+func (ss *SQLStatement) BuildCountQuery() string {
+	where := ss.Where
+	if len(ss.Where) == 0 {
+		where = "1 == 1"
+	}
+	return fmt.Sprintf("SELECT Count(*) FROM %s WHERE %s", ss.Table, where)
 }
