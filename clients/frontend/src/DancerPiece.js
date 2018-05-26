@@ -30,49 +30,21 @@ class DancerPiece extends Component {
       openCast : false,
       openCalendar: false,
       events : [],
-      dancers : []
+      dancers : [],
+      getRehearsalError: [],
+      choreographer: {role:{}}
     } 
   };
 
   componentWillMount() {
-    this.formatEvents()
-    //this.getPieceID()
-  }
-
-  getPieceID = () => {
-    Util.makeRequest("users/me/pieces", "", "GET", true)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
-        if (res.status === 401) {
-          Util.signOut()
-        }
-        //this is if there is no piece
-        if (res.status === 404) {
-          this.setState({
-            error : true
-          })
-        }
-        return res
-          .text()
-          .then((t) => Promise.reject(t));
-      })
-      .then(piece => {
-        this.setState({
-          pieceID : piece.id
-        })
-        this.getPieceUsers(piece.id)
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+    //this.formatEvents()
+    this.getPieceUsers()
   }
 
   getPieceUsers = (pieceID) => {
     //TODO deal with pages
-    for(let i = 1; i < Util.PAGEMAX; i++) {
-      Util.makeRequest("pieces/" + pieceID + "/users?page=" + i, "", "GET", true)
+    for(let i = 1; i <= Util.PAGEMAX; i++) {
+      Util.makeRequest("pieces/" + this.props.pieceID + "/users?page=" + i, "", "GET", true)
         .then(res => {
           if (res.ok) {
             return res.json()
@@ -96,6 +68,43 @@ class DancerPiece extends Component {
           console.error(err)
         })
     }
+  }
+
+  getEvents = () => {
+    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals", {}, "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.json()
+      }
+      return res.text().then((t) => Promise.reject(t));
+    })
+    .then(events => {
+      this.formatEvents(events)
+    })
+    .catch(err => {
+      this.setState({
+        getRehearsalError : err
+      })
+      console.error(err)
+    })
+  }
+
+  formatEvents = (events) => {
+    let formattedEvents = []
+    events.forEach((event) => {
+      let start = new Date(event.start)
+      let end = new Date(event.end)
+      let tempEvent = {
+        id : event.id,
+        title : event.title,
+        start : start,
+        end : end
+      }
+      formattedEvents.push(tempEvent)
+    })
+    this.setState({
+      events : formattedEvents
+    })
   }
 
   onSelectExisting = (event) => {
@@ -125,103 +134,111 @@ class DancerPiece extends Component {
     })
   }
 
-  formatEvents = () => {
-    let events = JSON.parse(localStorage.rehearsals)
-    let formattedEvents = []
-    events.forEach((event) => {
-      let start = new Date(event.start)
-      let end = new Date(event.end)
-      let tempEvent = {
-        id : event.id,
-        title : event.title,
-        start : start,
-        end : end
-      }
-      formattedEvents.push(tempEvent)
-    })
-    this.setState({
-      events : formattedEvents
-    })
-  }
-
   render() {
     let event = this.state.event
+
+    let castRows = this.state.dancers.map((dancer, i) => {
+      return (
+        <tr key={i}>
+          <td>
+            {dancer.firstName + " " + dancer.lastName}
+          </td>
+          <td>
+            {dancer.role.displayName}
+          </td>
+          <td>
+            <a href={"mailto:" + dancer.email}>{dancer.email}</a>
+          </td>
+        </tr>
+      )
+    })
+
+    let choreographer = (<tr key={this.state.choreographer.id} style={{backgroundColor:"lightgray"}}>
+      <td >
+        {this.state.choreographer.firstName + " " + this.state.choreographer.lastName}
+      </td>
+      <td>
+        {this.state.choreographer.role.displayName}
+      </td>
+      <td>
+        <a href={"mailto:" + this.state.choreographer.email}>{this.state.choreographer.email}</a>
+      </td>
+    </tr>)
     return (
-      <section className="main">
-        <div className="mainView">
-          <div className="pageContentWrap">
-            <h1>My Piece</h1>
+      <section className="pieceCard">
+        <div className="pieceCardContents">
+          <h1>{this.props.pieceName}</h1>
+          <div className="fullWidthCard dancerPieceToggle">
             {
-              this.state.error && 
-              <div>
-                You have not been cast in a piece yet.
-              </div>
+              !this.state.openCalendar &&
+              // Styling for toggle header is in general
+                <div className="toggleHeader clickable" onClick={this.toggleCalendar}>
+                  <h2 className="smallHeading">Calendar</h2>
+                  <i className="fas fa-chevron-down fa-lg"></i>
+                </div>
             }
             {
-              !this.state.error &&
+              this.state.openCalendar &&
               <section>
-                <div className="fullWidthCard">
-                  {
-                    !this.state.openCalendar &&
-                    // Styling for toggle header is in general
-                    <div className="toggleHeader" onClick={this.toggleCalendar}>
-                      <h2 className="smallHeading">Calendar</h2>
-                      <i className="fas fa-chevron-down fa-lg"></i>
-                    </div>
-                  }
-                  {
-                    this.state.openCalendar &&
-                    <section>
-                      <div className="toggleHeader" onClick={this.toggleCalendar}>
-                        <h2 className="smallHeading">Calendar</h2>
-                        <i className="fas fa-chevron-up fa-lg"></i>
-                      </div>
-                      <BigCalendar style={{ height: "710px", width: "100%" }}
-                        defaultDate={new Date()}
-                        defaultView='week'
-                        events={this.state.events}
-                        views={VIEWS}
-                        step={30}
-                        min={this.state.minTime}
-                        max={this.state.maxTime}
-                        onSelectEvent={event => this.onSelectExisting(event)}
-                      />
-                    </section>
-                  }
+                <div className="toggleHeader clickable" onClick={this.toggleCalendar}>
+                  <h2 className="smallHeading">Calendar</h2>
+                  <i className="fas fa-chevron-up fa-lg"></i>
                 </div>
-                <div className="fullWidthCard">
-                  {
-                    !this.state.openCast &&
-                    // Styling for toggle header is in general
-                    <div className="toggleHeader" onClick={this.toggleCast}>
-                      <h2 className="smallHeading">My Cast</h2>
-                      <i className="fas fa-chevron-down fa-lg"></i>
-                    </div>
-                  }
-                  {
-                    this.state.openCast &&
-                    <section>
-                      <div className="toggleHeader" onClick={this.toggleCast}>
-                        <h2 className="smallHeading">My Cast</h2>
-                        <i className="fas fa-chevron-up fa-lg"></i>
-                      </div>
-                    </section>
-                  }
-                </div>
-                <Dialog
-                  title={event.title}
-                  actions={[]}
-                  modal={false}
-                  open={this.state.openSetRehearsal}
-                  onRequestClose={this.handleClose}
-                  >
-                  <div>
-                    This rehearsal goes from {moment(event.start).format("hh:mm A")} to {moment(event.end).format("hh:mm A")}
-                  </div>
-                </Dialog>
+                <p>Access the full tech schedule here: {<a href="http://staff.washington.edu/peterb5/Prod%20Shed/ProdScheds.html">UW Dance Production Site</a>}</p>
+                <BigCalendar style={{ height: "710px", width: "100%" }}
+                  defaultDate={new Date()}
+                  defaultView='week'
+                  events={this.state.events}
+                  views={VIEWS}
+                  step={30}
+                  min={this.state.minTime}
+                  max={this.state.maxTime}
+                  onSelectEvent={event => this.onSelectExisting(event)}
+                />
               </section>
             }
           </div>
+          <div className="fullWidthCard dancerPieceToggle">
+            {
+              !this.state.openCast &&
+              // Styling for toggle header is in general
+              <div className="toggleHeader clickable" onClick={this.toggleCast}>
+                <h2 className="smallHeading">My Cast</h2>
+                <i className="fas fa-chevron-down fa-lg"></i>
+              </div>
+            }
+            {
+              this.state.openCast &&
+              <section>
+                <div className="toggleHeader clickable" onClick={this.toggleCast}>
+                  <h2 className="smallHeading">My Cast</h2>
+                  <i className="fas fa-chevron-up fa-lg"></i>
+                </div>
+                <table>
+                  <tbody>
+                    <tr className="categories">
+                      <th>Name</th>
+                      <th>Role</th>
+                      <th>Email</th>
+                    </tr>
+                    {choreographer}
+                    {castRows}
+                  </tbody>
+                </table>
+              </section>
+            }
+          </div>
+          <Dialog
+            title={event.title}
+            actions={[]}
+            modal={false}
+            open={this.state.openSetRehearsal}
+            onRequestClose={this.handleClose}
+            >
+            <div>
+              This rehearsal goes from {moment(event.start).format("hh:mm A")} to {moment(event.end).format("hh:mm A")}
+            </div>
+          </Dialog>
         </div>
       </section>
   );

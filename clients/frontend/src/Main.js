@@ -197,8 +197,7 @@ class Main extends Component {
                     onClick={this.handleToggle}>
                     <p className="hambMenu">MENU</p>
                   </RaisedButton>
-
-                  <img className="mobileNavLogo" alt="logo" src={logo} />
+                  <a href="/"><img className="mobileNavLogo" alt="logo" src={logo} /></a>
                 </div>
               </div>
               <Drawer
@@ -247,7 +246,6 @@ class Main extends Component {
             .state
             .currShows
             .map((show, i) => {
-              console.log(show)
               let showName = show.name
               let path = "/" + showName
                 .split(' ')

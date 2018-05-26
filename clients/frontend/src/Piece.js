@@ -327,17 +327,20 @@ class Piece extends Component {
       return (<PersonRow p={dancer} piece={true} key={i} pieceID={this.state.pieceID} updateCast={() => {this.setState({dancers: []}); this.getPieceUsers(this.state.pieceID)}}/>)
     })
 
-    let contactRows = this.state.dancers.map((dancer, i) => {
-      return (
-        <tr key={i}>
-          <td>
-            {dancer.firstName + " " + dancer.lastName}
-          </td>
-          <td>
-            {dancer.email}
-          </td>
-        </tr>
-      )
+    let contactRows = []
+    this.state.dancers.forEach((dancer, i) => {
+      if(dancer.role.displayName === "Dancer") {
+        contactRows.push(
+          <tr key={i}>
+            <td>
+              {dancer.firstName + " " + dancer.lastName}
+            </td>
+            <td>
+              {dancer.email}
+            </td>
+          </tr>
+        ) 
+      }
     })
     return (
       <section className="main">

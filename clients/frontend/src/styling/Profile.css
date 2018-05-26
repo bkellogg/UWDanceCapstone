@@ -97,6 +97,10 @@ img#photo {
   margin-right: 10px;
 }
 
+.editButtons {
+  margin-bottom: 20px
+}
+
 
 /*TABLET VIEW*/
 @media only screen and (max-width : 1043px)  {

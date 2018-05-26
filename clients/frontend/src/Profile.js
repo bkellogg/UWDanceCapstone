@@ -201,6 +201,13 @@ class Profile extends Component {
     })
   }
 
+  onCancel = () => {
+    let editState = !this.state.edit
+    this.setState({
+      edit: editState
+    })
+  }
+
   inputChange = (val) => {
     const name = val.target.name
     this.setState({
@@ -317,7 +324,7 @@ class Profile extends Component {
               </div>
               <div className="mainContentBorder">
                 <div id="bio" className="bio">
-                  <div className="subheader"><b>Dancer Bio:</b></div>
+                  <div className="subheader"><b>Bio:</b></div>
                   {!this.state.edit &&
                     <section>
                       {this.state.bio !== "" && this.state.bio}
@@ -347,7 +354,7 @@ class Profile extends Component {
                           {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
                           {this.state.resume != null && (
                             <div>
-                              <div className="subheader"><b>Dancer Resume:</b></div>
+                              <div className="subheader"><b>Resume:</b></div>
                               <a href={this.state.resume}>View PDF Resume</a>
                             </div>
                           )}
@@ -363,28 +370,32 @@ class Profile extends Component {
                     </div>
                   </div>
 
-                <div id="history">
-                  <div id="historyTitle" className="subheader"><b>Your Piece History</b></div>
-                  {this.state.history.length > 0 && this.state.history.map((p, i) => {
-                    return (
-                      //TODO STYLE THESE
-                      <div className="showHistory" key={i}>
-                        <p>{p.name}</p>
-                        <p>{p.year}</p>
-                      </div>
-                    )
-                  })}
-                  {this.state.history.length === 0 &&
-                    <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
+                { !this.state.edit &&
+                  <div id="history">
+                    <div id="historyTitle" className="subheader"><b>Piece History</b></div>
+                    {this.state.history.length > 0 && this.state.history.map((p, i) => {
+                      return (
+                        //TODO STYLE THESE
+                        <div className="showHistory" key={i}>
+                          <p>{p.name + ", " + p.year}</p>
+                        </div>
+                      )
+                    })}
+                    {this.state.history.length === 0 &&
+                      <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
 
+                    }
+                  </div>
                   }
-                </div>
 
               </div>
 
             </div>
             {this.state.edit &&
-              <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
+              <div className="editButtons"> 
+                <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
+                <Button className="saveButton" onClick={() => this.onCancel()}>Cancel</Button>
+              </div>
             }
           </div>
         </div>

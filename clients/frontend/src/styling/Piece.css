@@ -11,6 +11,22 @@ td.userEmail{
     
 }
 
+.pieceCard {
+    background-color: #EFF3FA;
+    width: 95%
+}
+
+.pieceCardContents {
+    padding: 20px;
+    margin-bottom: 20px
+}
+
+.dancerPieceToggle {
+    margin-right: 20px;
+    margin-left: 20px;
+    width: 95%
+}
+
 @media only screen 
 and (max-width : 1024px)  {
     .userBioDisp, .bioOfUser{

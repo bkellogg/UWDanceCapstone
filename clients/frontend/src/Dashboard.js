@@ -81,7 +81,9 @@ class Dashboard extends Component {
         announcements.map(announcement => {
           return currAnnouncements.push({
             "type": this.state.announcementTypes[announcement.typeID],
-            "message": announcement.message
+            "message": announcement.message,
+            "createdAt": announcement.createdAt,
+            "createdBy": announcement.createdBy
           })
         })
         return currAnnouncements
@@ -128,7 +130,10 @@ class Dashboard extends Component {
         <div key={index} className="announcement announcementBorderColor">
           {
             <div className="announcementCardColor">
-              <p className="announcementMessage"> {announcement.message} </p>
+              <div className="announcementMessage">
+                <p> <em>{announcement.createdBy.firstName + " " + announcement.createdBy.lastName + ", " + moment(announcement.createdAt).format("MM/DD/YY hh:mm A")}</em></p>
+                <p>{announcement.message}</p>
+              </div>
             </div>
           }
         </div>
