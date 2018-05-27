@@ -4,6 +4,8 @@ import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
 import AvatarEditorConsole from './AvatarEditorConsole';
 import TextField from 'material-ui/TextField';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import { compose } from 'ramda';
 import './styling/Profile.css';
 import './styling/General.css';
@@ -268,6 +270,12 @@ class Profile extends Component {
 
   handleBioChange = e => this.setCounts(e.target.value);
 
+  deleteAccount = () => {
+    this.setState({
+      deleteConfirmation: false
+    })
+  }
+
   render() {
     let email = this.state.user.email
     return (
@@ -405,8 +413,35 @@ class Profile extends Component {
             }
             {
               this.state.edit &&
-              <Button> Delete Account </Button>
+              <Button onClick={() => this.setState({deleteConfirmation: true})}> Delete Account </Button>
             }
+              <Dialog
+                title="Delete Account"
+                actions={[
+                  <FlatButton
+                    label="Cancel"
+                    style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
+                    primary={false}
+                    onClick={() => {this.setState({deleteConfirmation: false})}}
+                  />,
+                  <FlatButton
+                    label="Delete Account"
+                    style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+                    primary={false}
+                    keyboardFocused={true}
+                    onClick={this.deleteAccount}
+                  />,
+                ]}
+                modal={false}
+                open={this.state.deleteConfirmation}
+              >
+                <div className="warningText"> 
+                By clicking Delete Account, your account will be <strong className="importantText">permanently disabled</strong> and your login credentials will no longer work.
+                <br />
+                You will have to re-sign up to participate in the site again. You may reuse your email or use a new one.
+                </div>
+              </Dialog>
+            
           </div>
         </div>
       </section>
