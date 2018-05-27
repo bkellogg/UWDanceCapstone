@@ -415,55 +415,49 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
 // Returns an error if one occurred.
-func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, *DBError) {
-	tx, err := store.db.Begin()
-	if err != nil {
-		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  `DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt`,
+		Table: `Users U`,
+		Join:  `JOIN UserPiece UP ON U.UserID = UP.UserID JOIN Pieces P ON UP.PieceID = P.PieceID`,
+		Where: `P.ShowID = ? AND UP.IsDeleted = false`,
+		Page:  page,
 	}
-	defer tx.Rollback()
 
-	offset := getSQLPageOffset(page)
-	result, err := tx.Query(`
-		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
-		JOIN UserPiece UP ON U.UserID = UP.UserID
-		JOIN Pieces P ON UP.PieceID = P.PieceID
-		WHERE P.ShowID = ? AND UP.IsDeleted = false
-		LIMIT 25 OFFSET ?`, id, offset)
-	users, dberr := handleUsersFromDatabase(result, err)
-	if dberr != nil {
-		return nil, dberr
-	}
-	if err = tx.Commit(); err != nil {
-		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
-	}
-	return users, nil
+	return store.processUserQuery(sqlStmnt, id)
 }
 
 // GetUsersByPieceID returns a slice of users that are in the given piece, if any, as well
 // as the current choreographer for that that piece if it exists.
 // Returns an error if one occurred.
-func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, *User, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
-	JOIN UserPiece UP On UP.UserID = U.UserID
-	WHERE UP.PieceID = ? AND UP.IsDeleted = FALSE`
-	query += ` LIMIT 25 OFFSET ?`
-	users, dberr := handleUsersFromDatabase(store.db.Query(query, id, offset))
-	if dberr != nil {
-		return nil, nil, dberr
+func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, *User, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  `DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt`,
+		Table: `Users U`,
+		Join:  `JOIN UserPiece UP ON UP.UserID = U.UserID`,
+		Where: `UP.PieceID = ? AND UP.IsDeleted = FALSE`,
+		Page:  page,
 	}
-	query = `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
+
+	fmt.Println(sqlStmnt.BuildQuery())
+	fmt.Println(sqlStmnt.BuildCountQuery())
+
+	users, numPages, dberr := store.processUserQuery(sqlStmnt, id)
+	if dberr != nil {
+		return nil, nil, 0, dberr
+	}
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
 	JOIN Pieces P On P.ChoreographerID = U.UserID
 	WHERE P.PieceID = ?`
 	chor, dberr := handleUsersFromDatabase(store.db.Query(query, id))
 	if dberr != nil {
-		return nil, nil, dberr
+		return nil, nil, 0, dberr
 	}
 	var chorToReturn *User
 	if len(chor) > 0 {
 		chorToReturn = chor[0]
 	}
-	return users, chorToReturn, nil
+	return users, chorToReturn, numPages, nil
 }
 
 // UpdatePasswordByID changes the user with the given IDs passhash to the given

@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -133,31 +134,39 @@ func (store *Database) DeletePieceByID(id int) *DBError {
 
 // GetPiecesByUserID gets all pieces the given user is in. If showID is specified, then only pieces
 // the user is in in that show will be returned
-func (store *Database) GetPiecesByUserID(id, page, showID int, includeDeleted bool) ([]*Piece, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT P.PieceID, P.InfoSheetID, P.ChoreographerID ,P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy,
-	P.IsDeleted FROM Pieces P 
-	JOIN UserPiece UP ON P.PieceID = UP.PieceID 
-	WHERE UP.UserID = ?`
+func (store *Database) GetPiecesByUserID(id, page, showID int, includeDeleted bool) ([]*Piece, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols: `DISTINCT P.PieceID, P.InfoSheetID, P.ChoreographerID ,P.PieceName, P.ShowID,
+		P.CreatedAt, P.CreatedBy, P.IsDeleted`,
+		Table: "Pieces P",
+		Join:  "JOIN UserPiece UP ON P.PieceID = UP.PieceID",
+		Where: "UP.UserID = ?",
+		Page:  page,
+	}
+
 	if !includeDeleted {
-		query += ` AND UP.IsDeleted = false`
+		sqlStmnt.Where += ` AND UP.IsDeleted = false`
 	}
 	if showID > 0 {
-		query += fmt.Sprintf(" AND P.ShowID = %s ", strconv.Itoa(showID))
+		sqlStmnt.Where += fmt.Sprintf(" AND P.ShowID = %s ", strconv.Itoa(showID))
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
+	return store.processPieceQuery(sqlStmnt, id)
 }
 
 // GetPiecesByShowID gets all pieces that are associated with the given show ID.
-func (store *Database) GetPiecesByShowID(id, page int, includeDeleted bool) ([]*Piece, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT * FROM Pieces P Where P.ShowID = ?`
-	if !includeDeleted {
-		query += ` AND P.IsDeleted = false`
+func (store *Database) GetPiecesByShowID(id, page int, includeDeleted bool) ([]*Piece, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  "*",
+		Table: "Pieces P",
+		Where: "P.ShowID = ?",
+		Page:  page,
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
+
+	if !includeDeleted {
+		sqlStmnt.Where += ` AND P.IsDeleted = false`
+	}
+
+	return store.processPieceQuery(sqlStmnt, id)
 }
 
 // InsertNewPieceInfoSheet inserts the given pieceInfoSheet for the given PieceID.
@@ -548,4 +557,27 @@ func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, *DBError) 
 		pieces = append(pieces, piece)
 	}
 	return pieces, nil
+}
+
+// processPieceQuery runs the query with the given args and returns a slice of pieces
+// that matched that query as well as the number of pages of pieces that matched
+// that query. Returns a DBError if an error occurred.
+func (store *Database) processPieceQuery(sqlStmt *SQLStatement, args ...interface{}) ([]*Piece, int, *DBError) {
+	pieces, dberr := handlePiecesFromDatabase(store.db.Query(sqlStmt.BuildQuery(), args...))
+	if dberr != nil {
+		return nil, 0, dberr
+	}
+	numResults := 0
+	rows, err := store.db.Query(sqlStmt.BuildCountQuery(), args...)
+	if err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error querying for number of results: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, 0, NewDBError("count query returned no results", http.StatusInternalServerError)
+	}
+	if err = rows.Scan(&numResults); err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error scanning rows into num results: %v", err), http.StatusInternalServerError)
+	}
+	return pieces, int(math.Ceil(float64(numResults) / 25.0)), nil
 }

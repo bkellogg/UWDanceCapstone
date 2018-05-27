@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -128,12 +129,12 @@ func (store *Database) GetShowTypes(includeDeleted bool) ([]*ShowType, *DBError)
 	return showTypes, nil
 }
 
-// GetShows gets the first 25 shows that match the given history and includeDeleted filters
+// GetShows gets the first 25 shows as well as the number of pages that match the given history and includeDeleted filters
 // on the provided page, or an error if one occurred.
-func (store *Database) GetShows(page int, history string, includeDeleted bool, typeName string) ([]*Show, *DBError) {
+func (store *Database) GetShows(page int, history string, includeDeleted bool, typeName string) ([]*Show, int, *DBError) {
 	tx, err := store.db.Begin()
 	if err != nil {
-		return nil, NewDBError(fmt.Sprintf("erro beginning transaction: %v", err), http.StatusInternalServerError)
+		return nil, 0, NewDBError(fmt.Sprintf("erro beginning transaction: %v", err), http.StatusInternalServerError)
 	}
 	defer tx.Rollback()
 
@@ -143,40 +144,45 @@ func (store *Database) GetShows(page int, history string, includeDeleted bool, t
 		res, err := tx.Query(`SELECT ShowTypeID FROM ShowType ST WHERE ST.ShowTypeName = ?`, typeName)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				return nil, NewDBError("invalid show type", http.StatusNotFound)
+				return nil, 0, NewDBError("invalid show type", http.StatusNotFound)
 			}
-			return nil, NewDBError(fmt.Sprintf("error retrieving show type from database: %v", err), http.StatusInternalServerError)
+			return nil, 0, NewDBError(fmt.Sprintf("error retrieving show type from database: %v", err), http.StatusInternalServerError)
 		}
 		if !res.Next() {
-			return nil, NewDBError("invalid show type", http.StatusNotFound)
+			return nil, 0, NewDBError("invalid show type", http.StatusNotFound)
 		}
 		if err = res.Scan(&st.ID); err != nil {
-			return nil, NewDBError(fmt.Sprintf("error scanning result into show type: %v", err), http.StatusInternalServerError)
+			return nil, 0, NewDBError(fmt.Sprintf("error scanning result into show type: %v", err), http.StatusInternalServerError)
 		}
 		res.Close()
 	}
+	if err = tx.Commit(); err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
 
-	offset := getSQLPageOffset(page)
-	// TODO: This is awful, but a quick fix for WHERE needing to be there
-	query := `SELECT DISTINCT * FROM Shows S
- 		WHERE 1 = 1`
+	sqlStmnt := &SQLStatement{
+		Cols:  "DISTINCT *",
+		Where: "1 = 1",
+		Table: "Shows S",
+		Page:  page,
+	}
+
 	if !includeDeleted {
-		query += ` AND S.IsDeleted = false`
+		sqlStmnt.Where += ` AND S.IsDeleted = false`
 	}
 	switch history {
 	case "current":
-		query += ` AND S.EndDate > NOW()`
+		sqlStmnt.Where += ` AND S.EndDate > NOW()`
 	case "past":
-		query += ` AND S.EndDate <= NOW()`
+		sqlStmnt.Where += ` AND S.EndDate <= NOW()`
 	case "all", "":
 	default:
-		return nil, NewDBError(appvars.ErrInvalidHistoryOption, http.StatusBadRequest)
+		return nil, 0, NewDBError(appvars.ErrInvalidHistoryOption, http.StatusBadRequest)
 	}
 	if shouldFilterByType {
-		query += ` AND S.ShowTypeID = ` + strconv.Itoa(st.ID)
+		sqlStmnt.Where += ` AND S.ShowTypeID = ` + strconv.Itoa(st.ID)
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handleShowsFromDatabase(tx.Query(query, offset))
+	return store.processShowQuery(sqlStmnt)
 }
 
 // GetShowByID returns the show with the given ID.
@@ -239,26 +245,25 @@ func (store *Database) DeleteShowByID(id int) *DBError {
 
 // GetShowsByUserID returns a slice of shows that the given user is in, or an error
 // if one occurred.
-func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, history string) ([]*Show, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT S.ShowID, S.ShowTypeID, S.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted FROM Shows S
-		JOIN Pieces P ON S.ShowID = P.ShowID
-		JOIN UserPiece UP ON P.PieceID = UP.PieceID
-		WHERE UP.UserID = ?`
-	if !includeDeleted {
-		query += ` AND S.IsDeleted = false`
+func (store *Database) GetShowsByUserID(id, page int, includeDeleted bool, history string) ([]*Show, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  `DISTINCT S.ShowID, S.ShowTypeID, S.AuditionID, S.EndDate, S.CreatedAt, S.CreatedBy, S.IsDeleted`,
+		Table: "Shows S",
+		Join:  `JOIN Pieces P ON S.ShowID = P.ShowID JOIN UserPiece UP ON P.PieceID = UP.PieceID`,
+		Where: `UP.UserID = ?`,
+		Page:  page,
 	}
+
 	switch history {
 	case "current":
-		query += ` AND S.EndDate > NOW()`
+		sqlStmnt.Where += ` AND S.EndDate > NOW()`
 	case "past":
-		query += ` AND S.EndDate <= NOW()`
+		sqlStmnt.Where += ` AND S.EndDate <= NOW()`
 	case "all", "":
 	default:
-		return nil, NewDBError(appvars.ErrInvalidHistoryOption, http.StatusBadRequest)
+		return nil, 0, NewDBError(appvars.ErrInvalidHistoryOption, http.StatusBadRequest)
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handleShowsFromDatabase(store.db.Query(query, id, offset))
+	return store.processShowQuery(sqlStmnt, id)
 }
 
 // handleShowsFromDatabase returns a slice of shows from the given sql Rows, or an
@@ -280,4 +285,27 @@ func handleShowsFromDatabase(result *sql.Rows, err error) ([]*Show, *DBError) {
 		shows = append(shows, show)
 	}
 	return shows, nil
+}
+
+// processShowQuery runs the query with the given args and returns a slice of shows
+// that matched that query as well as the number of pages of shows that matched
+// that query. Returns a DBError if an error occurred.
+func (store *Database) processShowQuery(sqlStmt *SQLStatement, args ...interface{}) ([]*Show, int, *DBError) {
+	shows, dberr := handleShowsFromDatabase(store.db.Query(sqlStmt.BuildQuery(), args...))
+	if dberr != nil {
+		return nil, 0, dberr
+	}
+	numResults := 0
+	rows, err := store.db.Query(sqlStmt.BuildCountQuery(), args...)
+	if err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error querying for number of results: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, 0, NewDBError("count query returned no results", http.StatusInternalServerError)
+	}
+	if err = rows.Scan(&numResults); err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error scanning rows into num results: %v", err), http.StatusInternalServerError)
+	}
+	return shows, int(math.Ceil(float64(numResults) / 25.0)), nil
 }

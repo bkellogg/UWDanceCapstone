@@ -169,7 +169,7 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 			return httperr
 		}
 
-		users, chor, dberr := ctx.store.GetUsersByPieceID(pieceID, page, getIncludeDeletedParam(r))
+		users, chor, numPages, dberr := ctx.store.GetUsersByPieceID(pieceID, page, getIncludeDeletedParam(r))
 		if dberr != nil {
 			return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting users by piece id")
 		}
@@ -182,7 +182,7 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 		if err != nil {
 			return HTTPError(fmt.Sprintf("error converting users to user responses: %v", err), http.StatusInternalServerError)
 		}
-		return respond(w, models.NewPieceUsersResponse(page, chorRes, userRes), http.StatusOK)
+		return respond(w, models.NewPieceUsersResponse(page, numPages, chorRes, userRes), http.StatusOK)
 	case "info":
 		if r.Method == "POST" {
 			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {

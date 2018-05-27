@@ -123,17 +123,17 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		if httperr != nil {
 			return httperr
 		}
-		pieces, err := ctx.store.GetPiecesByUserID(userID, page, showID, includeDeleted)
+		pieces, numPages, err := ctx.store.GetPiecesByUserID(userID, page, showID, includeDeleted)
 		if err != nil {
 			return HTTPError(err.Message, err.HTTPStatus)
 		}
-		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
+		return respond(w, models.PaginatePieces(pieces, page, numPages), http.StatusOK)
 	case "shows":
-		shows, err := ctx.store.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
+		shows, numPages, err := ctx.store.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
 		if err != nil {
 			return HTTPError(err.Message, err.HTTPStatus)
 		}
-		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
+		return respond(w, models.PaginateNumShows(shows, page, numPages), http.StatusOK)
 	case "photo":
 		userID, err := parseUserID(r, u)
 		if err != nil {

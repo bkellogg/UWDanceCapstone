@@ -40,14 +40,15 @@ type Piece struct {
 // report all users in a piece.
 type PieceUsersResponse struct {
 	Page          int             `json:"page"`
+	NumPages      int             `json:"numPages,omitempty"`
 	Choreographer *UserResponse   `json:"choreographer"`
 	Dancers       []*UserResponse `json:"dancers"`
 }
 
 // NewPieceUsersResponse returns a new pointer to a PieceUsersResponse from the
 // given information.
-func NewPieceUsersResponse(page int, chor *UserResponse, dancers []*UserResponse) *PieceUsersResponse {
-	return &PieceUsersResponse{Page: page, Choreographer: chor, Dancers: dancers}
+func NewPieceUsersResponse(page, numPages int, chor *UserResponse, dancers []*UserResponse) *PieceUsersResponse {
+	return &PieceUsersResponse{Page: page, Choreographer: chor, Dancers: dancers, NumPages: numPages}
 }
 
 // PieceInfoSheet defines how a piece info sheet is
