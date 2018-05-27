@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactAvatarEditor from 'react-avatar-editor'
 import Dropzone from 'react-dropzone'
+import ReactDOM from 'react-dom';
 import "./styling/General.css"
 import "./styling/AvatarEditorConsole.css"
 
@@ -27,6 +28,7 @@ class AvatarEditorConsole extends Component {
   }
 
   sendUpImage = () => {
+    this.refs.preview.click()
     let edit = this.editor.getImageScaledToCanvas().toDataURL()
     let image = this.dataURLtoFile(edit, 'a.png');
     this.props.changeImg(image)
@@ -137,12 +139,13 @@ class AvatarEditorConsole extends Component {
         <button onClick={this.rotateRight}>Right</button>
         </p>
         </div>
-        {/* <br />
         <br />
-        <input type="button" onClick={this.handleSave} value="Preview" />
+        <br />
+        <input type="button" className="preview" ref="preview" onClick={this.handleSave} value="Preview" />
         <br />
         {!!this.state.preview && (
           <img
+            className="preview"
             alt="preview"
             src={this.state.preview.img}
             style={{
@@ -154,7 +157,7 @@ class AvatarEditorConsole extends Component {
                 (this.state.preview.borderRadius / 2 / 100)}px`,
             }}
           />
-        )} */}
+        )}
       </div>
     )
   }

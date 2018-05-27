@@ -403,8 +403,11 @@ class Profile extends Component {
                 <Button className="saveButton" onClick={() => this.onCancel()}>Cancel</Button>
               </div>
             }
+            {
+              this.state.edit &&
+              <Button> Delete Account </Button>
+            }
           </div>
-          <Button> Delete Account </Button>
         </div>
       </section>
     );
