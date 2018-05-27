@@ -217,7 +217,6 @@ class Piece extends Component {
 
   async getDancerAvailability() {
     let dancers = this.state.dancers
-    let dancerAvailabilityList = []
     let filteredCast=[]
 
     const allDancersAvailability = dancers.map(async dancer => {
@@ -302,8 +301,7 @@ class Piece extends Component {
     let musicianRow = []
     let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
-    console.log(this.state.dancerAvailabilityList + " " + this.state.filteredCast)
-    //const availability = <AvailabilityOverlap filteredCast={this.state.filteredCast} cast={this.state.dancerAvailabilityList} contested={[]} />
+
     musicianRow = musicians.map((musician, i) => {
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
