@@ -120,7 +120,6 @@ class Dashboard extends Component {
 
   render() {
     const pending = this.state.pending
-    console.log(this.props)
     let pendingCasting = pending.map((piece, i) => {
       return (
         <PendingInvites key={i} piece={piece} />

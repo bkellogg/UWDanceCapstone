@@ -28,7 +28,7 @@ class DancerPiece extends Component {
       minTime : MINTIME,
       maxTime : MAXTIME,
       openCast : false,
-      openCalendar: true,
+      openCalendar: false,
       events : [],
       dancers : [],
       getRehearsalError: [],

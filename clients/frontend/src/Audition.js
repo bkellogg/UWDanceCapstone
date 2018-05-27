@@ -65,8 +65,6 @@ class Audition extends Component {
   }
   
   checkRegistration = () => {
-
-    console.log(this.props.audition)
     let error = false
     Util
       .makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)

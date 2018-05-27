@@ -306,7 +306,7 @@ class Main extends Component {
                   render={props => <AuditionRegistrationList
                     {...props}
                     name={show.name}
-                    audition={show.auditionID}
+                    auditionID={show.auditionID}
                     show={show.show} />} />
 
                 routes.push(route1)
