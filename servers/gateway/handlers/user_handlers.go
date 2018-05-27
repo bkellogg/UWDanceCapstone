@@ -119,6 +119,9 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 	objectType := mux.Vars(r)["object"]
 	switch objectType {
 	case "pieces":
+		if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
+			return permissionDenied()
+		}
 		showID, httperr := getIntParam(r, "show")
 		if httperr != nil {
 			return httperr
@@ -129,6 +132,9 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		}
 		return respond(w, models.PaginatePieces(pieces, page, numPages), http.StatusOK)
 	case "shows":
+		if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
+			return permissionDenied()
+		}
 		shows, numPages, err := ctx.store.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
 		if err != nil {
 			return HTTPError(err.Message, err.HTTPStatus)
@@ -168,12 +174,18 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		}
 	case "resume":
 		if r.Method == "GET" {
+			if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
+				return permissionDenied()
+			}
 			resumeBytes, httperr := getUserResume(userID)
 			if httperr != nil {
 				return httperr
 			}
 			return respondWithPDF(w, resumeBytes, http.StatusOK)
 		} else if r.Method == "POST" {
+			if !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
+				return permissionDenied()
+			}
 			if httperr := saveResumeFromRequest(r, userID); httperr != nil {
 				return httperr
 			}
