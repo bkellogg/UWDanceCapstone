@@ -30,7 +30,8 @@ class Profile extends Component {
       bioUpload: "",
       resumeUpload: "",
       wordCount: "",
-      text: ""
+      text: "",
+      deleteConfirmation: false
     }
   };
 
@@ -271,8 +272,13 @@ class Profile extends Component {
   handleBioChange = e => this.setCounts(e.target.value);
 
   deleteAccount = () => {
-    this.setState({
-      deleteConfirmation: false
+    Util.makeRequest("users/me", {}, "LOCK", true)
+    .then(res => {
+      this.setState({
+        deleteConfirmation: false,
+        deleteSuccess: true
+      })
+      setTimeout(() => {Util.signOut()}, 1500)
     })
   }
 
@@ -345,6 +351,7 @@ class Profile extends Component {
                           <div className="row">
                             <div className="input-field col s12">
                               <TextField
+                                name="bioUpload"
                                 className="bioUpload2"
                                 defaultValue={this.state.text}
                                 multiLine={true}
@@ -434,11 +441,15 @@ class Profile extends Component {
                 ]}
                 modal={false}
                 open={this.state.deleteConfirmation}
-              >
+              > 
                 <div className="warningText"> 
                 By clicking Delete Account, your account will be <strong className="importantText">permanently disabled</strong> and your login credentials will no longer work.
                 <br />
                 You will have to re-sign up to participate in the site again. You may reuse your email or use a new one.
+                {
+                  this.state.deleteSuccess &&
+                  <p>You will be signed out shortly</p>
+                }
                 </div>
               </Dialog>
             

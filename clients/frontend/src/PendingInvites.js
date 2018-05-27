@@ -74,11 +74,10 @@ class PendingInvites extends Component {
   render() {
     let today = moment()
     let createdAt = moment(this.props.piece.createdAt)
-    console.log(createdAt)
     //this will be the difference between createdAt and today subtracted from 48 hours
     let hours = Math.round(48 - moment.duration(today.diff(createdAt)).asHours())
     let expireDateTime = moment(createdAt.add(2, 'days')).format("LLLL")
-    console.log(expireDateTime)
+
     return (
       <div className="announcement castBorderColor">
       {

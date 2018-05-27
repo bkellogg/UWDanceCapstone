@@ -108,7 +108,6 @@ class Dashboard extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .then(pieces => {
-        console.log(pieces)
         this.setState({
           pending: pieces
         })
@@ -180,7 +179,7 @@ class Dashboard extends Component {
                   <div id='announcements'>
                     {pendingCasting}
                     {this.state.user.bio === "" &&
-                      <div className="announcement completeProfileBorderColor" onClick={() => window.location = "/profile"}>
+                      <div className="announcement completeProfileBorderColor clickable" onClick={() => window.location = "/profile"}>
                         <div className="completeProfileCardColor">
                           <p className="announcementMessage"> Please complete your profile. </p>
                         </div>

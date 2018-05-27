@@ -23,7 +23,7 @@ class Piece extends Component {
       dancers: [],
       openInfo: false,
       openCast: false,
-      openCalendar: true,
+      openCalendar: false,
       error : false,
       choreographerPhone : "",
       danceTitle : "",
@@ -215,44 +215,34 @@ class Piece extends Component {
     }
   }
 
-  getDancerAvailability = () => {
+  async getDancerAvailability() {
     let dancers = this.state.dancers
     let dancerAvailabilityList = []
-    let filteredCast = []
-    dancers.forEach(dancer => {
-      filteredCast.push(dancer.id)
+    let filteredCast=[]
+
+    const allDancersAvailability = dancers.map(async dancer => {
       let dancerAvailability = {
         dancer : {
           user : dancer,
           availability: []
         }
       }
-      Util.makeRequest("users/" + dancer.id + "/auditions/" + this.state.auditionID + "/availability", {}, "GET", true)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
-        if (res.status === 401) {
-          Util.signOut()
-        }
-        return res
-          .text()
-          .then((t) => Promise.reject(t));
-      })
-      .then(availability => {
-        dancerAvailability.dancer.availability = availability
-        dancerAvailabilityList.push(dancerAvailability)
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+      const response = await Util.makeRequest("users/" + dancer.id + "/auditions/" + this.state.auditionID + "/availability", {}, "GET", true)
+      const availability = await response.json()
+      
+      dancerAvailability.dancer.availability = availability
+      filteredCast.push(dancer.id)
+
+      return dancerAvailability
     })
 
+    const allDancers = await Promise.all(allDancersAvailability)
     this.setState({
-      dancerAvailabilityList : dancerAvailabilityList,
+      dancerAvailabilityList : allDancers,
       filteredCast: filteredCast
     })
   }
+
 
   viewAvailability = () => {
     let view = this.state.viewAvailability
@@ -312,7 +302,8 @@ class Piece extends Component {
     let musicianRow = []
     let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
-    let availability = <AvailabilityOverlap filteredCast={this.state.filteredCast} cast={this.state.dancerAvailabilityList} contested={[]} />
+    console.log(this.state.dancerAvailabilityList + " " + this.state.filteredCast)
+    //const availability = <AvailabilityOverlap filteredCast={this.state.filteredCast} cast={this.state.dancerAvailabilityList} contested={[]} />
     musicianRow = musicians.map((musician, i) => {
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
@@ -438,7 +429,7 @@ class Piece extends Component {
                           <h2 className="smallHeading">Hide Cast Availability</h2>
                           <i className="fas fa-chevron-up fa-lg"></i>
                         </div>
-                        {availability}
+                        <AvailabilityOverlap filteredCast={this.state.filteredCast} cast={this.state.dancerAvailabilityList} contested={[]} />
                       </section>
                     }
                   </div>
