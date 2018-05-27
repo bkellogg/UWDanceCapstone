@@ -115,12 +115,12 @@ class AvatarEditorConsole extends Component {
           </div>
         </Dropzone>
         </div>
-        <div className="nameWrap">
+        <div className="nameWrap" style={{marginBottom: "15px"}}>
         <br />
-        <p>New File:</p>
+        <p>Upload a head shot as a <b>JPG file.</b></p>
         <input name="newImage" type="file" onChange={this.handleNewImage} />
         <br />
-        <p>Zoom:</p>
+        <p><b>Zoom:</b></p>
         <input
           name="scale"
           type="range"
@@ -132,7 +132,7 @@ class AvatarEditorConsole extends Component {
         />
         <br />
 
-        <p>Rotate: &nbsp; 
+        <p><b>Rotate: </b>&nbsp; 
         <button onClick={this.rotateLeft}>Left</button>
         <button onClick={this.rotateRight}>Right</button>
         </p>

@@ -3,6 +3,7 @@ import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
 import AvatarEditorConsole from './AvatarEditorConsole';
+import TextField from 'material-ui/TextField';
 import { compose } from 'ramda';
 import './styling/Profile.css';
 import './styling/General.css';
@@ -286,10 +287,7 @@ class Profile extends Component {
                     }
                     {this.state.edit &&
                       <section>
-                        <div>
-                          <p>Upload a head shot as a jpg file. </p>
-                        </div>
-                        <AvatarEditorConsole img={this.state.photoSrc} changeImg={this.updateImage} />
+                        <AvatarEditorConsole style={{marginBottom: "15px"}} img={this.state.photoSrc} changeImg={this.updateImage} />
                       </section>
                     }
                   </div>
@@ -307,17 +305,18 @@ class Profile extends Component {
                       }
                       {this.state.edit &&
                         <div id="editName">
+                          <b>Name: </b>
                           <Row>
-                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname} />
-                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} />
+                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}/>
+                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}} />
                           </Row>
                         </div>
                       }
                     </div>
                   </div>
-                  {!this.state.edit &&
+                  {
+                    !this.state.edit &&
                     <Button id="edit" className="editButton" onClick={() => this.onClick()}>Edit</Button>
-
                   }
 
                 </div>
@@ -337,8 +336,14 @@ class Profile extends Component {
                         <form className="col s12">
                           <div className="row">
                             <div className="input-field col s12">
-                              <textarea id="textarea1" style={{backgroundColor: 'white', height: '100px', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}} name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
-                              <p><strong>Word Count:</strong> {this.state.wordCount}</p>
+                              <TextField
+                                className="bioUpload2"
+                                defaultValue={this.state.text}
+                                multiLine={true}
+                                onChange={this.handleBioChange}
+                                style={{backgroundColor: 'white', height: '100px', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}
+                              />
+                              <p style={{fontSize: "13px"}}><strong>Word Count:</strong> {this.state.wordCount}</p>
                             </div>
                           </div>
                         </form>
@@ -363,6 +368,7 @@ class Profile extends Component {
                       }
                       {this.state.edit &&
                         <section>
+                          <div className="subHeader"><b>Resume:  </b></div>
                           <div> Upload your dance resume <b>AS A PDF.</b> </div>
                           <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
                         </section>
@@ -398,6 +404,7 @@ class Profile extends Component {
               </div>
             }
           </div>
+          <Button> Delete Account </Button>
         </div>
       </section>
     );
