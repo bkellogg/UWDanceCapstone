@@ -131,8 +131,8 @@ class Dashboard extends Component {
           {
             <div className="announcementCardColor">
               <div className="announcementMessage">
-                <p> <em>{announcement.createdBy.firstName + " " + announcement.createdBy.lastName + ", " + moment(announcement.createdAt).format("MM/DD/YY hh:mm A")}</em></p>
-                <p>{announcement.message}</p>
+              <p>{announcement.message}</p>
+              <p> <em>{announcement.createdBy.firstName + " " + announcement.createdBy.lastName + ", " + moment(announcement.createdAt).format("MM/DD/YY hh:mm A")}</em></p>
               </div>
             </div>
           }

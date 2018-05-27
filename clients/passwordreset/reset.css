@@ -6,19 +6,28 @@ body {
 }
 
 .pass-reset-page-wrap{
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 500px;
+    width: auto;
+    margin-top: 100px;
+    text-align: center;
+}
+
+.pass-reset-form-wrap{
     border: 1px solid lightgray;
     background-color: white;
     border-radius: 10px;
     padding: 50px;
     padding-top: 30px;
-    max-width: 400px;
-    width: auto;
     text-align: left;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 150px;
-    box-shadow: rgba(236, 230, 230, 0.12) 0px 1px 6px, rgba(255, 255, 255, 0.12) 0px 1px 4px;
 
+    box-shadow: rgba(236, 230, 230, 0.12) 0px 1px 6px, rgba(255, 255, 255, 0.12) 0px 1px 4px;
+}
+
+.stage-logo{
+    width: 200px;
+    margin-bottom: 30px;
 }
 
 h1{
