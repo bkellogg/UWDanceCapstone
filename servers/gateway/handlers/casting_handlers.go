@@ -145,8 +145,8 @@ func (ctx *CastingContext) handleCastingUpdate(w http.ResponseWriter, r *http.Re
 
 // handlePostCasting handles requests to post casting
 func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
-	newRehearsals := models.NewRehearsalTimes{}
-	if dberr := receive(r, &newRehearsals); dberr != nil {
+	postCastingReq := models.PostCastingRequest{}
+	if dberr := receive(r, &postCastingReq); dberr != nil {
 		return dberr
 	}
 
@@ -180,12 +180,36 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	rehearsals, dberr := ctx.Session.Store.InsertPieceRehearsals(u.ID, piece.ID, newRehearsals)
+	rehearsals, dberr := ctx.Session.Store.InsertPieceRehearsals(u.ID, piece.ID, postCastingReq.Rehearsals)
 	if dberr != nil {
 		pcr.Message = "failed to create piece rehearsals: " + err.Error()
 	} else {
 		pcr.Rehearsals = rehearsals
 	}
+
+	pieceInfoSheet, dberr := ctx.Session.Store.GetPieceInfoSheet(piece.ID)
+	if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
+		pcr.Message += "failed to get piece info sheet: " + dberr.Message
+	} else {
+		if pieceInfoSheet != nil {
+			updates := &models.PieceInfoSheetUpdates{
+				RehearsalSchedule: postCastingReq.RehearsalSchedule,
+			}
+			dberr = ctx.Session.Store.UpdatePieceInfoSheet(pieceInfoSheet.ID, updates)
+			if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
+				pcr.Message += "failed to update existing piece info sheet: " + dberr.Message
+			}
+		} else {
+			newInfoSheet := &models.NewPieceInfoSheet{
+				RehearsalSchedule: postCastingReq.RehearsalSchedule,
+			}
+			if _, dberr := ctx.Session.Store.InsertNewPieceInfoSheet(int(u.ID), piece.ID, newInfoSheet); dberr != nil {
+				pcr.Message += "failed to insert new piece info sheet: " + dberr.Message
+			}
+		}
+	}
+
+	pcr.RehearsalSchedule = postCastingReq.RehearsalSchedule
 
 	confResultChan := make(chan *models.CastingConfResult)
 
@@ -305,6 +329,11 @@ func getNormalizedTimeParts(time time.Time) (string, string, string, string) {
 		expiryTimePeriod = "P.M."
 	}
 
+	expiryTimeHourString := strconv.Itoa(expiryTimeHour)
+	if expiryTimeHour/10 == 0 {
+		expiryTimeHourString = "0" + expiryTimeHourString
+	}
+
 	expiryTimeMinute := time.Minute()
 	expiryTimeMinuteString := strconv.Itoa(expiryTimeMinute)
 	if expiryTimeMinute/10 == 0 {
@@ -317,5 +346,5 @@ func getNormalizedTimeParts(time time.Time) (string, string, string, string) {
 		expiryTimeSecondString = "0" + expiryTimeSecondString
 	}
 
-	return strconv.Itoa(expiryTimeHour), expiryTimeMinuteString, expiryTimeSecondString, expiryTimePeriod
+	return expiryTimeHourString, expiryTimeMinuteString, expiryTimeSecondString, expiryTimePeriod
 }

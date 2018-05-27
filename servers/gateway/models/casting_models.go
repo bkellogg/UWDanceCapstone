@@ -1,5 +1,7 @@
 package models
 
+import "github.com/pkg/errors"
+
 // CastingConfVars defines the variables that will be merged
 // into the casting confirmation template.
 type CastingConfVars struct {
@@ -22,10 +24,30 @@ type CastingConfResult struct {
 	Message       string `json:"message,omitempty"`
 }
 
+// PostCastingRequest defines how the body of a request
+// to post casting is formatted.
+type PostCastingRequest struct {
+	Rehearsals        NewRehearsalTimes `json:"rehearsals,omitempty"`
+	RehearsalSchedule string            `json:"rehearsalSchedule,omitempty"`
+}
+
+// Validate validates the given PostCastingRequest.
+// Returns an error if one occurred.
+func (pcr *PostCastingRequest) Validate() error {
+	if err := pcr.Rehearsals.Validate(); err != nil {
+		return err
+	}
+	if len(pcr.RehearsalSchedule) > 100 {
+		return errors.New("rehearsal schedule must be fewer than 100 characters")
+	}
+	return nil
+}
+
 // PostCastingResponse defines the structure of a post
 // casting request response
 type PostCastingResponse struct {
-	Message        string               `json:"message,omitempty"`
-	Rehearsals     RehearsalTimes       `json:"rehearsals"`
-	CastingResults []*CastingConfResult `json:"castingResults"`
+	Message           string               `json:"message,omitempty"`
+	Rehearsals        RehearsalTimes       `json:"rehearsals,omitempty"`
+	RehearsalSchedule string               `json:"rehearsalSchedule,omitempty"`
+	CastingResults    []*CastingConfResult `json:"castingResults"`
 }

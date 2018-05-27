@@ -227,7 +227,7 @@ func (store *Database) InsertNewPieceInfoSheet(creator int, pieceID int, info *N
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error getting piece info id: %v", err), http.StatusInternalServerError)
 	}
-	finalInfo.PieceInfoID = infoID
+	finalInfo.ID = infoID
 
 	for _, newMusician := range info.Musicians {
 		musician := &PieceMusician{
@@ -289,7 +289,7 @@ func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError
 		return nil, NewDBError("no piece info sheet found", http.StatusNotFound)
 	}
 	is := &PieceInfoSheet{}
-	if err = rows.Scan(&is.PieceInfoID, &is.ChorPhone, &is.Title, &is.RunTime,
+	if err = rows.Scan(&is.ID, &is.ChorPhone, &is.Title, &is.RunTime,
 		&is.Composers, &is.MusicTitle, &is.PerformedBy, &is.MusicSource,
 		&is.NumMusicians, &is.RehearsalSchedule, &is.ChorNotes,
 		&is.CostumeDesc, &is.ItemDesc, &is.LightingDesc, &is.OtherNotes,
@@ -300,7 +300,7 @@ func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError
 		M.Email, M.CreatedAt, M.CreatedBy,
 		M.IsDeleted FROM Musician M
 		JOIN PieceInfoMusician PIM ON M.MusicianID = PIM.MusicianID
-		WHERE PIM.PieceInfoID = ?`, is.PieceInfoID)
+		WHERE PIM.MusicianID = ?`, is.ID)
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error retrieving piece musicians: %v", err), http.StatusInternalServerError)
 	}
@@ -315,6 +315,41 @@ func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError
 	}
 	is.Musicians = musicians
 	return is, nil
+}
+
+// UpdatePieceInfoSheet updates an existing piece info sheet if it exists.
+// Returns a DBError if an error occurred.
+func (store *Database) UpdatePieceInfoSheet(infoSheetID int64, info *PieceInfoSheetUpdates) *DBError {
+	res, err := store.db.Exec(`UPDATE PieceInfoSheet PIS SET
+		PIS.ChoreographerPhone = COALESCE(NULLIF(?, ''), ChoreographerPhone),
+		PIS.Title = COALESCE(NULLIF(?, ''), Title),
+		PIS.RunTime = COALESCE(NULLIF(?, ''), RunTime),
+		PIS.Composers = COALESCE(NULLIF(?, ''), Composers),
+		PIS.MusicTitle = COALESCE(NULLIF(?, ''), MusicTitle),
+		PIS.PerformedBy = COALESCE(NULLIF(?, ''), PerformedBy),
+		PIS.MusicSource = COALESCE(NULLIF(?, ''), MusicSource),
+		PIS.RehearsalSchedule = COALESCE(NULLIF(?, ''), RehearsalSchedule),
+		PIS.ChorNotes = COALESCE(NULLIF(?, ''), ChorNotes),
+		PIS.CostumeDesc = COALESCE(NULLIF(?, ''), CostumeDesc),
+		PIS.ItemDesc = COALESCE(NULLIF(?, ''), ItemDesc),
+		PIS.LightingDesc = COALESCE(NULLIF(?, ''), LightingDesc),
+		PIS.OtherNotes = COALESCE(NULLIF(?, ''), OtherNotes)
+		WHERE PIS.PieceInfoID = ?`, info.ChorPhone, info.Title, info.RunTime,
+		info.Composers, info.MusicTitle, info.PerformedBy, info.MusicSource,
+		info.RehearsalSchedule, info.ChorNotes, info.CostumeDesc, info.ItemDesc,
+		info.LightingDesc, info.OtherNotes, infoSheetID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error applyong info sheet update: %v", err), http.StatusInternalServerError)
+	}
+
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving num rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("the piece info sheet doesn't exist or there were no changes made", http.StatusNotFound)
+	}
+	return nil
 }
 
 // DeletePieceInfoSheet deletes the given piece's info sheet, if it exists.
