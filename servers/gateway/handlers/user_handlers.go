@@ -92,14 +92,22 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		return respondWithString(w, "user updated", http.StatusOK)
-	case "DELETE":
+	case "LOCK":
 		if !ctx.permChecker.UserCanDeleteUser(u, int64(userID)) {
 			return permissionDenied()
 		}
-		if dberr := ctx.store.DeactivateUserByID(userID); err != nil {
+		if dberr := ctx.store.DeactivateUserByID(userID); dberr != nil {
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
-		return respondWithString(w, "user has been deleted", http.StatusOK)
+		return respondWithString(w, "user has been deactivated", http.StatusOK)
+	case "UNLOCK":
+		if !ctx.permChecker.UserCanEnableUser(u, int64(userID)) {
+			return permissionDenied()
+		}
+		if dberr := ctx.store.ActivateUserByID(userID); dberr != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
+		}
+		return respondWithString(w, "user has been activated", http.StatusOK)
 	default:
 		return methodNotAllowed()
 	}

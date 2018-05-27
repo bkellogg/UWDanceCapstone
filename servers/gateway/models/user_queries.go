@@ -357,33 +357,41 @@ func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeI
 }
 
 // DeactivateUserByID marks the user with the given userID as inactive. Returns
-// an error if one occured.
+// an error if one occurred.
 func (store *Database) DeactivateUserByID(userID int) *DBError {
+	return store.changeUserActivation(userID, false)
+}
+
+// ActivateUserByID marks the user with the given userID as active. Returns
+// an error if one occurred.
+func (store *Database) ActivateUserByID(userID int) *DBError {
+	return store.changeUserActivation(userID, true)
+}
+
+// changeUserActivation changes the given user's activation status to
+// match the given active status. Returns an error if one occurred.
+func (store *Database) changeUserActivation(userID int, active bool) *DBError {
 	tx, err := store.db.Begin()
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
 	}
 	defer tx.Rollback()
 
-	result, err := tx.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, false, userID)
+	result, err := tx.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, active, userID)
 	if err != nil {
-		return NewDBError(fmt.Sprintf("error deactivating user by id: %v", err), http.StatusInternalServerError)
+		return NewDBError(fmt.Sprintf("error changing user activation by id: %v", err), http.StatusInternalServerError)
 	}
 	numRows, err := result.RowsAffected()
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error retrieving rows affected %v", err), http.StatusInternalServerError)
 	}
 	if numRows == 0 {
-		return NewDBError("no user exists with the given id", http.StatusNotFound)
+		return NewDBError("no user exists with the given id with a different activation than provided", http.StatusNotFound)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
 	}
 	return nil
-}
-
-// ActivateUserByID marks the user with the given userID as active. Returns
-// an error if one occured.
-func (store *Database) ActivateUserByID(userID int) *DBError {
-	_, err := store.db.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, true, userID)
-	return NewDBError(fmt.Sprintf("error activating user: %v", err), http.StatusInternalServerError)
 }
 
 // TODO: Modularize these GetUsersByX functions...

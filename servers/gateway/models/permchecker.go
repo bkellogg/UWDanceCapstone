@@ -277,6 +277,21 @@ func (pc *PermissionChecker) UserCanDeleteUser(u *User, target int64) bool {
 	if target == 1 && u.ID != 1 {
 		return false
 	}
+	if u.ID == target {
+		return true
+	}
+	return pc.userHasPermissionTo(u, target, permissions.DeleteUsers)
+}
+
+// UserCanDeleteUser returns true if the given user can delete the target user,
+// false if otherwise.
+func (pc *PermissionChecker) UserCanEnableUser(u *User, target int64) bool {
+	if target == 1 && u.ID != 1 {
+		return false
+	}
+	if u.ID == target {
+		return true
+	}
 	return pc.userHasPermissionTo(u, target, permissions.DeleteUsers)
 }
 

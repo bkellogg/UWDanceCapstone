@@ -7,7 +7,8 @@ const (
 	SeeAllUsers               = 70
 	ModifyUsers               = 70
 	ChangeUserRole            = 100
-	DeleteUsers               = 70
+	DeleteUsers               = 100
+	EnableUsers               = 100
 	AddUserToPiece            = 70
 	AddStaffToPiece           = 75
 	RemoveUserFromPiece       = 70
