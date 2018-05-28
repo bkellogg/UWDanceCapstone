@@ -296,7 +296,8 @@ class Profile extends Component {
                 <div className="header">
 
                   <div id="photoContainer" className="photoContainer">
-                    {!this.state.edit &&
+                    {
+                      !this.state.edit &&
                       <img id="photo" alt="profile" src={this.state.photoSrc}></img>
                     }
                     {this.state.edit &&
@@ -317,7 +318,8 @@ class Profile extends Component {
                           <p className="email"><a href={"mailto:" + this.state.user.email}>{email}</a></p>
                         </div>
                       }
-                      {this.state.edit &&
+                      {
+                        this.state.edit &&
                         <div id="editName">
                           <b>Name: </b>
                           <Row>
@@ -369,19 +371,18 @@ class Profile extends Component {
 
                 <div className="resumeWrap">
                     <div id="resume">
-                      {!this.state.edit &&
+                      {
+                        !this.state.edit &&
                         <section>
+                          <div className="subheader"><b>Resume:</b></div>
                           {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                          {this.state.resume != null && (
-                            <div>
-                              <div className="subheader"><b>Resume:</b></div>
-                              <a href={this.state.resume}>View PDF Resume</a>
-                            </div>
-                          )}
-
+                          {this.state.resume != null && 
+                            <a href={this.state.resume}>View PDF Resume</a>
+                          }
                         </section>
                       }
-                      {this.state.edit &&
+                      {
+                        this.state.edit &&
                         <section>
                           <div className="subHeader"><b>Resume:  </b></div>
                           <div> Upload your dance resume <b>AS A PDF.</b> </div>
@@ -391,7 +392,8 @@ class Profile extends Component {
                     </div>
                   </div>
 
-                { !this.state.edit &&
+                {
+                  !this.state.edit &&
                   <div id="history">
                     <div id="historyTitle" className="subheader"><b>Piece History</b></div>
                     {this.state.history.length > 0 && this.state.history.map((p, i) => {
@@ -402,7 +404,8 @@ class Profile extends Component {
                         </div>
                       )
                     })}
-                    {this.state.history.length === 0 &&
+                    {
+                      this.state.history.length === 0 &&
                       <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
 
                     }
@@ -412,7 +415,8 @@ class Profile extends Component {
               </div>
 
             </div>
-            {this.state.edit &&
+            {
+              this.state.edit &&
               <div className="editButtons"> 
                 <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
                 <Button className="saveButton" onClick={() => this.onCancel()}>Cancel</Button>
