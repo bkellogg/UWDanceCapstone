@@ -16,7 +16,7 @@ func (store *Database) InsertRole(role *NewRole) (*Role, *DBError) {
 		return nil, NewDBError("error beginning transaction: "+err.Error(), http.StatusInternalServerError)
 	}
 	roles, dbErr := parseRolesFromDatabase(tx.Query(`SELECT * FROM Role R
-		Where R.RoleName = ? OR R.RoleDisplayName = ?`, role.Name, role.DisplayName))
+		Where (R.RoleName = ? OR R.RoleDisplayName = ?) AND R.IsDeleted = FALSE`, role.Name, role.DisplayName))
 	if dbErr != nil {
 		tx.Rollback()
 		return nil, dbErr
@@ -53,7 +53,7 @@ func (store *Database) InsertRole(role *NewRole) (*Role, *DBError) {
 // GetRoleByName gets the role associated with that name. Returns
 // an error if one occurred.
 func (store *Database) GetRoleByName(name string) (*Role, *DBError) {
-	res, err := store.db.Query(`SELECT * FROM Role R Where R.RoleName = ?`, name)
+	res, err := store.db.Query(`SELECT * FROM Role R Where R.RoleName = ? AND R.IsDeleted = FALSE`, name)
 	if err != nil {
 		dbErr := NewDBError(err.Error(), http.StatusInternalServerError)
 		if err == sql.ErrNoRows {
@@ -136,7 +136,7 @@ func (store *Database) DeleteRoleByID(id int) *DBError {
 // the database, or an error if one occurred. If there are no
 // roles, an empty slice is returned but no error.
 func (store *Database) GetRoles() ([]*Role, *DBError) {
-	return parseRolesFromDatabase(store.db.Query(`SELECT * FROM Role R`))
+	return parseRolesFromDatabase(store.db.Query(`SELECT * FROM Role R WHERE R.IsDeleted = FALSE`))
 }
 
 // parseRolesFromDatabase compiles the given result and err into a slice of roles or an error.
