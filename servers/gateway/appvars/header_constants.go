@@ -6,12 +6,11 @@ const (
 	HeaderAccessControlAllowHeaders  = "Access-Control-Allow-Headers"
 	HeaderAccessControlExposeHeaders = "Access-Control-Expose-Headers"
 	HeaderAccessControlAllowMethods  = "Access-Control-Allow-Methods"
-	HeaderAccessControlMaxAge        = "Access-Control-Max-Age"
 )
 
 const (
 	CORSAllowedOrigins = "*"
-	CORSAllowedMethods = "OPTIONS, GET, POST, PATCH, DELETE, LINK, UNLINK, PUT"
+	CORSAllowedMethods = "OPTIONS, GET, POST, PATCH, DELETE, LINK, UNLINK, PUT, LOCK, UNLOCK"
 	CORSAllowedHeaders = "Content-Type, Authorization, ImageFieldName, ResumeFieldName"
 	CORSExposedHeaders = "Authorization, " + HeaderStrictTransportSecurity
 )
@@ -27,8 +26,6 @@ const (
 	ContentTypeJSONUTF8       = ContentTypeJSON + CharsetUTF8
 	ContentTypeTextPlain      = "text/plain"
 	ContentTypeTextPlainUTF8  = ContentTypeTextPlain + CharsetUTF8
-	ContentTypeTextHTML       = "text/html"
-	ContentTypeTextHTMLUTF8   = ContentTypeTextHTML + CharsetUTF8
 	ContentTypeImageJPEG      = "image/jpeg"
 	ContentTypeApplicationPDF = "application/pdf"
 )

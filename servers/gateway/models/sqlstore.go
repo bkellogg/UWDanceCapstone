@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
@@ -100,13 +101,15 @@ func (store *Database) beginPieceInviteJanitor() {
 type SQLStatement struct {
 	Cols  string
 	Table string
+	Join  string
 	Where string
 	Page  int
 }
 
 func (ss *SQLStatement) BuildQuery() string {
-	return fmt.Sprintf("SELECT %s FROM %s WHERE %s LIMIT 25 OFFSET %d",
-		ss.Cols, ss.Table, ss.Where, getSQLPageOffset(ss.Page))
+	return strings.TrimSpace(fmt.Sprintf("SELECT %s FROM %s %s WHERE %s LIMIT 25 OFFSET %d",
+		strings.TrimSpace(ss.Cols), strings.TrimSpace(ss.Table),
+		strings.TrimSpace(ss.Join), strings.TrimSpace(ss.Where), getSQLPageOffset(ss.Page)))
 }
 
 func (ss *SQLStatement) BuildCountQuery() string {
@@ -114,5 +117,6 @@ func (ss *SQLStatement) BuildCountQuery() string {
 	if len(ss.Where) == 0 {
 		where = "1 == 1"
 	}
-	return fmt.Sprintf("SELECT Count(*) FROM %s WHERE %s", ss.Table, where)
+	return strings.TrimSpace(fmt.Sprintf("SELECT Count(*) FROM %s %s WHERE %s",
+		strings.TrimSpace(ss.Table), strings.TrimSpace(ss.Join), strings.TrimSpace(where)))
 }

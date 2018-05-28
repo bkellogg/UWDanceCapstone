@@ -1,5 +1,11 @@
 package models
 
+import (
+	"time"
+
+	"github.com/pkg/errors"
+)
+
 // CastingConfVars defines the variables that will be merged
 // into the casting confirmation template.
 type CastingConfVars struct {
@@ -7,6 +13,7 @@ type CastingConfVars struct {
 	ChorFName  string
 	ChorLName  string
 	ExpiryTime string
+	Schedule   string
 	URL        string
 }
 
@@ -22,10 +29,39 @@ type CastingConfResult struct {
 	Message       string `json:"message,omitempty"`
 }
 
+// PostCastingRequest defines how the body of a request
+// to post casting is formatted.
+type PostCastingRequest struct {
+	Rehearsals        NewRehearsalTimes `json:"rehearsals,omitempty"`
+	RehearsalSchedule string            `json:"rehearsalSchedule,omitempty"`
+}
+
+// Validate validates the given PostCastingRequest.
+// Returns an error if one occurred.
+func (pcr *PostCastingRequest) Validate() error {
+	if err := pcr.Rehearsals.Validate(); err != nil {
+		return err
+	}
+	if len(pcr.RehearsalSchedule) > 500 {
+		return errors.New("rehearsal schedule must be fewer than 500 characters")
+	}
+	return nil
+}
+
 // PostCastingResponse defines the structure of a post
 // casting request response
 type PostCastingResponse struct {
-	Message        string               `json:"message,omitempty"`
-	Rehearsals     RehearsalTimes       `json:"rehearsals"`
-	CastingResults []*CastingConfResult `json:"castingResults"`
+	Message           string               `json:"message,omitempty"`
+	Rehearsals        RehearsalTimes       `json:"rehearsals,omitempty"`
+	RehearsalSchedule string               `json:"rehearsalSchedule,omitempty"`
+	CastingResults    []*CastingConfResult `json:"castingResults"`
+}
+
+// PieceInviteResponse defines how an invite for a given piece is
+// reported to the client.
+type PieceInviteResponse struct {
+	Choreographer     *UserResponse `json:"choreographer"`
+	Piece             *Piece        `json:"piece"`
+	RehearsalSchedule string        `json:"rehearsalSchedule"`
+	ExpiryTime        time.Time     `json:"expiresAt"`
 }

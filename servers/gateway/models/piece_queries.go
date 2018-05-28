@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -133,31 +134,39 @@ func (store *Database) DeletePieceByID(id int) *DBError {
 
 // GetPiecesByUserID gets all pieces the given user is in. If showID is specified, then only pieces
 // the user is in in that show will be returned
-func (store *Database) GetPiecesByUserID(id, page, showID int, includeDeleted bool) ([]*Piece, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT P.PieceID, P.InfoSheetID, P.ChoreographerID ,P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy,
-	P.IsDeleted FROM Pieces P 
-	JOIN UserPiece UP ON P.PieceID = UP.PieceID 
-	WHERE UP.UserID = ?`
+func (store *Database) GetPiecesByUserID(id, page, showID int, includeDeleted bool) ([]*Piece, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols: `DISTINCT P.PieceID, P.InfoSheetID, P.ChoreographerID ,P.PieceName, P.ShowID,
+		P.CreatedAt, P.CreatedBy, P.IsDeleted`,
+		Table: "Pieces P",
+		Join:  "JOIN UserPiece UP ON P.PieceID = UP.PieceID",
+		Where: "UP.UserID = ?",
+		Page:  page,
+	}
+
 	if !includeDeleted {
-		query += ` AND UP.IsDeleted = false`
+		sqlStmnt.Where += ` AND UP.IsDeleted = false`
 	}
 	if showID > 0 {
-		query += fmt.Sprintf(" AND P.ShowID = %s ", strconv.Itoa(showID))
+		sqlStmnt.Where += fmt.Sprintf(" AND P.ShowID = %s ", strconv.Itoa(showID))
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
+	return store.processPieceQuery(sqlStmnt, id)
 }
 
 // GetPiecesByShowID gets all pieces that are associated with the given show ID.
-func (store *Database) GetPiecesByShowID(id, page int, includeDeleted bool) ([]*Piece, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT * FROM Pieces P Where P.ShowID = ?`
-	if !includeDeleted {
-		query += ` AND P.IsDeleted = false`
+func (store *Database) GetPiecesByShowID(id, page int, includeDeleted bool) ([]*Piece, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  "*",
+		Table: "Pieces P",
+		Where: "P.ShowID = ?",
+		Page:  page,
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
+
+	if !includeDeleted {
+		sqlStmnt.Where += ` AND P.IsDeleted = false`
+	}
+
+	return store.processPieceQuery(sqlStmnt, id)
 }
 
 // InsertNewPieceInfoSheet inserts the given pieceInfoSheet for the given PieceID.
@@ -203,7 +212,7 @@ func (store *Database) InsertNewPieceInfoSheet(creator int, pieceID int, info *N
 
 	res, err := tx.Exec(`INSERT INTO PieceInfoSheet
 		(ChoreographerPhone, Title, RunTime, Composers, MusicTitle,
-		PerformedBy, MusicSource, NumMusicians, RehearsalSchedule,
+		PerformedBy, MusicSource, NumMusicians, Schedule,
 		ChorNotes, CostumeDesc, ItemDesc, LightingDesc, OtherNotes,
 		CreatedAt, CreatedBy, IsDeleted)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -218,7 +227,7 @@ func (store *Database) InsertNewPieceInfoSheet(creator int, pieceID int, info *N
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error getting piece info id: %v", err), http.StatusInternalServerError)
 	}
-	finalInfo.PieceInfoID = infoID
+	finalInfo.ID = infoID
 
 	for _, newMusician := range info.Musicians {
 		musician := &PieceMusician{
@@ -280,7 +289,7 @@ func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError
 		return nil, NewDBError("no piece info sheet found", http.StatusNotFound)
 	}
 	is := &PieceInfoSheet{}
-	if err = rows.Scan(&is.PieceInfoID, &is.ChorPhone, &is.Title, &is.RunTime,
+	if err = rows.Scan(&is.ID, &is.ChorPhone, &is.Title, &is.RunTime,
 		&is.Composers, &is.MusicTitle, &is.PerformedBy, &is.MusicSource,
 		&is.NumMusicians, &is.RehearsalSchedule, &is.ChorNotes,
 		&is.CostumeDesc, &is.ItemDesc, &is.LightingDesc, &is.OtherNotes,
@@ -291,7 +300,7 @@ func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError
 		M.Email, M.CreatedAt, M.CreatedBy,
 		M.IsDeleted FROM Musician M
 		JOIN PieceInfoMusician PIM ON M.MusicianID = PIM.MusicianID
-		WHERE PIM.PieceInfoID = ?`, is.PieceInfoID)
+		WHERE PIM.MusicianID = ?`, is.ID)
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error retrieving piece musicians: %v", err), http.StatusInternalServerError)
 	}
@@ -306,6 +315,41 @@ func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError
 	}
 	is.Musicians = musicians
 	return is, nil
+}
+
+// UpdatePieceInfoSheet updates an existing piece info sheet if it exists.
+// Returns a DBError if an error occurred.
+func (store *Database) UpdatePieceInfoSheet(infoSheetID int64, info *PieceInfoSheetUpdates) *DBError {
+	res, err := store.db.Exec(`UPDATE PieceInfoSheet PIS SET
+		PIS.ChoreographerPhone = COALESCE(NULLIF(?, ''), ChoreographerPhone),
+		PIS.Title = COALESCE(NULLIF(?, ''), Title),
+		PIS.RunTime = COALESCE(NULLIF(?, ''), RunTime),
+		PIS.Composers = COALESCE(NULLIF(?, ''), Composers),
+		PIS.MusicTitle = COALESCE(NULLIF(?, ''), MusicTitle),
+		PIS.PerformedBy = COALESCE(NULLIF(?, ''), PerformedBy),
+		PIS.MusicSource = COALESCE(NULLIF(?, ''), MusicSource),
+		PIS.Schedule = COALESCE(NULLIF(?, ''), Schedule),
+		PIS.ChorNotes = COALESCE(NULLIF(?, ''), ChorNotes),
+		PIS.CostumeDesc = COALESCE(NULLIF(?, ''), CostumeDesc),
+		PIS.ItemDesc = COALESCE(NULLIF(?, ''), ItemDesc),
+		PIS.LightingDesc = COALESCE(NULLIF(?, ''), LightingDesc),
+		PIS.OtherNotes = COALESCE(NULLIF(?, ''), OtherNotes)
+		WHERE PIS.PieceInfoID = ?`, info.ChorPhone, info.Title, info.RunTime,
+		info.Composers, info.MusicTitle, info.PerformedBy, info.MusicSource,
+		info.RehearsalSchedule, info.ChorNotes, info.CostumeDesc, info.ItemDesc,
+		info.LightingDesc, info.OtherNotes, infoSheetID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error applyong info sheet update: %v", err), http.StatusInternalServerError)
+	}
+
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving num rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("the piece info sheet doesn't exist or there were no changes made", http.StatusNotFound)
+	}
+	return nil
 }
 
 // DeletePieceInfoSheet deletes the given piece's info sheet, if it exists.
@@ -548,4 +592,27 @@ func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, *DBError) 
 		pieces = append(pieces, piece)
 	}
 	return pieces, nil
+}
+
+// processPieceQuery runs the query with the given args and returns a slice of pieces
+// that matched that query as well as the number of pages of pieces that matched
+// that query. Returns a DBError if an error occurred.
+func (store *Database) processPieceQuery(sqlStmt *SQLStatement, args ...interface{}) ([]*Piece, int, *DBError) {
+	pieces, dberr := handlePiecesFromDatabase(store.db.Query(sqlStmt.BuildQuery(), args...))
+	if dberr != nil {
+		return nil, 0, dberr
+	}
+	numResults := 0
+	rows, err := store.db.Query(sqlStmt.BuildCountQuery(), args...)
+	if err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error querying for number of results: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, 0, NewDBError("count query returned no results", http.StatusInternalServerError)
+	}
+	if err = rows.Scan(&numResults); err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error scanning rows into num results: %v", err), http.StatusInternalServerError)
+	}
+	return pieces, int(math.Ceil(float64(numResults) / 25.0)), nil
 }

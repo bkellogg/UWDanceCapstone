@@ -92,14 +92,22 @@ func (ctx *AuthContext) SpecificUserHandler(w http.ResponseWriter, r *http.Reque
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		return respondWithString(w, "user updated", http.StatusOK)
-	case "DELETE":
+	case "LOCK":
 		if !ctx.permChecker.UserCanDeleteUser(u, int64(userID)) {
 			return permissionDenied()
 		}
-		if dberr := ctx.store.DeactivateUserByID(userID); err != nil {
+		if dberr := ctx.store.DeactivateUserByID(userID); dberr != nil {
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
-		return respondWithString(w, "user has been deleted", http.StatusOK)
+		return respondWithString(w, "user has been deactivated", http.StatusOK)
+	case "UNLOCK":
+		if !ctx.permChecker.UserCanEnableUser(u, int64(userID)) {
+			return permissionDenied()
+		}
+		if dberr := ctx.store.ActivateUserByID(userID); dberr != nil {
+			return HTTPError(dberr.Message, dberr.HTTPStatus)
+		}
+		return respondWithString(w, "user has been activated", http.StatusOK)
 	default:
 		return methodNotAllowed()
 	}
@@ -119,21 +127,27 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 	objectType := mux.Vars(r)["object"]
 	switch objectType {
 	case "pieces":
+		if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
+			return permissionDenied()
+		}
 		showID, httperr := getIntParam(r, "show")
 		if httperr != nil {
 			return httperr
 		}
-		pieces, err := ctx.store.GetPiecesByUserID(userID, page, showID, includeDeleted)
+		pieces, numPages, err := ctx.store.GetPiecesByUserID(userID, page, showID, includeDeleted)
 		if err != nil {
 			return HTTPError(err.Message, err.HTTPStatus)
 		}
-		return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
+		return respond(w, models.PaginatePieces(pieces, page, numPages), http.StatusOK)
 	case "shows":
-		shows, err := ctx.store.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
+		if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
+			return permissionDenied()
+		}
+		shows, numPages, err := ctx.store.GetShowsByUserID(userID, page, includeDeleted, getHistoryParam(r))
 		if err != nil {
 			return HTTPError(err.Message, err.HTTPStatus)
 		}
-		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
+		return respond(w, models.PaginateNumShows(shows, page, numPages), http.StatusOK)
 	case "photo":
 		userID, err := parseUserID(r, u)
 		if err != nil {
@@ -168,12 +182,18 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		}
 	case "resume":
 		if r.Method == "GET" {
+			if !ctx.permChecker.UserCanSeeUser(u, int64(userID)) {
+				return permissionDenied()
+			}
 			resumeBytes, httperr := getUserResume(userID)
 			if httperr != nil {
 				return httperr
 			}
 			return respondWithPDF(w, resumeBytes, http.StatusOK)
 		} else if r.Method == "POST" {
+			if !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
+				return permissionDenied()
+			}
 			if httperr := saveResumeFromRequest(r, userID); httperr != nil {
 				return httperr
 			}

@@ -27,11 +27,11 @@ func (ctx *AnnouncementContext) AnnouncementsHandler(w http.ResponseWriter, r *h
 			return httperr
 		}
 		includeDeleted := getIncludeDeletedParam(r)
-		announcements, dberr := ctx.Store.GetAllAnnouncements(page, includeDeleted, getStringParam(r, "user"), getStringParam(r, "type"))
+		announcements, numPages, dberr := ctx.Store.GetAllAnnouncements(page, includeDeleted, getStringParam(r, "user"), getStringParam(r, "type"))
 		if dberr != nil {
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
-		return respond(w, models.PaginateAnnouncementResponses(announcements, page), http.StatusOK)
+		return respond(w, models.PaginateNumAnnouncementResponses(announcements, page, numPages), http.StatusOK)
 	case "POST":
 		if !ctx.permChecker.UserCan(u, permissions.SendAnnouncements) {
 			return permissionDenied()
