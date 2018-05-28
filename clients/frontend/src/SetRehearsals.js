@@ -64,7 +64,7 @@ class SetRehearsals extends Component {
 
     let body = {
       rehearsals : this.state.allRehearsals,
-      //rehearsalSchedule : rehearsalString
+      rehearsalSchedule : rehearsalString
     }
     
     Util.makeRequest("auditions/" + this.props.audition + "/casting", body, "POST", true)

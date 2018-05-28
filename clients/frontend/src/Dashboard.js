@@ -97,7 +97,7 @@ class Dashboard extends Component {
   }
 
   getUserPieces = () => {
-    Util.makeRequest("users/me/pieces/pending", "", "GET", true)
+    Util.makeRequest("users/me/pieces/invites", "", "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json();

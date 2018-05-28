@@ -27,6 +27,17 @@ td.userEmail{
     width: 95%
 }
 
+.param {
+    margin: 10px
+}
+
+.subsectionheader {
+    padding-top: 15px
+}
+
+.subSection {
+    border-top: solid lightgrey
+}
 
 @media only screen 
 and (max-width : 1024px)  {
