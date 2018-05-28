@@ -370,11 +370,13 @@ class Main extends Component {
           <div className="navigationWrap">
             <ul id="slide-out" className="side-nav fixed">
               <div className="navigationBg">
+              <Link to="/" style={{padding: "0px", marginBottom: "40px"}}>
                 <li>
                   <div id="logo">
-                    <img className="officialLogoImage" alt="logo" src={logo} />
+                  <img className="officialLogoImage" alt="logo" src={logo} />
                   </div>
                 </li>
+                </Link>
                 <li className="dropDown">
                   <Link to="/">Dashboard</Link>
                 </li>
