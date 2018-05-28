@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Switch, Route} from 'react-router-dom';
+import Terms from './Terms';
 
 //components
 import Landing from './Landing';
@@ -91,6 +93,10 @@ class App extends Component {
   render() {
     return (  
       <section>
+        <Switch >
+           <Route exact path={"/terms"} component={Terms}/> 
+        </Switch>
+
         {
           this.state.landing && !this.state.authorized && !this.state.signUp &&
           <Landing logIn={this.showSignIn} signUp={this.showSignUp} />
