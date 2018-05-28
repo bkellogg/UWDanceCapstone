@@ -199,7 +199,6 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 			if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
 				pcr.Message += "failed to update existing piece info sheet: " + dberr.Message
 			}
-			pieceInfoSheet.RehearsalSchedule = postCastingReq.RehearsalSchedule
 		} else {
 			newInfoSheet := &models.NewPieceInfoSheet{
 				RehearsalSchedule: postCastingReq.RehearsalSchedule,
@@ -210,12 +209,18 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	pcr.RehearsalSchedule = postCastingReq.RehearsalSchedule
+	if len(postCastingReq.RehearsalSchedule) > 0 {
+		pcr.RehearsalSchedule = postCastingReq.RehearsalSchedule
+	} else if len(pieceInfoSheet.RehearsalSchedule) > 0 {
+		pcr.RehearsalSchedule = pieceInfoSheet.RehearsalSchedule
+	} else {
+		pcr.RehearsalSchedule = appvars.EmptyRehearsalSchedule
+	}
 
 	confResultChan := make(chan *models.CastingConfResult)
 
 	for _, id64 := range dancers {
-		go handleUserInvite(ctx, int(id64), u, piece, confResultChan, pieceInfoSheet.RehearsalSchedule)
+		go handleUserInvite(ctx, int(id64), u, piece, confResultChan, pcr.RehearsalSchedule)
 	}
 
 	results := make([]*models.CastingConfResult, 0, len(dancers))

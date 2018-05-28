@@ -19,4 +19,6 @@ const (
 	CastStatusAccepted = "accepted"
 	CastStatusExpired  = "expired"
 	CastStatusDeleted  = "deleted"
+
+	EmptyRehearsalSchedule = "Weekly rehearsals have not been set yet."
 )

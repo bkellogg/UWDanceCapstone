@@ -212,7 +212,7 @@ func (store *Database) InsertNewPieceInfoSheet(creator int, pieceID int, info *N
 
 	res, err := tx.Exec(`INSERT INTO PieceInfoSheet
 		(ChoreographerPhone, Title, RunTime, Composers, MusicTitle,
-		PerformedBy, MusicSource, NumMusicians, Schedule,
+		PerformedBy, MusicSource, NumMusicians, RehearsalSchedule,
 		ChorNotes, CostumeDesc, ItemDesc, LightingDesc, OtherNotes,
 		CreatedAt, CreatedBy, IsDeleted)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -328,7 +328,7 @@ func (store *Database) UpdatePieceInfoSheet(infoSheetID int64, info *PieceInfoSh
 		PIS.MusicTitle = COALESCE(NULLIF(?, ''), MusicTitle),
 		PIS.PerformedBy = COALESCE(NULLIF(?, ''), PerformedBy),
 		PIS.MusicSource = COALESCE(NULLIF(?, ''), MusicSource),
-		PIS.Schedule = COALESCE(NULLIF(?, ''), Schedule),
+		PIS.RehearsalSchedule = COALESCE(NULLIF(?, ''), RehearsalSchedule),
 		PIS.ChorNotes = COALESCE(NULLIF(?, ''), ChorNotes),
 		PIS.CostumeDesc = COALESCE(NULLIF(?, ''), CostumeDesc),
 		PIS.ItemDesc = COALESCE(NULLIF(?, ''), ItemDesc),
