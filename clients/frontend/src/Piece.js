@@ -538,6 +538,7 @@ class Piece extends Component {
                       <TextField
                         className="textField"
                         id="composer"
+                        multiLine={true}
                         defaultValue={this.state.composer}
                         onChange={this.handleChange('composer')}
                         style={STYLES}
@@ -547,6 +548,7 @@ class Piece extends Component {
                       <TextField
                         className="textField"
                         id="musicTitle"
+                        multiLine={true}
                         defaultValue={this.state.musicTitle}
                         onChange={this.handleChange('musicTitle')}
                         style={STYLES}
@@ -602,6 +604,7 @@ class Piece extends Component {
                         className="textField"
                         id="rehearsalSchedule"
                         defaultValue={this.state.rehearsalSchedule}
+                        multiLine={true}
                         onChange={this.handleChange('rehearsalSchedule')}
                         style={STYLES}
                       />
