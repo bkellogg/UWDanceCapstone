@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/middleware"
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/models"
 	"github.com/gorilla/mux"
@@ -18,18 +17,18 @@ func (ctx *AuthContext) UserObjectDispatcher(w http.ResponseWriter, r *http.Requ
 		return ctx.handleUserAudition(w, r, u)
 	case "pieces":
 		subObject := vars["objectID"]
-		if subObject != appvars.CastStatusPending {
+		if subObject != "invites" {
 			return objectTypeNotSupported()
 		}
 		targetUser, httperr := parseUserID(r, u)
 		if httperr != nil {
 			return httperr
 		}
-		pieces, dberr := ctx.store.GetUserPieceInvites(targetUser)
+		invites, dberr := ctx.store.GetUserPieceInvites(targetUser)
 		if dberr != nil {
-			return middleware.HTTPErrorFromDBErrorContext(dberr, "getting pending user pieces")
+			return middleware.HTTPErrorFromDBErrorContext(dberr, "getting pending user piece invites")
 		}
-		return respond(w, pieces, http.StatusOK)
+		return respond(w, invites, http.StatusOK)
 	default:
 		return objectTypeNotSupported()
 	}

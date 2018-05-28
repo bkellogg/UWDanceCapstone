@@ -55,11 +55,11 @@ func (ctx *AuthContext) ShowAuditionRelationshipHandler(w http.ResponseWriter, r
 // handleUsersForAudition handles requests getting the users in an audition
 func (ctx *AuthContext) handleUsersForAudition(w http.ResponseWriter, r *http.Request, u *models.User) *middleware.HTTPError {
 	vars := mux.Vars(r)
-	showID, err := strconv.Atoi(vars["id"])
+	audID, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		return unparsableIDGiven()
 	}
-	if !ctx.permChecker.UserCanSeeUsersInAudition(u, showID) {
+	if !ctx.permChecker.UserCanSeeUsersInAudition(u, audID) {
 		return permissionDenied()
 	}
 	page, httperr := getPageParam(r)
@@ -68,7 +68,7 @@ func (ctx *AuthContext) handleUsersForAudition(w http.ResponseWriter, r *http.Re
 	}
 	includeDeleted := getIncludeDeletedParam(r)
 
-	users, dberr := ctx.store.GetUsersByAuditionID(showID, page, includeDeleted)
+	users, dberr := ctx.store.GetUsersByAuditionID(audID, page, includeDeleted)
 	if dberr != nil {
 		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}

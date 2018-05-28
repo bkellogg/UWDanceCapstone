@@ -136,8 +136,8 @@ func (npis *NewPieceInfoSheet) Validate() error {
 	if len(npis.MusicSource) > 100 {
 		return errors.New("music source must be fewer than 100 characters")
 	}
-	if len(npis.RehearsalSchedule) > 100 {
-		return errors.New("rehearsal schedule must be fewer than 100 characters")
+	if len(npis.RehearsalSchedule) > 500 {
+		return errors.New("rehearsal schedule must be fewer than 500 characters")
 	}
 	if len(npis.ChorNotes) > 100 {
 		return errors.New("choreographer notes must be fewer than 100 characters")
@@ -227,8 +227,8 @@ func (pisu *PieceInfoSheetUpdates) Validate() error {
 	if len(pisu.MusicSource) > 100 {
 		return errors.New("music source must be fewer than 100 characters")
 	}
-	if len(pisu.RehearsalSchedule) > 100 {
-		return errors.New("rehearsal schedule must be fewer than 100 characters")
+	if len(pisu.RehearsalSchedule) > 500 {
+		return errors.New("rehearsal schedule must be fewer than 500 characters")
 	}
 	if len(pisu.ChorNotes) > 100 {
 		return errors.New("choreographer notes must be fewer than 100 characters")

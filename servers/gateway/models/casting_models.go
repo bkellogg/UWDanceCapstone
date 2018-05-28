@@ -1,6 +1,10 @@
 package models
 
-import "github.com/pkg/errors"
+import (
+	"time"
+
+	"github.com/pkg/errors"
+)
 
 // CastingConfVars defines the variables that will be merged
 // into the casting confirmation template.
@@ -37,8 +41,8 @@ func (pcr *PostCastingRequest) Validate() error {
 	if err := pcr.Rehearsals.Validate(); err != nil {
 		return err
 	}
-	if len(pcr.RehearsalSchedule) > 100 {
-		return errors.New("rehearsal schedule must be fewer than 100 characters")
+	if len(pcr.RehearsalSchedule) > 500 {
+		return errors.New("rehearsal schedule must be fewer than 500 characters")
 	}
 	return nil
 }
@@ -50,4 +54,13 @@ type PostCastingResponse struct {
 	Rehearsals        RehearsalTimes       `json:"rehearsals,omitempty"`
 	RehearsalSchedule string               `json:"rehearsalSchedule,omitempty"`
 	CastingResults    []*CastingConfResult `json:"castingResults"`
+}
+
+// PieceInviteResponse defines how an invite for a given piece is
+// reported to the client.
+type PieceInviteResponse struct {
+	Choreographer     *UserResponse `json:"choreographer"`
+	Piece             *Piece        `json:"piece"`
+	RehearsalSchedule string        `json:"rehearsalSchedule"`
+	ExpiryTime        time.Time     `json:"expiresAt"`
 }

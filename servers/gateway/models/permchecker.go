@@ -297,7 +297,9 @@ func (pc *PermissionChecker) UserCanEnableUser(u *User, target int64) bool {
 
 // userHasPermissionTo returns if the user has permission to perform the given action on the given target
 func (pc *PermissionChecker) userHasPermissionTo(u *User, target int64, action int) bool {
-	if target == 1 && u.ID != 1 {
+	// prevent the first user from being modified by anyone but the
+	// first user.
+	if target == 1 && u.ID != 1 && action != permissions.SeeAllUsers {
 		return false
 	}
 	if u.ID == target {

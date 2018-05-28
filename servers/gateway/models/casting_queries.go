@@ -67,17 +67,44 @@ func (store *Database) ExpirePendingPieceInvites() (int64, *DBError) {
 
 // GetUserPieceInvites returns a slice of pieces that the given user
 // has pending invites for.
-func (store *Database) GetUserPieceInvites(id int) ([]*Piece, *DBError) {
-	rows, err := store.db.Query(`
-		SELECT P.PieceID, P.InfoSheetID, P.ChoreographerID, P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy, P.IsDeleted FROM Pieces P
+func (store *Database) GetUserPieceInvites(id int) ([]*PieceInviteResponse, *DBError) {
+	rows, err := store.db.Query(`SELECT
+		P.PieceID, P.InfoSheetID, P.ChoreographerID, P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy, P.IsDeleted,
+		PIS.RehearsalSchedule, UPP.ExpiresAt,
+		U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, R.RoleID, R.RoleName, R.RoleDisplayName, R.RoleLevel, R.IsDeleted,
+		U.Active, U.CreatedAt FROM Pieces P
 		JOIN UserPiecePending UPP ON UPP.PieceID = P.PieceID
+		JOIN PieceInfoSheet PIS ON PIS.PieceInfoID = P.InfoSheetID
+		JOIN Users U ON U.userID = P.ChoreographerID
+		JOIN Role R ON U.RoleID = R.RoleID
 		WHERE UPP.UserID = ?
 		AND P.IsDeleted = FALSE
 		AND UPP.IsDeleted = FALSE
 		AND UPP.ExpiresAt > NOW()
-		AND UPP.Status = ?`,
-		id, appvars.CastStatusPending)
-	return handlePiecesFromDatabase(rows, err)
+		AND UPP.Status = ?`, id, appvars.CastStatusPending)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error getting piece user invites: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	invites := make([]*PieceInviteResponse, 0)
+	for rows.Next() {
+		i := &PieceInviteResponse{
+			Choreographer: &UserResponse{
+				Role: &Role{},
+			},
+			Piece: &Piece{},
+		}
+		err = rows.Scan(&i.Piece.ID, &i.Piece.InfoSheetID, &i.Piece.ChoreographerID, &i.Piece.Name,
+			&i.Piece.ShowID, &i.Piece.CreatedAt, &i.Piece.CreatedBy, &i.Piece.IsDeleted, &i.RehearsalSchedule, &i.ExpiryTime,
+			&i.Choreographer.ID, &i.Choreographer.FirstName, &i.Choreographer.LastName, &i.Choreographer.Email,
+			&i.Choreographer.Bio, &i.Choreographer.Role.ID, &i.Choreographer.Role.Name, &i.Choreographer.Role.DisplayName,
+			&i.Choreographer.Role.Level, &i.Choreographer.Role.IsDeleted, &i.Choreographer.Active, &i.Choreographer.CreatedAt)
+		if err != nil {
+			return nil, NewDBError(fmt.Sprintf("error scanning row into piece invite response: %v", err), http.StatusInternalServerError)
+		}
+		invites = append(invites, i)
+	}
+	return invites, nil
 }
 
 // UserHasInviteForPiece returns if the user has an invite for the given piece.

@@ -214,6 +214,26 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting piece info sheet")
 			}
 			return respond(w, pieceInfo, http.StatusOK)
+		} else if r.Method == "PATCH" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			infoUpdates := &models.PieceInfoSheetUpdates{}
+			if dbErr := receive(r, infoUpdates); dbErr != nil {
+				return dbErr
+			}
+			piece, dbErr := ctx.store.GetPieceByID(pieceID, false)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error getting piece by id")
+			}
+			if piece.InfoSheetID == 0 {
+				return HTTPError("requested piece does not have an info sheet", http.StatusBadRequest)
+			}
+			dbErr = ctx.store.UpdatePieceInfoSheet(int64(piece.InfoSheetID), infoUpdates)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error updating piece info sheet")
+			}
+			return respondWithString(w, "info sheet updated", http.StatusOK)
 		} else if r.Method == "DELETE" {
 			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
 				return permissionDenied()

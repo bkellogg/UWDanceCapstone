@@ -94,7 +94,7 @@ CREATE TABLE PieceInfoSheet (
     PerformedBy VARCHAR(100) NOT NULL,
     MusicSource VARCHAR(100) NOT NULL,
     NumMusicians INT NOT NULL DEFAULT 0,
-    RehearsalSchedule VARCHAR(100) NOT NULL,
+    RehearsalSchedule VARCHAR(500) NOT NULL,
     ChorNotes VARCHAR(100) NOT NULL,
     CostumeDesc VARCHAR(100) NOT NULL,
     ItemDesc VARCHAR(100) NOT NULL,
