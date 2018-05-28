@@ -447,9 +447,6 @@ func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*
 		Page:  page,
 	}
 
-	fmt.Println(sqlStmnt.BuildQuery())
-	fmt.Println(sqlStmnt.BuildCountQuery())
-
 	users, numPages, dberr := store.processUserQuery(sqlStmnt, id)
 	if dberr != nil {
 		return nil, nil, 0, dberr

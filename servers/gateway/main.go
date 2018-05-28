@@ -160,6 +160,8 @@ func main() {
 
 	rolesRouter := baseRouter.PathPrefix(appvars.RolesPath).Subrouter()
 	rolesRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.RolesHandler))
+	rolesRouter.Handle(appvars.ResourceRoot+"/", authorizer.Authorize(authContext.RolesHandler))
+	rolesRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificRoleHandler))
 
 	baseRouter.Handle(appvars.BaseAPIPath, http.NotFoundHandler())
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
