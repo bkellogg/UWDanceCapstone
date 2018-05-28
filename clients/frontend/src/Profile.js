@@ -358,7 +358,7 @@ class Profile extends Component {
                                 defaultValue={this.state.text}
                                 multiLine={true}
                                 onChange={this.handleBioChange}
-                                style={{backgroundColor: 'white', height: '100px', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}
+                                style={{backgroundColor: 'white', height: '100px', maxWidth: '400px', width: '100%', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}
                               />
                               <p style={{fontSize: "13px"}}><strong>Word Count:</strong> {this.state.wordCount}</p>
                             </div>
@@ -419,7 +419,7 @@ class Profile extends Component {
               this.state.edit &&
               <div className="editButtons"> 
                 <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
-                <Button className="saveButton" onClick={() => this.onCancel()}>Cancel</Button>
+                <Button className="btn cancelButton" onClick={() => this.onCancel()}>Cancel</Button>
               </div>
             }
             {

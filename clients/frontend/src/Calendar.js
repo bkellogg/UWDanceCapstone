@@ -7,6 +7,7 @@ import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './styling/General.css';
+import './styling/Calendar.css';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 const VIEWS = ['month', 'week', 'day']
@@ -243,7 +244,7 @@ class Calendar extends Component {
             Error getting piece rehearsals: {Util.titleCase(this.getRehearsalError)}
           </div>
         }
-        <BigCalendar style={{ height: "710px", width: "100%" }}
+        <BigCalendar style={{ height: "710px", width: "100%" }}          
           selectable
           defaultDate={new Date()}
           defaultView='week'

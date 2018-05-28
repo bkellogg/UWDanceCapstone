@@ -124,6 +124,7 @@ class AvatarEditorConsole extends Component {
         <br />
         <p><b>Zoom:</b></p>
         <input
+          className="zoomScale"
           name="scale"
           type="range"
           onChange={this.handleScale}

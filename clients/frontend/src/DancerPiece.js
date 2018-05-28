@@ -4,6 +4,7 @@ import BigCalendar from 'react-big-calendar';
 import Dialog from 'material-ui/Dialog';
 import moment from 'moment';
 import './styling/Piece.css';
+import './styling/Calendar.css';
 import './styling/General.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 

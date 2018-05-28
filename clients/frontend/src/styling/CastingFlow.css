@@ -1,3 +1,7 @@
+button.steps{
+    background-color: transparent !important;
+}
+
 /* STEPPER  */
 .card-casting{
     width: 95%;
@@ -71,6 +75,7 @@ th{
     font-size: 13px;
     color: hsl(0, 0%, 29%);
     width: 10%;
+    padding: inherit;
 }
 
 /* CHECK AVAILABILITY */

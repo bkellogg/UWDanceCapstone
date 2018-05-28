@@ -4,9 +4,7 @@ import { Link } from 'react-router-dom';
 import './styling/CastingFlow.css';
 import './styling/General.css';
 import img from './imgs/defaultProfile.jpg';
-// import Button from 'material-ui/RaisedButton';
 import { Button } from 'react-materialize';
-
 import Checkbox from 'material-ui/Checkbox';
 
 
@@ -293,7 +291,7 @@ class AllDancersRow extends Component {
                         <section className="personRankBoxes">
                             <div className="check">
                                 <Checkbox
-                                    // iconStyle={{ fill: 'black' }}
+                                    iconStyle={{ fill: 'hsl(0, 0%, 45%)' }}
                                     value="1"
                                     checked={this.state.checked.one}
                                     onCheck={this.updateCheck}
@@ -301,7 +299,7 @@ class AllDancersRow extends Component {
                             </div>
                             <div className="check">
                                 <Checkbox
-                                    // iconStyle={{ fill: 'black' }}
+                                    iconStyle={{ fill: 'hsl(0, 0%, 45%)' }}
                                     value="2"
                                     checked={this.state.checked.two}
                                     onCheck={this.updateCheck}
@@ -309,7 +307,7 @@ class AllDancersRow extends Component {
                             </div>
                             <div className="check">
                                 <Checkbox
-                                    // iconStyle={{ fill: 'black' }}
+                                    iconStyle={{ fill: 'hsl(0, 0%, 45%)' }}
                                     value="3"
                                     checked={this.state.checked.three}
                                     onCheck={this.updateCheck}
