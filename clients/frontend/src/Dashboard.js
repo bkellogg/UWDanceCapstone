@@ -161,7 +161,7 @@ class Dashboard extends Component {
 
                 </div>
                 <div className="buttonToSignUp">
-                  <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link></Button>
+                  <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>REGISTER</Link></Button>
                 </div>
               </div>
               }

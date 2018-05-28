@@ -37,7 +37,7 @@ class DancerPiece extends Component {
   };
 
   componentWillMount() {
-    //this.formatEvents()
+    this.getEvents()
     this.getPieceUsers()
   }
 
@@ -79,6 +79,7 @@ class DancerPiece extends Component {
       return res.text().then((t) => Promise.reject(t));
     })
     .then(events => {
+      console.log(events)
       this.formatEvents(events)
     })
     .catch(err => {
@@ -236,7 +237,7 @@ class DancerPiece extends Component {
             onRequestClose={this.handleClose}
             >
             <div>
-              This rehearsal goes from {moment(event.start).format("hh:mm A")} to {moment(event.end).format("hh:mm A")}
+              This rehearsal is on {moment(event.start).format("dddd, MMMM Do")} and goes from {moment(event.start).format("hh:mm A")} to {moment(event.end).format("hh:mm A")}
             </div>
           </Dialog>
         </div>
