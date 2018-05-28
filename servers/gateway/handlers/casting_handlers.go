@@ -199,6 +199,7 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 			if dberr != nil && dberr.HTTPStatus != http.StatusNotFound {
 				pcr.Message += "failed to update existing piece info sheet: " + dberr.Message
 			}
+			pieceInfoSheet.RehearsalSchedule = postCastingReq.RehearsalSchedule
 		} else {
 			newInfoSheet := &models.NewPieceInfoSheet{
 				RehearsalSchedule: postCastingReq.RehearsalSchedule,
@@ -214,7 +215,7 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 	confResultChan := make(chan *models.CastingConfResult)
 
 	for _, id64 := range dancers {
-		go handleUserInvite(ctx, int(id64), u, piece, confResultChan)
+		go handleUserInvite(ctx, int(id64), u, piece, confResultChan, pieceInfoSheet.RehearsalSchedule)
 	}
 
 	results := make([]*models.CastingConfResult, 0, len(dancers))
@@ -233,7 +234,8 @@ func (ctx *CastingContext) handlePostCasting(w http.ResponseWriter, r *http.Requ
 // Intended to be used on its own goroutine so does not return an error but
 // logs all errors to standard out.
 // Sends result for user into the given result channel
-func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piece *models.Piece, resultChan chan *models.CastingConfResult) {
+func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User,
+	piece *models.Piece, resultChan chan *models.CastingConfResult, rehearsalSchedule string) {
 	result := &models.CastingConfResult{
 		InviteCreated: false,
 		EmailSent:     false,
@@ -291,6 +293,7 @@ func handleUserInvite(ctx *CastingContext, dancerID int, chor *models.User, piec
 			ChorFName:  chor.FirstName,
 			ChorLName:  chor.LastName,
 			ExpiryTime: expiryTimeFormat,
+			Schedule:   rehearsalSchedule,
 			URL:        appvars.StageURL,
 		}
 

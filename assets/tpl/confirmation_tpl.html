@@ -121,6 +121,10 @@
             padding: 10px;
         }
 
+        .schedule {
+            margin-bottom: 20px;
+        }
+
 
         @media only screen and (max-width: 768px) {
             body {
@@ -153,6 +157,10 @@
                 <div class="main-content">
                     <p>If you are unable to click on the link, please copy and paste this into your web browser:</p>
                     <div class="raw-url">{{.URL}}</div>
+                </div>
+
+                <div class="schedule">
+                    {{.Schedule}}
                 </div>
 
                 <div class="expiration-time-msg">

@@ -13,6 +13,7 @@ type CastingConfVars struct {
 	ChorFName  string
 	ChorLName  string
 	ExpiryTime string
+	Schedule   string
 	URL        string
 }
 
