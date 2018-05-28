@@ -1,6 +1,8 @@
 "use strict";
 refreshLocalUser();
 
+vex.defaultOptions.className = 'vex-theme-default'
+
 var announcementForm = document.querySelector(".announcement-form");
 var errorBox = document.querySelector(".js-error");
 var announcementType = document.getElementById("announcementType");
@@ -36,31 +38,49 @@ function getAnnouncements() {
 }
 
 function deleteAnnouncement(event) {
-    makeRequest("announcements/" + event, {}, "DELETE", true)
-        .then(() => {
-            location.reload();
-        })
+    vex.dialog.confirm({
+        message: 'Are you sure you want to delete this announcement?',
+        callback: function (response) {
+            if (response) {
+                makeRequest("announcements/" + event, {}, "DELETE", true)
+                    .then(() => {
+                        location.reload();
+                    })
+            } else {
+                return;
+            }
+        }
+    });
 }
 
 announcementForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
-    var payload = {
-        "type": announcementType.value,
-        "message": message.value,
-    };
-    makeRequest("announcements", payload, "POST", true)
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
+    vex.dialog.confirm({
+        message: 'Are you sure you want to post this announcement?',
+        callback: function (response) {
+            if (response) {
+                var payload = {
+                    "type": announcementType.value,
+                    "message": message.value,
+                };
+                makeRequest("announcements", payload, "POST", true)
+                    .then((res) => {
+                        if (res.ok) {
+                            return res.json();
+                        }
+                        return res.text().then((t) => Promise.reject(t));
+                    })
+                    .then((data) => {
+                        location.reload();
+                    })
+                    .catch((err) => {
+                        errorBox.textContent = err;
+                    })
+            } else {
+                return;
             }
-            return res.text().then((t) => Promise.reject(t));
-        })
-        .then((data) => {
-            location.reload();
-        })
-        .catch((err) => {
-            errorBox.textContent = err;
-        })
+        }
+    });
 })
 
 // get announcement types

@@ -1,5 +1,7 @@
 "use strict";
 
+vex.defaultOptions.className = 'vex-theme-default'
+
 var shows = [];
 var showTypes = [];
 
@@ -80,8 +82,17 @@ function getAuditionInfo(auditionID, index) {
 }
 
 function deleteShow(event) {
-    makeRequest("shows/" + event, {}, "DELETE", true)
-        .then(() => {
-            location.reload();
-        })
+    vex.dialog.confirm({
+        message: 'Are you sure you want to delete this show?',
+        callback: function (response) {
+            if (response) {
+                makeRequest("shows/" + event, {}, "DELETE", true)
+                    .then(() => {
+                        location.reload();
+                    })
+            } else {
+                return
+            }
+        }
+    });
 }
