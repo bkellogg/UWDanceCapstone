@@ -405,7 +405,7 @@ class Profile extends Component {
             }
             {
               this.state.edit &&
-              <Button> Delete Account </Button>
+              <Button className="deleteAccount"> Delete Account </Button>
             }
           </div>
         </div>

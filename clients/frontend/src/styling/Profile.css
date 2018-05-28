@@ -112,6 +112,14 @@ img#photo {
   width: 500px;
 }
 
+.deleteAccount{
+  background-color: #e65100;
+}
+
+.deleteAccount:hover{
+  background-color: #e65100;
+}
+
 
 /*TABLET VIEW*/
 @media only screen and (max-width : 1043px)  {
