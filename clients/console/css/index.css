@@ -62,11 +62,17 @@ img {
     border-radius:10px;
 }
 
-.reset-password {
+.reset-password, .signin-return {
     margin-top: 1em;
     margin-bottom: 2em;
+    cursor: pointer;
 }
 
-.reset-password a {
+.reset-password a, .signin-return a {
     color: white;
+
+}
+
+.forgot-pass-message{
+    font-weight: 100;
 }

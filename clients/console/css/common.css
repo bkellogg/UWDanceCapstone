@@ -101,17 +101,19 @@ h2.showName{
 
 
 /*BUTTONS*/
-.delete, #search-submit, #signin, .pieces{
+.delete, #search-submit, #signin, .pieces, #passwordemail{
   height: 35px;
   color: white;
   font-size: 15px;
   font-weight: 500;
   border-radius: 3px;
-  width: 120px;
+  width: auto;
+  padding-left: 20px;
+  padding-right: 20px;
   outline: none;
 }
 
-#search-submit, #signin, .pieces{
+#search-submit, #signin, .pieces, #passwordemail{
   background-color: #22A7E0;
   border: 1px solid rgb(7, 95, 133); 
 }
@@ -133,4 +135,12 @@ h2.showName{
 
 .delete-with-float{
   float: right;
+}
+
+.forgot-pass-message{
+  font-size: 15px;
+}
+
+.fill-input{
+  font-size: 14px;
 }
