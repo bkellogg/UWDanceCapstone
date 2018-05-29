@@ -2,7 +2,7 @@ body{
   margin: 0;
   padding: 0;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .page-wrap{
@@ -101,18 +101,36 @@ h2.showName{
 
 
 /*BUTTONS*/
-.delete, #search-submit, #signin{
-  height: 30px;
-  background-color: #22A7E0;
+.delete, #search-submit, #signin, .pieces{
+  height: 35px;
   color: white;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
-  border: 1px solid rgb(7, 95, 133); 
   border-radius: 3px;
   width: 120px;
+  outline: none;
 }
 
-.delete:hover, #search-submit:hover{
-  background-color: rgb(54, 172, 223);
+#search-submit, #signin, .pieces{
+  background-color: #22A7E0;
+  border: 1px solid rgb(7, 95, 133); 
 }
 
+#search-submit:hover, .pieces:hover{
+  background-color: #36acdf;
+}
+
+/*DELETE BUTTON*/
+.delete{
+  background-color: #e65100;
+  border: 1px solid #af3f03;
+  margin-left: 16px;
+}
+
+.delete:hover{
+  background-color: #e4621d;
+}
+
+.delete-with-float{
+  float: right;
+}

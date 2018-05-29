@@ -28,7 +28,7 @@ function getAnnouncements() {
             $(data.announcements).each(function (index, value) {
                 var announcementInfo = [];
                 announcementInfo.push('<div class="announcements" id=' + value.id + '>' + value.message + '</div>');
-                announcementInfo.push('<button class="remove" id =' + value.id + ' onClick="deleteAnnouncement(this.id)">Remove</button>');
+                announcementInfo.push('<button class="delete delete-with-float" id =' + value.id + ' onClick="deleteAnnouncement(this.id)">Delete</button>');
                 announcements.push(announcementInfo);
             });
         })

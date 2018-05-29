@@ -75,11 +75,11 @@ function getAuditionInfo(auditionID, index) {
             var showID = shows[index].showID
             var showIDValue = "show-" + index;
 
-            $(".active-shows").append('<div class="active-shows-card" id=' + showIDValue + '><h2 class="showName">'
+            $(".active-shows").append('<div class="active-shows-card" style="width: 80%" id=' + showIDValue + '><h2 class="showName">'
                 + showName + '</h2><p>Audition Information</p><p>Date: ' + auditionDay + '</p><p>Time: ' +
-                auditionTime + '</p><p>Location: ' + location + '</p><button class="show" id =wrapper-' + showIDValue +
-                ' onClick=showPieces(this.id)>Pieces</button><div id=piece-wrapper-' + showIDValue +
-                ' style= display:none></div><button class="delete" id =' + showID + ' onClick="deleteShow(this.id)">Delete Show</button></div>')
+                auditionTime + '</p><p>Location: ' + location + '</p><button class="show pieces" id =wrapper-' + showIDValue +
+                ' onClick=showPieces(this.id)>Pieces</button><button class="delete" id =' + showID + ' onClick="deleteShow(this.id)">Delete Show</button><div id=piece-wrapper-' + showIDValue + 
+                ' style= display:none> </div>  </div>')
         })
         .then(() => {
             var pieceWrapperID = "piece-wrapper-" + "show-" + index;
@@ -101,7 +101,7 @@ function getAllPiecesInShow(showID, pieceWrapperID) {
             $(data.pieces).each(function (index, value) {
                 var pieceIDValue = pieceWrapperID + "-" + index
                 var showPieceID = pieceIDValue.slice(6);
-                $("#" + pieceWrapperID).append('<button class="show" id=' + showPieceID + ' onClick=showPieces(this.id)>' + value.name + '</button><div class="info" id=' + pieceIDValue + ' style= display:none></div>')
+                $("#" + pieceWrapperID).append('<button class="show dropDownClick" id=' + showPieceID + ' onClick=showPieces(this.id)>' + value.name + '</button><div class="info" id=' + pieceIDValue + ' style= display:none></div>')
                 getAllUsersInPiece(value.id, pieceIDValue);
             });
         })
@@ -121,9 +121,9 @@ function getAllUsersInPiece(pieceID, pieceIDValue) {
             $(data.choreographer).each(function (index, value) {
                 $("#" + pieceIDValue).append('<p id=chor-' + pieceID + '>Choreographer: ' + value.firstName + ' ' + value.lastName + '</p>')
                 $("#chor-" + pieceID).append('<p id=chor-' + pieceID + '-email>Email: ' + value.email + '</p>')
-                $("#" + pieceIDValue).append('<button class="show" id=' + pieceIDValue + '-dancer-table onClick=showTable(this.id)>Dancer Contact Information:</button><div className=dancerInfo id=' +
-                    pieceIDValue + '-dancer-table-info style= display:none><table id=' + pieceIDValue + '-table style= display:none ><tbody><tr class=categories><th>Name</th><th>Email</th><th>Bio</th></tr></tbody></table><p id=' + pieceIDValue + '-table-no>No Dancers Assigned</p></div>')
-                $("#" + pieceIDValue).append('<button class="show" id=button-info-' + pieceIDValue + ' onClick=showPieceInfoSheet(this.id)>Piece Information Sheet:</button><div class=pieceInfo id=info-' + pieceIDValue + ' style= display:none><p id=no-' + pieceIDValue + '>No Piece Information Available </p></div>')
+                $("#" + pieceIDValue).append('<button class="show dropDownClick firstChild" id=' + pieceIDValue + '-dancer-table onClick=showTable(this.id)>Dancer Contact Information</button><div className=dancerInfo id=' +
+                    pieceIDValue + '-dancer-table-info style= display:none><table class="all-dancers-table" id=' + pieceIDValue + '-table style= display:none ><tbody><tr class=categories><th>Name</th><th>Email</th><th>Bio</th></tr></tbody></table><p  class="no-dancers" id=' + pieceIDValue + '-table-no>No Dancers Assigned</p></div>')
+                $("#" + pieceIDValue).append('<button class="show dropDownClick" id=button-info-' + pieceIDValue + ' onClick=showPieceInfoSheet(this.id)>Piece Information Sheet</button><div class=pieceInfo id=info-' + pieceIDValue + ' style= display:none><p id=no-' + pieceIDValue + '>No Piece Information Available </p></div>')
             });
             return data;
         })
@@ -162,8 +162,8 @@ function getAllUsersInPiece(pieceID, pieceIDValue) {
                             '<p>Music Title(s): ' + isEmpty(value.musicTitle) + '</p>' +
                             '<p>Performed By: ' + isEmpty(value.performedBy) + '</p>' +
                             '<p>Music Source: ' + isEmpty(value.MusicSource) + '</p>' +
-                            '<p><button class= show id=button-live-musician-' + pieceIDValue + ' onclick=showMusicians(this.id)>Live Musician Information:</button><div id=live-musician-' + pieceIDValue + ' style= display:none>' +
-                            '<table id=' + pieceIDValue + '-musician-table style= display:none><tbody><tr class=categories><th>Name</th><th>Email</th><th>Phone</th></tr></tbody></table><p id=live-musicians-no-' + pieceIDValue + '>No Live Musicians Assigned</p></p></div>' +
+                            '<p><button class= "show dropDownClick" id=button-live-musician-' + pieceIDValue + ' onclick=showMusicians(this.id)>Live Musician Information:</button><div id=live-musician-' + pieceIDValue + ' style= display:none>' +
+                            '<table class="all-musicians-table" id=' + pieceIDValue + '-musician-table style= display:none><tbody><tr class=categories><th>Name</th><th>Email</th><th>Phone</th></tr></tbody></table><p id=live-musicians-no-' + pieceIDValue + '>No Live Musicians Assigned</p></p></div>' +
                             '<p>Rehearsal Schedule: ' + isEmpty(value.rehearsalSchedule) + '</p>' +
                             '<p>Choreographers Notes: ' + isEmpty(value.chorNotes) + '</p>' +
                             '<p>Costume Descriptions: ' + isEmpty(value.costumeDesc) + '</p>' +
