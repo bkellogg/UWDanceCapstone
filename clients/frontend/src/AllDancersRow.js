@@ -229,6 +229,7 @@ class AllDancersRow extends Component {
                     this.props.checkAvailability &&
                     <td>
                         <Checkbox
+                            iconStyle={{ fill: 'hsl(0, 0%, 45%)' }}
                             onCheck={this.onCheck}
                             checked={this.state.filterChecked}
                         />
@@ -278,7 +279,7 @@ class AllDancersRow extends Component {
                     <td>
                         {
                             hasComments &&
-                            <div className="tooltip">
+                            <div className="tooltip" style={{width: "5px"}}>
                                 <i className="fas fa-comment"></i>
                                 <span className="tooltiptext">{this.props.comments[0].comment}</span>
                             </div>

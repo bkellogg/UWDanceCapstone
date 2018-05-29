@@ -56,6 +56,9 @@ class AuditionRegistrationList extends Component {
           <td>
             <Link className="personNameLink" to={{ pathname: "/users/" + dancer.user.id }} target="_blank">{dancer.user.firstName + " " + dancer.user.lastName}</Link>
           </td>
+          <td>
+            {dancer.user.email}
+          </td>
           <td stye={{textAlign: "center"}}>
             {dancer.regNum}
           </td>

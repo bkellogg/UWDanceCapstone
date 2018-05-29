@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './styling/General.css';
+import { HashLink } from "react-router-hash-link";
 
 class FAQ extends Component {
 
@@ -9,6 +10,25 @@ class FAQ extends Component {
         <div className="mainView">
           <div className="pageContentWrap">
             <h1>Help</h1>
+            <h2 className="smallHeading">Tutorials</h2>
+            <p>Dancers</p>
+              <li>Edit your profile</li>
+              <li><HashLink to="/faq#audition">Register for an Audition</HashLink></li>
+              <li>Accept/Decline your Casting</li>
+              <li>View Piece Information</li>
+            <p>Choreographers</p>
+              <li>View Dancers Registered for an Audition</li>
+              <li>Cast your Piece</li>
+              <li>Set Rehearsal Schedules</li>
+              <li>Edit Rehearsals</li>
+              <li>Add/Remove Dancers to Cast</li>
+              <li>Add Collaborators (Musicians, Production Staff)</li>
+              <li>Fill Out Information Sheet</li>
+              <br /><h2 className="smallHeading">Additional Help</h2><br />
+            <h2 className="smallHeading">About STAGE</h2><br />
+            <h2 className="smallHeading">Report Errors</h2><br /><br />
+
+            <section id="audition">
             <h2 className="smallHeading">How to Register for an Audition</h2>
             <div style={{border: "2px solid #ebebeb", minWidth: "100%", borderBottom: "0 none", height: "501px"}}>
                 <iframe title="registerForAudition" style={{border: "0 none", borderBottom: "2px solid #ebebeb", minWidth: "100%"}} src="https://www.iorad.com/player/127222/Register-for-Audition?src=iframe" width="100%" height="500px" allowFullScreen="true"></iframe>
@@ -31,6 +51,7 @@ class FAQ extends Component {
                 <p style={{display: "none"}}>Click &lt;span class=&quot;&quot;&gt;&lt;i&gt;&lt;b&gt;Unregister&amp;nbsp;&lt;/b&gt;to remove your registration from the audition pool.&lt;/i&gt;&lt;/span&gt;</p>
                 <p style={{display: "none"}}>That&apos;s it. You&apos;re done.</p>
             </div>
+            </section>
           </div>
         </div>
       </section>

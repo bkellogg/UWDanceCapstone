@@ -60,15 +60,16 @@ div.announcementMessage>p:nth-child(2) {
 }
 
 .buttonToSignUp{
-  text-align: right;
+  padding-top: 10px;
+  /* text-align: right;
   position: absolute;
   display: inline-block;
   vertical-align: bottom;
   right: 0;
   bottom: 0;
   margin-bottom: 25px;
-  margin-right: 15px;
-}
+  margin-right: 15px; */
+} 
 
 .linkTurnedIntoButton{
   color: white;

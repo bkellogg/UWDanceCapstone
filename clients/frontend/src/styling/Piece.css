@@ -6,10 +6,16 @@ td.userEmail{
     padding-left: 10px;
 }
 
+/*ADD COLLABORATORS SEARCH*/
 .textField{
     background-color: white !important;
     font-size: 14px !important;
-    
+    width: 100% !important;
+    max-width: 600px !important;
+}
+
+.onSearch{
+    padding: 0;
 }
 
 .pieceCard {
@@ -28,6 +34,21 @@ td.userEmail{
     width: 95%
 }
 
+.param {
+    margin: 10px
+}
+
+.subsectionheader {
+    padding-top: 15px
+}
+
+.dividerDiv{
+    margin-top: 25px;
+    margin-bottom: 10px;
+    height: 2px;
+    background-color: lightgrey;
+    width: 100%;
+}
 
 @media only screen 
 and (max-width : 1024px)  {
@@ -36,6 +57,10 @@ and (max-width : 1024px)  {
         width: 0%;
         clear: both;
         display: none;
+    }
+
+    .toggleHeader h2{
+        width: 80%;
     }
 
 }

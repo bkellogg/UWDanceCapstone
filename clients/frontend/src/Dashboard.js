@@ -97,7 +97,7 @@ class Dashboard extends Component {
   }
 
   getUserPieces = () => {
-    Util.makeRequest("users/me/pieces/pending", "", "GET", true)
+    Util.makeRequest("users/me/pieces/invites", "", "GET", true)
       .then((res) => {
         if (res.ok) {
           return res.json();
@@ -108,7 +108,6 @@ class Dashboard extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .then(pieces => {
-        console.log(pieces)
         this.setState({
           pending: pieces
         })
@@ -162,7 +161,7 @@ class Dashboard extends Component {
 
                 </div>
                 <div className="buttonToSignUp">
-                  <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>Sign up here!</Link></Button>
+                  <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>REGISTER</Link></Button>
                 </div>
               </div>
               }
@@ -180,9 +179,9 @@ class Dashboard extends Component {
                   <div id='announcements'>
                     {pendingCasting}
                     {this.state.user.bio === "" &&
-                      <div className="announcement completeProfileBorderColor" onClick={() => window.location = "/profile"}>
+                      <div className="announcement completeProfileBorderColor clickable" onClick={() => window.location = "/profile"}>
                         <div className="completeProfileCardColor">
-                          <p className="announcementMessage"> Please complete your profile. </p>
+                          <p className="announcementMessage"> Please click here to complete your profile. </p>
                         </div>
                       </div>
                     }

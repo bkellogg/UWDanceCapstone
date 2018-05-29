@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 import './styling/General.css';
-import './styling/People.css';
 import './styling/CastingFlowMobile.css';
-
 import PersonRow from './PersonRow'
 
 

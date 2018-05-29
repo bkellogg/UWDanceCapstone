@@ -4,6 +4,8 @@ import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
 import AvatarEditorConsole from './AvatarEditorConsole';
 import TextField from 'material-ui/TextField';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import { compose } from 'ramda';
 import './styling/Profile.css';
 import './styling/General.css';
@@ -28,7 +30,8 @@ class Profile extends Component {
       bioUpload: "",
       resumeUpload: "",
       wordCount: "",
-      text: ""
+      text: "",
+      deleteConfirmation: false
     }
   };
 
@@ -268,6 +271,17 @@ class Profile extends Component {
 
   handleBioChange = e => this.setCounts(e.target.value);
 
+  deleteAccount = () => {
+    Util.makeRequest("users/me", {}, "LOCK", true)
+    .then(res => {
+      this.setState({
+        deleteConfirmation: false,
+        deleteSuccess: true
+      })
+      setTimeout(() => {Util.signOut()}, 1500)
+    })
+  }
+
   render() {
     let email = this.state.user.email
     return (
@@ -282,7 +296,8 @@ class Profile extends Component {
                 <div className="header">
 
                   <div id="photoContainer" className="photoContainer">
-                    {!this.state.edit &&
+                    {
+                      !this.state.edit &&
                       <img id="photo" alt="profile" src={this.state.photoSrc}></img>
                     }
                     {this.state.edit &&
@@ -303,7 +318,8 @@ class Profile extends Component {
                           <p className="email"><a href={"mailto:" + this.state.user.email}>{email}</a></p>
                         </div>
                       }
-                      {this.state.edit &&
+                      {
+                        this.state.edit &&
                         <div id="editName">
                           <b>Name: </b>
                           <Row>
@@ -337,6 +353,7 @@ class Profile extends Component {
                           <div className="row">
                             <div className="input-field col s12">
                               <TextField
+                                name="bioUpload"
                                 className="bioUpload2"
                                 defaultValue={this.state.text}
                                 multiLine={true}
@@ -354,19 +371,18 @@ class Profile extends Component {
 
                 <div className="resumeWrap">
                     <div id="resume">
-                      {!this.state.edit &&
+                      {
+                        !this.state.edit &&
                         <section>
+                          <div className="subheader"><b>Resume:</b></div>
                           {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                          {this.state.resume != null && (
-                            <div>
-                              <div className="subheader"><b>Resume:</b></div>
-                              <a href={this.state.resume}>View PDF Resume</a>
-                            </div>
-                          )}
-
+                          {this.state.resume != null && 
+                            <a href={this.state.resume}>View PDF Resume</a>
+                          }
                         </section>
                       }
-                      {this.state.edit &&
+                      {
+                        this.state.edit &&
                         <section>
                           <div className="subHeader"><b>Resume:  </b></div>
                           <div> Upload your dance resume <b>AS A PDF.</b> </div>
@@ -376,7 +392,8 @@ class Profile extends Component {
                     </div>
                   </div>
 
-                { !this.state.edit &&
+                {
+                  !this.state.edit &&
                   <div id="history">
                     <div id="historyTitle" className="subheader"><b>Piece History</b></div>
                     {this.state.history.length > 0 && this.state.history.map((p, i) => {
@@ -387,7 +404,8 @@ class Profile extends Component {
                         </div>
                       )
                     })}
-                    {this.state.history.length === 0 &&
+                    {
+                      this.state.history.length === 0 &&
                       <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
 
                     }
@@ -397,7 +415,8 @@ class Profile extends Component {
               </div>
 
             </div>
-            {this.state.edit &&
+            {
+              this.state.edit &&
               <div className="editButtons"> 
                 <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
                 <Button className="btn cancelButton" onClick={() => this.onCancel()}>Cancel</Button>
@@ -405,8 +424,39 @@ class Profile extends Component {
             }
             {
               this.state.edit &&
-              <Button className="deleteAccount"> Delete Account </Button>
+              <Button className="deleteAccount" onClick={() => this.setState({deleteConfirmation: true})}> Delete Account </Button>
             }
+              <Dialog
+                title="Delete Account"
+                actions={[
+                  <FlatButton
+                    label="Cancel"
+                    style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
+                    primary={false}
+                    onClick={() => {this.setState({deleteConfirmation: false})}}
+                  />,
+                  <FlatButton
+                    label="Delete Account"
+                    style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+                    primary={false}
+                    keyboardFocused={true}
+                    onClick={this.deleteAccount}
+                  />,
+                ]}
+                modal={false}
+                open={this.state.deleteConfirmation}
+              > 
+                <div className="warningText"> 
+                By clicking Delete Account, your account will be <strong className="importantText">permanently disabled</strong> and your login credentials will no longer work.
+                <br />
+                You will have to re-sign up to participate in the site again. You may reuse your email or use a new one.
+                {
+                  this.state.deleteSuccess &&
+                  <p>You will be signed out shortly</p>
+                }
+                </div>
+              </Dialog>
+            
           </div>
         </div>
       </section>

@@ -151,6 +151,7 @@ class SignUp extends Component {
                         </div>
                       </div>
                     </form>
+                    <p> By using this product you are agreeing to our <a href="google.com">terms of service</a>.</p>
                     <div className="buttons">
                       <Button onClick={this.onClick}> Sign Up </Button>
                     </div>
