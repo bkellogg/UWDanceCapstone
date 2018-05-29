@@ -27,7 +27,7 @@ function getAnnouncements() {
         .then((data) => {
             $(data.announcements).each(function (index, value) {
                 var announcementInfo = [];
-                announcementInfo.push('<div class="announcements" id=' + value.id + '>' + value.message + '</div>');
+                announcementInfo.push('<div class="announcements" id=' + value.id + '>' + value.message + '<p style=color:grey;>' + value.createdBy.firstName + ' ' + value.createdBy.lastName + ', ' + moment(value.createdAt).format("MM/DD/YY hh:mm A") + '</p></div>');
                 announcementInfo.push('<button class="delete delete-with-float" id =' + value.id + ' onClick="deleteAnnouncement(this.id)">Delete</button>');
                 announcements.push(announcementInfo);
             });

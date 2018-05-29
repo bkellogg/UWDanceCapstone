@@ -23,7 +23,7 @@ function getActiveShows() {
             });
         })
         .then(() => {
-            makeRequest("shows", {}, "GET", true)
+            makeRequest("shows?history=current", {}, "GET", true)
                 .then((res) => {
                     if (res.ok) {
                         return res.json();
@@ -78,7 +78,7 @@ function getAuditionInfo(auditionID, index) {
             $(".active-shows").append('<div class="active-shows-card" style="width: 80%" id=' + showIDValue + '><h2 class="showName">'
                 + showName + '</h2><p>Audition Information</p><p>Date: ' + auditionDay + '</p><p>Time: ' +
                 auditionTime + '</p><p>Location: ' + location + '</p><button class="show pieces" id =wrapper-' + showIDValue +
-                ' onClick=showPieces(this.id)>Pieces</button><button class="delete" id =' + showID + ' onClick="deleteShow(this.id)">Delete Show</button><div id=piece-wrapper-' + showIDValue + 
+                ' onClick=showPieces(this.id)>Pieces</button><button class="delete" id =' + showID + ' onClick="deleteShow(this.id)">Delete Show</button><div id=piece-wrapper-' + showIDValue +
                 ' style= display:none> </div>  </div>')
         })
         .then(() => {
@@ -110,6 +110,7 @@ function getAllPiecesInShow(showID, pieceWrapperID) {
 
 // Get Users in each piece (includes chor of piece and all dancers)
 function getAllUsersInPiece(pieceID, pieceIDValue) {
+    var totalDancers = 0;
     makeRequest("pieces/" + pieceID + "/users", {}, "GET", true)
         .then((res) => {
             if (res.ok) {
@@ -119,32 +120,40 @@ function getAllUsersInPiece(pieceID, pieceIDValue) {
         })
         .then((data) => {
             $(data.choreographer).each(function (index, value) {
-                $("#" + pieceIDValue).append('<p id=chor-' + pieceID + '>Choreographer: ' + value.firstName + ' ' + value.lastName + '</p>')
-                $("#chor-" + pieceID).append('<p id=chor-' + pieceID + '-email>Email: ' + value.email + '</p>')
-                $("#" + pieceIDValue).append('<button class="show dropDownClick firstChild" id=' + pieceIDValue + '-dancer-table onClick=showTable(this.id)>Dancer Contact Information</button><div className=dancerInfo id=' +
-                    pieceIDValue + '-dancer-table-info style= display:none><table class="all-dancers-table" id=' + pieceIDValue + '-table style= display:none ><tbody><tr class=categories><th>Name</th><th>Email</th><th>Bio</th></tr></tbody></table><p  class="no-dancers" id=' + pieceIDValue + '-table-no>No Dancers Assigned</p></div>')
-                $("#" + pieceIDValue).append('<button class="show dropDownClick" id=button-info-' + pieceIDValue + ' onClick=showPieceInfoSheet(this.id)>Piece Information Sheet</button><div class=pieceInfo id=info-' + pieceIDValue + ' style= display:none><p id=no-' + pieceIDValue + '>No Piece Information Available </p></div>')
+                //$("#" + pieceIDValue).append('<p id=chor-' + pieceID + '>Choreographer: ' + value.firstName + ' ' + value.lastName + '</p>')
+                //$("#chor-" + pieceID).append('<p id=chor-' + pieceID + '-email>Email: ' + value.email + '</p>')
+                $("#" + pieceIDValue).append('<button class="show dropDownClick firstChild" id=' + pieceIDValue + '-dancer-table onClick=showTable(this.id)>Cast</button><div className=dancerInfo id=' +
+                    pieceIDValue + '-dancer-table-info style= display:none><table class="all-dancers-table" id=' + pieceIDValue + '-table style= display:none ><tbody><tr class=categories><th>Name</th><th>Role</th><th>Bio</th><th>Email</th></tr></tbody></table><p  class="no-dancers" id=' + pieceIDValue + '-table-no>No Dancers Assigned</p></div>')
+                $("#" + pieceIDValue).append('<button class="show dropDownClick" id=button-info-' + pieceIDValue + ' onClick=showPieceInfoSheet(this.id)>Information Sheet</button><div class=pieceInfo id=info-' + pieceIDValue + ' style= display:none><p id=no-' + pieceIDValue + '>No Piece Information Available </p></div>')
             });
             return data;
         })
         .then((data) => {
             $(data.dancers).each(function (index, value) {
+                if (value.role.displayName === "Dancer") {
+                    totalDancers += 1;
+                }
+
                 var table = document.getElementById(pieceIDValue + '-table');
                 if (value != "") {
                     var tableMessage = document.getElementById(pieceIDValue + '-table-no');
                     tableMessage.style.display = "none";
-                    table.style.display= "block";
+                    table.style.display = "block";
                 }
                 var row = table.insertRow();
                 var cell1 = row.insertCell(0);
                 var cell2 = row.insertCell(1);
                 var cell3 = row.insertCell(2)
+                var cell4 = row.insertCell(3)
                 cell1.innerHTML = value.firstName + " " + value.lastName;
-                cell2.innerHTML = value.email;
+                cell2.innerHTML = value.role.displayName;
                 cell3.innerHTML = value.bio;
+                cell4.innerHTML = value.email;
             });
+            return data;
         })
-        .then(() => {
+        .then((data) => {
+            var userData = data;
             makeRequest("pieces/" + pieceID + "/info", {}, "GET", true)
                 .then((res) => {
                     if (res.ok) {
@@ -153,28 +162,36 @@ function getAllUsersInPiece(pieceID, pieceIDValue) {
                     return res.text().then((t) => Promise.reject(t));
                 })
                 .then((data) => {
+                    //console.log("user data ")
+                    //console.log(userData)
+                    //console.log("piece info ")
+                    //console.log(data)
                     var message = document.getElementById('no-' + pieceIDValue);
                     message.style.display = "none";
                     $(data).each(function (index, value) {
-                        $("#info-" + pieceIDValue).append('<p>Dance Title: ' + isEmpty(value.title) + '</p>' +
+                        $("#info-" + pieceIDValue).append('<p>Choreographer Name: ' + userData.choreographer.firstName + ' ' + userData.choreographer.lastName + '</p>' +
+                            '<p>Choreographer Phone Number: ' + isEmpty(value.choreographerPhone) + '</p>' +
+                            '<p>Choreographer Email: ' + isEmpty(userData.choreographer.email) + '</p>' +
+                            '<p>Total Number of Dancers: ' + totalDancers + '</p>' +
+                            '<p>Dancer Contact Information: </p><table class="all-dancers-table" id=' + pieceIDValue + '-dancer-table-2 style= display:none><tbody><tr class=categories><th>Name</th><th>Email</th></tr></tbody></table>' +
+                            '<p>Dance Title: ' + isEmpty(value.title) + '</p>' +
                             '<p>Dance Runtime: ' + isEmpty(value.runTime) + '</p>' +
                             '<p>Composer(s): ' + isEmpty(value.composers) + '</p>' +
                             '<p>Music Title(s): ' + isEmpty(value.musicTitle) + '</p>' +
                             '<p>Performed By: ' + isEmpty(value.performedBy) + '</p>' +
                             '<p>Music Source: ' + isEmpty(value.MusicSource) + '</p>' +
-                            '<p><button class= "show dropDownClick" id=button-live-musician-' + pieceIDValue + ' onclick=showMusicians(this.id)>Live Musician Information:</button><div id=live-musician-' + pieceIDValue + ' style= display:none>' +
-                            '<table class="all-musicians-table" id=' + pieceIDValue + '-musician-table style= display:none><tbody><tr class=categories><th>Name</th><th>Email</th><th>Phone</th></tr></tbody></table><p id=live-musicians-no-' + pieceIDValue + '>No Live Musicians Assigned</p></p></div>' +
+                            '<p>Number of Live Musician: ' + value.numMusicians + '</p>' +
+                            '<p>Contact Information for Musicians: </p><table class="all-musicians-table" id=' + pieceIDValue + '-musician-table style= display:none><tbody><tr class=categories><th>Name</th><th>Email</th><th>Phone</th></tr></tbody></table>' +
                             '<p>Rehearsal Schedule: ' + isEmpty(value.rehearsalSchedule) + '</p>' +
                             '<p>Choreographers Notes: ' + isEmpty(value.chorNotes) + '</p>' +
                             '<p>Costume Descriptions: ' + isEmpty(value.costumeDesc) + '</p>' +
-                            '<p>Item Description: ' + isEmpty(value.itemDesc) + '</p>' +
+                            '<p>Props/Scenic Items Description: ' + isEmpty(value.itemDesc) + '</p>' +
                             '<p>Lighting Description: ' + isEmpty(value.lightingDesc) + '</p>' +
-                            '<p>Other Notes: ' + isEmpty(value.otherNotes) + '</p>')
+                            '<p>Other special needs: ' + isEmpty(value.otherNotes) + '</p>'
+                        )
                     });
                     $(data.musicians).each(function (index, value) {
                         if (value != "") {
-                            var message2 = document.getElementById('live-musicians-no-' + pieceIDValue);
-                            message2.style.display = "none";
                             var message3 = document.getElementById(pieceIDValue + '-musician-table');
                             message3.style.display = "block";
                         }
@@ -187,6 +204,20 @@ function getAllUsersInPiece(pieceID, pieceIDValue) {
                         cell2.innerHTML = value.email;
                         cell3.innerHTML = value.phone;
                     });
+                    if (totalDancers > 0) {
+                        var dancerTable = document.getElementById(pieceIDValue + '-dancer-table-2');
+                        dancerTable.style.display = "block";
+                        $(userData.dancers).each(function (index, value) {
+
+                            if (value.role.displayName === "Dancer") {
+                                var row = dancerTable.insertRow();
+                                var cell1 = row.insertCell(0);
+                                var cell2 = row.insertCell(1);
+                                cell1.innerHTML = value.firstName + " " + value.lastName;
+                                cell2.innerHTML = value.email;
+                            }
+                        });
+                    }
                 })
         })
 }
