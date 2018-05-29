@@ -52,15 +52,15 @@ class AuditionRegistrationList extends Component {
     const allDancers = this.state.allDancers
     let dancerRows = allDancers.map((dancer, i) => {
       return (
-        <tr key={i}>
+        <tr key={i} >
+          <td>
+            {dancer.regNum}
+          </td>
           <td>
             <Link className="personNameLink" to={{ pathname: "/users/" + dancer.user.id }} target="_blank">{dancer.user.firstName + " " + dancer.user.lastName}</Link>
           </td>
           <td>
             {dancer.user.email}
-          </td>
-          <td stye={{textAlign: "center"}}>
-            {dancer.regNum}
           </td>
         </tr>
       )
@@ -72,8 +72,9 @@ class AuditionRegistrationList extends Component {
           <table>
             <tbody>
               <tr className="categories">
-                <th>Name</th>
                 <th>Registration Number</th>
+                <th>Name</th>
+                <th>Email</th>
               </tr>
               {dancerRows}
             </tbody>

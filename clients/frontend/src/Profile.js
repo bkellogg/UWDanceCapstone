@@ -377,7 +377,7 @@ class Profile extends Component {
                           <div className="subheader"><b>Resume:</b></div>
                           {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
                           {this.state.resume != null && 
-                            <a href={this.state.resume}>View PDF Resume</a>
+                            <a href={this.state.resume} target="_blank">View PDF Resume</a>
                           }
                         </section>
                       }

@@ -71,7 +71,7 @@ class Main extends Component {
 
   //only gets the first page
   getCurrShows = () => {
-    Util.makeRequest("shows?page=1", {}, "GET", true).then(res => {
+    Util.makeRequest("shows?history=current&page=1", {}, "GET", true).then(res => {
       if (res.ok) {
         return res.json()
       }
