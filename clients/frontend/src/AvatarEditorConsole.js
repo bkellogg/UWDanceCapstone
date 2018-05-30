@@ -27,6 +27,11 @@ class AvatarEditorConsole extends Component {
   }
 
   sendUpImage = () => {
+    setTimeout(() => {
+      if (this.refs.preview) {
+        this.refs.preview.click()
+      }
+    }, 100)
     let edit = this.editor.getImageScaledToCanvas().toDataURL()
     let image = this.dataURLtoFile(edit, 'a.png');
     this.props.changeImg(image)
@@ -117,11 +122,12 @@ class AvatarEditorConsole extends Component {
         </div>
         <div className="nameWrap">
         <br />
-        <p>New File:</p>
+        <p>Upload a head shot as a <b>JPG file.</b></p>
         <input name="newImage" type="file" onChange={this.handleNewImage} />
         <br />
-        <p>Zoom:</p>
+        <p><b>Zoom:</b></p>
         <input
+          className="zoomScale"
           name="scale"
           type="range"
           onChange={this.handleScale}
@@ -132,29 +138,12 @@ class AvatarEditorConsole extends Component {
         />
         <br />
 
-        <p>Rotate: &nbsp; 
+        <p><b>Rotate: </b>&nbsp; 
         <button onClick={this.rotateLeft}>Left</button>
         <button onClick={this.rotateRight}>Right</button>
         </p>
         </div>
-        {/* <br />
-        <br />
-        <input type="button" onClick={this.handleSave} value="Preview" />
-        <br />
-        {!!this.state.preview && (
-          <img
-            alt="preview"
-            src={this.state.preview.img}
-            style={{
-              borderRadius: `${(Math.min(
-                this.state.preview.height,
-                this.state.preview.width
-              ) +
-                10) *
-                (this.state.preview.borderRadius / 2 / 100)}px`,
-            }}
-          />
-        )} */}
+        <input type="button" className="preview" ref="preview" onClick={this.handleSave} value="Preview" />
       </div>
     )
   }

@@ -58,7 +58,7 @@ class PersonRow extends Component {
     let p = this.props.p
     return (
         <tr>
-          { !this.props.setRehearsals &&
+          { !this.props.setRehearsals && !this.props.piece &&
             <td className="avatarWrap">
               <img src={this.state.photoUrl} alt="profile" className="avatar"/>
             </td>
@@ -67,7 +67,7 @@ class PersonRow extends Component {
             <Link className="personNameLink" to={{pathname: "/users/" + this.props.p.id}} target="_blank">{p.firstName + " " + p.lastName}</Link>
           </td>
           {
-            !this.props.piece && !this.props.setRehearsals &&
+            !this.props.setRehearsals &&
             <td className="userRoleDisp">
               {p.role.displayName}
             </td>

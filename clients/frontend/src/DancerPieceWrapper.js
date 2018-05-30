@@ -7,7 +7,7 @@ class DancerPieceWrapper extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pieces: [{}],
+            pieces: [],
             noPiece: false
         }
     }
@@ -37,7 +37,7 @@ class DancerPieceWrapper extends Component {
                 })
             } else {
                 this.setState({
-                    pieces : pieces
+                    pieces : pieces.pieces
                 })
             }
         })
@@ -47,23 +47,25 @@ class DancerPieceWrapper extends Component {
     }
 
     render() {
-        // console.log(this.state.pieces)
-        // let allPieces = this.state.pieces
-        // let pieces = allPieces.map((piece, i) => {
-        //     console.log(piece)
-        //     return (
-        //          <p>ayy</p>
-        //     )
-        // })
+        let allPieces = this.state.pieces
+        let pieces = allPieces.map((piece, i) => {
+            return (
+                 <DancerPiece key={i} pieceID={piece.id} pieceName={piece.name}/>
+            )
+        })
+        let title = "My Piece"
+        if (allPieces.length > 1) {
+            title = title + "s"
+        }
         return (
             <section className="main">
             <div className="mainView">
-                <h1>My Piece</h1>
+                <h1>{title}</h1>
                 {
                     this.state.noPiece &&
                     <p>You have not been cast in a piece yet.</p>
                 }
-                {/* {pieces} */}
+                {pieces}
             </div>
             </section>
         );

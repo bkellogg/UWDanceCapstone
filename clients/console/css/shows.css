@@ -1,3 +1,54 @@
+
+
 .audition-input{
     margin-top: 25px;
 }
+  
+/*DROP DOWN*/
+.dropDownClick{
+    background-color: transparent;
+    border: none;
+    color: #22A7E0;
+    box-shadow: none;
+    font-size: 15px;
+    display: block;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: 100%;
+    text-align: left;
+    border-top: 2px solid rgb(175, 175, 175);
+    cursor: pointer;
+}
+
+.dropDownClick:nth-child(1){
+    border-top: none;
+    padding-top: 25px;
+}
+
+.firstChild{
+    border-top: none;
+}
+
+.dropDownClick:focus{
+    outline: none;
+}
+
+.dropDownClick:hover{
+    text-decoration: underline;
+}
+
+.info{
+    margin-bottom: 25px;
+    padding-left: 20px;
+}
+
+.pieceInfo, .no-dancers{
+    padding-left: 15px;
+}
+
+
+.all-dancers-table, .all-musicians-table{
+    border: none;
+    margin-bottom: 25px;
+}
+

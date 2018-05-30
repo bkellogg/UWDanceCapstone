@@ -1,3 +1,7 @@
+button.steps{
+    background-color: transparent !important;
+}
+
 /* STEPPER  */
 .card-casting{
     width: 95%;
@@ -20,7 +24,7 @@
 
 /*SELECT CAST*/
 td{
-    padding: 0;
+    padding: 10px;
     padding-top: 10px;
     padding-bottom: 10px;
     border: none;
@@ -34,7 +38,7 @@ tr{
     /* TABLE HEADERS - THIS IS SHARED CODE*/
 th{
     color: hsl(0, 0%, 45%);   
-    padding:0;
+    padding:10px;
     border: none;
     font-weight: 500;
     font-size: 13px;
@@ -53,7 +57,7 @@ th{
 }
 
 .rank {
-    padding: 10px;
+    padding: 15px;
     text-align: center;
 }
 
@@ -71,6 +75,7 @@ th{
     font-size: 13px;
     color: hsl(0, 0%, 29%);
     width: 10%;
+    padding: inherit;
 }
 
 /* CHECK AVAILABILITY */

@@ -1,4 +1,5 @@
 "use strict";
+vex.defaultOptions.className = 'vex-theme-default'
 
 let nameLoc = document.querySelector(".user-name-loc");
 let emailLoc = document.querySelector(".user-email-loc");
@@ -17,6 +18,8 @@ var errorBoxPassword = document.querySelector(".js-error-password");
 
 var showHistory = [];
 var showTypes = [];
+var roleNames = {};
+var userInfo;
 
 let userID = getQueryParam("user");
 if (!userID) {
@@ -37,6 +40,7 @@ makeRequest("users/" + userID, {}, "GET", true)
         return res.text().then((t) => Promise.reject(t));
     })
     .then((data) => {
+        userInfo = data;
         nameLoc.textContent = data.firstName + " " + data.lastName + " (" + data.role.displayName + ")";
         bioContent.textContent = data.bio;
         emailLoc.textContent = data.email;
@@ -104,6 +108,7 @@ function populateRoleOptions() {
             var options = '<option value=""><strong>User Role</strong></option>';
             $(data).each(function (index, value) {
                 options += '<option value="' + value.name + '">' + value.displayName + '</option>';
+                roleNames[value.name] = value.displayName;
             });
             $('#roleName').html(options);
         })
@@ -112,17 +117,32 @@ function populateRoleOptions() {
 
 roleChangeForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
-    let setRole = {
-        "roleName": role.value
-    }
-    makeRequest("users/" + userID + "/role", setRole, "PATCH", true)
-        .then((data) => {
-            alert("Role successfully changed to " + role.value + ".");
-            location.reload();
-        })
-        .catch((err) => {
-            errorBox.textContent = err;
-        })
+    vex.dialog.confirm({
+        message: 'Are you sure you want to change ' + userInfo.firstName + ' ' + userInfo.lastName + ' to ' + roleNames[role.value] + '?',
+        callback: function (response) {
+            if (response) {
+                let setRole = {
+                    "roleName": role.value
+                }
+                makeRequest("users/" + userID + "/role", setRole, "PATCH", true)
+                    .then((res) => {
+                        if (res.ok) {
+                            vex.dialog.alert({
+                                message: "Role successfully changed!",
+                                callback: function () {
+                                    location.reload(true);
+                                }
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        errorBox.textContent = err;
+                    })
+            } else {
+                return;
+            }
+        }
+    });
 })
 
 
@@ -131,18 +151,33 @@ passwordChangeForm.addEventListener("submit", function (evt) {
     if (!validatePassword()) {
         return;
     }
-    let newPassword = {
-        "password": password.value,
-        "passwordConf": confPassword.value
-    }
-    makeRequest("users/" + userID + "/password", newPassword, "PATCH", true)
-        .then((data) => {
-            alert("Password successfully changed to " + password.value + ".");
-            location.reload();
-        })
-        .catch((err) => {
-            errorBoxPassword.textContent = err;
-        })
+    vex.dialog.confirm({
+        message: "Are you sure you want to change " + userInfo.firstName + " " + userInfo.lastName + "'s password?",
+        callback: function (response) {
+            if (response) {
+                let newPassword = {
+                    "password": password.value,
+                    "passwordConf": confPassword.value
+                }
+                makeRequest("users/" + userID + "/password", newPassword, "PATCH", true)
+                    .then((res) => {
+                        if (res.ok) {
+                            vex.dialog.alert({
+                                message: "Password successfully changed!",
+                                callback: function () {
+                                    location.reload(true);
+                                }
+                            })
+                        }
+                    })
+                    .catch((err) => {
+                        errorBoxPassword.textContent = err;
+                    })
+            } else {
+                return;
+            }
+        }
+    })
 })
 
 function validatePassword() {

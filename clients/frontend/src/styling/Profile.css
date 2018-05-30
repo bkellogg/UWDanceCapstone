@@ -3,7 +3,10 @@
   padding: 2%;
   padding-bottom: 0;
   position: relative;
-  margin-bottom: 15px;
+}
+
+.mainContentBorder {
+  margin-bottom: 15px
 }
 
 .mainContentBorder{
@@ -97,6 +100,26 @@ img#photo {
   margin-right: 10px;
 }
 
+.editButtons {
+  margin-bottom: 20px
+}
+
+#resumeUpload{
+  left: 0;
+}
+
+.bioUpload2{
+  width: 500px;
+}
+
+.deleteAccount{
+  background-color: #e65100;
+}
+
+.deleteAccount:hover{
+  background-color: #e65100;
+}
+
 
 /*TABLET VIEW*/
 @media only screen and (max-width : 1043px)  {
@@ -109,13 +132,12 @@ img#photo {
 
   .header{
     border-bottom: none;
-      padding-bottom: 0px;
+    padding-bottom: 0px;
   }
   
   .nameWrap{
     margin-top: 25px;
     width: 100%;
-    padding-bottom: 25px;
     padding-top: 0;
   }
 
@@ -128,8 +150,8 @@ img#photo {
   }
 
   img#photo {
-    width: 200px;
     height: 200px;
+    width: 200px;
     display: block;
     margin: auto;
     margin-top: 40px;
@@ -137,5 +159,21 @@ img#photo {
 
   h1#profileName, .email{
     text-align: center;
+  }
+}
+
+@media only screen and (max-width : 414px) {
+  .photoContainer{
+    width: 100%;
+    margin: 0px;
+    display: block;
+}
+
+  img#photo {
+    height: 100%;
+    width: 100%;
+    display: block;
+    margin: auto;
+    margin-top: 40px;
   }
 }

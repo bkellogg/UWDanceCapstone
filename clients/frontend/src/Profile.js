@@ -3,6 +3,9 @@ import * as Util from './util';
 import { Button, Input, Row } from 'react-materialize';
 import img from './imgs/defaultProfile.jpg';
 import AvatarEditorConsole from './AvatarEditorConsole';
+import TextField from 'material-ui/TextField';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import { compose } from 'ramda';
 import './styling/Profile.css';
 import './styling/General.css';
@@ -27,7 +30,8 @@ class Profile extends Component {
       bioUpload: "",
       resumeUpload: "",
       wordCount: "",
-      text: ""
+      text: "EX: I am majoring in Informatics and have danced in several local companies.",
+      deleteConfirmation: false
     }
   };
 
@@ -201,6 +205,13 @@ class Profile extends Component {
     })
   }
 
+  onCancel = () => {
+    let editState = !this.state.edit
+    this.setState({
+      edit: editState
+    })
+  }
+
   inputChange = (val) => {
     const name = val.target.name
     this.setState({
@@ -260,6 +271,17 @@ class Profile extends Component {
 
   handleBioChange = e => this.setCounts(e.target.value);
 
+  deleteAccount = () => {
+    Util.makeRequest("users/me", {}, "LOCK", true)
+    .then(res => {
+      this.setState({
+        deleteConfirmation: false,
+        deleteSuccess: true
+      })
+      setTimeout(() => {Util.signOut()}, 1500)
+    })
+  }
+
   render() {
     let email = this.state.user.email
     return (
@@ -274,15 +296,13 @@ class Profile extends Component {
                 <div className="header">
 
                   <div id="photoContainer" className="photoContainer">
-                    {!this.state.edit &&
+                    {
+                      !this.state.edit &&
                       <img id="photo" alt="profile" src={this.state.photoSrc}></img>
                     }
                     {this.state.edit &&
                       <section>
-                        <div>
-                          <p>Upload a head shot as a jpg file. </p>
-                        </div>
-                        <AvatarEditorConsole img={this.state.photoSrc} changeImg={this.updateImage} />
+                        <AvatarEditorConsole style={{marginBottom: "15px"}} img={this.state.photoSrc} changeImg={this.updateImage} />
                       </section>
                     }
                   </div>
@@ -298,40 +318,51 @@ class Profile extends Component {
                           <p className="email"><a href={"mailto:" + this.state.user.email}>{email}</a></p>
                         </div>
                       }
-                      {this.state.edit &&
+                      {
+                        this.state.edit &&
                         <div id="editName">
+                          <b>Name: </b>
                           <Row>
-                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname} />
-                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} />
+                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}/>
+                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}} />
                           </Row>
                         </div>
                       }
                     </div>
                   </div>
-                  {!this.state.edit &&
+                  {
+                    !this.state.edit &&
                     <Button id="edit" className="editButton" onClick={() => this.onClick()}>Edit</Button>
-
                   }
 
                 </div>
               </div>
               <div className="mainContentBorder">
                 <div id="bio" className="bio">
-                  <div className="subheader"><b>Dancer Bio:</b></div>
-                  {!this.state.edit &&
+                  <div className="subheader"><b>Bio:</b></div>
+                  {
+                    !this.state.edit &&
                     <section>
                       {this.state.bio !== "" && this.state.bio}
                       {this.state.bio === "" && " Dancer has no bio"}
                     </section>
                   }
-                  {this.state.edit &&
+                  {
+                    this.state.edit &&
                     <div id="editBio">
                       <div className="row">
                         <form className="col s12">
                           <div className="row">
                             <div className="input-field col s12">
-                              <textarea id="textarea1" style={{backgroundColor: 'white', height: '100px', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}} name="bioUpload" s={6} className="materialize-textarea" value={this.state.text} onChange={this.handleBioChange}></textarea>
-                              <p><strong>Word Count:</strong> {this.state.wordCount}</p>
+                              <TextField
+                                name="bioUpload"
+                                className="bioUpload2"
+                                defaultValue={this.state.text}
+                                multiLine={true}
+                                onChange={this.handleBioChange}
+                                style={{backgroundColor: 'white', height: '100px', maxWidth: '400px', width: '100%', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}
+                              />
+                              <p style={{fontSize: "13px"}}><strong>Word Count:</strong> {this.state.wordCount}</p>
                             </div>
                           </div>
                         </form>
@@ -342,20 +373,20 @@ class Profile extends Component {
 
                 <div className="resumeWrap">
                     <div id="resume">
-                      {!this.state.edit &&
+                      {
+                        !this.state.edit &&
                         <section>
+                          <div className="subheader"><b>Resume:</b></div>
                           {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
-                          {this.state.resume != null && (
-                            <div>
-                              <div className="subheader"><b>Dancer Resume:</b></div>
-                              <a href={this.state.resume}>View PDF Resume</a>
-                            </div>
-                          )}
-
+                          {this.state.resume != null && 
+                            <a href={this.state.resume}>View PDF Resume</a>
+                          }
                         </section>
                       }
-                      {this.state.edit &&
+                      {
+                        this.state.edit &&
                         <section>
+                          <div className="subHeader"><b>Resume:  </b></div>
                           <div> Upload your dance resume <b>AS A PDF.</b> </div>
                           <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
                         </section>
@@ -363,29 +394,71 @@ class Profile extends Component {
                     </div>
                   </div>
 
-                <div id="history">
-                  <div id="historyTitle" className="subheader"><b>Your Piece History</b></div>
-                  {this.state.history.length > 0 && this.state.history.map((p, i) => {
-                    return (
-                      //TODO STYLE THESE
-                      <div className="showHistory" key={i}>
-                        <p>{p.name}</p>
-                        <p>{p.year}</p>
-                      </div>
-                    )
-                  })}
-                  {this.state.history.length === 0 &&
-                    <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
+                {
+                  !this.state.edit &&
+                  <div id="history">
+                    <div id="historyTitle" className="subheader"><b>Piece History</b></div>
+                    {this.state.history.length > 0 && this.state.history.map((p, i) => {
+                      return (
+                        //TODO STYLE THESE
+                        <div className="showHistory" key={i}>
+                          <p>{p.name + ", " + p.year}</p>
+                        </div>
+                      )
+                    })}
+                    {
+                      this.state.history.length === 0 &&
+                      <p> Dancer has no piece history. <i>We will auto-fill piece history once you start participating in shows.</i></p>
 
+                    }
+                  </div>
                   }
-                </div>
 
               </div>
 
             </div>
-            {this.state.edit &&
-              <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
+            {
+              this.state.edit &&
+              <div className="editButtons"> 
+                <Button id="edit" className="saveButton" onClick={() => this.onClick()}>Save</Button>
+                <Button className="btn cancelButton" onClick={() => this.onCancel()}>Cancel</Button>
+              </div>
             }
+            {
+              this.state.edit &&
+              <Button className="deleteAccount" onClick={() => this.setState({deleteConfirmation: true})}> Delete Account </Button>
+            }
+              <Dialog
+                title="Delete Account"
+                actions={[
+                  <FlatButton
+                    label="Cancel"
+                    style={{ backgroundColor: 'transparent', color: 'hsl(0, 0%, 29%)', marginRight: '20px' }}
+                    primary={false}
+                    onClick={() => {this.setState({deleteConfirmation: false})}}
+                  />,
+                  <FlatButton
+                    label="Delete Account"
+                    style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+                    primary={false}
+                    keyboardFocused={true}
+                    onClick={this.deleteAccount}
+                  />,
+                ]}
+                modal={false}
+                open={this.state.deleteConfirmation}
+              > 
+                <div className="warningText"> 
+                By clicking Delete Account, your account will be <strong className="importantText">permanently disabled</strong> and your login credentials will no longer work.
+                <br />
+                You will have to re-sign up to participate in the site again. You may reuse your email or use a new one.
+                {
+                  this.state.deleteSuccess &&
+                  <p>You will be signed out shortly</p>
+                }
+                </div>
+              </Dialog>
+            
           </div>
         </div>
       </section>
