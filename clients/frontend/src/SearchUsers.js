@@ -5,7 +5,7 @@ import Button from 'react-materialize/lib/Button';
 import './styling/General.css';
 import './styling/Piece.css';
 
-const STYLES = { width: "200px", paddingLeft: "15px", marginLeft:"10px"}
+const STYLES = { width: "200px", paddingLeft: "15px"}
 
 class SearchUsers extends Component {
   constructor(props) {
@@ -111,7 +111,7 @@ class SearchUsers extends Component {
           <div className="searchHeader"> Search for users using <b>at least one</b> of the following search parameters. </div>
           <div className="searchParams">
             <div className="param">
-                {"First Name    "}  
+                <p className="inputLabelSearch" > First Name</p>
                 <TextField
                     className="textField onSearch"
                     id="firstName"
@@ -122,7 +122,7 @@ class SearchUsers extends Component {
                 />
             </div>
             <div className="param">
-                {"Last Name   "}
+            <p className="inputLabelSearch" > Last Name</p>
                 <TextField
                     className="textField onSearch"
                     id="lastName"
@@ -132,7 +132,7 @@ class SearchUsers extends Component {
                 />
             </div>
             <div className="param">
-                Email Address  
+            <p className="inputLabelSearch" > Email Address</p>
                 <TextField
                     className="textField onSearch"
                     id="email"
@@ -156,7 +156,7 @@ class SearchUsers extends Component {
               {Util.titleCase(this.state.searchError)}
             </div>
           }
-          <table>
+          <table class="searchDancersTable">
             <tbody>
             <tr className="categories">
                 <th>Name</th>

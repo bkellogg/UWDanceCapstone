@@ -37,7 +37,7 @@ div.announcementMessage>p:nth-child(2) {
   color: hsl(0, 0%, 45%);
 }
 
-.acceptCastButton{
+.positiveButton{
   margin-left: 25px !important;
   margin-bottom: 15px !important;
   margin-top: -25px !important;
@@ -46,21 +46,15 @@ div.announcementMessage>p:nth-child(2) {
   background-color: #22A7E0 !important;
 }
 
-.acceptCastButton:hover{
+.positiveButton:hover, .positiveButton-noMargin:hover{
   background-color: #1e96c9 !important;
   cursor: pointer !important;
 }
 
-.declineCastButton{
-  margin-left: 15px !important;
-  cursor: pointer !important;
+.positiveButton-noMargin{
   color: white !important;
-  background-color: #e65100 !important;
-}
-
-.declineCastButton:hover{
-  background-color: #cf4800 !important;
   cursor: pointer !important;
+  background-color: #22A7E0 !important;
 }
 
 .showTitle2{
