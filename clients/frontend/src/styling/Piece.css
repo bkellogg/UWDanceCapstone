@@ -15,7 +15,7 @@ td.userEmail{
     margin-bottom: 25px;
 }
 
-.inputTitle{
+.inputTitle, .inputLabelBlock-noWidth{
     margin-bottom: 5px;
 }
 
