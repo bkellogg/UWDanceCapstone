@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 //styling
-import Moment from 'react-moment';
+import moment from 'moment';
 import './styling/General.css';
 import './styling/RegistrationConf.css';
 import './styling/RegistrationConfMobile.css';
@@ -61,7 +61,7 @@ class RegistrationConf extends Component {
                     <p id="successMessage">You have successfully registered for the show! Your assigned number is {this.props.regNum}.</p>
                     <p>Location: {this.props.audition.location}</p>
 
-                    <p>Audition starts at <Moment format="MM/DD HH:mm">{this.props.audition.time}</Moment></p>
+                    <p>Date: {moment(this.props.audition.time).format("LLLL")}</p>
                   </div>
                 </div>
               </div>

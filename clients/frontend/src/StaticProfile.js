@@ -154,6 +154,7 @@ class StaticProfile extends Component {
   }
 
   render() {
+    let email = this.state.user.email
     return (
       <section className="main">
         <div className="mainView">
@@ -172,6 +173,7 @@ class StaticProfile extends Component {
                   <div className="nameWrap">
                     <div id="name" className="name">
                       <h1 id="profileName">{this.state.user.firstName} {this.state.user.lastName}</h1>
+                      <p className="email"><a href={"mailto:" + this.state.user.email}>{email}</a></p>
                     </div>
                   </div>
                     </div>
@@ -180,7 +182,7 @@ class StaticProfile extends Component {
                 </div>
                 <div className="mainContentBorder">
                 <div id="bio" className="bio">
-                        <div className="subheader"><b>Dancer Bio:</b></div>
+                        <div className="subheader"><b>Bio:</b></div>
                         <section>
                           {this.state.user.bio !== "" && this.state.user.bio}
                           {this.state.user.bio === "" && " Dancer has no bio"}
@@ -189,7 +191,10 @@ class StaticProfile extends Component {
                       <div className="resumeWrap">
                     <div id="resume">
                       <section>
-                        {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
+                      <div className="subheader"><b>Resume:</b></div>
+                        {this.state.resume === null && 
+                          <p>Dancer has not uploaded a resume.</p>
+                        }
                         {this.state.resume != null && (
                           <div>
                             <a href={Util.API_URL_BASE + "users/" + this.state.userID + "/resume?auth=" + this.state.auth} target="_blank">View PDF Resume</a>
@@ -205,8 +210,7 @@ class StaticProfile extends Component {
                       return (
                         //TODO STYLE THESE
                         <div className="showHistory" key={i}>
-                          <p>{p.name}</p>
-                          <p>{p.year}</p>
+                          <p>{p.name + ", " + p.year}</p>
                         </div>
                       )
                     })}

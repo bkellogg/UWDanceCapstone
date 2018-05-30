@@ -42,7 +42,6 @@ class Audition extends Component {
       return res.text().then((t) => Promise.reject(t));
     })
     .then(audition => {
-      console.log(audition)
       this.setState({ 
         audition: audition
       })
@@ -65,8 +64,6 @@ class Audition extends Component {
   }
   
   checkRegistration = () => {
-
-    console.log(this.props.audition)
     let error = false
     Util
       .makeRequest("users/me/auditions/" + this.props.audition, "", "GET", true)

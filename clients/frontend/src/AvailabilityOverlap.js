@@ -50,9 +50,8 @@ class AvailabilityOverlap extends Component {
   };
 
   componentWillMount() {
-    console.log(this.props)
     this.setState({
-      dayTimes: this.getAllDancerOverlap(this.props.filteredCast)
+      dayTimes: this.getAllDancerOverlap(this.props.filteredCast, this.props.cast, this.props.contested)
     })
   }
 
@@ -61,7 +60,7 @@ class AvailabilityOverlap extends Component {
       cast: props.cast,
       filteredCast: props.filteredCast,
       contested: props.contested,
-      dayTimes: this.getAllDancerOverlap(props.filteredCast)
+      dayTimes: this.getAllDancerOverlap(props.filteredCast, props.cast, props.contested)
     })
   }
 
@@ -75,20 +74,17 @@ class AvailabilityOverlap extends Component {
     return newWeek
   }
 
-  getAllDancerOverlap = (filteredCast) => {
-
+  getAllDancerOverlap = (filteredCast, cast, contested) => {
     let dayTimes = this.flushDayTimes()
-    console.log(this.props.cast)
-    this.props.cast.forEach((dancer, i) => { //go through each dancer
-      console.log(dancer)
+    cast.forEach((dancer, i) => { //go through each dancer
       let days = dancer.dancer.availability.days
       let id = dancer.dancer.user.id
       let firstName = dancer.dancer.user.firstName
       if (filteredCast.indexOf(id) >= 0 && days !== undefined) { //check to see that they are in the filtered cast and did have an availability
 
-        days.forEach((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
+        days.forEach((day, j) => { 
           let times = day.times
-
+          let dayIndex = daysRef.indexOf(day.day) //the location of the day in the array
           times.forEach((time, k) => { //times is the array of times for that day
 
             let startIndex = timesRef.indexOf(time.start)
@@ -105,7 +101,7 @@ class AvailabilityOverlap extends Component {
 
             //bug?? cannot read property push or undefined, looks like an issue with a user not having any availability
             while (incrementIndex !== (endIndex)) { //plus one added to include the end index
-              let currPlace = dayTimes[j][incrementIndex]
+              let currPlace = dayTimes[dayIndex][incrementIndex]
               currPlace.push({"id" : id, "name" : firstName})
               incrementIndex++
             }
@@ -114,15 +110,16 @@ class AvailabilityOverlap extends Component {
       }
     })
     //just going to go through contested dancers again because I am tired and lazy
-    if (this.props.contested) {
+    if (contested) {
       this.props.contested.forEach((dancer, i) => { //go through each dancer
         let days = dancer.rankedDancer.dancer.availability.days
         let id = dancer.rankedDancer.dancer.user.id
         let firstName = dancer.rankedDancer.dancer.user.firstName
         if (filteredCast.indexOf(id) >= 0  && days !== undefined) {
 
-          days.forEach((day, j) => { //j will match the index of this.state.dayTimes & daysRef, it is the day for each dancer's schedule
+          days.forEach((day, j) => {
             let times = day.times
+            let dayIndex = daysRef.indexOf(day.day) //the location of the day in the array
 
             times.forEach((time, k) => { //times is the array of times for that day
 
@@ -138,7 +135,7 @@ class AvailabilityOverlap extends Component {
               let incrementIndex = startIndex //increment index is the index of our this.state.dayTimes[j][incrementIndex]
 
               while (incrementIndex !== (endIndex + 1)) { //plus one added to include the end index
-                let currPlace = dayTimes[j][incrementIndex]
+                let currPlace = dayTimes[dayIndex][incrementIndex]
                 currPlace.push({"id" : id, "name" : firstName})
                 incrementIndex++
               }

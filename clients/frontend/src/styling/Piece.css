@@ -6,18 +6,61 @@ td.userEmail{
     padding-left: 10px;
 }
 
+/*ADD COLLABORATORS SEARCH*/
 .textField{
     background-color: white !important;
-    
+    font-size: 14px !important;
+    width: 100% !important;
+    max-width: 600px !important;
+}
+
+.onSearch{
+    padding: 0;
+}
+
+.pieceCard {
+    background-color: #EFF3FA;
+    width: 95%
+}
+
+.pieceCardContents {
+    padding: 20px;
+    margin-bottom: 20px
+}
+
+.dancerPieceToggle {
+    margin-right: 20px;
+    margin-left: 20px;
+    width: 95%
+}
+
+.param {
+    margin: 10px
+}
+
+.subsectionheader {
+    padding-top: 15px
+}
+
+.dividerDiv{
+    margin-top: 25px;
+    margin-bottom: 10px;
+    height: 2px;
+    background-color: lightgrey;
+    width: 100%;
 }
 
 @media only screen 
 and (max-width : 1024px)  {
-    .userBioDisp, .bioOfUser{
+    .userBioDisp, .bioOfUser, .userRole, .userRoleDisp{
         visibility: hidden;
         width: 0%;
         clear: both;
         display: none;
+    }
+
+    .toggleHeader h2{
+        width: 80%;
     }
 
 }

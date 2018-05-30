@@ -8,8 +8,9 @@
     <title>UW Stage Admin Console</title>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.3/jquery.timepicker.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css"></link>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/css/vex.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/css/vex-theme-default.min.css">
     <link rel="stylesheet" href="css/shows.css">
     <link rel="stylesheet" href="css/common.css">
 </head>
@@ -17,15 +18,25 @@
 <body>
     <nav id='nav-bar'></nav>
     <div class="page-wrap">
-    <h1>Create New Show</h1>
+        <h1>Create New Show</h1>
         <form class="show-form">
-                <h2>Show</h2>
+            <h2>Show Information</h2>
             <div class="showType">
                 <p>Select Concert:</p>
                 <select id="showType">
                     <option id="showType-input" value=''>
                         <strong>Show Type</strong>
                     </option>
+                </select>
+            </div>
+            <div class="quarter-name">
+                <p>Select Quarter:</p>
+                <select id="quarter-name-input">
+                    <option value=''>Quarter</option>
+                    <option value='autumn'>Autumn</option>
+                    <option value='winter'>Winter</option>
+                    <option value='spring'>Spring</option>
+                    <option value='summer'>Summer</option>
                 </select>
             </div>
             <div class="endDate">
@@ -52,20 +63,25 @@
                     <input id="audition-date" placeholder="Audition Date" />
                     <input id="audition-time-input" placeholder="Audition Time">
                 </div>
-                <div class="quarter-name">
-                    <p>Select Quarter:</p>
-                    <select id="quarter-name-input">
-                        <option value=''>Quarter</option>
-                        <option value='autumn'>Autumn</option>
-                        <option value='winter'>Winter</option>
-                        <option value='spring'>Spring</option>
-                        <option value='summer'>Summer</option>
-                    </select>
-                </div>
             </div>
             <button id="search-submit" type="submit">Create Show</button>
         </form>
         <div class="js-error"></div>
+        <div class="descriptions">
+            <p><b>*Each concert type should have only one active show at a time.</b></p>
+            <p>Create new show allows for the creation of a new show that can be used in the audition and casting process.
+                <b>All fields are required.</b>
+            </p>
+            <ul>
+                <li>
+                    <b>Show Information:</b> Set the concert type for the show, the quarter the show will occur in, 
+                    and the end date and time.
+                </li>
+                <li>
+                    <b>Audtion Information:</b> Set the audition name, location, and date/time of the show's audition.
+                </li>
+            </ul>
+        </div>
     </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -73,6 +89,7 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.3/jquery.timepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/js/vex.combined.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/createNewShow.js"></script>
 
