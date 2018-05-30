@@ -50,6 +50,7 @@ docker run -d \
 -e RESETPASSWORDCLIENTPATH=/static/clients/passwordreset/ \
 -e ADMINCONSOLEPATH=/static/clients/console/ \
 -e FRONTENDPATH=/static/clients/frontend/build/ \
+-e TERMSPATH=/static/clients/terms/ \
 -e ASSETSPATH=/static/assets/ \
 -e STAGE_ADMIN_FIRSTNAME=Brendan \
 -e STAGE_ADMIN_LASTNAME=Kellogg \
