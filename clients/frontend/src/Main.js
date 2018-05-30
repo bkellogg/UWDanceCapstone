@@ -116,7 +116,7 @@ class Main extends Component {
         this.getAudition(show)
       })
     }).catch(err => {
-      console.log(err)
+      console.err(err)
       Util.handleError(err)
     })
   }

@@ -32,7 +32,6 @@ class People extends Component {
         return res.text().then((t) => Promise.reject(t));
       })
       .then(data => {
-        console.log(data)
         let currUsers = this.state.users
         let newUsers = currUsers.concat(data.users)
         this.setState({ 
@@ -40,7 +39,7 @@ class People extends Component {
         })
       })
       .catch(err => {
-        console.log(err)
+        console.err(err)
         Util.handleError(err)
       })
     }

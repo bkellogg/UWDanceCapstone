@@ -80,7 +80,6 @@ class DancerPiece extends Component {
       return res.text().then((t) => Promise.reject(t));
     })
     .then(events => {
-      console.log(events)
       this.formatEvents(events)
     })
     .catch(err => {
