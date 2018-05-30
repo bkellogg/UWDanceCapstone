@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './styling/index.css';
 import App from './App';
+import ScrollToTop from './ScrollToTop';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 
 const muiTheme = getMuiTheme({
     stepper: {
@@ -14,8 +15,10 @@ const muiTheme = getMuiTheme({
 
 ReactDOM.render(
     <MuiThemeProvider muiTheme={muiTheme}>
-        <BrowserRouter>
-            <App />
+        <BrowserRouter >
+            <ScrollToTop>
+                <App />
+            </ScrollToTop>
         </BrowserRouter>
     </MuiThemeProvider>,
     document.getElementById('root'));
