@@ -9,6 +9,7 @@ import Calendar from './Calendar';
 import PersonRow from './PersonRow';
 import AvailabilityOverlap from './AvailabilityOverlap';
 import SearchUsers from './SearchUsers';
+import Snackbar from 'material-ui/Snackbar';
 import './styling/Piece.css';
 import './styling/General.css';
 
@@ -44,7 +45,8 @@ class Piece extends Component {
       otherDesc : "",
       setError: false,
       dancerAvailabilityList: [],
-      filteredCast: []
+      filteredCast: [],
+      setSuccess: false
     }
   };
 
@@ -377,6 +379,12 @@ class Piece extends Component {
     let opp = this.state.openCalendar
     this.setState({
       openCalendar: !opp
+    })
+  }
+
+  handleRequestClose = () => {
+    this.setState({
+      setSuccess: false
     })
   }
 
@@ -798,12 +806,12 @@ class Piece extends Component {
                           Error setting piece info sheet: {Util.titleCase(this.state.setError)}
                         </div>
                       }
-                      {
-                        this.state.setSuccess &&
-                        <div className="successPiece">
-                          Info Sheet Updated
-                        </div>
-                      }
+                      <Snackbar
+                        open={this.state.setSuccess}
+                        message="Successfully Updated Info Sheet"
+                        autoHideDuration={3000}
+                        onRequestClose={this.handleRequestClose}
+                      />
                 </section>
               }
             </div>
