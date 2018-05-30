@@ -229,6 +229,7 @@ class AllDancersRow extends Component {
                     this.props.checkAvailability &&
                     <td>
                         <Checkbox
+                            iconStyle={{ fill: 'hsl(0, 0%, 45%)' }}
                             onCheck={this.onCheck}
                             checked={this.state.filterChecked}
                         />

@@ -426,7 +426,7 @@ class Profile extends Component {
             }
             {
               this.state.edit &&
-              <Button onClick={() => this.setState({deleteConfirmation: true})}> Delete Account </Button>
+              <Button className="deleteAccount" onClick={() => this.setState({deleteConfirmation: true})}> Delete Account </Button>
             }
               <Dialog
                 title="Delete Account"

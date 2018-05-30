@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import { Link } from 'react-router-dom';
 import './styling/General.css';
-import './styling/People.css';
 import './styling/CastingFlowMobile.css';
 
 class AuditionRegistrationList extends Component {

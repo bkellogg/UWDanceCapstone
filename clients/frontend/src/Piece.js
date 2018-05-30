@@ -528,7 +528,8 @@ class Piece extends Component {
                   <div className="buttons">
                     {
                       !this.state.viewAvailability &&
-                      <section className="subSection">
+                      <section>
+                      <div className="dividerDiv"></div>
                         <div className="toggleHeader clickable" onClick={this.viewAvailability}>
                           <h2 className="smallHeading subsectionheader" style={{marginBottom: "15px"}}>
                             View Cast Availability
@@ -543,7 +544,8 @@ class Piece extends Component {
                     }
                     {
                       this.state.viewAvailability &&
-                      <section className="subSection">
+                      <section>
+                        <div className="dividerDiv"></div>
                         <div className="toggleHeader clickable" onClick={this.viewAvailability}>
                           <h2 className="smallHeading subsectionheader">
                             Hide Cast Availability
@@ -559,7 +561,8 @@ class Piece extends Component {
                     }
                     {
                       !this.state.searchUsers &&
-                      <section className="subSection">
+                      <section>
+                        <div className="dividerDiv"></div>
                         <div className="toggleHeader clickable subsectionheader" onClick={() => this.setState({searchUsers : true})}>
                           <h2 className="smallHeading">
                             Add Collaborators
@@ -574,7 +577,8 @@ class Piece extends Component {
                     }
                     {
                       this.state.searchUsers &&
-                      <section className="subSection">
+                      <section>
+                        <div className="dividerDiv"></div>
                         <div className="toggleHeader clickable" onClick={() => this.setState({searchUsers : false})}>
                           <h2 className="smallHeading subsectionheader">
                             Add Collaborators

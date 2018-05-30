@@ -113,7 +113,7 @@ class SearchUsers extends Component {
             <div className="param">
                 {"First Name    "}  
                 <TextField
-                    className="textField"
+                    className="textField onSearch"
                     id="firstName"
                     label="First Name"
                     defaultValue={this.state.firstName}
@@ -124,7 +124,7 @@ class SearchUsers extends Component {
             <div className="param">
                 {"Last Name   "}
                 <TextField
-                    className="textField"
+                    className="textField onSearch"
                     id="lastName"
                     defaultValue={this.state.lastName}
                     onChange={(e) => this.setState({lastName: e.target.value})}
@@ -134,7 +134,7 @@ class SearchUsers extends Component {
             <div className="param">
                 Email Address  
                 <TextField
-                    className="textField"
+                    className="textField onSearch"
                     id="email"
                     defaultValue={this.state.email}
                     onChange={(e) => this.setState({email: e.target.value})}

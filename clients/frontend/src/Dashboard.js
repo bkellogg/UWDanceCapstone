@@ -181,7 +181,7 @@ class Dashboard extends Component {
                     {this.state.user.bio === "" &&
                       <div className="announcement completeProfileBorderColor clickable" onClick={() => window.location = "/profile"}>
                         <div className="completeProfileCardColor">
-                          <p className="announcementMessage"> Please complete your profile. </p>
+                          <p className="announcementMessage"> Please click here to complete your profile. </p>
                         </div>
                       </div>
                     }
