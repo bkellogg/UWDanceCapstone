@@ -130,7 +130,6 @@ class Piece extends Component {
       "musicTitle": this.state.musicTitle,
       "performedBy": this.state.musicPerformer,
       "musicSource": this.state.musicSource,
-      "numMusicians": this.state.numMusicians,
       "rehearsalSchedule": this.state.rehearsalSchedule,
       "chorNotes": this.state.choreoNotes,
       "musicians": this.state.musicians,
@@ -178,7 +177,6 @@ class Piece extends Component {
       "musicTitle": this.state.musicTitle,
       "performedBy": this.state.musicPerformer,
       "musicSource": this.state.musicSource,
-      "numMusicians": this.state.numMusicians,
       "rehearsalSchedule": this.state.rehearsalSchedule,
       "chorNotes": this.state.choreoNotes,
       "musicians": this.state.musicians,
@@ -349,10 +347,11 @@ class Piece extends Component {
 
   render() {
     let musicianRow = []
-    let numMusicians = this.state.numMusicians
+    let numMusicians = 0
     let musicians = this.state.musicians
     const dancers = this.state.dancers
     musicianRow = musicians.map((musician, i) => {
+      numMusicians++
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
       )
@@ -659,8 +658,8 @@ class Piece extends Component {
                       <p><b>If music will be performed live, number of musicians: </b> </p>
                       <SelectField
                         style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', width: '90px', paddingLeft: '10px'}}
-                        defaultValue={this.state.numMusicians}
-                        value={this.state.numMusicians}
+                        defaultValue={numMusicians}
+                        value={numMusicians}
                         onChange={this.handleChangeMusician}
                       >
                         <MenuItem value={0} primaryText="0" />
@@ -677,7 +676,7 @@ class Piece extends Component {
                       </SelectField>
 
                       {
-                        this.state.numMusicians > 0 &&
+                        numMusicians > 0 &&
                         <div className="musicianInfo">
                           <p><b>List of contact info for musicians:</b> </p>
                           {musicianRow}

@@ -1,3 +1,7 @@
 .zoomScale{
     width: 300px;
 }
+
+.preview {
+    visibility: hidden
+}

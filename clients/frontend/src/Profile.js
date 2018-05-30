@@ -30,7 +30,7 @@ class Profile extends Component {
       bioUpload: "",
       resumeUpload: "",
       wordCount: "",
-      text: "",
+      text: "EX: I am majoring in Informatics and have danced in several local companies.",
       deleteConfirmation: false
     }
   };

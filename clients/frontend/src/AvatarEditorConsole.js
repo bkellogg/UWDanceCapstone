@@ -27,7 +27,11 @@ class AvatarEditorConsole extends Component {
   }
 
   sendUpImage = () => {
-    this.refs.preview.click()
+    setTimeout(() => {
+      if (this.refs.preview) {
+        this.refs.preview.click()
+      }
+    }, 100)
     let edit = this.editor.getImageScaledToCanvas().toDataURL()
     let image = this.dataURLtoFile(edit, 'a.png');
     this.props.changeImg(image)
@@ -116,7 +120,7 @@ class AvatarEditorConsole extends Component {
           </div>
         </Dropzone>
         </div>
-        <div className="nameWrap" style={{marginBottom: "15px"}}>
+        <div className="nameWrap">
         <br />
         <p>Upload a head shot as a <b>JPG file.</b></p>
         <input name="newImage" type="file" onChange={this.handleNewImage} />
@@ -139,25 +143,7 @@ class AvatarEditorConsole extends Component {
         <button onClick={this.rotateRight}>Right</button>
         </p>
         </div>
-        <br />
-        <br />
         <input type="button" className="preview" ref="preview" onClick={this.handleSave} value="Preview" />
-        <br />
-        {!!this.state.preview && (
-          <img
-            className="preview"
-            alt="preview"
-            src={this.state.preview.img}
-            style={{
-              borderRadius: `${(Math.min(
-                this.state.preview.height,
-                this.state.preview.width
-              ) +
-                10) *
-                (this.state.preview.borderRadius / 2 / 100)}px`,
-            }}
-          />
-        )}
       </div>
     )
   }
