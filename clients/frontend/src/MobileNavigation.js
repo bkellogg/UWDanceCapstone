@@ -17,7 +17,7 @@ class MobileNavigationElement extends Component {
         let address = "/" + this.props.showTitle.split(' ').join('');
         return (
             <li>
-                <MenuItem className="collapsible-header">
+                <MenuItem className="collapsible-header navMenuItem">
                     <p className="mobileNavItem" >{this.props.showTitle} </p>
                 </MenuItem>
                 <div className="collapsible-body">
@@ -25,7 +25,9 @@ class MobileNavigationElement extends Component {
                         {/*Dancer (new user)*/}
                         {this.state.role === 10 &&
                             <li>
-                                <Link to={{ pathname: address + "/audition" }}>
+                                <Link 
+                                className="navMenuItem"
+                                to={{ pathname: address + "/audition" }}>
                                     <MenuItem onClick={this.props.handleClose}>
                                         <p className="mobileNavItem" >Audition </p>
                                     </MenuItem>
@@ -36,21 +38,28 @@ class MobileNavigationElement extends Component {
                         {this.state.role === 70 &&
                             <section>
                                 <li>
-                                    <Link to={{ pathname: address + "/casting" }}>
-                                        <MenuItem onClick={this.props.handleClose}>
+                                    <Link 
+                                    className="navMenuItem"
+                                    to={{ pathname: address + "/casting" }}>
+                                        <MenuItem 
+                                        onClick={this.props.handleClose}>
                                             <p className="mobileNavItem" >Casting</p>
                                         </MenuItem>
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={{ pathname: address + "/audition" }}>
+                                    <Link 
+                                    className="navMenuItem"
+                                    to={{ pathname: address + "/audition" }}>
                                         <MenuItem onClick={this.props.handleClose}>
                                             <p className="mobileNavItem">Audition</p>
                                         </MenuItem>
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={{ pathname: address + "/people" }}>
+                                    <Link 
+                                    className="navMenuItem"
+                                    to={{ pathname: address + "/people" }}>
                                         <MenuItem onClick={this.props.handleClose}>
                                             <p className="mobileNavItem" >People</p>
                                         </MenuItem>
@@ -62,21 +71,27 @@ class MobileNavigationElement extends Component {
                         {this.state.role === 100 &&
                             <section>
                                 <li>
-                                    <Link to={{ pathname: address + "/casting" }}>
+                                    <Link 
+                                    className="navMenuItem"
+                                    to={{ pathname: address + "/casting" }}>
                                         <MenuItem onClick={this.props.handleClose}>
                                             <p className="mobileNavItem" >Casting</p>
                                         </MenuItem>
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={{ pathname: address + "/people" }}>
+                                    <Link 
+                                    className="navMenuItem"
+                                    to={{ pathname: address + "/people" }}>
                                         <MenuItem onClick={this.props.handleClose}>
                                             <p className="mobileNavItem" >People</p>
                                         </MenuItem>
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={{ pathname: address + "/audition" }}>
+                                    <Link 
+                                    className="navMenuItem"
+                                    to={{ pathname: address + "/audition" }}>
                                         <MenuItem onClick={this.props.handleClose}>
                                             <p className="mobileNavItem" >Audition</p>
                                         </MenuItem>
@@ -85,7 +100,9 @@ class MobileNavigationElement extends Component {
                             </section>
                         }
                         <li>
-                            <Link to={{ pathname: address + "/piece" }}>
+                            <Link 
+                            className="navMenuItem"
+                            to={{ pathname: address + "/piece" }}>
                                 <MenuItem onClick={this.props.handleClose}>
                                     <p className="mobileNavItem" >My Piece</p>
                                 </MenuItem>

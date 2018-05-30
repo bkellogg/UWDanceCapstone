@@ -95,7 +95,7 @@ class SelectCast extends Component {
       <section>
         <div className="mainView mainContentView">
           <div className="pageContentWrap">
-            <div className="fullWidthCard">
+            <div className="fullWidthCard scrollableCard">
               <h2 className="smallHeading">Select Cast</h2>
               <div className="xtraInfo tooltip">
                 <i className="fas fa-question-circle"></i>

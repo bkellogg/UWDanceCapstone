@@ -29,6 +29,10 @@
     font-size: 14px;
 }
 
+.mobileNavItem:focus{
+    background-color: #22A7E0;
+}
+
 .menuList{
     margin: 0;
     background-color: #1C2C50;
@@ -52,4 +56,12 @@
     letter-spacing: 1px;
     font-size: 14px;
     margin: 0;
+}
+
+.navMenuItem:active div{
+    background-color: #22A7E0;
+}
+
+.navMenuItem:visited div{
+    background-color: #22A7E0;
 }

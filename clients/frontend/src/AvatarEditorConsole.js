@@ -135,12 +135,13 @@ class AvatarEditorConsole extends Component {
           max="2"
           step="0.01"
           defaultValue="1"
+          style={{fill: 'red'}}
         />
         <br />
 
         <p><b>Rotate: </b>&nbsp; 
-        <button onClick={this.rotateLeft}>Left</button>
-        <button onClick={this.rotateRight}>Right</button>
+        <button className="turnButton" onClick={this.rotateLeft}>Left</button>
+        <button className="turnButton" onClick={this.rotateRight}>Right</button>
         </p>
         </div>
         <input type="button" className="preview" ref="preview" onClick={this.handleSave} value="Preview" />

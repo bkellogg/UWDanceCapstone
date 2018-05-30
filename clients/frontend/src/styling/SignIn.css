@@ -38,7 +38,8 @@ body,html {
   width: auto;
   max-width: 500px;
   display: inline-block;
-  padding: 35px;
+  padding: 40px;
+  padding-top: 50px;
   margin: 1%;
   margin-bottom: 8%;
   border-radius: 10px;
@@ -47,7 +48,6 @@ body,html {
 
 .authenticate {
   text-align: left;
-  margin-bottom: 50px;
 }
 
 .title {
@@ -75,7 +75,7 @@ Button {
 }
 
 .link{
-  padding-top: 25px;
+  padding-top: 15px;
 }
 
 .blueTextLink {
@@ -101,6 +101,9 @@ Button {
   color: lavender
 }
 
+.termsOfService{
+  margin-bottom: 30px;
+}
 
 @media only screen and (max-width : 992px) {
   .logInLanding {
