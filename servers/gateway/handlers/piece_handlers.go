@@ -146,10 +146,6 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 		if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
 			return permissionDenied()
 		}
-		updates := &models.NewPieceMusician{}
-		if httpErr := receive(r, updates); httpErr != nil {
-			return httpErr
-		}
 		piece, dbErr := ctx.store.GetPieceByMusicianID(objectID)
 		if dbErr != nil {
 			return middleware.HTTPErrorFromDBErrorContext(dbErr, "error getting piece by musician ID")
@@ -158,6 +154,10 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 			return HTTPError("musician is not part of this piece", http.StatusBadRequest)
 		}
 		if r.Method == "PATCH" {
+			updates := &models.MusicianUpdates{}
+			if httpErr := receive(r, updates); httpErr != nil {
+				return httpErr
+			}
 			dbErr := ctx.store.UpdateMusicianByID(objectID, updates)
 			if dbErr != nil {
 				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error updating musician by id")

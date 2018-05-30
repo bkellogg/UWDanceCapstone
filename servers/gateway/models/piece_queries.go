@@ -412,7 +412,7 @@ func (store *Database) GetPieceMusicians(pieceID int) ([]*PieceMusician, *DBErro
 
 // UpdateMusicianByID updates the musician with the given id to contain the values
 // of the given updates. Returns a DBError if an error occurred.
-func (store *Database) UpdateMusicianByID(id int, updates *NewPieceMusician) *DBError {
+func (store *Database) UpdateMusicianByID(id int, updates *MusicianUpdates) *DBError {
 	res, err := store.db.Exec(`UPDATE Musician M SET
 		M.Name = COALESCE(NULLIF(?, ''), Name),
 		M.Phone = COALESCE(NULLIF(?, ''), Phone),
