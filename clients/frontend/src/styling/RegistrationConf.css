@@ -41,8 +41,9 @@
 
 .unregisterButton{
     float: left;
+    margin-left: 0 !important;
     margin-right: 2%;
-    /* background-color: #f15b59; */
+    display: inline-block;
 }
 
 .changeAvailabilityButton{
@@ -54,14 +55,6 @@
     box-shadow: none;
     color: #22A7E0;
     text-transform: capitalize;
-}
-
-.unregisterButton {
-    background-color: #ef5350;
-}
-
-.unregisterButton:hover{
-    background-color: #ef5350;
 }
 
 #numberMessage{

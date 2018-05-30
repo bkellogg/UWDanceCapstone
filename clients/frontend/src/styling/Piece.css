@@ -67,9 +67,27 @@ td.userEmail{
 }
 
 /*SEARCH INPUT LABEL INLINE*/
-.inputLabelSearch{
+.inputLabelBlock{
     display: inline-block;
     width: 100px;
+}
+
+/*MUSICIAN INPUT*/
+.musicianInput{
+    padding-left: 15px !important;
+    width: 100% !important;
+    display: inline-block !important;
+}
+
+.inputLabelBlock-noWidth{
+    display: inline-block;
+}
+
+.param-displayInline{
+    display: inline-block;
+    width: 30%;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 @media only screen 
@@ -85,4 +103,12 @@ and (max-width : 1024px)  {
         width: 80%;
     }
 
+}
+
+@media only screen and (max-width : 768px) {
+/*MUSICIAN INPUT*/
+.param-displayInline{
+    display: block;
+    width: 100%;
+}
 }

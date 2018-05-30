@@ -111,7 +111,7 @@ class SearchUsers extends Component {
           <div className="searchHeader"> Search for users using <b>at least one</b> of the following search parameters. </div>
           <div className="searchParams">
             <div className="param">
-                <p className="inputLabelSearch" > First Name</p>
+                <p className="inputLabelBlock" > First Name</p>
                 <TextField
                     className="textField onSearch"
                     id="firstName"
@@ -122,7 +122,7 @@ class SearchUsers extends Component {
                 />
             </div>
             <div className="param">
-            <p className="inputLabelSearch" > Last Name</p>
+            <p className="inputLabelBlock" > Last Name</p>
                 <TextField
                     className="textField onSearch"
                     id="lastName"
@@ -132,7 +132,7 @@ class SearchUsers extends Component {
                 />
             </div>
             <div className="param">
-            <p className="inputLabelSearch" > Email Address</p>
+            <p className="inputLabelBlock" > Email Address</p>
                 <TextField
                     className="textField onSearch"
                     id="email"
