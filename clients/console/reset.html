@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/css/vex.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/css/vex-theme-default.min.css">
     <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/common.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script type="text/javascript">
@@ -23,22 +27,32 @@
 </head>
 
 <body>
-    <h1>UW Stage Admin Console Forgot Password</h1>
-    <p>If you have forgotten your password you can establish a new one online</p>
-    <p>A unique email with instructions will be sent to you in order to complete the process. Please complete this request only
-        once and wait for the email to be sent to you.</p>
-    <form class="reset-form">
-        <div class="email">
-            <h2>Email:</h2>
-            <input id="email-input" type="text" placeholder="Enter Email">
+    <div class="page-wrap">
+        <div class="main-header">
+            <img class="stage-logo" src="img/logoex.png" alt="STAGE Logo">
+            <h1>Admin Console Forgot Password</h1>
         </div>
-        <input type="submit" id="passwordemail" value="Send Password Reset Email" disabled="disabled" />
-    </form>
-    <div class="js-error"></div>
-    <div class="signin-return">
-        <a href="./index.html">Return to sign in</a>
+        <div class="reset-message-wrap">
+            <p class="forgot-pass-message">If you have forgotten your password you can establish a new one online</p>
+            <p class="forgot-pass-message">A unique email with instructions will be sent to you in order to complete the process. Please complete this request
+                only once and wait for the email to be sent to you.</p>
+        </div>
+        <form class="reset-form">
+            <div class="email">
+                <h2>Email:</h2>
+                <input class="fill-input" id="email-input" type="text" placeholder="Enter Email">
+            </div>
+            <input type="submit" id="passwordemail" value="Send Password Reset Email" disabled="disabled" />
+        </form>
+        <div class="js-error"></div>
+        <div class="signin-return">
+            <a href="./index.html">Return to sign in</a>
+        </div>
+
     </div>
+
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/js/vex.combined.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/reset.js"></script>
 

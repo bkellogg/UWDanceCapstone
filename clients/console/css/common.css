@@ -2,11 +2,13 @@ body{
   margin: 0;
   padding: 0;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .page-wrap{
   padding: 20px;
+  width: 100%;
+  position: relative;
 }
 
 /*INPUT FIELDS*/
@@ -14,6 +16,36 @@ body{
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+/*LEFT CARD*/
+.left-card{
+  width: 60%;
+  position: relative;
+  display: inline-block;
+}
+
+/*RIGHT CARD*/
+.right-card{
+  max-width: 30%;
+  width: auto;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 5%
+}
+
+/*LEGENDS*/
+.descriptions{
+  background-color: #f6f8fc;
+  padding: 10px;
+  padding-left: 25px;
+  border: 1px solid #d8d8d8;
+}
+
+.descriptions ul {
+  list-style-type: disc;
+}
+
 
 label.short-input{
   width: 100px;
@@ -33,10 +65,18 @@ label.long-input{
   border: 1px solid #d8d8d8;
   width: 60%;
   margin-bottom: 25px;
+  display: inline-block;
+  position: relative;
 }
+
+.signup-form, .newRole-form, .show-form, .newShowType-form, .newAnnouncementType-form{
+  width: -webkit-fill-available !important;
+}
+
 
 .dashboardAnnouncement{
   background-color: rgb(253, 237, 236);
+  padding-top: 25px;
 }
 
 .important-message{
@@ -67,7 +107,11 @@ tr:nth-child(even) {
 
 /*ROLE INFO CARD, SHOW TYPE CARD*/
 #role_info, #show_type_info{
-  width: 60%;
+  width: 100%;
+}
+
+.tablesorter{
+  width: 100%;
 }
 
 .hidden {
@@ -101,18 +145,70 @@ h2.showName{
 
 
 /*BUTTONS*/
-.delete, #search-submit, #signin{
-  height: 30px;
-  background-color: #22A7E0;
+.delete, #search-submit, #signin, .pieces, #passwordemail, .profile-link, #next, #previous, .change-button{
+  height: 35px;
   color: white;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
-  border: 1px solid rgb(7, 95, 133); 
   border-radius: 3px;
-  width: 120px;
+  width: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  outline: none;
 }
 
-.delete:hover, #search-submit:hover{
-  background-color: rgb(54, 172, 223);
+#search-submit, #signin, .pieces, #passwordemail, .profile-link, #next, #previous, .change-button{
+  background-color: #22A7E0;
+  border: 1px solid rgb(7, 95, 133); 
 }
 
+#search-submit:hover, .pieces:hover, .profile-link:hover, #next:hover, #previous:hover, .change-button:hover{
+  background-color: #36acdf;
+}
+
+/*DELETE BUTTON*/
+.delete{
+  background-color: #e65100;
+  border: 1px solid #af3f03;
+  margin-left: 16px;
+}
+
+.delete:hover{
+  background-color: #e4621d;
+}
+
+.delete-with-float{
+  float: right;
+}
+
+.forgot-pass-message{
+  font-size: 15px;
+}
+
+.fill-input{
+  font-size: 14px;
+}
+
+.form {
+  display: inline-block;
+  margin-right: 0px;
+}
+
+@media only screen and (max-width : 600px) {
+/*LEFT CARD*/
+.left-card, r.ight-card{
+  width: 100% !important;
+  position: relative;
+  display: block;
+}
+
+/*RIGHT CARD*/
+.right-card{
+  margin-top: 25px;
+  margin-left: 0;
+}
+
+.descriptions{
+  width: 400px !important;
+}
+}

@@ -9,6 +9,7 @@ import Calendar from './Calendar';
 import PersonRow from './PersonRow';
 import AvailabilityOverlap from './AvailabilityOverlap';
 import SearchUsers from './SearchUsers';
+import Snackbar from 'material-ui/Snackbar';
 import './styling/Piece.css';
 import './styling/General.css';
 
@@ -35,14 +36,17 @@ class Piece extends Component {
       musicSource : "",
       rehearsalSchedule : "",
       choreoNotes : "",
-      musicians : [],
+      musicians : [{}],
+      newMusicians: [{}],
+      editMusicians: [{}],
       costumeDesc : "",
       propsDesc : "",
       lightingDesc : "",
       otherDesc : "",
       setError: false,
       dancerAvailabilityList: [],
-      filteredCast: []
+      filteredCast: [],
+      setSuccess: false
     }
   };
 
@@ -93,7 +97,6 @@ class Piece extends Component {
         .then((t) => Promise.reject(t));
     })
     .then(res => {
-      console.log(res)
       this.setState({
         choreographerPhone : res.choreographerPhone,
         danceTitle : res.title,
@@ -132,7 +135,6 @@ class Piece extends Component {
       "musicSource": this.state.musicSource,
       "rehearsalSchedule": this.state.rehearsalSchedule,
       "chorNotes": this.state.choreoNotes,
-      "musicians": this.state.musicians,
       "costumeDesc": this.state.costumeDesc,
       "itemDesc": this.state.propsDesc,
       "lightingDesc": this.state.lightingDesc,
@@ -165,6 +167,9 @@ class Piece extends Component {
   }
 
   updateInfoSheet = () => {
+    if (this.refs.musician) {
+      this.refs.musician.updateUser()
+    }
     this.setState({
       setError: false,
       setSuccess: false
@@ -179,7 +184,6 @@ class Piece extends Component {
       "musicSource": this.state.musicSource,
       "rehearsalSchedule": this.state.rehearsalSchedule,
       "chorNotes": this.state.choreoNotes,
-      "musicians": this.state.musicians,
       "costumeDesc": this.state.costumeDesc,
       "itemDesc": this.state.propsDesc,
       "lightingDesc": this.state.lightingDesc,
@@ -255,25 +259,6 @@ class Piece extends Component {
     }
   }
 
-  setMusicians = () => {
-    let body = {}
-    Util.makeRequest("pieces/" + this.state.pieceID + "/musicians", body, "POST", true)
-    .then(res => {
-      if (res.ok) {
-        return res.text()
-      }
-      return res
-        .text()
-        .then((t) => Promise.reject(t));
-    })
-    .then(res => {
-      console.log(res)
-    })
-    .catch((err) => {
-      console.error(err)
-    })
-  }
-
   updateMusician = (musicianID) => {
     let body = {}
     Util.makeRequest("pieces/" + this.state.pieceID + "/musicians" + musicianID, body, "PATCH", true)
@@ -297,14 +282,17 @@ class Piece extends Component {
     Util.makeRequest("pieces/" + pieceID + "/musicians", {}, "GET", true)
     .then(res => {
       if (res.ok) {
-        return res.text()
+        return res.json()
       }
       return res
         .text()
         .then((t) => Promise.reject(t));
     })
     .then(res => {
-      console.log(res)
+      this.setState({
+        musicians: res,
+        numMusicians: res.length
+      })
     })
     .catch((err) => {
       console.error(err)
@@ -364,7 +352,6 @@ class Piece extends Component {
 
   handleChangeMusician = (event, index, value) => {
     let musicians = this.state.musicians
-    musicians = musicians.slice(0, value )
     this.setState({ 
       numMusicians: value,
       musicians : musicians
@@ -373,6 +360,7 @@ class Piece extends Component {
 
   toggleInfo = () => {
     let opp = this.state.openInfo
+    this.getInfoSheet(this.state.pieceID)
     this.setState({
       setError: false,
       setSuccess: false,
@@ -394,12 +382,10 @@ class Piece extends Component {
     })
   }
 
-  updateMusicianList = (musician, id) => {
-      let musicians = this.state.musicians
-      musicians[id] = musician
-      this.setState({
-        musicians : musicians
-      })
+  handleRequestClose = () => {
+    this.setState({
+      setSuccess: false
+    })
   }
 
   render() {
@@ -407,14 +393,12 @@ class Piece extends Component {
     let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
     const dancers = this.state.dancers
-    musicianRow = musicians.map((musician, i) => {
-      return (
-        <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
-      )
-    })
-
-    for (let i = 0; i < numMusicians - musicians.length; i++) {
-      musicianRow.push(<MusicianRow key={i + "empty"} id={i} musicianContact={this.updateMusicianList} musician={{name:"", phone:"", email:""}}/>)
+    for (let i = 0; i < numMusicians; i++) {
+      if (this.state.musicians.length > i) {
+        musicianRow.push(<MusicianRow ref="musician" key={i} id={musicians[i].id} musician={musicians[i]} existing={true} pieceID={this.state.pieceID} error={(err) => this.setState({setError: err})}/>)
+      } else {
+        musicianRow.push(<MusicianRow ref="musician" key={i} id={i} musician={{name:"", phone:"", email:""}} existing={false} pieceID={this.state.pieceID} error={(err) => this.setState({setError: err})}/>)
+      }
     }
 
     let castRows = dancers.map((dancer, i) => {
@@ -511,7 +495,7 @@ class Piece extends Component {
                     </h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
-                  <div className="peopleList">
+                  <div className="peopleList" style={{marginBottom: "15px"}}>
                     <table>
                       <tbody>
                         <tr className="categories">
@@ -822,12 +806,12 @@ class Piece extends Component {
                           Error setting piece info sheet: {Util.titleCase(this.state.setError)}
                         </div>
                       }
-                      {
-                        this.state.setSuccess &&
-                        <div className="successPiece">
-                          Info Sheet Updated
-                        </div>
-                      }
+                      <Snackbar
+                        open={this.state.setSuccess}
+                        message="Successfully Updated Info Sheet"
+                        autoHideDuration={3000}
+                        onRequestClose={this.handleRequestClose}
+                      />
                 </section>
               }
             </div>

@@ -5,6 +5,9 @@ var errorBox = document.querySelector(".js-error");
 var email = document.getElementById("email-input");
 var password = document.getElementById("password-input");
 
+checkForUser();
+setLink();
+
 signinForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
     var payload = {
@@ -34,3 +37,27 @@ signinForm.addEventListener("submit", function (evt) {
             errorBox.textContent = err;
         })
 })
+
+
+function checkForUser() {
+    makeRequest("users/me", {}, "GET", true)
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+            return;
+        })
+        .then((data) => {
+            if (!data || !data.role) {
+                return;
+            }
+            if (data.role.level === 100) {
+                window.location.href = "console.html";
+            }
+        });
+}
+
+function setLink() {
+    var a = document.getElementById('link-dance-page');
+    a.href = "https://" + HOST
+}

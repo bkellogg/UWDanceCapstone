@@ -180,6 +180,9 @@ class Calendar extends Component {
       if (res.ok) {
         return res.text()
       }
+      if (res.status === 404) {
+        return res.text()
+      }
       return res.text().then((t) => Promise.reject(t));
     })
     .then( res => {

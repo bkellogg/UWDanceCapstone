@@ -27,7 +27,7 @@ function getUsers() {
                 user.push(value.lastName);
                 user.push(value.email);
                 user.push(value.role.displayName);
-                user.push('<a href="userProfile.html?user=' + value.id + '" target="_blank">Profile</a>');
+                user.push('<a class="profile-link" href="userProfile.html?user=' + value.id + '" target="_blank">Profile</a>');
                 allUsers.push(user);
             });
         })

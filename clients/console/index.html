@@ -14,22 +14,18 @@
 <body>
     <div class="page-wrap">
         <div class="main-header">
-            <img class="stage-logo" src="/img/logoex.png" alt="STAGE Logo">
+            <img class="stage-logo" src="img/logoex.png" alt="STAGE Logo">
             <h1>Admin Console Login</h1>
         </div>
         <form class="signin-form">
-            <!-- <div class="imgcontainer">
-            <img src="img/admin_temp.jpg" alt="Admin" class="admin">
-        </div> -->
-
             <div class="email">
                 <p>Email:</p>
-                <input id="email-input" type="text" placeholder="Enter Email">
+                <input class="fill-input" id="email-input" type="text" placeholder="Enter Email">
             </div>
 
             <div class="password">
                 <p>Password:</p>
-                <input id="password-input" type="password" placeholder="Enter Password">
+                <input class="fill-input" id="password-input" type="password" placeholder="Enter Password">
             </div>
 
             <input type="submit" id="signin" value="Sign In" disabled="disabled" />
@@ -38,6 +34,9 @@
         <div class="js-error"></div>
         <div class="reset-password">
             <a href="./reset.html">Forgot Password?</a>
+        </div>
+        <div>
+            <p>Not an admin? Head on over to the <a id="link-dance-page" href="#">main site.</a></p>
         </div>
     </div>
 </body>

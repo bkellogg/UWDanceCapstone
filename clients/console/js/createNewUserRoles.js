@@ -1,12 +1,13 @@
 "use strict";
 
 refreshLocalUser();
+vex.defaultOptions.className = 'vex-theme-default'
 
 var newRoleForm = document.querySelector(".newRole-form");
 var errorBox = document.querySelector(".js-error");
 var roleName = document.getElementById("roleName-input");
 var displayName = document.getElementById("displayName-input");
-var level = document.getElementById("level-input");
+var level = document.getElementById("level");
 
 var roles = [];
 
@@ -14,25 +15,41 @@ getRoles();
 
 newRoleForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
-    var payload = {
-        "name": roleName.value,
-        "displayName": displayName.value,
-        "level": Number(level.value),
-    };
-    makeRequest("roles", payload, "POST", true)
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
+    vex.dialog.confirm({
+        message: 'Are you sure you want to create a new user role user with the below information?',
+        input: [
+            '<p>Role Name: ' + roleName.value + ' </p>',
+            '<p>Display Name: ' + displayName.value + '</p>',
+            '<p>Permission Level: ' + level.value + '</p>',
+        ].join(''),
+        callback: function (response) {
+            if (response) {
+                var payload = {
+                    "name": roleName.value,
+                    "displayName": displayName.value,
+                    "level": Number(level.value),
+                };
+                makeRequest("roles", payload, "POST", true)
+                    .then((res) => {
+                        if (res.ok) {
+                            vex.dialog.alert({
+                                message: "New user role successfully created.",
+                                callback: function () {
+                                    location.reload(true);
+                                }
+                            })
+                            return res.json();
+                        }
+                        return res.text().then((t) => Promise.reject(t));
+                    })
+                    .catch((err) => {
+                        errorBox.textContent = err;
+                    })
+            } else {
+                return
             }
-            return res.text().then((t) => Promise.reject(t));
-        })
-        .then((data) => {
-            alert("New user role successfully created.");
-            location.reload();
-        })
-        .catch((err) => {
-            errorBox.textContent = err;
-        })
+        }
+    });
 })
 
 

@@ -194,7 +194,6 @@ export function getResume(){
     return makeRequest("users/me/resume", {}, "GET", true)
     .then((res) => {
         if (res.ok) {
-            console.log(res)
             return res.json();
         }
     })

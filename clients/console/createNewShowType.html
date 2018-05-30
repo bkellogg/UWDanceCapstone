@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>UW Stage Admin Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/css/vex.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/css/vex-theme-default.min.css">
     <link rel="stylesheet" href="css/shows.css">
     <link rel="stylesheet" href="css/common.css">
     <link rel="stylesheet" href="css/createNewShowType.css">
@@ -15,9 +17,10 @@
     <nav id='nav-bar'></nav>
     <div class="page-wrap">
         <h1>Create New Show Type</h1>
+        <div class="left-card">
         <form class="newShowType-form">
             <div class="showTypeName">
-                <label for="showTypeName-input">Name of Show Type (must be 3 characters long)</label>
+                <label for="showTypeName-input">Name of Show Type (must be exactly 3 characters long)</label>
                 <input id="showTypeName-input" type="text" placeholder="cdc">
             </div>
             <div class="description">
@@ -32,10 +35,26 @@
         </div>
         <h2> Current Show Types:</h2>
         <table id="show_type_info" class="tablesorter"></table>
-
+        </div>
+        <div class="right-card">
+        <div class="descriptions">
+            <p>Create new show type allows an admin to create a new show type that can be used when creating a new show.
+                <b>All fields are required.</b>
+            </p>
+            <ul>
+                <li>
+                    <b>Name of Show Type:</b> Abbreviated or shorthand name for the show type.
+                </li>
+                <li>
+                    <b>Description:</b> A short description of a show that will be displayed throughout the STAGE application. 
+                </li>
+            </ul>
+        </div>
+        </div>
     </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/js/vex.combined.min.js"></script>
 <script src="js/common.js"></script>
 <script src="js/createNewShowType.js"></script>
 

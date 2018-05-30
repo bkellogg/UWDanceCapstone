@@ -39,7 +39,7 @@ class PendingInvites extends Component {
         this.setState({
           error: err
         })
-        console.log(err)
+        console.err(err)
       });
   }
 
@@ -67,17 +67,16 @@ class PendingInvites extends Component {
       this.setState({
         error: err
       })
-      console.log(err)
+      console.err(err)
     });
   }
 
   render() {
     let today = moment()
-    let createdAt = moment(this.props.piece.createdAt)
+    let expiresAt = moment(this.props.piece.expiresAt)
     //this will be the difference between createdAt and today subtracted from 48 hours
-    let hours = Math.round(48 - moment.duration(today.diff(createdAt)).asHours())
-    let expireDateTime = moment(createdAt.add(2, 'days')).format("LLLL")
-    console.log(this.props.piece)
+    let hours = Math.round(expiresAt.diff(today, 'hours'))
+    let expireDateTime = expiresAt.format("LLLL")
     return (
       <div className="announcement castBorderColor">
       {
