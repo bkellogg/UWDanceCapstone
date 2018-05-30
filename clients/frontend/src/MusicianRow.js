@@ -13,11 +13,27 @@ class MusicianRow extends Component {
   };
 
   componentWillUnmount(){
-      if (this.state.exisiting) {
-        this.setState({
-            toDelete: true
-        })
-    }
+    console.log("unmounting")
+    console.log(this.state)
+        Util.makeRequest("pieces/" + this.props.pieceID + "/musicians/" + this.state.id, {},"DELETE", true)
+        .then(res => {
+            if (res.ok) {
+              return res.text()
+            }
+            if (res.status === 404) {
+              return res.text()
+            }
+            return res
+              .text()
+              .then((t) => Promise.reject(t));
+          })
+          .then(res => {
+            console.log(res)
+          })
+          .catch((err) => {
+            console.error(err)
+          })
+    
   }
 
   componentWillMount(){
