@@ -176,6 +176,20 @@ hr{
     background-color: hsl(0, 0%, 45%); 
   }
 
+/*DECLINE REMOVE BUTTON RED*/
+.negativeButton{
+    margin-left: 15px !important;
+    cursor: pointer !important;
+    color: white !important;
+    background-color: #e65100 !important;
+  }
+  
+  .negativeButton:hover{
+    background-color: #cf4800 !important;
+    cursor: pointer !important;
+  }
+  
+
  @media only screen and (max-width : 768px) {
     .avatar, .dancerRank, .userRoleDisp, .avatar2, .avatarWrap{
         visibility: hidden;

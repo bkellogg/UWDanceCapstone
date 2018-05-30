@@ -90,12 +90,12 @@ class PendingInvites extends Component {
           </div>
             <FlatButton
               label="Accept"
-              className="acceptCastButton"
+              className="positiveButton"
               onClick={() => this.acceptCasting(this.props.piece.piece.id)}
             />
             <FlatButton
               label="Decline"
-              className="declineCastButton"
+              className="negativeButton"
               onClick={() => this.declineCasting(this.props.piece.piece.id)}
             />
         </div>
