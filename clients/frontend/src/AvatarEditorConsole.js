@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import ReactAvatarEditor from 'react-avatar-editor'
 import Dropzone from 'react-dropzone'
-import ReactDOM from 'react-dom';
 import "./styling/General.css"
 import "./styling/AvatarEditorConsole.css"
 

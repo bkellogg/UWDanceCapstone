@@ -175,7 +175,13 @@ class DancerPiece extends Component {
               !this.state.openCalendar &&
               // Styling for toggle header is in general
                 <div className="toggleHeader clickable" onClick={this.toggleCalendar}>
-                  <h2 className="smallHeading">Calendar</h2>
+                  <h2 className="smallHeading">
+                    Calendar
+                    <div className="xtraInfo tooltip pieceTip">
+                      <i className="fas fa-question-circle"></i>
+                      <span className="tooltiptext">You can <b className="emphasis">view</b> rehearsals set by your choreographer and the tech rehearsal sheet.</span>
+                    </div>
+                  </h2>
                   <i className="fas fa-chevron-down fa-lg"></i>
                 </div>
             }
@@ -183,10 +189,16 @@ class DancerPiece extends Component {
               this.state.openCalendar &&
               <section>
                 <div className="toggleHeader clickable" onClick={this.toggleCalendar}>
-                  <h2 className="smallHeading">Calendar</h2>
+                  <h2 className="smallHeading">
+                    Calendar
+                    <div className="xtraInfo tooltip pieceTip">
+                      <i className="fas fa-question-circle"></i>
+                      <span className="tooltiptext">You can <b className="emphasis">view</b> rehearsals set by your choreographer and the tech rehearsal sheet.</span>
+                    </div>
+                  </h2>
                   <i className="fas fa-chevron-up fa-lg"></i>
                 </div>
-                <p>Access the full tech schedule here: {<a href="http://staff.washington.edu/peterb5/Prod%20Shed/ProdScheds.html" target="_blank">UW Dance Production Site</a>}</p>
+                <p>Access the full tech schedule here: <a href="http://staff.washington.edu/peterb5/Prod%20Shed/ProdScheds.html" rel="noopener noreferrer" target="_blank">UW Dance Production Site</a></p>
                 <BigCalendar style={{ height: "710px", width: "100%" }}
                   defaultDate={new Date()}
                   defaultView='week'
@@ -205,7 +217,13 @@ class DancerPiece extends Component {
               !this.state.openCast &&
               // Styling for toggle header is in general
               <div className="toggleHeader clickable" onClick={this.toggleCast}>
-                <h2 className="smallHeading">My Cast</h2>
+                <h2 className="smallHeading">
+                  My Cast
+                  <div className="xtraInfo tooltip pieceTip">
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">You can <b className="emphasis">view</b> contact information for your <b classname="emphasis">choreographer</b>, dancers in your cast, and production staff.</span>
+                  </div>
+                </h2>
                 <i className="fas fa-chevron-down fa-lg"></i>
               </div>
             }
@@ -213,7 +231,13 @@ class DancerPiece extends Component {
               this.state.openCast &&
               <section>
                 <div className="toggleHeader clickable" onClick={this.toggleCast}>
-                  <h2 className="smallHeading">My Cast</h2>
+                  <h2 className="smallHeading">
+                    My Cast
+                    <div className="xtraInfo tooltip pieceTip">
+                      <i className="fas fa-question-circle"></i>
+                      <span className="tooltiptext">You can <b className="emphasis">view</b> contact information for your <b classname="emphasis">choreographer</b>, dancers in your cast, and production staff.</span>
+                    </div>
+                  </h2>
                   <i className="fas fa-chevron-up fa-lg"></i>
                 </div>
                 <table>

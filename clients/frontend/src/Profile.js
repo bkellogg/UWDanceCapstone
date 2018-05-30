@@ -340,13 +340,15 @@ class Profile extends Component {
               <div className="mainContentBorder">
                 <div id="bio" className="bio">
                   <div className="subheader"><b>Bio:</b></div>
-                  {!this.state.edit &&
+                  {
+                    !this.state.edit &&
                     <section>
                       {this.state.bio !== "" && this.state.bio}
                       {this.state.bio === "" && " Dancer has no bio"}
                     </section>
                   }
-                  {this.state.edit &&
+                  {
+                    this.state.edit &&
                     <div id="editBio">
                       <div className="row">
                         <form className="col s12">
@@ -377,7 +379,7 @@ class Profile extends Component {
                           <div className="subheader"><b>Resume:</b></div>
                           {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
                           {this.state.resume != null && 
-                            <a href={this.state.resume} target="_blank">View PDF Resume</a>
+                            <a href={this.state.resume}>View PDF Resume</a>
                           }
                         </section>
                       }

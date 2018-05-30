@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import * as Util from './util';
 import { Link } from 'react-router-dom';
 import './styling/General.css';
+import './styling/People.css';
+import './styling/CastingFlowMobile.css';
 
 class AuditionRegistrationList extends Component {
   constructor(props) {
@@ -53,7 +55,7 @@ class AuditionRegistrationList extends Component {
     let dancerRows = allDancers.map((dancer, i) => {
       return (
         <tr key={i} >
-          <td>
+          <td style={{textAlign: "center"}}>
             {dancer.regNum}
           </td>
           <td>
@@ -67,19 +69,27 @@ class AuditionRegistrationList extends Component {
     })
     return (
       <section className="main">
-      <div className="mainView">
+        <div className="mainView">
+          <div className="pageContentWrap">
           <h1>{this.props.name}: Audition Registration List</h1>
-          <table>
-            <tbody>
-              <tr className="categories">
-                <th>Registration Number</th>
-                <th>Name</th>
-                <th>Email</th>
-              </tr>
-              {dancerRows}
-            </tbody>
-          </table>
-      </div>
+            <div className="fullWidthCard">
+              <div className="wrap">
+                <div className="peopleList">
+                  <table>
+                    <tbody>
+                      <tr className="categories">
+                        <th style={{width: "10%", textAlign:"center"}}>Registration Number</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                      </tr>
+                      {dancerRows}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     );
   };
