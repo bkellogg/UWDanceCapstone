@@ -7,6 +7,8 @@ body{
 
 .page-wrap{
   padding: 20px;
+  width: 100%;
+  position: relative;
 }
 
 /*INPUT FIELDS*/
@@ -14,6 +16,39 @@ body{
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+/*LEFT CARD*/
+.left-card{
+  width: 60%;
+  position: relative;
+  display: inline-block;
+}
+
+/*RIGHT CARD*/
+.right-card{
+  width: 35%;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+}
+
+/*LEGENDS*/
+.descriptions{
+  width: 20%;
+  right: 100px;
+  display: inline-block;
+  width: 350px !important;
+  background-color: #f6f8fc;
+  padding: 10px;
+  padding-left: 25px;
+  border: 1px solid #d8d8d8;
+  margin-left: 100px;
+}
+
+.descriptions ul {
+  list-style-type: disc;
+}
+
 
 label.short-input{
   width: 100px;
@@ -31,14 +66,20 @@ label.long-input{
   padding: 10px;
   padding-left: 25px;
   border: 1px solid #d8d8d8;
-  width: 50%;
+  width: 60%;
   margin-bottom: 25px;
   display: inline-block;
+  position: relative;
+}
+
+.signup-form, .newRole-form, .show-form, .newShowType-form, .newAnnouncementType-form{
+  width: -webkit-fill-available !important;
 }
 
 
 .dashboardAnnouncement{
   background-color: rgb(253, 237, 236);
+  padding-top: 25px;
 }
 
 .important-message{
@@ -69,7 +110,11 @@ tr:nth-child(even) {
 
 /*ROLE INFO CARD, SHOW TYPE CARD*/
 #role_info, #show_type_info{
-  width: 60%;
+  width: 100%;
+}
+
+.tablesorter{
+  width: 100%;
 }
 
 .hidden {
@@ -103,7 +148,7 @@ h2.showName{
 
 
 /*BUTTONS*/
-.delete, #search-submit, #signin, .pieces, #passwordemail, .profile-link{
+.delete, #search-submit, #signin, .pieces, #passwordemail, .profile-link, #next, #previous{
   height: 35px;
   color: white;
   font-size: 15px;
@@ -115,12 +160,12 @@ h2.showName{
   outline: none;
 }
 
-#search-submit, #signin, .pieces, #passwordemail, .profile-link{
+#search-submit, #signin, .pieces, #passwordemail, .profile-link, #next, #previous{
   background-color: #22A7E0;
   border: 1px solid rgb(7, 95, 133); 
 }
 
-#search-submit:hover, .pieces:hover, .profile-link:hover{
+#search-submit:hover, .pieces:hover, .profile-link:hover, #next:hover, #previous:hover{
   background-color: #36acdf;
 }
 
@@ -145,22 +190,6 @@ h2.showName{
 
 .fill-input{
   font-size: 14px;
-}
-
-
-.descriptions {
-  background-color: #f6f8fc;
-  padding: 10px;
-  padding-left: 25px;
-  border: 1px solid #d8d8d8;
-  width: 40%;
-  margin-bottom: 25px;
-  vertical-align: top;
-  display: inline-block;
-}
-
-.descriptions ul {
-  list-style-type: disc;
 }
 
 .form {

@@ -14,11 +14,17 @@
 }
 
 
-#next {
+#next, #previous {
+    height: 20px !important;
     float: right;
     margin-right: 20px;
     margin-bottom: 10px;
+    text-decoration: none;
+    padding: 5px;
+    vertical-align: middle;
+    margin-bottom: 200px;
 }
+
 #previous {
     float:left;
     margin-left: 20px;
