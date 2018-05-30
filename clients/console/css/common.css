@@ -145,7 +145,7 @@ h2.showName{
 
 
 /*BUTTONS*/
-.delete, #search-submit, #signin, .pieces, #passwordemail, .profile-link, #next, #previous{
+.delete, #search-submit, #signin, .pieces, #passwordemail, .profile-link, #next, #previous, .change-button{
   height: 35px;
   color: white;
   font-size: 15px;
@@ -157,12 +157,12 @@ h2.showName{
   outline: none;
 }
 
-#search-submit, #signin, .pieces, #passwordemail, .profile-link, #next, #previous{
+#search-submit, #signin, .pieces, #passwordemail, .profile-link, #next, #previous, .change-button{
   background-color: #22A7E0;
   border: 1px solid rgb(7, 95, 133); 
 }
 
-#search-submit:hover, .pieces:hover, .profile-link:hover, #next:hover, #previous:hover{
+#search-submit:hover, .pieces:hover, .profile-link:hover, #next:hover, #previous:hover, .change-button:hover{
   background-color: #36acdf;
 }
 
