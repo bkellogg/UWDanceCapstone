@@ -17,10 +17,12 @@ import './styling/Audition.css';
 const styles = {
   customWidthText: {
     width: 500,
+    marginTop: '10px',
     paddingLeft: '10px'
   },
   customWidth: {
     width: 80,
+    marginTop: '10px',
     backgroundColor: 'white',
     border: '1px solid lightgray',
     borderRadius: '5px',

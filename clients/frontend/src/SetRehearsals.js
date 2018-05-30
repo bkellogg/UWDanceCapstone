@@ -267,13 +267,13 @@ class SetRehearsals extends Component {
                     {rehearsals}
                     <div className="buttonsWrap">
                       <Button
-                        backgroundcolor="#708090"
+                        backgroundcolor="hsl(0, 0%, 45%)"
                         style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
                         onClick={this.addRehearsal}
                         disabled={this.state.finishedAdding}>
                         ADD</Button>
                       <Button
-                        backgroundcolor="#708090"
+                        backgroundcolor="hsl(0, 0%, 45%)"
                         style={{ color: '#ffffff', float: 'right' }}
                         onClick={this.removeRehearsal} disabled={this.state.finishedAdding}>
                         REMOVE</Button>
@@ -356,7 +356,7 @@ class SetRehearsals extends Component {
 
                 <br />
                 <br /> 
-                An email will be sent to your cast with these times, and they will accept or decline their casting within <b className="importantText warningText">48 hours</b>.
+                An email will be sent to your cast with these times. They will accept or decline their casting within <b className="importantText warningText">48 hours</b>.
                 </div>
                 {
                   this.state.castingError &&

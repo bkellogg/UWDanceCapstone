@@ -194,7 +194,7 @@ th{
 }
 
 .importantText{
-    color: #22A7E0;
+    color: #e65100;
 }
 
 .warningText{
@@ -221,7 +221,7 @@ th{
 
 /*SHARED*/
 .smallHeading{
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 500;
     padding-bottom: 20px;
     width: auto;
@@ -236,3 +236,8 @@ th{
 .addDropButton:hover{
     background-color: #22A7E0 !important;
 }
+
+/*TO REMOVE THE GREEN ON BUTTON CLICK*/
+.btn:focus{ 
+    background-color: hsl(0, 0%, 45%); 
+  }
