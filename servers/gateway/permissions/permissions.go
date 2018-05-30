@@ -43,4 +43,8 @@ const (
 
 	SeeShowTypes    = 10
 	CreateShowTypes = 75
+
+	CreateRole = 100
+	DeleteRole = 100
+	SeeRole    = 10
 )

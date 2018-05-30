@@ -227,9 +227,6 @@ func handleAnnouncementsFromDatabase(result *sql.Rows, err error) ([]*Announceme
 		}
 		announcements = append(announcements, a)
 	}
-	if len(announcements) == 0 {
-		return nil, NewDBError("no announcements found", http.StatusNotFound)
-	}
 	return announcements, nil
 }
 

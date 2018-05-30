@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 
@@ -31,6 +32,9 @@ func (ctx *AnnouncementContext) AnnouncementsHandler(w http.ResponseWriter, r *h
 		if dberr != nil {
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
+		sort.Slice(announcements, func(i, j int) bool {
+			return !announcements[i].CreatedAt.Before(announcements[j].CreatedAt)
+		})
 		return respond(w, models.PaginateNumAnnouncementResponses(announcements, page, numPages), http.StatusOK)
 	case "POST":
 		if !ctx.permChecker.UserCan(u, permissions.SendAnnouncements) {

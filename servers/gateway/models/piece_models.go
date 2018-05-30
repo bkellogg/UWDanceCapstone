@@ -62,7 +62,7 @@ type PieceInfoSheet struct {
 	MusicTitle        string           `json:"musicTitle"`
 	PerformedBy       string           `json:"performedBy"`
 	MusicSource       string           `json:"MusicSource"`
-	NumMusicians      int              `json:"numMusicians"`
+	NumMusicians      int              `json:"numMusicians,omitempty"`
 	RehearsalSchedule string           `json:"rehearsalSchedule"`
 	ChorNotes         string           `json:"chorNotes"`
 	Musicians         []*PieceMusician `json:"musicians"`

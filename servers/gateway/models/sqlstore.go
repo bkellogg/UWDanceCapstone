@@ -33,6 +33,7 @@ func NewDatabase(user, password, addr, dbName string) (*Database, error) {
 	if err != nil {
 		return nil, errors.New("error opening connection to store: " + err.Error())
 	}
+	db.SetMaxOpenConns(100)
 	wrappedDB := &Database{db: db}
 	go wrappedDB.beginPieceInviteJanitor()
 	return wrappedDB, nil
