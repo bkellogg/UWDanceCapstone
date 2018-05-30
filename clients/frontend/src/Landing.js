@@ -157,7 +157,7 @@ class App extends Component {
                 </div>
               </div>
             </div>
-            <p><i>Photo credits: Steve Corn </i> </p>
+            <p><i>Photo credit: Steve Korn </i> </p>
           </div>
         </div>
       </section>
