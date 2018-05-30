@@ -15,7 +15,7 @@ td.userEmail{
     margin-bottom: 25px;
 }
 
-.inputTitle{
+.inputTitle, .inputLabelBlock-noWidth{
     margin-bottom: 5px;
 }
 
@@ -61,7 +61,7 @@ td.userEmail{
     margin-bottom: 25px;
 }
 
-.searchDancersTable{
+.myPiece-tables{
     margin-top: 25px;
 }
 
@@ -89,6 +89,10 @@ td.userEmail{
     margin-bottom: 0;
 }
 
+.infoSheet-autoFillInfo{
+    margin-bottom: 25px;
+}
+
 @media only screen 
 and (max-width : 1024px)  {
     .userBioDisp, .bioOfUser, .userRole, .userRoleDisp{
@@ -98,8 +102,8 @@ and (max-width : 1024px)  {
         display: none;
     }
 
-    .toggleHeader h2{
-        width: 80%;
+    .toggleHeader i{
+        text-align: right;
     }
 
 }

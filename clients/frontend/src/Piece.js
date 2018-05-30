@@ -611,7 +611,7 @@ class Piece extends Component {
                   </div>
                   <div className="peopleList">
                     <div className="choreoContact">
-                      <p><b>Choreographer's Name:</b> {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
+                      <p className="infoSheet-autoFillInfo"><b>Choreographer's Name:</b> {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
                       <p className="inputTitle" ><b>Choreographer's Phone Number:</b></p>
                       <TextField
                         className="textField"
@@ -621,14 +621,14 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p><b>Choreographer's email:</b> {this.state.choreographer.email}</p>
+                      <p className="infoSheet-autoFillInfo"><b>Choreographer's email:</b> {this.state.choreographer.email}</p>
                     </div>
                     <div className="dancerInfo">
-                      <p><b>Number of dancers: </b>{numDancers}</p>
-                      <p><b>Dancer Contact Information:</b></p>
+                      <p className="infoSheet-autoFillInfo"><b>Number of dancers: </b>{numDancers}</p>
+                      <p className="infoSheet-autoFillInfo"><b>Dancer Contact Information:</b></p>
                       { 
                         numDancers > 0 &&
-                          <table>
+                          <table className="myPiece-tables">
                             <tbody>
                               <tr className="categories">
                                 <th>Name</th>
