@@ -299,6 +299,36 @@ func (npm *NewPieceMusician) Validate() error {
 	return nil
 }
 
+// MusicianUpdates defines how updates for a musician
+// are sent to the server.
+type MusicianUpdates struct {
+	Name  string `json:"name"`
+	Phone string `json:"phone"`
+	Email string `json:"email"`
+}
+
+// Validate validates the current musician updates.
+// Returns an error if one occurred.
+func (mu *MusicianUpdates) Validate() error {
+	if len(mu.Name) > 50 {
+		return errors.New("piece musician name is too long")
+	}
+	if len(mu.Email) > 75 {
+		return errors.New("piece musician email is too long")
+	}
+	if len(mu.Phone) > 0 {
+		if len(mu.Phone) < 10 || len(mu.Phone) > 11 {
+			return errors.New("piece musician must have a valid phone number")
+		}
+	}
+	if len(mu.Email) > 0 {
+		if _, err := mail.ParseAddress(mu.Email); err != nil {
+			return errors.New("piece musicians must have a valid email address")
+		}
+	}
+	return nil
+}
+
 // timePhone removes any spaces, -, and () from the
 // phone number.
 func trimPhone(phone string) string {

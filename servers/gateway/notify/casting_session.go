@@ -160,7 +160,7 @@ func (c *CastingSession) Handle(chorID int64, cu *ChoreographerUpdate) error {
 	if err := c.handle(chorID, cu); err != nil {
 		return fmt.Errorf("error handling updates: %v", err)
 	}
-
+	log.Printf("right before sendupdates for chor: %d\n", chorID)
 	return c.sendUpdates()
 }
 
