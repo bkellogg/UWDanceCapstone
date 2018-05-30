@@ -74,6 +74,7 @@ class Piece extends Component {
         })
         this.getPieceUsers(piece.id)
         this.getInfoSheet(piece.id)
+        this.getMusicians(piece.id)
       })
       .catch((err) => {
         console.error(err)
@@ -94,7 +95,6 @@ class Piece extends Component {
     .then(res => {
       console.log(res)
       this.setState({
-        numMusicians: res.numMusicians,
         choreographerPhone : res.choreographerPhone,
         danceTitle : res.title,
         runtime : res.runTime,
@@ -255,6 +255,63 @@ class Piece extends Component {
     }
   }
 
+  setMusicians = () => {
+    let body = {}
+    Util.makeRequest("pieces/" + this.state.pieceID + "/musicians", body, "POST", true)
+    .then(res => {
+      if (res.ok) {
+        return res.text()
+      }
+      return res
+        .text()
+        .then((t) => Promise.reject(t));
+    })
+    .then(res => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  }
+
+  updateMusician = (musicianID) => {
+    let body = {}
+    Util.makeRequest("pieces/" + this.state.pieceID + "/musicians" + musicianID, body, "PATCH", true)
+    .then(res => {
+      if (res.ok) {
+        return res.text()
+      }
+      return res
+        .text()
+        .then((t) => Promise.reject(t));
+    })
+    .then(res => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  }
+
+  getMusicians = (pieceID) => {
+    Util.makeRequest("pieces/" + pieceID + "/musicians", {}, "GET", true)
+    .then(res => {
+      if (res.ok) {
+        return res.text()
+      }
+      return res
+        .text()
+        .then((t) => Promise.reject(t));
+    })
+    .then(res => {
+      console.log(res)
+    })
+    .catch((err) => {
+      console.error(err)
+    })
+  }
+
+
   async getDancerAvailability() {
     let dancers = this.state.dancers
     let filteredCast=[]
@@ -347,11 +404,10 @@ class Piece extends Component {
 
   render() {
     let musicianRow = []
-    let numMusicians = 0
+    let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
     const dancers = this.state.dancers
     musicianRow = musicians.map((musician, i) => {
-      numMusicians++
       return (
         <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
       )
@@ -659,7 +715,7 @@ class Piece extends Component {
                       <SelectField
                         style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', width: '90px', paddingLeft: '10px'}}
                         defaultValue={numMusicians}
-                        value={numMusicians}
+                        value={this.state.numMusicians}
                         onChange={this.handleChangeMusician}
                       >
                         <MenuItem value={0} primaryText="0" />

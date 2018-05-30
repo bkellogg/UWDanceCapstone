@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Switch, Route} from 'react-router-dom';
 
 //components
 import Landing from './Landing';
