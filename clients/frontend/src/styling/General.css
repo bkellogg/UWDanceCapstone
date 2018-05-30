@@ -171,6 +171,11 @@ hr{
     cursor: pointer;
 }
 
+/*TO REMOVE THE GREEN ON BUTTON CLICK*/
+.btn:focus{ 
+    background-color: hsl(0, 0%, 45%); 
+  }
+
  @media only screen and (max-width : 768px) {
     .avatar, .dancerRank, .userRoleDisp, .avatar2, .avatarWrap{
         visibility: hidden;

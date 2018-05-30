@@ -238,6 +238,6 @@ th{
 }
 
 /*TO REMOVE THE GREEN ON BUTTON CLICK*/
-.btn:focus{ 
+/* .btn:focus{ 
     background-color: hsl(0, 0%, 45%); 
-  }
+  } */

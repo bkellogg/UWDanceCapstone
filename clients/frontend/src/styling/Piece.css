@@ -12,10 +12,16 @@ td.userEmail{
     font-size: 14px !important;
     width: 100% !important;
     max-width: 600px !important;
+    margin-bottom: 25px;
+}
+
+.inputTitle{
+    margin-bottom: 5px;
 }
 
 .onSearch{
     padding: 0;
+    margin: 0;
 }
 
 .pieceCard {
@@ -35,7 +41,8 @@ td.userEmail{
 }
 
 .param {
-    margin: 10px
+    margin: 10px;
+    margin-left: 0;
 }
 
 .subsectionheader {
@@ -48,6 +55,21 @@ td.userEmail{
     height: 2px;
     background-color: lightgrey;
     width: 100%;
+}
+
+.searchParams{
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.searchDancersTable{
+    margin-top: 25px;
+}
+
+/*SEARCH INPUT LABEL INLINE*/
+.inputLabelSearch{
+    display: inline-block;
+    width: 100px;
 }
 
 @media only screen 

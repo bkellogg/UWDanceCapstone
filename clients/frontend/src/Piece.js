@@ -628,7 +628,7 @@ class Piece extends Component {
                   <div className="peopleList">
                     <div className="choreoContact">
                       <p><b>Choreographer's Name:</b> {this.state.choreographer.firstName + " " + this.state.choreographer.lastName} </p>
-                      <p><b>Choreographer's Phone Number:</b></p>
+                      <p className="inputTitle" ><b>Choreographer's Phone Number:</b></p>
                       <TextField
                         className="textField"
                         id="choreographerPhone"
@@ -660,7 +660,7 @@ class Piece extends Component {
                       }
                     </div>
                     <div className="pieceInfo">
-                      <p><b>Dance Title: </b></p>
+                      <p className="inputTitle"><b>Dance Title: </b></p>
                       <TextField
                         className="textField"
                         id="danceTitle"
@@ -668,7 +668,7 @@ class Piece extends Component {
                         onChange={this.handleChange('danceTitle')}
                         style={STYLES}
                       />
-                      <p><b>Dance Runtime:</b></p>
+                      <p className="inputTitle"><b>Dance Runtime:</b></p>
                       <TextField
                         className="textField"
                         id="runtime"
@@ -677,7 +677,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p><b>Composer(s):</b></p>
+                      <p className="inputTitle"><b>Composer(s):</b></p>
                       <TextField
                         className="textField"
                         id="composer"
@@ -687,7 +687,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p><b>Music title(s): </b></p>
+                      <p className="inputTitle"><b>Music title(s): </b></p>
                       <TextField
                         className="textField"
                         id="musicTitle"
@@ -697,7 +697,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p><b>Performed By:</b></p>
+                      <p className="inputTitle"><b>Performed By:</b></p>
                       <TextField
                       className="textField"
                         id="musicPerformer"
@@ -706,7 +706,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p><b>Music Source:</b></p>
+                      <p className="inputTitle"><b>Music Source:</b></p>
                       <TextField
                         className="textField"
                         id="musicSource"
@@ -715,7 +715,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p><b>If music will be performed live, number of musicians: </b> </p>
+                      <p className="inputTitle"><b>If music will be performed live, number of musicians: </b> </p>
                       <SelectField
                         style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', width: '90px', paddingLeft: '10px'}}
                         defaultValue={numMusicians}
@@ -742,7 +742,7 @@ class Piece extends Component {
                           {musicianRow}
                         </div>
                       }
-                      <p><b>Rehearsal Schedule:</b></p>
+                      <p className="inputTitle"><b>Rehearsal Schedule:</b></p>
                       <TextField
                         className="textField"
                         id="rehearsalSchedule"
@@ -753,7 +753,7 @@ class Piece extends Component {
                       />
                     </div>
                     <div className="notes">
-                      <p><b>Choreographers Notes:</b> </p>
+                      <p className="inputTitle"><b>Choreographers Notes:</b> </p>
                       <TextField
                         className="textField"
                         id="choreoNotes"
@@ -763,7 +763,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p><b>Costume Descriptions: </b> </p>
+                      <p className="inputTitle"><b>Costume Descriptions: </b> </p>
                       <TextField
                         className="textField"
                         id="costumeDesc"
@@ -773,7 +773,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p><b>Props/Scenic Items Descriptions:</b> </p>
+                      <p className="inputTitle"><b>Props/Scenic Items Descriptions:</b> </p>
                       <TextField
                         className="textField"
                         id="propsDesc"
@@ -783,7 +783,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p><b>Lighting Description: </b></p>
+                      <p className="inputTitle"><b>Lighting Description: </b></p>
                       <TextField
                         className="textField"
                         id="lightingDesc"
@@ -793,7 +793,7 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p><b>Other special needs: </b> </p>
+                      <p className="inputTitle"><b>Other special needs: </b> </p>
                       <TextField
                         className="textField"
                         id="otherDesc"
@@ -812,7 +812,7 @@ class Piece extends Component {
                       Save</Button>
 
                       <Button 
-                      className="saveButton" 
+                      className="cancelButton" 
                       onClick={() => this.setState({setError: false, setSuccess: false, openInfo: false})}>
                       Cancel</Button>
 
