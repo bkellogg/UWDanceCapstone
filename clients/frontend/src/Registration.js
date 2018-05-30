@@ -81,7 +81,16 @@ class Registration extends Component {
           <div className="formWrap">
             <div className="row">
               <div className="">
-                <p>1. Number of pieces I am available for: </p>
+                <div>1. Number of pieces I am available for: 
+                  <div className="xtraInfo tooltip pieceTip">
+                    <i className="fas fa-question-circle"></i>
+                    <span className="tooltiptext">
+                      This is the maximum <b className="emphasis">number</b> of 
+                      <b className="emphasis"> pieces</b> that you can do during the show run. Each piece rehearses for 
+                      <b className="emphasis"> ~4 hours </b> a week.
+                    </span>
+                  </div>
+                </div>
                 <SelectField
                   value={this.state.value}
                   onChange={this.handleChange}
@@ -90,11 +99,18 @@ class Registration extends Component {
                   <MenuItem value={1} primaryText="1" />
                   <MenuItem value={2} primaryText="2" />
                 </SelectField>
+                
               </div>
             </div>
             <br />
             <div className="row">
-              <div>2. You must be enrolled in a <b>technique</b> class during the quarter the production is occurring.<br />
+              <div>2. You must be enrolled in a <b>technique</b> class during the quarter the production is occurring.
+                <div className="xtraInfo tooltip pieceTip">
+                  <i className="fas fa-question-circle"></i>
+                  <span className="tooltiptext">
+                    This is <b className="emphasis">required</b> if you want to participate. 
+                  </span>
+                </div>
               </div>
               <br />
               <Checkbox
@@ -105,19 +121,34 @@ class Registration extends Component {
             </div>
             <br />
             <div className="row">
-              <div><p>3. Availability <b>[click & drag to indicate when you are <b className="importantAvailabilityFormMessage">AVAILABLE </b>to rehearse]</b></p></div>
+              <div>
+                3. Availability <b>[click & drag to indicate when you are <b className="importantAvailabilityFormMessage">AVAILABLE </b>to rehearse]</b>
+                <div className="xtraInfo tooltip pieceTip">
+                  <i className="fas fa-question-circle"></i>
+                  <span className="tooltiptext">
+                    Indicate your availability for the quarter that rehearsals will <b className="emphasis">starting</b>.
+                  </span>
+                </div>
+              </div>
               <Availability availability={this.setAvailability} />
             </div>
             <br />
             <div className="row">
-              <div><p>4. Please indicate any additional notes below</p></div>
+              <div>
+                4. Please indicate any additional availability notes below
+                <div className="xtraInfo tooltip pieceTip">
+                  <i className="fas fa-question-circle"></i>
+                  <span className="tooltiptext">
+                    This could be known <b className="emphasis">dates</b> or general times you know you won't be available to rehearse.
+                  </span>
+                </div>
+              </div>
               <TextField
                 className="textField"
                 name="comments"
                 onChange={this.addComment}
                 multiLine={true}
                 style={styles.customWidthText}
-                rows={2}
                 hintText="EX: I am not available on Saturday, April 29th"
               />
             </div>

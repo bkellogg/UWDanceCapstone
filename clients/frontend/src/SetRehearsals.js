@@ -19,7 +19,7 @@ const daysFormatted = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "
 const daysRef = ["mon", "tues", "wed", "thurs", "fri", "sat", "sun"]
 
 const timesRef = ["1000", "1030", "1100", "1130", "1200", "1230", "1300", "1330", "1400", "1430",
-  "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130"]
+  "1500", "1530", "1600", "1630", "1700", "1730", "1800", "1830", "1900", "1930", "2000", "2030", "2100", "2130", "2200", "2230"]
 
 class SetRehearsals extends Component {
   constructor(props) {
@@ -56,12 +56,18 @@ class SetRehearsals extends Component {
     })
   }
 
-  postCasting = () => {
+  postCasting = (rehearsalString) => {
     this.setState({
       progress: true,
       successMessage: false
     })
-    Util.makeRequest("auditions/" + this.props.audition + "/casting", this.state.allRehearsals, "POST", true)
+
+    let body = {
+      rehearsals : this.state.allRehearsals,
+      rehearsalSchedule : rehearsalString
+    }
+    
+    Util.makeRequest("auditions/" + this.props.audition + "/casting", body, "POST", true)
       .then((res) => {
         if (res.ok) {
           return res.text()
@@ -220,20 +226,26 @@ class SetRehearsals extends Component {
       )
     })
 
+    let rehearsalString = "Weekly rehearsals are "
     let rehearsalSchedule = this.state.rehearsalSchedule.map((day, i) => {
+      if (i > 0) {
+        rehearsalString = rehearsalString + " and "
+      }
       let dayIndex = daysRef.indexOf(day.day)
       let startTimeIndex = timesRef.indexOf(day.startTime)
       let endTimeIndex = timesRef.indexOf(day.endTime)
+      let string = daysFormatted[dayIndex] + " from " + timesFormatted[startTimeIndex] + " to " + timesFormatted[endTimeIndex]
+      rehearsalString = rehearsalString + string
       return (
         <p key={i}>
-          {daysFormatted[dayIndex] + " from "}
-          {timesFormatted[startTimeIndex] + " to "}
-          {timesFormatted[endTimeIndex] + " "}
+          {string}
         </p>
       )
-
     })
-
+    rehearsalString = rehearsalString + ". The first day of rehearsal is " + moment(this.state.startDate).format("dddd, MMMM Do YYYY") + "."
+    if(rehearsalSchedule.length === 0) {
+      rehearsalString = "Weekly rehearsals have not been set."
+    }
     return (
       <section >
         <div className="mainView mainContentView">
@@ -255,13 +267,13 @@ class SetRehearsals extends Component {
                     {rehearsals}
                     <div className="buttonsWrap">
                       <Button
-                        backgroundColor="#708090"
+                        backgroundcolor="#708090"
                         style={{ color: '#ffffff', marginRight: '20px', float: 'right' }}
                         onClick={this.addRehearsal}
                         disabled={this.state.finishedAdding}>
                         ADD</Button>
                       <Button
-                        backgroundColor="#708090"
+                        backgroundcolor="#708090"
                         style={{ color: '#ffffff', float: 'right' }}
                         onClick={this.removeRehearsal} disabled={this.state.finishedAdding}>
                         REMOVE</Button>
@@ -289,7 +301,7 @@ class SetRehearsals extends Component {
                     <div className="postCasting">
                       <Button
                         className="postCastingLarge"
-                        backgroundColor="#22A7E0"
+                        backgroundcolor="#22A7E0"
                         style={{ color: '#ffffff', width: '100%', height: '60' }}
                         onClick={this.handleOpen}
                         disabled={finished}>
@@ -318,7 +330,7 @@ class SetRehearsals extends Component {
                     style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
                     primary={false}
                     keyboardFocused={true}
-                    onClick={this.postCasting}
+                    onClick={() => this.postCasting(rehearsalString)}
                   />,
                 ]}
                 modal={false}
@@ -329,9 +341,19 @@ class SetRehearsals extends Component {
                 <div className="warningText"> By clicking Post Casting you confirm that your selected cast is <strong className="importantText">accurate</strong> and there are <strong className="importantText">no conflicts</strong> with other choreographers. 
                 <br /> 
                 <br />
-                Your rehearsal start date is {moment(this.state.startDate).format("dddd, MMMM Do YYYY")} and your rehearsal times are :
-                <br />
-                {rehearsalSchedule}
+                {
+                  rehearsalSchedule.length > 0 &&
+                  <div>
+                    <p>Your rehearsal start date is {moment(this.state.startDate).format("dddd, MMMM Do YYYY")} and your rehearsal times are :</p>
+                    <br />
+                    {rehearsalSchedule}
+                  </div>
+                }
+                {
+                  rehearsalSchedule.length === 0 &&
+                  <p>{rehearsalString}</p>
+                }
+
                 <br />
                 <br /> 
                 An email will be sent to your cast with these times, and they will accept or decline their casting within <b className="importantText warningText">48 hours</b>.

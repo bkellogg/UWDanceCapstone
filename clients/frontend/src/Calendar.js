@@ -7,6 +7,7 @@ import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './styling/General.css';
+import './styling/Calendar.css';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment))
 const VIEWS = ['month', 'week', 'day']
@@ -43,11 +44,15 @@ class Calendar extends Component {
   };
 
   componentWillMount() {
-    this.getEvents()
+    this.getEvents(this.props.pieceID)
   }
 
-  getEvents = () => {
-    Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals", {}, "GET", true)
+  componentWillReceiveProps(props){
+    this.getEvents(props.pieceID)
+  }
+
+  getEvents = (pieceID) => {
+    Util.makeRequest("pieces/" + pieceID + "/rehearsals", {}, "GET", true)
     .then(res => {
       if (res.ok) {
         return res.json()
@@ -97,7 +102,8 @@ class Calendar extends Component {
   onSelectExisting = (slotInfo) => {
     this.setState({
       slotInfo : slotInfo,
-      openSetRehearsal : true
+      openSetRehearsal : true,
+      rehearsalName: slotInfo.title
     })
   }
 
@@ -110,7 +116,6 @@ class Calendar extends Component {
 
   deleteRehearsal = () => {
     let slotInfo = this.state.slotInfo
-    console.log()
     Util.makeRequest("pieces/" + this.props.pieceID + "/rehearsals?ids=" + slotInfo.id , {}, "DELETE", true)
     .then(res => {
       if (res.ok) {
@@ -122,7 +127,7 @@ class Calendar extends Component {
       this.setState({
         openSetRehearsal : false
       })
-      this.getEvents()
+      this.getEvents(this.props.pieceID)
     })
     .catch(err => {
       this.setState({
@@ -133,7 +138,6 @@ class Calendar extends Component {
   }
 
   addRehearsal = () => {
-    console.log(this.state.slotInfo)
     let slotInfo = this.state.slotInfo
     let body = []
     let rehearsalObject = {
@@ -154,7 +158,7 @@ class Calendar extends Component {
         openNewRehearsal : false,
         rehearsalName: "Rehearsal"
       })
-      this.getEvents()
+      this.getEvents(this.props.pieceID)
     })
     .catch(err => {
       this.setState({
@@ -184,7 +188,7 @@ class Calendar extends Component {
         openNewRehearsal : false,
         rehearsalName: "Rehearsal"
       })
-      this.getEvents()
+      this.getEvents(this.props.pieceID)
     })
     .catch(err => {
       this.setState({
@@ -240,7 +244,7 @@ class Calendar extends Component {
             Error getting piece rehearsals: {Util.titleCase(this.getRehearsalError)}
           </div>
         }
-        <BigCalendar style={{ height: "710px", width: "100%" }}
+        <BigCalendar style={{ height: "710px", width: "100%" }}          
           selectable
           defaultDate={new Date()}
           defaultView='week'

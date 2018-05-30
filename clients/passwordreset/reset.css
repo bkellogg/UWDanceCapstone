@@ -1,8 +1,69 @@
 body {
     margin:0px;
-    text-align: center;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 15px;
+    background-color: #1C2C50;
 }
 
 .pass-reset-page-wrap{
-    margin: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 500px;
+    width: auto;
+    margin-top: 100px;
+    text-align: center;
+}
+
+.pass-reset-form-wrap{
+    border: 1px solid lightgray;
+    background-color: white;
+    border-radius: 10px;
+    padding: 50px;
+    padding-top: 30px;
+    text-align: left;
+
+    box-shadow: rgba(236, 230, 230, 0.12) 0px 1px 6px, rgba(255, 255, 255, 0.12) 0px 1px 4px;
+}
+
+.stage-logo{
+    width: 200px;
+    margin-bottom: 30px;
+}
+
+h1{
+    font-size: 22px;
+}
+
+.pass-input{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.input-label{
+    width: 100%;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.the-input{
+    width: 100%;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.submit-wrapper{
+    margin-top: 20px;
+}
+
+.button{
+    width: 140px;
+    background-color: #22A7E0;
+    color: white;
+    border-radius: 5px;
+    font-weight: 500;
+    font-size: 14px;
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:8px;
+    padding-bottom:8px;
 }

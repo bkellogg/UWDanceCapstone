@@ -89,22 +89,23 @@ class App extends Component {
   }
 
   render() {
+
     return (  
       <section>
         {
-          this.state.landing && !this.state.authorized && !this.state.signUp &&
+          this.state.landing && !this.state.authorized && !this.state.signUp && !this.state.showTerms &&
           <Landing logIn={this.showSignIn} signUp={this.showSignUp} />
         }
         {
-          !this.state.landing && !this.state.authorized && !this.state.signUp &&
+          !this.state.landing && !this.state.authorized && !this.state.signUp && !this.state.showTerms &&
           <SignIn onSignIn={this.registerUser} onSignUp={this.handleSignUp} toLanding={this.toLanding}/>
         }
         {
-          !this.state.landing && !this.state.authorized && this.state.signUp &&
+          !this.state.landing && !this.state.authorized && this.state.signUp && !this.state.showTerms &&
           <SignUp onSignUp={this.registerUser} goBack={this.goBack} toLanding={this.toLanding}/>
         }
         {
-          this.state.authorized &&
+          this.state.authorized && !this.state.showTerms &&
           <Main auth={this.signOut}/>
         }
       </section>

@@ -74,7 +74,7 @@ h2{
 
 .toggleHeader h2 {
     display: inline-block;
-    width: 95%; 
+    width: 90%; 
 }
 
 .toggleHeader i {
@@ -89,6 +89,10 @@ h2{
     position: relative;
 }
 
+.pieceTip {
+    margin-left: 5px
+}
+
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 200px;
@@ -101,7 +105,7 @@ h2{
     z-index: 1;
     bottom: 125%;
     left: 50%;
-    margin-left: -60px;
+    margin-left: -103px;
     opacity: 0;
     transition: opacity 0.3s;
 }
@@ -143,11 +147,28 @@ span.thumb.active{
 .serverError {
     background-color: #f9c79e;
     border-radius: 5px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 10px
+}
+
+.successPiece {
+    background-color: #8CDFAF;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding: 10px;
+    width: 200px;
+    text-align: center
 }
 
 hr{
     visibility: hidden;
     color: red;
+}
+
+.clickable {
+    cursor: pointer;
 }
 
  @media only screen and (max-width : 768px) {
@@ -159,6 +180,20 @@ hr{
     }
 
  }
+
+ @media only screen and (max-width : 1106px)  {
+    .toggleHeader h2{
+        width: 90%
+    }
+
+}
+@media only screen and (min-width : 1106px)  {
+    .toggleHeader h2{
+        width: 95%
+    }
+
+}
+
 
 /*SUPER LARGE SCREEN SIZING*/
  @media only screen and (min-width : 1920px) {

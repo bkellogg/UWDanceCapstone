@@ -71,7 +71,7 @@ class Main extends Component {
 
   //only gets the first page
   getCurrShows = () => {
-    Util.makeRequest("shows?page=1", {}, "GET", true).then(res => {
+    Util.makeRequest("shows?history=current&page=1", {}, "GET", true).then(res => {
       if (res.ok) {
         return res.json()
       }
@@ -197,8 +197,7 @@ class Main extends Component {
                     onClick={this.handleToggle}>
                     <p className="hambMenu">MENU</p>
                   </RaisedButton>
-
-                  <img className="mobileNavLogo" alt="logo" src={logo} />
+                  <a href="/"><img className="mobileNavLogo" alt="logo" src={logo} /></a>
                 </div>
               </div>
               <Drawer
@@ -247,7 +246,6 @@ class Main extends Component {
             .state
             .currShows
             .map((show, i) => {
-              console.log(show)
               let showName = show.name
               let path = "/" + showName
                 .split(' ')
@@ -308,7 +306,7 @@ class Main extends Component {
                   render={props => <AuditionRegistrationList
                     {...props}
                     name={show.name}
-                    audition={show.auditionID}
+                    auditionID={show.auditionID}
                     show={show.show} />} />
 
                 routes.push(route1)
@@ -372,11 +370,13 @@ class Main extends Component {
           <div className="navigationWrap">
             <ul id="slide-out" className="side-nav fixed">
               <div className="navigationBg">
+              <Link to="/" style={{padding: "0px", marginBottom: "40px"}}>
                 <li>
                   <div id="logo">
-                    <img className="officialLogoImage" alt="logo" src={logo} />
+                  <img className="officialLogoImage" alt="logo" src={logo} />
                   </div>
                 </li>
+                </Link>
                 <li className="dropDown">
                   <Link to="/">Dashboard</Link>
                 </li>
