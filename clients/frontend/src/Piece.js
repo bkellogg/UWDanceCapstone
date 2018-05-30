@@ -134,7 +134,6 @@ class Piece extends Component {
       "musicSource": this.state.musicSource,
       "rehearsalSchedule": this.state.rehearsalSchedule,
       "chorNotes": this.state.choreoNotes,
-      "musicians": this.state.musicians,
       "costumeDesc": this.state.costumeDesc,
       "itemDesc": this.state.propsDesc,
       "lightingDesc": this.state.lightingDesc,
@@ -167,6 +166,9 @@ class Piece extends Component {
   }
 
   updateInfoSheet = () => {
+    if (this.refs.musician) {
+      this.refs.musician.updateUser()
+    }
     this.setState({
       setError: false,
       setSuccess: false
@@ -181,7 +183,6 @@ class Piece extends Component {
       "musicSource": this.state.musicSource,
       "rehearsalSchedule": this.state.rehearsalSchedule,
       "chorNotes": this.state.choreoNotes,
-      "musicians": this.state.musicians,
       "costumeDesc": this.state.costumeDesc,
       "itemDesc": this.state.propsDesc,
       "lightingDesc": this.state.lightingDesc,
@@ -257,25 +258,6 @@ class Piece extends Component {
     }
   }
 
-  setMusicians = () => {
-    let body = {}
-    Util.makeRequest("pieces/" + this.state.pieceID + "/musicians", body, "POST", true)
-    .then(res => {
-      if (res.ok) {
-        return res.text()
-      }
-      return res
-        .text()
-        .then((t) => Promise.reject(t));
-    })
-    .then(res => {
-      console.log(res)
-    })
-    .catch((err) => {
-      console.error(err)
-    })
-  }
-
   updateMusician = (musicianID) => {
     let body = {}
     Util.makeRequest("pieces/" + this.state.pieceID + "/musicians" + musicianID, body, "PATCH", true)
@@ -306,6 +288,7 @@ class Piece extends Component {
         .then((t) => Promise.reject(t));
     })
     .then(res => {
+      console.log(res)
       this.setState({
         musicians: res,
         numMusicians: res.length
@@ -369,7 +352,6 @@ class Piece extends Component {
 
   handleChangeMusician = (event, index, value) => {
     let musicians = this.state.musicians
-    musicians = musicians.slice(0, value )
     this.setState({ 
       numMusicians: value,
       musicians : musicians
@@ -378,6 +360,7 @@ class Piece extends Component {
 
   toggleInfo = () => {
     let opp = this.state.openInfo
+    this.getInfoSheet(this.state.pieceID)
     this.setState({
       setError: false,
       setSuccess: false,
@@ -399,51 +382,20 @@ class Piece extends Component {
     })
   }
 
-  updateMusicianList = (m, id) => {
-      let musicians = this.state.musicians
-      let editMusicians = this.state.editMusicians
-      let newMusicians = this.state.newMusicians
-      musicians.forEach((musician, i) => {
-        if (musician.id === id) {
-          editMusicians.forEach((music, j) => {
-            if (music.id === id) {
-              editMusicians[j] = m
-            } else {
-              editMusicians.push(m)
-            }
-          })
-        } else {
-          newMusicians.forEach((music, j) => {
-            if (music.id === id) {
-              newMusicians[j] = m
-            } else {
-              newMusicians.push(m)
-            }
-          })
-        }
-      })
-      this.setState({
-        musicians : musicians,
-        editMusicians : editMusicians,
-        newMusicians : newMusicians
-      })
-  }
-
   render() {
     let musicianRow = []
     let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
     const dancers = this.state.dancers
-
+    console.log(this.state.musicians)
     for (let i = 0; i < numMusicians; i++) {
-      console.log(i)
       if (this.state.musicians.length > i) {
-        musicianRow.push(<MusicianRow key={i} id={musicians[i].id} musicianContact={this.updateMusicianList} musician={musicians[i]} existing={true}/>)
+        musicianRow.push(<MusicianRow ref="musician" key={i} id={musicians[i].id} musician={musicians[i]} existing={true} pieceID={this.state.pieceID} error={(err) => this.setState({setError: err})}/>)
       } else {
-        musicianRow.push(<MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={{name:"", phone:"", email:""}} existing={false}/>)
+        musicianRow.push(<MusicianRow ref="musician" key={i} id={i} musician={{name:"", phone:"", email:""}} existing={false} pieceID={this.state.pieceID} error={(err) => this.setState({setError: err})}/>)
       }
     }
-    console.log(numMusicians)
+
     let castRows = dancers.map((dancer, i) => {
       return (<PersonRow p={dancer} piece={true} key={i} pieceID={this.state.pieceID} updateCast={() => {this.getPieceUsers(this.state.pieceID)}}/>)
     })

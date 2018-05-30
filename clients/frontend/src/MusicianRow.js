@@ -1,18 +1,32 @@
 import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
+import * as Util from './util';
 
 class MusicianRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        id: this.props.musician.id,
+        id: this.props.id,
         musician : {},
         existing: this.props.existing 
     }
   };
 
   componentWillUnmount(){
-      console.log("unmounting")
+      if (this.state.exisiting) {
+        this.setState({
+            toDelete: true
+        })
+    }
+  }
+
+  componentWillMount(){
+      if (this.state.existing) {
+          this.setState({
+              toDelete: false,
+              musician: this.props.musician
+          })
+      }
   }
   handleChange = name => event => {
     this.setState({
@@ -26,7 +40,6 @@ class MusicianRow extends Component {
     this.setState({
         musician : musician
     })
-    this.props.musicianContact(musician, this.state.id)
   }
 
   updateNumber = (event) => {
@@ -35,7 +48,6 @@ class MusicianRow extends Component {
     this.setState({
         musician : musician
     })
-    this.props.musicianContact(musician, this.state.id)
   }
 
   updateEmail = (event) => {
@@ -44,11 +56,54 @@ class MusicianRow extends Component {
     this.setState({
         musician : musician
     })
-    this.props.musicianContact(musician, this.state.id)
+  }
+
+  updateUser = () => {
+    console.log(this.state)
+    if (!this.state.existing) {
+        Util.makeRequest("pieces/" + this.props.pieceID + "/musicians", this.state.musician, "POST", true)
+        .then(res => {
+          if (res.ok) {
+            return res.text()
+          }
+          if (res.status === 404) {
+            return res.text()
+          }
+          return res
+            .text()
+            .then((t) => Promise.reject(t));
+        })
+        .then(res => {
+          console.log(res)
+        })
+        .catch((err) => {
+            this.props.error(err)
+          console.error(err)
+        })
+    } else {
+        Util.makeRequest("pieces/" + this.props.pieceID + "/musicians/" + this.state.id, this.state.musician, "PATCH", true)
+        .then(res => {
+        if (res.ok) {
+            return res.text()
+        }
+        if (res.status === 404) {
+            return res.text()
+        }
+        return res
+            .text()
+            .then((t) => Promise.reject(t));
+        })
+        .then(res => {
+            console.log(res)
+        })
+        .catch((err) => {
+            this.props.error(err)
+            console.error(err)
+        })
+    }
   }
 
   render() {
-    console.log(this.state)
     return (
       <section>
           <div>
