@@ -295,7 +295,7 @@ class Profile extends Component {
               <div className="wrap">
                 <div className="header">
 
-                  <div id="photoContainer" className="photoContainer">
+                  <div id="photoContainer" className="photoContainer anotherOne">
                     {
                       !this.state.edit &&
                       <img id="photo" alt="profile" src={this.state.photoSrc}></img>
@@ -308,7 +308,7 @@ class Profile extends Component {
                   </div>
 
 
-                  <div className="nameWrap">
+                  <div className="nameWrap extraNameWrap">
                     <div id="name" className="name">
 
                       {
@@ -323,8 +323,8 @@ class Profile extends Component {
                         <div id="editName">
                           <b>Name: </b>
                           <Row>
-                            <Input id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}/>
-                            <Input id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}} />
+                            <Input class="inputMob" id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}/>
+                            <Input class="inputMob" id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}} />
                           </Row>
                         </div>
                       }

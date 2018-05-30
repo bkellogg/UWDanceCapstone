@@ -97,7 +97,7 @@ class AvatarEditorConsole extends Component {
   render() {
     return (
       <div>
-        <div className="photoContainer">
+        <div className="extraPhotoContainer">
         <Dropzone
           onDrop={this.handleDrop}
           disableClick

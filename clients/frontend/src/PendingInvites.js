@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 import moment from 'moment';
-import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import './styling/Dashboard.css';
 import './styling/General.css';
 
@@ -88,18 +88,14 @@ class PendingInvites extends Component {
             <p>{this.props.piece.rehearsalSchedule}</p>
             <p>Your offer will expire in {hours} hours on {expireDateTime}</p>
           </div>
-            <RaisedButton
+            <FlatButton
               label="Accept"
               className="acceptCastButton"
-              style={{ color: '#ffffff' }}
-              backgroundColor="#22A7E0"
               onClick={() => this.acceptCasting(this.props.piece.piece.id)}
             />
-            <RaisedButton
+            <FlatButton
               label="Decline"
-              className="acceptCastButton"
-              style={{ color: '#ffffff' }}
-              backgroundColor="#22A7E0"
+              className="declineCastButton"
               onClick={() => this.declineCasting(this.props.piece.piece.id)}
             />
         </div>
