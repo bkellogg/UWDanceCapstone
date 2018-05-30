@@ -60,8 +60,8 @@ showForm.addEventListener("submit", function (evt) {
         message: 'Are you sure you want to create a new show with the below information?',
         input: [
             '<p>Concert: ' + showTypeNames[showType.value] + ' </p>',
-            '<p>Show Date: ' + moment(showDate.value).format('MMM. Do, YYYY') + '</p>',
-            '<p>Show Time: ' + showTime.value + '</p>',
+            '<p>Show End Date: ' + moment(showDate.value).format('MMM. Do, YYYY') + '</p>',
+            '<p>Show End Time: ' + showTime.value + '</p>',
             '<p>Audition Name: ' + auditionName.value + '</p>',
             '<p>Audition Location: ' + getBuilding.value + " " + getRoom.value + '</p>',
             '<p>Audition Date: ' + moment(auditionDate.value).format('MMM. Do, YYYY') + '</p>',
