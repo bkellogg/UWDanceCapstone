@@ -95,7 +95,6 @@ class Piece extends Component {
         .then((t) => Promise.reject(t));
     })
     .then(res => {
-      console.log(res)
       this.setState({
         choreographerPhone : res.choreographerPhone,
         danceTitle : res.title,
@@ -288,7 +287,6 @@ class Piece extends Component {
         .then((t) => Promise.reject(t));
     })
     .then(res => {
-      console.log(res)
       this.setState({
         musicians: res,
         numMusicians: res.length
@@ -387,7 +385,6 @@ class Piece extends Component {
     let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
     const dancers = this.state.dancers
-    console.log(this.state.musicians)
     for (let i = 0; i < numMusicians; i++) {
       if (this.state.musicians.length > i) {
         musicianRow.push(<MusicianRow ref="musician" key={i} id={musicians[i].id} musician={musicians[i]} existing={true} pieceID={this.state.pieceID} error={(err) => this.setState({setError: err})}/>)
@@ -490,7 +487,7 @@ class Piece extends Component {
                     </h2>
                     <i className="fas fa-chevron-up fa-lg"></i>
                   </div>
-                  <div className="peopleList">
+                  <div className="peopleList" style={{marginBottom: "15px"}}>
                     <table>
                       <tbody>
                         <tr className="categories">

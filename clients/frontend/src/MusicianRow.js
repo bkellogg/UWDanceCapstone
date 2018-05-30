@@ -59,7 +59,6 @@ class MusicianRow extends Component {
   }
 
   updateUser = () => {
-    console.log(this.state)
     if (!this.state.existing) {
         Util.makeRequest("pieces/" + this.props.pieceID + "/musicians", this.state.musician, "POST", true)
         .then(res => {

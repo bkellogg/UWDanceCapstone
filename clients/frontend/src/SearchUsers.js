@@ -50,7 +50,6 @@ class SearchUsers extends Component {
           return res.text().then((t) => Promise.reject(t));
         })
         .then(results => {
-            console.log(results)
             this.setState({
                 results : results.users
             })
@@ -65,7 +64,6 @@ class SearchUsers extends Component {
   }
 
   addUser = (id) => {
-      console.log(id)
       Util.makeRequest("users/" + id + "/pieces/" + this.props.pieceID, {}, "LINK", true)
       .then(res => {
         if (res.ok) {

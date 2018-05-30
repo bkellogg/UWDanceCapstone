@@ -28,9 +28,6 @@ class FAQ extends Component {
             <h2 className="smallHeading"><HashLink to="/faq#about">About STAGE</HashLink></h2><br />
             <h2 className="smallHeading"><HashLink to="/faq#report">Report Errors</HashLink></h2><br /><br />
 
-            <iframe width="550" height="400"
-              src="https://www.youtube.com/embed/-aguBdDWThA">
-            </iframe>
 
             <section id="viewdancerpiece-dupliate">
               {/* <h2 className="smallHeading">How to Register for an Audition</h2>
@@ -249,9 +246,10 @@ class FAQ extends Component {
               <p>STAGE is the modern solution to an age old practice in the arts - producing a show.</p>
 
               <div>
-                Our platform allows you to easily manage critical aspects of a production, by allowing every dancer to create a profile,
+                <p>Our platform allows you to easily manage critical aspects of a production, by allowing every dancer to create a profile,
                 every choreographer to easily select their star cast, and giving the director a comprehensive look at every piece. Our goal is to
-                reduce the stress of scheduling and communication, and let you focus your energy on what really matters - getting your work on STAGE.
+                reduce the stress of scheduling and communication, and let you focus your energy on what really matters - getting your work on STAGE.</p>
+                <p>Want to contribute? Check out our <a href="https://github.com/bkellogg/UWDanceCapstone">Github!</a></p>
               </div>
             </section>
 
