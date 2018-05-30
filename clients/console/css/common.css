@@ -7,6 +7,8 @@ body{
 
 .page-wrap{
   padding: 20px;
+  width: 100%;
+  position: relative;
 }
 
 /*INPUT FIELDS*/
@@ -14,6 +16,36 @@ body{
   margin-top: 10px;
   margin-bottom: 10px;
 }
+
+/*LEFT CARD*/
+.left-card{
+  width: 60%;
+  position: relative;
+  display: inline-block;
+}
+
+/*RIGHT CARD*/
+.right-card{
+  max-width: 30%;
+  width: auto;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 5%
+}
+
+/*LEGENDS*/
+.descriptions{
+  background-color: #f6f8fc;
+  padding: 10px;
+  padding-left: 25px;
+  border: 1px solid #d8d8d8;
+}
+
+.descriptions ul {
+  list-style-type: disc;
+}
+
 
 label.short-input{
   width: 100px;
@@ -33,10 +65,18 @@ label.long-input{
   border: 1px solid #d8d8d8;
   width: 60%;
   margin-bottom: 25px;
+  display: inline-block;
+  position: relative;
 }
+
+.signup-form, .newRole-form, .show-form, .newShowType-form, .newAnnouncementType-form{
+  width: -webkit-fill-available !important;
+}
+
 
 .dashboardAnnouncement{
   background-color: rgb(253, 237, 236);
+  padding-top: 25px;
 }
 
 .important-message{
@@ -67,7 +107,11 @@ tr:nth-child(even) {
 
 /*ROLE INFO CARD, SHOW TYPE CARD*/
 #role_info, #show_type_info{
-  width: 60%;
+  width: 100%;
+}
+
+.tablesorter{
+  width: 100%;
 }
 
 .hidden {
@@ -101,7 +145,7 @@ h2.showName{
 
 
 /*BUTTONS*/
-.delete, #search-submit, #signin, .pieces, #passwordemail{
+.delete, #search-submit, #signin, .pieces, #passwordemail, .profile-link, #next, #previous, .change-button{
   height: 35px;
   color: white;
   font-size: 15px;
@@ -113,12 +157,12 @@ h2.showName{
   outline: none;
 }
 
-#search-submit, #signin, .pieces, #passwordemail{
+#search-submit, #signin, .pieces, #passwordemail, .profile-link, #next, #previous, .change-button{
   background-color: #22A7E0;
   border: 1px solid rgb(7, 95, 133); 
 }
 
-#search-submit:hover, .pieces:hover{
+#search-submit:hover, .pieces:hover, .profile-link:hover, #next:hover, #previous:hover, .change-button:hover{
   background-color: #36acdf;
 }
 
@@ -145,23 +189,26 @@ h2.showName{
   font-size: 14px;
 }
 
-
-.descriptions {
-  background-color: #f6f8fc;
-  padding: 10px;
-  padding-left: 25px;
-  border: 1px solid #d8d8d8;
-  width: 40%;
-  margin-bottom: 25px;
-  vertical-align: top;
-  display: inline-block;
-}
-
-.descriptions ul {
-  list-style-type: disc;
-}
-
 .form {
   display: inline-block;
   margin-right: 0px;
+}
+
+@media only screen and (max-width : 600px) {
+/*LEFT CARD*/
+.left-card, r.ight-card{
+  width: 100% !important;
+  position: relative;
+  display: block;
+}
+
+/*RIGHT CARD*/
+.right-card{
+  margin-top: 25px;
+  margin-left: 0;
+}
+
+.descriptions{
+  width: 400px !important;
+}
 }

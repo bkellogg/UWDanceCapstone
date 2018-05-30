@@ -17,27 +17,36 @@
     <nav id='nav-bar'></nav>
 
     <div class="page-wrap">
-        <h1 class="user-name-loc"></h1>
+
         <div class="profile-wrap">
             <div class="img-bio-resume">
                 <div class="image-loc"></div>
+            </div>
+            <div class="name-bio-wrap">
+                <h1 class="user-name-loc"></h1>
                 <div class="bio-wrap">
                     <h2>Bio</h2>
                     <div class="bio-content"></div>
                 </div>
-              <div>
-                <h2>Email</h2>
-    <div class="user-email-loc"></div>
-              </div>
+            </div>
+
+            <div class="email-resume">
+                <div>
+                    <h2 class="email-txt">Email</h2>
+                    <div class="user-email-loc"></div>
+                </div>
                 <div class="resume-wrap">
                     <h2>Resume</h2>
                     <div class="resume-content"></div>
                     <a href="" id="user-resume" target="_blank">View Resume</a>
                 </div>
+                <div class="show-history-wrap">
+                <h2>Show History</h2>
+                <div class="show-history-content"></div>
+            </div>
             </div>
 
-            <h2>Show History</h2>
-            <div class="show-history-content"></div>
+
             <div id="content"></div>
             <div class="role-change">
                 <h2>Change Role</h2>
@@ -48,7 +57,7 @@
                             </option>
                         </select>
                     </div>
-                    <button type="submit">Change Role</button>
+                    <button class="change-button" type="submit">Change Role</button>
                 </form>
                 <div class="js-error"></div>
             </div>
@@ -65,11 +74,12 @@
                             <input id="password-conf-input" type="password">
                         </div>
                     </div>
-                    <button type="submit">Change Password</button>
+                    <button class="change-button" type="submit">Change Password</button>
                 </form>
                 <div class="js-error-password"></div>
             </div>
         </div>
+    </div>
     </div>
 </body>
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>

@@ -12,7 +12,7 @@ var role = document.getElementById("roleName");
 var roleName = "";
 
 var roleDisplayNames = {};
-vex.defaultOptions.className = 'vex-theme-default'
+vex.defaultOptions.className = 'vex-theme-default';
 
 populateRoleOptions();
 
