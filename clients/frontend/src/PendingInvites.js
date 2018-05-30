@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 import moment from 'moment';
-import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import './styling/Dashboard.css';
 import './styling/General.css';
 
@@ -39,7 +39,7 @@ class PendingInvites extends Component {
         this.setState({
           error: err
         })
-        console.log(err)
+        console.err(err)
       });
   }
 
@@ -67,17 +67,16 @@ class PendingInvites extends Component {
       this.setState({
         error: err
       })
-      console.log(err)
+      console.err(err)
     });
   }
 
   render() {
     let today = moment()
-    let createdAt = moment(this.props.piece.createdAt)
+    let expiresAt = moment(this.props.piece.expiresAt)
     //this will be the difference between createdAt and today subtracted from 48 hours
-    let hours = Math.round(48 - moment.duration(today.diff(createdAt)).asHours())
-    let expireDateTime = moment(createdAt.add(2, 'days')).format("LLLL")
-    console.log(this.props.piece)
+    let hours = Math.round(expiresAt.diff(today, 'hours'))
+    let expireDateTime = expiresAt.format("LLLL")
     return (
       <div className="announcement castBorderColor">
       {
@@ -88,18 +87,14 @@ class PendingInvites extends Component {
             <p>{this.props.piece.rehearsalSchedule}</p>
             <p>Your offer will expire in {hours} hours on {expireDateTime}</p>
           </div>
-            <RaisedButton
+            <FlatButton
               label="Accept"
-              className="acceptCastButton"
-              style={{ color: '#ffffff' }}
-              backgroundColor="#22A7E0"
+              className="positiveButton"
               onClick={() => this.acceptCasting(this.props.piece.piece.id)}
             />
-            <RaisedButton
+            <FlatButton
               label="Decline"
-              className="acceptCastButton"
-              style={{ color: '#ffffff' }}
-              backgroundColor="#22A7E0"
+              className="negativeButton"
               onClick={() => this.declineCasting(this.props.piece.piece.id)}
             />
         </div>

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Button } from 'react-materialize';
-import { Link } from 'react-router-dom';
 import * as Util from './util.js';
 import logo from './imgs/logoex.png'
 import './styling/SignIn.css';
@@ -152,7 +151,7 @@ class SignUp extends Component {
                         </div>
                       </div>
                     </form>
-                    <div> By using this product you are agreeing to our <a href="www.dasc.ischool.capstone.uw.edu/terms" target="_blank">terms of service</a>.</div>
+                    <div> By using this product you are agreeing to our <a href="/terms" target="_blank">terms of service</a>.</div>
                     <div className="buttons">
                       <Button onClick={this.onClick}> Sign Up </Button>
                     </div>

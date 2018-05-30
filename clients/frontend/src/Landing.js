@@ -153,9 +153,11 @@ class App extends Component {
                     <p className="capstoneInfoContent"> Project Manager</p>
 
                   </div>
+                  
                 </div>
               </div>
             </div>
+            <p><i>Photo credit: Steve Korn </i> </p>
           </div>
         </div>
       </section>

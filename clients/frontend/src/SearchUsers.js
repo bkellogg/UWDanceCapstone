@@ -5,7 +5,7 @@ import Button from 'react-materialize/lib/Button';
 import './styling/General.css';
 import './styling/Piece.css';
 
-const STYLES = { width: "200px", paddingLeft: "15px", marginLeft:"10px"}
+const STYLES = { width: "200px", paddingLeft: "15px"}
 
 class SearchUsers extends Component {
   constructor(props) {
@@ -50,7 +50,6 @@ class SearchUsers extends Component {
           return res.text().then((t) => Promise.reject(t));
         })
         .then(results => {
-            console.log(results)
             this.setState({
                 results : results.users
             })
@@ -65,7 +64,6 @@ class SearchUsers extends Component {
   }
 
   addUser = (id) => {
-      console.log(id)
       Util.makeRequest("users/" + id + "/pieces/" + this.props.pieceID, {}, "LINK", true)
       .then(res => {
         if (res.ok) {
@@ -111,7 +109,7 @@ class SearchUsers extends Component {
           <div className="searchHeader"> Search for users using <b>at least one</b> of the following search parameters. </div>
           <div className="searchParams">
             <div className="param">
-                {"First Name    "}  
+                <p className="inputLabelBlock" > First Name</p>
                 <TextField
                     className="textField onSearch"
                     id="firstName"
@@ -122,7 +120,7 @@ class SearchUsers extends Component {
                 />
             </div>
             <div className="param">
-                {"Last Name   "}
+            <p className="inputLabelBlock" > Last Name</p>
                 <TextField
                     className="textField onSearch"
                     id="lastName"
@@ -132,7 +130,7 @@ class SearchUsers extends Component {
                 />
             </div>
             <div className="param">
-                Email Address  
+            <p className="inputLabelBlock" > Email Address</p>
                 <TextField
                     className="textField onSearch"
                     id="email"
@@ -156,7 +154,7 @@ class SearchUsers extends Component {
               {Util.titleCase(this.state.searchError)}
             </div>
           }
-          <table>
+          <table class="myPiece-tables">
             <tbody>
             <tr className="categories">
                 <th>Name</th>

@@ -1,6 +1,6 @@
-/*NEW AUDITION MESSAGE -- BLUE TONES*/
+/*NEW AUDITION MESSAGE & COMPLETE PROFILE MESSAGE -- RED TONES*/
 .newAuditionBorderColor{
-  border-left: 6px solid rgb(52, 152, 219);
+  border-left: 6px solid #22A7E0;
 }
 
 .auditionAnnouncementCardColor{
@@ -10,19 +10,22 @@
   position: relative;
 }
 
-/*COMPLETE PROFILE MESSAGE -- RED TONES*/
-.completeProfileBorderColor, .announcementBorderColor {
-  border-left: 6px solid rgb(231, 76, 60);
+.announcementBorderColor {
+  border-left: 6px solid rgb(142, 68, 173);
 }
 
-.completeProfileCardColor, .announcementCardColor{
-  background-color:rgb(253, 237, 236);
+.announcementCardColor{
+  background-color: rgb(245, 238, 248);
 }
 
 /*CAST MESSAGE -- BLUE TONES*/
-.castBorderColor{
-  border-left: 6px solid rgb(52, 152, 219);
-  background-color: rgb(235, 245, 251);
+.completeProfileBorderColor, .castBorderColor{
+  border-left: 6px solid rgb(231, 76, 60);
+  background-color:rgb(253, 237, 236);
+}
+
+.completeProfileBorderColor{
+  cursor: pointer;
 }
 
 .announcement {
@@ -38,10 +41,24 @@ div.announcementMessage>p:nth-child(2) {
   color: hsl(0, 0%, 45%);
 }
 
-.acceptCastButton{
-  margin-left: 25px;
-  margin-bottom: 15px;
-  margin-top: -25px;
+.positiveButton{
+  margin-left: 25px !important;
+  margin-bottom: 15px !important;
+  margin-top: -25px !important;
+  color: white !important;
+  cursor: pointer !important;
+  background-color: #22A7E0 !important;
+}
+
+.positiveButton:hover, .positiveButton-noMargin:hover{
+  background-color: #1e96c9 !important;
+  cursor: pointer !important;
+}
+
+.positiveButton-noMargin{
+  color: white !important;
+  cursor: pointer !important;
+  background-color: #22A7E0 !important;
 }
 
 .showTitle2{

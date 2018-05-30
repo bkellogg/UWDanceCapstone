@@ -232,13 +232,13 @@ class Casting extends Component {
                   <div style={contentStyle}>
                     <div style={{ marginTop: 12 }}>
                       <ArrowBackIcon 
-                        size={26} 
+                        size={30} 
                         disabled={stepIndex === 0}
                         onClick={this.handlePrev}
                         className="back-button-styles-css"
                       />
                       <ArrowForwardIcon 
-                        size={26} 
+                        size={30} 
                         disabled={stepIndex === 3}
                         onClick={this.handleNext}
                         className="next-button-styles-css"

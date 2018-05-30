@@ -13,10 +13,11 @@
   padding-top: 25px;
 }
 
+
 .photoContainer {
   position: relative;
   display: inline-block;
-  margin-right: 3%;
+  margin-right: 25px;
   vertical-align: bottom;
 }
 
@@ -24,12 +25,19 @@ h1#profileName{
   font-size: 28px;
 }
 
-.nameWrap, .resumeWrap{
-  width: 60%;
+.nameWrap{
+  width: 50%;
+  display: inline-block;
+}
+
+.extraNameWrap, .resumeWrap{
+  width: 70%;
+  margin-top: 25px;
   position: relative;
   display: inline-block;
   vertical-align: bottom;
 }
+
 
 .editButton {
   position: absolute;
@@ -149,6 +157,10 @@ img#photo {
     width: 100%;
   }
 
+  .bioUpload2{
+    width: 100%;
+  }
+
   img#photo {
     height: 200px;
     width: 200px;
@@ -176,4 +188,5 @@ img#photo {
     margin: auto;
     margin-top: 40px;
   }
+
 }

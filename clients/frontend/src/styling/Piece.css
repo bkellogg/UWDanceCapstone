@@ -12,10 +12,16 @@ td.userEmail{
     font-size: 14px !important;
     width: 100% !important;
     max-width: 600px !important;
+    margin-bottom: 25px;
+}
+
+.inputTitle, .inputLabelBlock-noWidth{
+    margin-bottom: 5px;
 }
 
 .onSearch{
     padding: 0;
+    margin: 0;
 }
 
 .pieceCard {
@@ -35,7 +41,8 @@ td.userEmail{
 }
 
 .param {
-    margin: 10px
+    margin: 10px;
+    margin-left: 0;
 }
 
 .subsectionheader {
@@ -43,11 +50,47 @@ td.userEmail{
 }
 
 .dividerDiv{
-    margin-top: 25px;
     margin-bottom: 10px;
     height: 2px;
     background-color: lightgrey;
     width: 100%;
+}
+
+.searchParams{
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+.myPiece-tables{
+    margin-top: 25px;
+}
+
+/*SEARCH INPUT LABEL INLINE*/
+.inputLabelBlock{
+    display: inline-block;
+    width: 100px;
+}
+
+/*MUSICIAN INPUT*/
+.musicianInput{
+    padding-left: 15px !important;
+    width: 100% !important;
+    display: inline-block !important;
+}
+
+.inputLabelBlock-noWidth{
+    display: inline-block;
+}
+
+.param-displayInline{
+    display: inline-block;
+    width: 30%;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.infoSheet-autoFillInfo{
+    margin-bottom: 25px;
 }
 
 @media only screen 
@@ -59,8 +102,16 @@ and (max-width : 1024px)  {
         display: none;
     }
 
-    .toggleHeader h2{
-        width: 80%;
+    .toggleHeader i{
+        text-align: right;
     }
 
+}
+
+@media only screen and (max-width : 768px) {
+/*MUSICIAN INPUT*/
+.param-displayInline{
+    display: block;
+    width: 100%;
+}
 }

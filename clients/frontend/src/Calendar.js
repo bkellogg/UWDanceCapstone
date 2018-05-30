@@ -180,6 +180,9 @@ class Calendar extends Component {
       if (res.ok) {
         return res.text()
       }
+      if (res.status === 404) {
+        return res.text()
+      }
       return res.text().then((t) => Promise.reject(t));
     })
     .then( res => {
@@ -269,14 +272,16 @@ class Calendar extends Component {
             />,
             <FlatButton
               label="Delete Rehearsal"
-              style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+              className="negativeButton"
+              style={{ marginRight: '10px'}}
               primary={false}
               keyboardFocused={false}
               onClick={event => this.deleteRehearsal(event)}
             />,
             <FlatButton
               label="Save Changes"
-              style={{ backgroundColor: '#22A7E0', color: '#ffffff' }}
+              className="positiveButton-noMargin"
+              style={{ margin: '0' }}
               primary={false}
               keyboardFocused={false}
               onClick={event => this.modifyRehearsal(event)}

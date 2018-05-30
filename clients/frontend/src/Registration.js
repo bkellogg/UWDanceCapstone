@@ -17,10 +17,12 @@ import './styling/Audition.css';
 const styles = {
   customWidthText: {
     width: 500,
+    marginTop: '10px',
     paddingLeft: '10px'
   },
   customWidth: {
     width: 80,
+    marginTop: '10px',
     backgroundColor: 'white',
     border: '1px solid lightgray',
     borderRadius: '5px',
@@ -81,7 +83,7 @@ class Registration extends Component {
           <div className="formWrap">
             <div className="row">
               <div className="">
-                <div>1. Number of pieces I am available for: 
+                <div><b className="asterisk">*</b> Number of pieces I am available for: 
                   <div className="xtraInfo tooltip pieceTip">
                     <i className="fas fa-question-circle"></i>
                     <span className="tooltiptext">
@@ -104,7 +106,7 @@ class Registration extends Component {
             </div>
             <br />
             <div className="row">
-              <div>2. You must be enrolled in a <b>technique</b> class during the quarter the production is occurring.
+              <div><b className="asterisk">*</b> You must be enrolled in a <b>technique</b> class during the quarter the production is occurring.
                 <div className="xtraInfo tooltip pieceTip">
                   <i className="fas fa-question-circle"></i>
                   <span className="tooltiptext">
@@ -115,6 +117,7 @@ class Registration extends Component {
               <br />
               <Checkbox
                 labelStyle={{fontSize: "14px", fontWeight: '500', color: 'hsl(0, 0%, 29%)'}}
+                iconStyle={{ fill: 'hsl(0, 0%, 45%)' }}
                 label="I confirm I am enrolled in a technique class for the quarter during which the show is occuring."
                 onClick={() => { this.setState({ clicked: !this.state.clicked }) }}
               />
@@ -122,11 +125,11 @@ class Registration extends Component {
             <br />
             <div className="row">
               <div>
-                3. Availability <b>[click & drag to indicate when you are <b className="importantAvailabilityFormMessage">AVAILABLE </b>to rehearse]</b>
+              <b className="asterisk">*</b> Availability <b>[click & drag to indicate when you are <b className="importantAvailabilityFormMessage">AVAILABLE </b>to rehearse]</b>
                 <div className="xtraInfo tooltip pieceTip">
                   <i className="fas fa-question-circle"></i>
                   <span className="tooltiptext">
-                    Indicate your availability for the quarter that rehearsals will <b className="emphasis">starting</b>.
+                    Indicate your availability for the quarter that rehearsals will be <b className="emphasis">starting</b>.
                   </span>
                 </div>
               </div>
@@ -135,7 +138,7 @@ class Registration extends Component {
             <br />
             <div className="row">
               <div>
-                4. Please indicate any additional availability notes below
+                Please indicate any additional availability notes below
                 <div className="xtraInfo tooltip pieceTip">
                   <i className="fas fa-question-circle"></i>
                   <span className="tooltiptext">
