@@ -56,6 +56,7 @@ func main() {
 	adminConsolePath := require("ADMINCONSOLEPATH")
 	frontEndPath := require("FRONTENDPATH")
 	assetsPath := require("ASSETSPATH")
+	termsPath := require("TERMSPATH")
 
 	// determine if the app should be started in DEBUG mode
 	isDebug := require("STAGE_DEBUG", "false") == "true"
@@ -111,6 +112,7 @@ func main() {
 	baseRouter.HandleFunc(appvars.PasswordResetPath, authContext.PasswordResetHandler)
 	baseRouter.PathPrefix("/reset/").Handler(handlers.PreventDirListing(http.StripPrefix("/reset/", http.FileServer(http.Dir(resetPasswordClientPath)))))
 	baseRouter.PathPrefix("/admin").Handler(handlers.AddTrailingSlash(http.StripPrefix("/admin/", http.FileServer(http.Dir(adminConsolePath)))))
+	baseRouter.PathPrefix("/terms").Handler(handlers.AddTrailingSlash(http.StripPrefix("/terms/", http.FileServer(http.Dir(termsPath)))))
 	baseRouter.PathPrefix("/assets/tpl/").Handler(http.NotFoundHandler()) // don't serve the assets/tpl directory
 	baseRouter.PathPrefix("/assets/").Handler(handlers.PreventDirListing(http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsPath)))))
 	baseRouter.PathPrefix(appvars.BaseAPIPath + "/flushcasting").Handler(authorizer.Authorize(castingContext.FlushCastingHandler)).

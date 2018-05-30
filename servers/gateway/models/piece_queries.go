@@ -431,6 +431,23 @@ func (store *Database) UpdateMusicianByID(id int, updates *NewPieceMusician) *DB
 	return nil
 }
 
+// DeleteMusicianByID deletes the musician with the given id.
+// Returns a DBError if an error occurred.
+func (store *Database) DeleteMusicianByID(id int) *DBError {
+	res, err := store.db.Exec(`UPDATE Musician M SET IsDeleted = TRUE WHERE MusicianID = ?`, id)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error executing update: %v", err), http.StatusInternalServerError)
+	}
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("given musician does not exist or has already been deleted", http.StatusNotFound)
+	}
+	return nil
+}
+
 // InsertMusicianToPiece inserts a new musician to the given piece. Returns a DBError if an error occurred.
 func (store *Database) InsertMusicianToPiece(pieceID, creator int, musician *NewPieceMusician) *DBError {
 	infoSheet, dberr := store.GetPieceInfoSheet(pieceID)

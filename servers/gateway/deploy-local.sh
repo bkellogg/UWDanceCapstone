@@ -98,6 +98,7 @@ deployAPI () {
     -e ASSETSPATH=/assets/ \
     -e ADMINCONSOLEPATH=/clients/console \
     -e FRONTENDPATH=/clients/frontend/build/ \
+    -e TERMSPATH=/clients/terms \
     -e TEMPLATESPATH=/assets/tpl/ \
     -e CLIENTPATH=$CLIENTPATH \
     -e STAGE_ADMIN_FIRSTNAME=Brendan \

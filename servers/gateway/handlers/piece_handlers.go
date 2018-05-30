@@ -163,6 +163,12 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error updating musician by id")
 			}
 			return respondWithString(w, "musician updated", http.StatusOK)
+		} else if r.Method == "DELETE" {
+			dbErr := ctx.store.DeleteMusicianByID(objectID)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error deleting musician by id")
+			}
+			return respondWithString(w, "musician deleted", http.StatusOK)
 		} else {
 			return methodNotAllowed()
 		}

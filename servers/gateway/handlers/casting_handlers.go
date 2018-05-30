@@ -338,8 +338,8 @@ func getNormalizedTimeParts(time time.Time) (string, string, string, string) {
 	}
 
 	expiryTimeHourString := strconv.Itoa(expiryTimeHour)
-	if expiryTimeHour/10 == 0 {
-		expiryTimeHourString = "0" + expiryTimeHourString
+	if expiryTimeHour == 0 {
+		expiryTimeHourString = "12"
 	}
 
 	expiryTimeMinute := time.Minute()
