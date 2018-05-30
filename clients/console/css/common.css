@@ -26,23 +26,20 @@ body{
 
 /*RIGHT CARD*/
 .right-card{
-  width: 35%;
+  max-width: 30%;
+  width: auto;
   position: relative;
   display: inline-block;
   vertical-align: top;
+  margin-left: 5%
 }
 
 /*LEGENDS*/
 .descriptions{
-  width: 20%;
-  right: 100px;
-  display: inline-block;
-  width: 350px !important;
   background-color: #f6f8fc;
   padding: 10px;
   padding-left: 25px;
   border: 1px solid #d8d8d8;
-  margin-left: 100px;
 }
 
 .descriptions ul {
@@ -195,4 +192,23 @@ h2.showName{
 .form {
   display: inline-block;
   margin-right: 0px;
+}
+
+@media only screen and (max-width : 600px) {
+/*LEFT CARD*/
+.left-card, r.ight-card{
+  width: 100% !important;
+  position: relative;
+  display: block;
+}
+
+/*RIGHT CARD*/
+.right-card{
+  margin-top: 25px;
+  margin-left: 0;
+}
+
+.descriptions{
+  width: 400px !important;
+}
 }
