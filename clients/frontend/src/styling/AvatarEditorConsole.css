@@ -11,3 +11,16 @@
     margin-right: 20%;
     display: inline-block;
 }
+
+.turnButton{
+    background-color: #22A7E0;
+    color: white;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 4px;
+    width: 60px;
+}
+
+.turnButton:hover{
+    background-color: #1e96c9;
+}

@@ -59,5 +59,5 @@ function checkForUser() {
 
 function setLink() {
     var a = document.getElementById('link-dance-page');
-    a.href = API_URL_BASE
+    a.href = "https://" + HOST
 }

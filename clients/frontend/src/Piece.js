@@ -37,8 +37,6 @@ class Piece extends Component {
       rehearsalSchedule : "",
       choreoNotes : "",
       musicians : [{}],
-      newMusicians: [{}],
-      editMusicians: [{}],
       costumeDesc : "",
       propsDesc : "",
       lightingDesc : "",
@@ -107,7 +105,6 @@ class Piece extends Component {
         musicSource : res.musicSource,
         rehearsalSchedule : res.rehearsalSchedule,
         choreoNotes : res.chorNotes,
-        musicians : res.musicians,
         costumeDesc : res.costumeDesc,
         propsDesc : res.itemDesc,
         lightingDesc : res.lightingDesc,
@@ -289,6 +286,8 @@ class Piece extends Component {
         .then((t) => Promise.reject(t));
     })
     .then(res => {
+      console.log(res)
+      console.log(this.state.musicians)
       this.setState({
         musicians: res,
         numMusicians: res.length
@@ -351,10 +350,8 @@ class Piece extends Component {
   };
 
   handleChangeMusician = (event, index, value) => {
-    let musicians = this.state.musicians
     this.setState({ 
       numMusicians: value,
-      musicians : musicians
     })
   };
 
@@ -699,7 +696,14 @@ class Piece extends Component {
                         style={STYLES}
                       />
 
-                      <p className="inputTitle"><b>If music will be performed live, number of musicians: </b> </p>
+                      <div className="inputTitle"><b>If music will be performed live, number of musicians: </b>
+                      <div className="xtraInfo tooltip">
+                        <i className="fas fa-question-circle"></i>
+                        <span className="tooltiptext"> Musicans <b className="emphasis">must</b> have a <b className="emphasis">valid</b> phone number and email.
+                        Once you fill a musician row out, to delete it you must <b className="emphasis">reduce</b> the number of musicians.
+                        </span>
+                      </div>
+                      </div>
                       <SelectField
                         style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', width: '90px', paddingLeft: '10px'}}
                         defaultValue={numMusicians}

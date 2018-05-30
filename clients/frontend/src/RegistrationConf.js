@@ -59,6 +59,7 @@ class RegistrationConf extends Component {
                 <div className="successWrap">
                   <div className="successfulRegistrationMessage">
                     <p id="successMessage">You have successfully registered for the show! Your assigned number is {this.props.regNum}.</p>
+                    <p>This number will be your identifier during the audition, when you arrive you will check in with the choreographers running the audition and recieve your physical number.</p>
                     <p>Location: {this.props.audition.location}</p>
 
                     <p>Date: {moment(this.props.audition.time).format("LLLL")}</p>

@@ -239,6 +239,10 @@ class Calendar extends Component {
 
   render() {
     let slotInfo = this.state.slotInfo
+    let defaultView = "week"
+    if (window.innerWidth < 617) {
+      defaultView = "day"
+    }
     return (
       <section>
         {
@@ -250,7 +254,7 @@ class Calendar extends Component {
         <BigCalendar style={{ height: "710px", width: "100%" }}          
           selectable
           defaultDate={new Date()}
-          defaultView='week'
+          defaultView={defaultView}
           events={this.state.events}
           views={VIEWS}
           step={30}

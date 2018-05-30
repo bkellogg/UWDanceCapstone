@@ -284,6 +284,12 @@ class Profile extends Component {
 
   render() {
     let email = this.state.user.email
+    let defaultBio = this.state.text
+    let hintText = false
+    if  (this.state.text.length === 0) { //if there is no bio
+      hintText = "EX: I am majoring in Informatics and have danced with Relay Dance Collective, Chamber Dance Company, and New Vision Dance Co."
+      defaultBio = ""
+    }
     return (
       <section className="main">
         <div className="mainView">
@@ -323,8 +329,8 @@ class Profile extends Component {
                         <div id="editName">
                           <b>Name: </b>
                           <Row>
-                            <Input class="inputMob" id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}/>
-                            <Input class="inputMob" id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}} />
+                            <Input className="inputMob" id="firstName" name="firstName" s={6} label="First Name" onChange={this.inputChange} defaultValue={this.state.fname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}/>
+                            <Input className="inputMob" id="lastname" name="lastName" s={6} label="Last Name" onChange={this.inputChange} defaultValue={this.state.lname} style={{backgroundColor: 'white', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}} />
                           </Row>
                         </div>
                       }
@@ -339,16 +345,42 @@ class Profile extends Component {
               </div>
               <div className="mainContentBorder">
                 <div id="bio" className="bio">
-                  <div className="subheader"><b>Bio:</b></div>
+                  {/* <div className="subheader">
+                    <b>Bio:</b>
+                    <div className="xtraInfo tooltip pieceTip">
+                      <i className="fas fa-question-circle"></i>
+                      <span className="tooltiptext">
+                        This is the maximum <b className="emphasis">number</b> of 
+                        <b className="emphasis"> pieces</b> that you can do during the show run. Each piece rehearses for 
+                        <b className="emphasis"> ~4 hours </b> a week.
+                      </span>
+                    </div> 
+                </div> */}
                   {
                     !this.state.edit &&
                     <section>
+                        <div className="subheader">
+                          <b>Bio:</b>
+                        </div>
+    
                       {this.state.bio !== "" && this.state.bio}
                       {this.state.bio === "" && " Dancer has no bio"}
                     </section>
                   }
                   {
                     this.state.edit &&
+                    <section>
+                        <div className="subheader">
+                          <b>Bio:</b>
+                          <div className="xtraInfo tooltip pieceTip">
+                            <i className="fas fa-question-circle"></i>
+                            <span className="tooltiptext">
+                              This will be your bio in the program of shows that you are participating in. <b className="emphasis">You cannot have a blank bio.</b> Your
+                              choreographer will tell you how many words it needs to be for the show, but it is typically 
+                              <b className="emphasis"> ~60 words long. </b>
+                            </span>
+                          </div>
+                        </div>
                     <div id="editBio">
                       <div className="row">
                         <form className="col s12">
@@ -357,7 +389,8 @@ class Profile extends Component {
                               <TextField
                                 name="bioUpload"
                                 className="bioUpload2"
-                                defaultValue={this.state.text}
+                                hintText={hintText}
+                                defaultValue={defaultBio}
                                 multiLine={true}
                                 onChange={this.handleBioChange}
                                 style={{backgroundColor: 'white', height: '100px', maxWidth: '400px', width: '100%', border: '1px solid lightgray', borderRadius: '5px', paddingLeft: '10px'}}
@@ -368,6 +401,7 @@ class Profile extends Component {
                         </form>
                       </div>
                     </div>
+                  </section>
                   }
                 </div>
 
@@ -376,7 +410,9 @@ class Profile extends Component {
                       {
                         !this.state.edit &&
                         <section>
-                          <div className="subheader"><b>Resume:</b></div>
+                          <div className="subheader">
+                            <b>Resume:</b>
+                          </div>
                           {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
                           {this.state.resume != null && 
                             <a href={this.state.resume}>View PDF Resume</a>
@@ -386,7 +422,16 @@ class Profile extends Component {
                       {
                         this.state.edit &&
                         <section>
-                          <div className="subHeader"><b>Resume:  </b></div>
+                          <div className="subHeader">
+                            <b>Resume:  </b>
+                            <div className="xtraInfo tooltip pieceTip">
+                              <i className="fas fa-question-circle"></i>
+                              <span className="tooltiptext">
+                                This dance resume is <b className="emphasis">not required</b>, but 
+                                could be used to demonstrate more of your skills!
+                              </span>
+                            </div>
+                          </div>
                           <div> Upload your dance resume <b>AS A PDF.</b> </div>
                           <Input id="resumeUpload" name="resumeUpload" type="file" onChange={this.resumeChange} />
                         </section>
@@ -397,10 +442,17 @@ class Profile extends Component {
                 {
                   !this.state.edit &&
                   <div id="history">
-                    <div id="historyTitle" className="subheader"><b>Piece History</b></div>
+                    <div id="historyTitle" className="subheader">
+                      <b>Piece History</b>
+                        <div className="xtraInfo tooltip pieceTip">
+                          <i className="fas fa-question-circle"></i>
+                          <span className="tooltiptext">
+                            This is a history of shows you have participated in <b className="emphasis">through this application</b>. We will automatically fill in values.
+                          </span>
+                        </div>
+                      </div>
                     {this.state.history.length > 0 && this.state.history.map((p, i) => {
                       return (
-                        //TODO STYLE THESE
                         <div className="showHistory" key={i}>
                           <p>{p.name + ", " + p.year}</p>
                         </div>

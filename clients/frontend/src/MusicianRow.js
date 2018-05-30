@@ -14,9 +14,8 @@ class MusicianRow extends Component {
   };
 
   componentWillUnmount(){
-    console.log("unmounting")
-    console.log(this.state)
-        Util.makeRequest("pieces/" + this.props.pieceID + "/musicians/" + this.state.id, {},"DELETE", true)
+    //right now if you delete the component it deletes the contents
+    Util.makeRequest("pieces/" + this.props.pieceID + "/musicians/" + this.state.id, {},"DELETE", true)
         .then(res => {
             if (res.ok) {
               return res.text()
@@ -40,7 +39,6 @@ class MusicianRow extends Component {
   componentWillMount(){
       if (this.state.existing) {
           this.setState({
-              toDelete: false,
               musician: this.props.musician
           })
       }
@@ -124,7 +122,7 @@ class MusicianRow extends Component {
       <section>
           <div>
               <div className="param param-displayInline">
-          <p className="inputLabelBlock-noWidth"><b>Name </b> </p>
+          <p className="inputLabelBlock-noWidth"><b className="asterisk">*</b> <b>Name </b> </p>
           
                 <TextField 
                     defaultValue={this.props.musician.name}
@@ -134,7 +132,7 @@ class MusicianRow extends Component {
                 />
             </div>
             <div className="param param-displayInline">
-            <p className="inputLabelBlock-noWidth"><b>Phone Number </b> </p>
+            <p className="inputLabelBlock-noWidth"><b className="asterisk">*</b> <b>Phone Number </b> </p>
                 <TextField 
                     defaultValue={this.props.musician.phone}
                     id="musicianPhoneNumber"
@@ -143,7 +141,7 @@ class MusicianRow extends Component {
                 />
             </div>
             <div className="param param-displayInline">
-            <p className="inputLabelBlock-noWidth"><b>Email </b> </p>
+            <p className="inputLabelBlock-noWidth"><b className="asterisk">*</b> <b>Email </b> </p>
                 <TextField 
                     defaultValue={this.props.musician.email}
                     id="musicianEmail"
