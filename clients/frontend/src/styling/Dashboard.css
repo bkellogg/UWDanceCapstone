@@ -1,28 +1,27 @@
-/*NEW AUDITION MESSAGE -- BLUE TONES*/
-.newAuditionBorderColor{
-  border-left: 6px solid rgb(52, 152, 219);
-}
-
+/*NEW AUDITION MESSAGE & COMPLETE PROFILE MESSAGE -- RED TONES*/
 .auditionAnnouncementCardColor{
   padding: 15px 25px;
-  background-color: rgb(235, 245, 251);
+  background-color: rgb(245, 238, 248);
   width: 100%;
   position: relative;
 }
 
-/*COMPLETE PROFILE MESSAGE -- RED TONES*/
-.completeProfileBorderColor, .announcementBorderColor {
-  border-left: 6px solid rgb(231, 76, 60);
+.announcementBorderColor, .newAuditionBorderColor {
+  border-left: 6px solid rgb(142, 68, 173);
 }
 
-.completeProfileCardColor, .announcementCardColor{
-  background-color:rgb(253, 237, 236);
+.announcementCardColor{
+  background-color: rgb(245, 238, 248);
 }
 
 /*CAST MESSAGE -- BLUE TONES*/
-.castBorderColor{
-  border-left: 6px solid rgb(52, 152, 219);
-  background-color: rgb(235, 245, 251);
+.completeProfileBorderColor, .castBorderColor{
+  border-left: 6px solid rgb(231, 76, 60);
+  background-color:rgb(253, 237, 236);
+}
+
+.completeProfileBorderColor{
+  cursor: pointer;
 }
 
 .announcement {
@@ -39,9 +38,29 @@ div.announcementMessage>p:nth-child(2) {
 }
 
 .acceptCastButton{
-  margin-left: 25px;
-  margin-bottom: 15px;
-  margin-top: -25px;
+  margin-left: 25px !important;
+  margin-bottom: 15px !important;
+  margin-top: -25px !important;
+  color: white !important;
+  cursor: pointer !important;
+  background-color: #22A7E0 !important;
+}
+
+.acceptCastButton:hover{
+  background-color: #1e96c9 !important;
+  cursor: pointer !important;
+}
+
+.declineCastButton{
+  margin-left: 15px !important;
+  cursor: pointer !important;
+  color: white !important;
+  background-color: #e65100 !important;
+}
+
+.declineCastButton:hover{
+  background-color: #cf4800 !important;
+  cursor: pointer !important;
 }
 
 .showTitle2{
