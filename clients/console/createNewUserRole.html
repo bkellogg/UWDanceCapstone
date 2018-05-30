@@ -15,8 +15,8 @@
 <body>
     <nav id='nav-bar'></nav>
     <div class="page-wrap">
-    <h1>Create New User Role</h1>
-    <form class="newRole-form">
+        <h1>Create New User Role</h1>
+        <form class="newRole-form">
             <div class="roleName">
                 <label class="long-input" for="roleName-input">Role Name</label>
                 <input id="roleName-input" type="text">
@@ -28,19 +28,44 @@
             <div class="level">
                 <label class="long-input" for="level-input">Permission Level</label>
                 <select id="level">
-                        <option id="level-input" value=''>Select Level</option>
-                        <option id="level-input" value='100'>100</option>
-                        <option id="level-input" value='70'>70</option>
-                        <option id="level-input" value='10'>10</option>
-                    </select>
+                    <option id="level-input" value=''>Select Level</option>
+                    <option id="level-input" value='100'>100</option>
+                    <option id="level-input" value='70'>70</option>
+                    <option id="level-input" value='10'>10</option>
+                </select>
             </div>
             <button id="search-submit" type="submit">Create Role</button>
         </form>
         <div class="js-error"></div>
-    <h2> Current Roles:</h2>
-    <table id="role_info" class="tablesorter"></table>
-    
-</div>
+        <h2> Current Roles:</h2>
+        <table id="role_info" class="tablesorter"></table>
+        <div class="descriptions">
+            <p>Create new user role allows an admin to create a new roles with unique names and a permission level of 10, 70,
+                or 100.
+                <b>All fields are required.</b>
+            </p>
+            <ul>
+                <li>
+                    <b>Role Name:</b> Abbreviated or shorthand name for role.</li>
+                <li>
+                    <b>Display Name of Role:</b> Display name of role that will be viewed throughout the STAGE application.</li>
+                <li>
+                    <b>Permission Level:</b> This value assigns the user specific permissions and functionality within the STAGE
+                    application.
+                    <ul>
+                        <li>
+                            <b>100:</b> Allows the user to have access to all the functionality of the STAGE application, view
+                            all user information, and access to the Admin Console. </li>
+                        <li>
+                            <b>70:</b> Allows the user to view user profiles, participate in the casting process, and modify
+                            all information about thier piece.</li>
+                        <li>
+                            <b>10:</b> Allows the user to audition for a show and modify their profile.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/js/vex.combined.min.js"></script>

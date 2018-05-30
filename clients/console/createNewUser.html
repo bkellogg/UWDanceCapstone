@@ -13,38 +13,57 @@
 <body>
     <nav id='nav-bar'></nav>
     <div class="page-wrap">
-    <h1>Create New User</h1>
-    <form class="signup-form">
-        <div class="fname">
-            <label class="long-input" for="fname-input">First Name</label>
-            <input id="fname-input" type="text">
+        <h1>Create New User</h1>
+        <form class="signup-form">
+            <div class="fname">
+                <label class="long-input" for="fname-input">First Name</label>
+                <input id="fname-input" type="text">
+            </div>
+            <div class="lname">
+                <label class="long-input" for="lname-input">Last Name</label>
+                <input id="lname-input" type="text">
+            </div>
+            <div class="email">
+                <label class="long-input" for="email-input">Email</label>
+                <input id="email-input" type="text">
+            </div>
+            <div class="password">
+                <label class="long-input" for="password-input">Password</label>
+                <input id="password-input" type="password">
+            </div>
+            <div class="passwordconf">
+                <label class="long-input" for="passwordconf-input">Confirm Password</label>
+                <input id="passwordconf-input" type="password">
+            </div>
+            <div class="role">
+                <select id="roleName">
+                    <option id="role-input" value=''>
+                    </option>
+                </select>
+            </div>
+            <button id="search-submit" type="submit" isabled="disabled">Create User</button>
+        </form>
+        <div class="js-error"></div>
+        <div class="descriptions">
+            <p>Create new user allows the creation of a new STAGE user.
+                <b>All fields are required.</b>
+            </p>
+            <ul>
+                <li>
+                    <b>First Name:</b> User's first name, can be a combindation of letters, numbers, and special characters.</li>
+                <li>
+                    <b>Last Name:</b> User's last name, can be a combindation of letters, numbers, and special characters.</li>
+                <li>
+                    <b>Email:</b> Must be a valid email address. This will be used for login purposes and STAGE communications.</li>
+                <li>
+                    <b>Password:</b> Must be at least six characters long and can be a combination of letters, numbers, and
+                    special characters.</li>
+                <li>
+                    <b>User Role:</b> Assign user role based on user type. User role descriptions on Create New User Role Name
+                    page.</li>
+            </ul>
         </div>
-        <div class="lname">
-            <label class="long-input" for="lname-input">Last Name</label>
-            <input id="lname-input" type="text">
-        </div>
-        <div class="email">
-            <label class="long-input" for="email-input">Email</label>
-            <input id="email-input" type="text">
-        </div>
-        <div class="password">
-            <label class="long-input" for="password-input">Password</label>
-            <input id="password-input" type="password">
-        </div>
-        <div class="passwordconf">
-            <label class="long-input" for="passwordconf-input">Confirm Password</label>
-            <input id="passwordconf-input" type="password">
-        </div>
-        <div class="role">
-            <select id="roleName">
-                <option id="role-input" value=''>
-                </option>
-            </select>
-        </div>
-        <button id="search-submit" type="submit" isabled="disabled">Create User</button>
-    </form>
-    <div class="js-error"></div>
-</div>
+    </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vex-js/4.1.0/js/vex.combined.min.js"></script>

@@ -120,8 +120,6 @@ function getAllUsersInPiece(pieceID, pieceIDValue) {
         })
         .then((data) => {
             $(data.choreographer).each(function (index, value) {
-                //$("#" + pieceIDValue).append('<p id=chor-' + pieceID + '>Choreographer: ' + value.firstName + ' ' + value.lastName + '</p>')
-                //$("#chor-" + pieceID).append('<p id=chor-' + pieceID + '-email>Email: ' + value.email + '</p>')
                 $("#" + pieceIDValue).append('<button class="show dropDownClick firstChild" id=' + pieceIDValue + '-dancer-table onClick=showTable(this.id)>Cast</button><div className=dancerInfo id=' +
                     pieceIDValue + '-dancer-table-info style= display:none><table class="all-dancers-table" id=' + pieceIDValue + '-table style= display:none ><tbody><tr class=categories><th>Name</th><th>Role</th><th>Bio</th><th>Email</th></tr></tbody></table><p  class="no-dancers" id=' + pieceIDValue + '-table-no>No Dancers Assigned</p></div>')
                 $("#" + pieceIDValue).append('<button class="show dropDownClick" id=button-info-' + pieceIDValue + ' onClick=showPieceInfoSheet(this.id)>Information Sheet</button><div class=pieceInfo id=info-' + pieceIDValue + ' style= display:none><p id=no-' + pieceIDValue + '>No Piece Information Available </p></div>')
@@ -162,10 +160,6 @@ function getAllUsersInPiece(pieceID, pieceIDValue) {
                     return res.text().then((t) => Promise.reject(t));
                 })
                 .then((data) => {
-                    //console.log("user data ")
-                    //console.log(userData)
-                    //console.log("piece info ")
-                    //console.log(data)
                     var message = document.getElementById('no-' + pieceIDValue);
                     message.style.display = "none";
                     $(data).each(function (index, value) {
@@ -180,7 +174,7 @@ function getAllUsersInPiece(pieceID, pieceIDValue) {
                             '<p>Music Title(s): ' + isEmpty(value.musicTitle) + '</p>' +
                             '<p>Performed By: ' + isEmpty(value.performedBy) + '</p>' +
                             '<p>Music Source: ' + isEmpty(value.MusicSource) + '</p>' +
-                            '<p>Number of Live Musician: ' + value.numMusicians + '</p>' +
+                            '<p>Number of Live Musician: ' + value.musicians.length  + '</p>' +
                             '<p>Contact Information for Musicians: </p><table class="all-musicians-table" id=' + pieceIDValue + '-musician-table style= display:none><tbody><tr class=categories><th>Name</th><th>Email</th><th>Phone</th></tr></tbody></table>' +
                             '<p>Rehearsal Schedule: ' + isEmpty(value.rehearsalSchedule) + '</p>' +
                             '<p>Choreographers Notes: ' + isEmpty(value.chorNotes) + '</p>' +

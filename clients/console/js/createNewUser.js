@@ -51,14 +51,15 @@ signupForm.addEventListener("submit", function (evt) {
                             .then((res) => {
                                 if (res.ok) {
                                     vex.dialog.alert(" User: " + fname.value + " " + lname.value + " with the role of " + roleDisplayNames[role.value] + " successfully created.");
-                                    return res.json();
+                                    $('input').val('');
+                                    $('.signup-form')[0].reset();
+                                    return;
                                 }
                                 return res.text().then((t) => Promise.reject(t));
                             })
-                    })
-                    .then(() => {
-                        $('input').val('');
-                        $('.signup-form')[0].reset();
+                            .catch((err) => {
+                                errorBox.textContent = err;
+                            })
                     })
                     .catch((err) => {
                         errorBox.textContent = err;

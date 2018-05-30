@@ -127,7 +127,7 @@ function populateShowTypeOptions() {
             return res.text().then((t) => Promise.reject(t));
         })
         .then((data) => {
-            var options = '<option value=""><strong>Show Type</strong></option>';
+            var options = '<option value=""><strong>Concert Type</strong></option>';
             $(data).each(function (index, value) {
                 options += '<option value="' + value.name + '">' + value.desc + '</option>';
                 showTypeNames[value.name] = value.desc;

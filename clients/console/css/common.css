@@ -144,3 +144,23 @@ h2.showName{
 .fill-input{
   font-size: 14px;
 }
+
+
+.descriptions {
+  background-color: #f6f8fc;
+  padding: 10px;
+  padding-left: 25px;
+  border: 1px solid #d8d8d8;
+  width: 40%;
+  margin-bottom: 25px;
+  vertical-align: top;
+  display: inline-block;
+}
+
+.descriptions ul {
+  list-style-type: disc;
+}
+
+.signup-form {
+  display: inline-block;
+}
