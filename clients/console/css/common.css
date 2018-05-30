@@ -31,9 +31,11 @@ label.long-input{
   padding: 10px;
   padding-left: 25px;
   border: 1px solid #d8d8d8;
-  width: 60%;
+  width: 50%;
   margin-bottom: 25px;
+  display: inline-block;
 }
+
 
 .dashboardAnnouncement{
   background-color: rgb(253, 237, 236);
@@ -101,7 +103,7 @@ h2.showName{
 
 
 /*BUTTONS*/
-.delete, #search-submit, #signin, .pieces, #passwordemail{
+.delete, #search-submit, #signin, .pieces, #passwordemail, .profile-link{
   height: 35px;
   color: white;
   font-size: 15px;
@@ -113,12 +115,12 @@ h2.showName{
   outline: none;
 }
 
-#search-submit, #signin, .pieces, #passwordemail{
+#search-submit, #signin, .pieces, #passwordemail, .profile-link{
   background-color: #22A7E0;
   border: 1px solid rgb(7, 95, 133); 
 }
 
-#search-submit:hover, .pieces:hover{
+#search-submit:hover, .pieces:hover, .profile-link:hover{
   background-color: #36acdf;
 }
 

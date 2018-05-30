@@ -44,17 +44,6 @@ tr:nth-child(even) {
     background-color: #f6f8fc
 }
 
-a:link, a:visited {
-    border-radius: 3px;
-    background-color: #22A7E0;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
+.profile-link{
     text-decoration: none;
-    display: inline-block;
-}
-
-
-a:hover, a:active {
-    background-color: #36acdf;
 }
