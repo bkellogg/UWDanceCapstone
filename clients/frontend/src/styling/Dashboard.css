@@ -1,12 +1,16 @@
 /*NEW AUDITION MESSAGE & COMPLETE PROFILE MESSAGE -- RED TONES*/
+.newAuditionBorderColor{
+  border-left: 6px solid #22A7E0;
+}
+
 .auditionAnnouncementCardColor{
   padding: 15px 25px;
-  background-color: rgb(245, 238, 248);
+  background-color: rgb(235, 245, 251);
   width: 100%;
   position: relative;
 }
 
-.announcementBorderColor, .newAuditionBorderColor {
+.announcementBorderColor {
   border-left: 6px solid rgb(142, 68, 173);
 }
 

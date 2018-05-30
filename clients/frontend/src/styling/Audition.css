@@ -90,3 +90,8 @@ RaisedButton:hover{
       border: 1px solid lightgray;
       border-radius: 5px;
   }
+
+
+.asterisk{
+    color: #e65100;
+}

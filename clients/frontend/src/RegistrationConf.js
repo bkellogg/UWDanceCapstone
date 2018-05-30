@@ -73,7 +73,7 @@ class RegistrationConf extends Component {
             !this.props.showChangeReg &&
             <div className="editRegistration">
               <div className="unregister">
-                <Button className="unregisterButton" onClick={this.unLink}>Unregister</Button>
+                <Button className="unregisterButton negativeButton" onClick={this.unLink}>Unregister</Button>
               </div>
               <div className="changeAvailability">
                 <Button className="changeAvailabilityButton" onClick={this.changeReg}>Change Availability</Button>
