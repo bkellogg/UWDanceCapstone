@@ -31,7 +31,7 @@ function getAnnouncements() {
         })
         .then((data) => {
             $(data.announcements).each(function (index, value) {
-                $(".active-announcements").append('<div class="announcements dashboardAnnouncement" id="message">' + value.message + '</div>')
+                $(".active-announcements").append('<div class="announcements dashboardAnnouncement" id="message">' + value.message + '<p style=color:grey;>' + value.createdBy.firstName + ' ' + value.createdBy.lastName + ', ' + moment(value.createdAt).format("MM/DD/YY hh:mm A") + '</p></div>')
                 $("#message").attr("id", value.id)
                 $("#remove").attr("id", value.id)
             });
@@ -53,7 +53,7 @@ function getActiveShows() {
             });
         })
         .then(() => {
-            makeRequest("shows", {}, "GET", true)
+            makeRequest("shows?history=current", {}, "GET", true)
                 .then((res) => {
                     if (res.ok) {
                         return res.json();

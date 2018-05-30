@@ -1,5 +1,7 @@
 "use strict";
 
+vex.defaultOptions.className = 'vex-theme-default'
+
 refreshLocalUser();
 
 var newAnnouncementTypeForm = document.querySelector(".newAnnouncementType-form");
@@ -13,26 +15,39 @@ getAnnouncementTypes()
 
 newAnnouncementTypeForm.addEventListener("submit", function (evt) {
     evt.preventDefault();
-    var payload = {
-        "name": announcementTypeName.value,
-        "desc": description.value,
-    };
-    makeRequest("announcements/types", payload, "POST", true)
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
+    vex.dialog.confirm({
+        message: 'Are you sure you want to create a show type with the below information?',
+        input: [
+            '<p>Announcement Type Name: ' + announcementTypeName.value + ' </p>',
+            '<p>Description: ' + description.value + '</p>',
+        ].join(''),
+        callback: function (response) {
+            if (response) {
+                var payload = {
+                    "name": announcementTypeName.value,
+                    "desc": description.value,
+                };
+                makeRequest("announcements/types", payload, "POST", true)
+                    .then((res) => {
+                        if (res.ok) {
+                            vex.dialog.alert({
+                                message: "New announcement type successfully created.",
+                                callback: function () {
+                                    location.reload(true);
+                                }
+                            })
+                            return res.json();
+                        }
+                        return res.text().then((t) => Promise.reject(t));
+                    })
+                    .catch((err) => {
+                        errorBox.textContent = err;
+                    })
+            } else {
+                return;
             }
-            return res.text().then((t) => Promise.reject(t));
-        })
-        .then((data) => {
-            alert("New announcement type successfully created.");
-            $('input').val('');
-            $('.newAnnouncementType-form')[0].reset();
-            location.reload();
-        })
-        .catch((err) => {
-            errorBox.textContent = err;
-        })
+        }
+    })
 })
 
 
