@@ -35,7 +35,9 @@ class Piece extends Component {
       musicSource : "",
       rehearsalSchedule : "",
       choreoNotes : "",
-      musicians : [],
+      musicians : [{}],
+      newMusicians: [{}],
+      editMusicians: [{}],
       costumeDesc : "",
       propsDesc : "",
       lightingDesc : "",
@@ -297,14 +299,17 @@ class Piece extends Component {
     Util.makeRequest("pieces/" + pieceID + "/musicians", {}, "GET", true)
     .then(res => {
       if (res.ok) {
-        return res.text()
+        return res.json()
       }
       return res
         .text()
         .then((t) => Promise.reject(t));
     })
     .then(res => {
-      console.log(res)
+      this.setState({
+        musicians: res,
+        numMusicians: res.length
+      })
     })
     .catch((err) => {
       console.error(err)
@@ -394,11 +399,33 @@ class Piece extends Component {
     })
   }
 
-  updateMusicianList = (musician, id) => {
+  updateMusicianList = (m, id) => {
       let musicians = this.state.musicians
-      musicians[id] = musician
+      let editMusicians = this.state.editMusicians
+      let newMusicians = this.state.newMusicians
+      musicians.forEach((musician, i) => {
+        if (musician.id === id) {
+          editMusicians.forEach((music, j) => {
+            if (music.id === id) {
+              editMusicians[j] = m
+            } else {
+              editMusicians.push(m)
+            }
+          })
+        } else {
+          newMusicians.forEach((music, j) => {
+            if (music.id === id) {
+              newMusicians[j] = m
+            } else {
+              newMusicians.push(m)
+            }
+          })
+        }
+      })
       this.setState({
-        musicians : musicians
+        musicians : musicians,
+        editMusicians : editMusicians,
+        newMusicians : newMusicians
       })
   }
 
@@ -407,16 +434,16 @@ class Piece extends Component {
     let numMusicians = this.state.numMusicians
     let musicians = this.state.musicians
     const dancers = this.state.dancers
-    musicianRow = musicians.map((musician, i) => {
-      return (
-        <MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={musician}/>
-      )
-    })
 
-    for (let i = 0; i < numMusicians - musicians.length; i++) {
-      musicianRow.push(<MusicianRow key={i + "empty"} id={i} musicianContact={this.updateMusicianList} musician={{name:"", phone:"", email:""}}/>)
+    for (let i = 0; i < numMusicians; i++) {
+      console.log(i)
+      if (this.state.musicians.length > i) {
+        musicianRow.push(<MusicianRow key={i} id={musicians[i].id} musicianContact={this.updateMusicianList} musician={musicians[i]} existing={true}/>)
+      } else {
+        musicianRow.push(<MusicianRow key={i} id={i} musicianContact={this.updateMusicianList} musician={{name:"", phone:"", email:""}} existing={false}/>)
+      }
     }
-
+    console.log(numMusicians)
     let castRows = dancers.map((dancer, i) => {
       return (<PersonRow p={dancer} piece={true} key={i} pieceID={this.state.pieceID} updateCast={() => {this.getPieceUsers(this.state.pieceID)}}/>)
     })

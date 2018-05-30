@@ -5,20 +5,19 @@ class MusicianRow extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        id: this.props.id,
-        musician : {
-            name : "",
-            phone : "",
-            email : ""
-        }
+        id: this.props.musician.id,
+        musician : {},
+        existing: this.props.existing 
     }
   };
 
+  componentWillUnmount(){
+      console.log("unmounting")
+  }
   handleChange = name => event => {
     this.setState({
       [name]: event.target.value,
     });
-    
   };
 
   updateName = (event) => {
@@ -49,6 +48,7 @@ class MusicianRow extends Component {
   }
 
   render() {
+    console.log(this.state)
     return (
       <section>
           <div>
