@@ -288,15 +288,11 @@ func (npm *NewPieceMusician) Validate() error {
 		if len(npm.Phone) < 10 || len(npm.Phone) > 11 {
 			return errors.New("piece musician must have a valid phone number")
 		}
-	} else {
-		npm.Phone = "Not provided"
 	}
 	if len(npm.Email) > 0 {
 		if _, err := mail.ParseAddress(npm.Email); err != nil {
 			return errors.New("piece musicians must have a valid email address")
 		}
-	} else {
-		npm.Email = "Not provided"
 	}
 	npm.Name = strings.Title(npm.Name)
 	npm.Email = strings.ToLower(npm.Email)
