@@ -82,8 +82,7 @@ func NewNotifier() *Notifier {
 // id. Will return nil and false if the id does not match a known
 // client, but will not report an error.
 func (n *Notifier) GetClient(id int64) (*WebSocketClient, bool) {
-	clientReader := n.getClientReader(id)
-	client := <-clientReader
+	client := <-n.getClientReader(id)
 	return client, client != nil
 }
 
