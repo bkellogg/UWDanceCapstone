@@ -151,8 +151,8 @@ class Main extends Component {
 
   getNavigation = () => {
     let showNav = this.state.currShows.map((show, index) => {
-        return <NavigationElement key={index} user={this.state.user} showTitle={show.name} />
-      })
+      return <NavigationElement key={index} user={this.state.user} showTitle={show.name} />
+    })
 
     return <ul className="collapsible collapsible-accordion">{showNav}</ul>
   }
@@ -209,20 +209,28 @@ class Main extends Component {
                 onRequestChange={(open) => this.setState({ open })}>
 
                 <div className="menuList">
-                  <Link to="/">
+                  <Link
+                    className="navMenuItem"
+                    to="/">
                     <MenuItem onClick={this.handleClose}>
                       <p className="mobileNavItem">Dashboard</p>
                     </MenuItem>
                   </Link>
                   {this.getMobileNavigation()}
 
-                  <Link to={{pathname: "/profile"}}>
-                    <MenuItem onClick={this.handleClose}>
+                  <Link
+                    className="navMenuItem"
+                    to={{ pathname: "/profile" }}>
+                    <MenuItem
+
+                      onClick={this.handleClose}>
                       <p className="mobileNavItem">Profile</p>
                     </MenuItem>
                   </Link>
 
-                  <Link to="/faq">
+                  <Link
+                    className="navMenuItem"
+                    to="/faq">
                     <MenuItem onClick={this.handleClose}>
                       <p className="mobileNavItem">Help</p>
                     </MenuItem>
@@ -359,7 +367,7 @@ class Main extends Component {
               }
               return (
                 <Switch key={i}>
-                  <Route exact path={path} render={props => <Show {...props} name={show.name} />} /> 
+                  <Route exact path={path} render={props => <Show {...props} name={show.name} />} />
                   {routes}
                 </Switch>
               )
@@ -370,12 +378,12 @@ class Main extends Component {
           <div className="navigationWrap">
             <ul id="slide-out" className="side-nav fixed">
               <div className="navigationBg">
-              <Link to="/" style={{padding: "0px", marginBottom: "40px"}}>
-                <li>
-                  <div id="logo">
-                  <img className="officialLogoImage" alt="logo" src={logo} />
-                  </div>
-                </li>
+                <Link to="/" style={{ padding: "0px", marginBottom: "40px" }}>
+                  <li>
+                    <div id="logo">
+                      <img className="officialLogoImage" alt="logo" src={logo} />
+                    </div>
+                  </li>
                 </Link>
                 <li className="dropDown">
                   <Link to="/">Dashboard</Link>

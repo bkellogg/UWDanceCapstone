@@ -1,4 +1,5 @@
 /*PAGE LAYOUT STYLE*/
+
 .mainView{
     padding-left: 5%;
     margin-bottom: 50px;
@@ -30,6 +31,22 @@
     margin-top: 30px;
     padding: 25px;
 }
+
+.scrollableCard, .restOfCast, .choreographersSelecteCast{
+    overflow: scroll;
+    height: -webkit-fill-available;
+}
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+  }
 
 img#photo, .fullWidthCard, .card2, .setTimes, .dancersList-filter, .overlapAvailabilityWrap, .choreographersSelecteCast, .restOfCast, .cardBody{
     border: 1px solid #c0c0c0;
