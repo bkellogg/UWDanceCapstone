@@ -156,7 +156,7 @@ class SearchUsers extends Component {
               {Util.titleCase(this.state.searchError)}
             </div>
           }
-          <table class="searchDancersTable">
+          <table class="myPiece-tables">
             <tbody>
             <tr className="categories">
                 <th>Name</th>
