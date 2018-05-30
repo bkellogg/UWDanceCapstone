@@ -247,7 +247,7 @@ class FAQ extends Component {
               <p>STAGE is the modern solution to an age old practice in the arts - producing a show.</p>
 
               <div>
-                <p>Our platform allows you to easily manage critical aspects of a production, by allowing every dancer to create a profile,
+                <p>Our platform is amazing! It allows you to easily manage critical aspects of a production, by allowing every dancer to create a profile,
                 every choreographer to easily select their star cast, and giving the director a comprehensive look at every piece. Our goal is to
                 reduce the stress of scheduling and communication, and let you focus your energy on what really matters - getting your work on STAGE.</p>
                 <p>Want to contribute? Check out our <a href="https://github.com/bkellogg/UWDanceCapstone">Github!</a></p>
