@@ -142,6 +142,30 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 		} else {
 			return methodNotAllowed()
 		}
+	case "musicians":
+		if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+			return permissionDenied()
+		}
+		updates := &models.NewPieceMusician{}
+		if httpErr := receive(r, updates); httpErr != nil {
+			return httpErr
+		}
+		piece, dbErr := ctx.store.GetPieceByMusicianID(objectID)
+		if dbErr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dbErr, "error getting piece by musician ID")
+		}
+		if piece.ID != pieceID {
+			return HTTPError("musician is not part of this piece", http.StatusBadRequest)
+		}
+		if r.Method == "PATCH" {
+			dbErr := ctx.store.UpdateMusicianByID(objectID, updates)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error updating musician by id")
+			}
+			return respondWithString(w, "musician updated", http.StatusOK)
+		} else {
+			return methodNotAllowed()
+		}
 	default:
 		return objectTypeNotSupported()
 	}
@@ -288,6 +312,33 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 				return middleware.HTTPErrorFromDBErrorContext(dberr, "error deleting piece rehearsal times")
 			}
 			return respondWithString(w, "piece rehearsal times deleted", http.StatusOK)
+		} else {
+			return methodNotAllowed()
+		}
+	case "musicians":
+		if r.Method == "GET" {
+			if !ctx.permChecker.UserCanSeePieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+
+			musicians, dbErr := ctx.store.GetPieceMusicians(pieceID)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error getting piece musicians")
+			}
+			return respond(w, musicians, http.StatusOK)
+		} else if r.Method == "POST" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			updates := &models.NewPieceMusician{}
+			if httpErr := receive(r, updates); httpErr != nil {
+				return httpErr
+			}
+			dbErr := ctx.store.InsertMusicianToPiece(pieceID, int(u.ID), updates)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error inserting musician to piece")
+			}
+			return respondWithString(w, "musician created", http.StatusCreated)
 		} else {
 			return methodNotAllowed()
 		}
