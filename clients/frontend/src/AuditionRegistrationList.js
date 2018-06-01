@@ -60,7 +60,7 @@ class AuditionRegistrationList extends Component {
           <td>
             <Link className="personNameLink" to={{ pathname: "/users/" + dancer.user.id }} target="_blank">{dancer.user.firstName + " " + dancer.user.lastName}</Link>
           </td>
-          <td>
+          <td className="hideEmail">
             {dancer.user.email}
           </td>
         </tr>
@@ -77,9 +77,9 @@ class AuditionRegistrationList extends Component {
                   <table>
                     <tbody>
                       <tr className="categories">
-                        <th style={{width: "10%", textAlign:"center"}}>Registration Number</th>
+                        <th style={{width: "10%", textAlign:"center"}}>#</th>
                         <th>Name</th>
-                        <th>Email</th>
+                        <th className="hideEmail">Email</th>
                       </tr>
                       {dancerRows}
                     </tbody>

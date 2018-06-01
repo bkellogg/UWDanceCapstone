@@ -43,4 +43,11 @@
     .overlapAvailability{
         z-index: 2 !important;
     }
+
+    .hideEmail{
+        visibility: hidden;
+        width: 0%;
+        clear: both;
+        display: none;
+    }
 }
