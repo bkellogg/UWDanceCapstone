@@ -2,6 +2,7 @@ package notify
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
@@ -108,6 +109,11 @@ func (n *Notifier) Notify(event *WebSocketEvent) {
 
 // start starts the notification loop
 func (n *Notifier) start() {
+	// in the event that the notifier loop exits, restart the loop
+	defer func() {
+		log.Printf("notifier loop exited...restarting")
+		n.start()
+	}()
 	for {
 		select {
 		case event := <-n.eventQ:

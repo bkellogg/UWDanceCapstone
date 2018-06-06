@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -23,6 +24,23 @@ func (ctx *AuthContext) RolesHandler(w http.ResponseWriter, r *http.Request, u *
 			return middleware.HTTPErrorFromDBErrorContext(err, "error querying roles")
 		}
 		return respond(w, roles, http.StatusOK)
+	case "POST":
+		if !ctx.permChecker.UserCan(u, permissions.CreateRole) {
+			return permissionDenied()
+		}
+		newRole := &models.NewRole{}
+		err := receive(r, newRole)
+		if err != nil {
+			return err
+		}
+		role, dbErr := ctx.store.InsertRole(newRole)
+		if dbErr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dbErr, "error querying roles")
+		}
+		if err := ctx.permChecker.FlushRoleCache(); err != nil {
+			return HTTPError(fmt.Sprintf("error updating role cache: %v", err), http.StatusInternalServerError)
+		}
+		return respond(w, role, http.StatusCreated)
 	default:
 		return methodNotAllowed()
 	}
@@ -69,21 +87,10 @@ func (ctx *AuthContext) SpecificRoleHandler(w http.ResponseWriter, r *http.Reque
 		if dbErr != nil {
 			return middleware.HTTPErrorFromDBErrorContext(dbErr, "error deleting role by id")
 		}
+		if err := ctx.permChecker.FlushRoleCache(); err != nil {
+			return HTTPError(fmt.Sprintf("error updating role cache: %v", err), http.StatusInternalServerError)
+		}
 		return respondWithString(w, "role deleted and all users with that role changed to normal user", http.StatusOK)
-	case "POST":
-		if !ctx.permChecker.UserCan(u, permissions.CreateRole) {
-			return permissionDenied()
-		}
-		newRole := &models.NewRole{}
-		err := receive(r, newRole)
-		if err != nil {
-			return err
-		}
-		role, dbErr := ctx.store.InsertRole(newRole)
-		if dbErr != nil {
-			return middleware.HTTPErrorFromDBErrorContext(dbErr, "error querying roles")
-		}
-		return respond(w, role, http.StatusCreated)
 	default:
 		return methodNotAllowed()
 	}
