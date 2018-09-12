@@ -376,7 +376,7 @@ class Main extends Component {
 
         <section className="desktop">
           <div className="navigationWrap">
-            <ul id="slide-out" className="side-nav fixed">
+            <ul id="slide-out" className="side-nav fixed no-print">
               <div className="navigationBg">
                 <Link to="/" style={{ padding: "0px", marginBottom: "40px" }}>
                   <li>

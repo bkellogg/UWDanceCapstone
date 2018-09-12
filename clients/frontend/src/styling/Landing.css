@@ -113,6 +113,10 @@
     letter-spacing: 0.5px;
 }
 
+.error {
+    color: red;
+}
+
 /*TABLET VIEW*/
 @media only screen and (max-width : 992px) {
     .landingBanner{
