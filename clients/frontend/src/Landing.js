@@ -30,8 +30,7 @@ class App extends Component {
                 <div className="logInSignUpButton">
                   <Button
                     className="logInRedirectButton"
-                    onClick={this.props.logIn}
-                    buttonStyle={{ borderRadius: '5' }}>
+                    onClick={this.props.logIn}>
                     Sign In</Button>
                   <Button
                     className="signUpRedirectButton"
