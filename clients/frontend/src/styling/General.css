@@ -205,6 +205,15 @@ hr{
     background-color: #cf4800 !important;
     cursor: pointer !important;
   }
+
+  .printButton {
+      display: inline-block
+  }
+
+  .printHeader {
+      width: 90%;
+      display: inline-block;
+  }
   
 
  @media only screen and (max-width : 768px) {
@@ -249,5 +258,9 @@ hr{
     .main
     {
         padding-left: 0px !important;
+    }
+
+    .printButton {
+        display: none !important;
     }
 }

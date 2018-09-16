@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as Util from './util';
 import { Link } from 'react-router-dom';
+import { Button } from 'react-materialize';
 import './styling/General.css';
 import './styling/CastingFlowMobile.css';
 
@@ -70,9 +71,8 @@ class AuditionRegistrationList extends Component {
       <section className="main">
         <div className="mainView">
           <div className="pageContentWrap">
-          <h1>{this.props.name}: Audition Registration List
-          <button onClick= {() => Util.printPage()}> Print </button>
-          </h1>
+          <h1 className="printHeader">{this.props.name}: Audition Registration List</h1>
+          <Button className="printButton" onClick= {() => Util.printPage()}> Print </Button>
             <div className="fullWidthCard">
               <div className="wrap">
                 <div className="peopleList">
