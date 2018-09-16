@@ -130,14 +130,15 @@ class Dashboard extends Component {
           {
             <div className="announcementCardColor">
               <div className="announcementMessage">
-              <p>{announcement.message}</p>
-              <p> <em>{announcement.createdBy.firstName + " " + announcement.createdBy.lastName + ", " + moment(announcement.createdAt).format("MM/DD/YY hh:mm A")}</em></p>
+                <p>{announcement.message}</p>
+                <p> <em>{announcement.createdBy.firstName + " " + announcement.createdBy.lastName + ", " + moment(announcement.createdAt).format("MM/DD/YY hh:mm A")}</em></p>
               </div>
             </div>
           }
         </div>
       )
     })
+    let hiddenShowCount = 0;
     let displayShows = this.props.shows.map((announcement, index) => {
       let auditionDay = moment(announcement.audition.time).format('MMM. Do, YYYY');
       let auditionTime = moment(announcement.audition.time).utcOffset('-0700').format("hh:mm a");
@@ -146,6 +147,7 @@ class Dashboard extends Component {
       let today = moment()
       let time = moment(announcement.audition.time).utcOffset('-0700')
       if (!today.isBefore(time)) {
+        hiddenShowCount++;
         return []
       }
       return (
@@ -155,46 +157,53 @@ class Dashboard extends Component {
               <div className="showInformation">
                 <h2 className="auditionHeading">Audition for the {announcement.name}</h2>
 
-                  <p> <b>Date:</b> {auditionDay} </p>
-                  <p> <b>Time:</b> {auditionTime} </p>
-                  <p> <b>Location:</b> {announcement.audition.location} </p>
+                <p> <b>Date:</b> {auditionDay} </p>
+                <p> <b>Time:</b> {auditionTime} </p>
+                <p> <b>Location:</b> {announcement.audition.location} </p>
 
-                </div>
-                <div className="buttonToSignUp">
-                  <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>REGISTER</Link></Button>
-                </div>
               </div>
-              }
-        </div>
-      )
-          })
-          return (
-      <section className='main' >
-            <div className="mainView">
-              <div className="pageContentWrap">
-                <div className='dashboard'>
-                  <div id='welcome'>
-                    <h1> Welcome, {this.state.user.firstName}!</h1>
-                  </div>
-                  <div id='announcements'>
-                    {pendingCasting}
-                    {this.state.user.bio === "" &&
-                      <div className="announcement completeProfileBorderColor clickable" onClick={() => window.location = "/profile"}>
-                        <div className="completeProfileCardColor">
-                          <p className="announcementMessage"> Please click here to complete your profile. </p>
-                        </div>
-                      </div>
-                    }
-                    {displayAnnouncements}
-                    {displayShows}
-                  </div>
-                </div>
+              <div className="buttonToSignUp">
+                <Button> <Link className="linkTurnedIntoButton" to={{ pathname: auditionLink + "/audition" }}>REGISTER</Link></Button>
               </div>
             </div>
-          </section>
-          )
-        }
-      }
-      
-      
+          }
+        </div>
+      )
+    })
+    return (
+      <section className='main' >
+        <div className="mainView">
+          <div className="pageContentWrap">
+            <div className='dashboard'>
+              <div id='welcome'>
+                <h1> Welcome, {this.state.user.firstName}!</h1>
+              </div>
+              <div id='announcements'>
+                {pendingCasting}
+                {this.state.user.bio === "" &&
+                  <div className="announcement completeProfileBorderColor clickable" onClick={() => window.location = "/profile"}>
+                    <div className="completeProfileCardColor">
+                      <p className="announcementMessage"> Please click here to complete your profile. </p>
+                    </div>
+                  </div>
+                }
+                {displayAnnouncements}
+                {displayShows}
+                { 
+                  this.state.user.bio !== "" &&
+                  pendingCasting.length === 0 &&
+                  displayAnnouncements.length === 0 &&
+                  displayShows.length === hiddenShowCount &&
+                  "There are no announcements right now. Happy dancing!"
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+}
+
+
 export default Dashboard;

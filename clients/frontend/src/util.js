@@ -220,4 +220,8 @@ export function handleError(err){
     }
 }
 
+export function printPage(){
+    window.print();
+}
+
 
