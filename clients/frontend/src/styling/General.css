@@ -126,6 +126,7 @@ h2{
     margin-left: -103px;
     opacity: 0;
     transition: opacity 0.3s;
+    font-size: 15px !important;
 }
 
 .tooltip .tooltiptext::after {
@@ -146,7 +147,7 @@ h2{
 
 .tooltip:hover .tooltiptext .emphasis {
     color: #22A7E0;
-    font-weight: 400;
+    font-weight: 400 !important;
 }
 
 /*PEOPLE NAME WITH A LINK TO THEIR PROFILE*/
