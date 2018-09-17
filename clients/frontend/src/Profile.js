@@ -412,6 +412,12 @@ class Profile extends Component {
                         <section>
                           <div className="subheader">
                             <b>Resume:</b>
+                            <div className="xtraInfo tooltip pieceTip">
+                            <i className="fas fa-question-circle"></i>
+                            <span className="tooltiptext">
+                              In order to view this resume, you must <b className="emphasis">disable Ad Blocker</b>, if you have it.
+                            </span>
+                          </div>
                           </div>
                           {this.state.resume === null && <p>Dancer has not uploaded a resume.</p>}
                           {this.state.resume != null && 

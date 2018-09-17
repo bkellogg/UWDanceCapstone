@@ -258,7 +258,7 @@ class FAQ extends Component {
               <h2 className="smallHeading">Report Errors</h2>
               <div>Something not working right? We're sorry to hear that.</div>
               <div>We're always looking to improve STAGE and we would love your feedback!</div>
-              <div>Go ahead and send us an email at <a href="mailto:adamsrc@uw.edu">adamsrc@uw.edu</a> with a description of your problem and we'll take a look!</div>
+              <div>Go ahead and send us an email at <a href="mailto:adamsrc@uw.edu">rosemarycadams@gmail.com</a> with a description of your problem and we'll take a look!</div>
             </section>
           </div>
         </div>
