@@ -2,6 +2,7 @@ package notify
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
@@ -10,6 +11,14 @@ import (
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/sessions"
 	"github.com/gorilla/websocket"
 )
+
+// ClientReader represents channel and a clientID
+// that when read from will return the client at
+// the given clientID.
+type ClientReader struct {
+	clientID   int64
+	clientChan chan *WebSocketClient
+}
 
 //WebSocketsHandler is a handler for WebSocket upgrade requests
 type WebSocketsHandler struct {
@@ -54,6 +63,7 @@ type Notifier struct {
 	eventQ        chan *WebSocketEvent
 	newClientQ    chan *WebSocketClient
 	removeClientQ chan *WebSocketClient
+	readClientQ   chan *ClientReader
 }
 
 // NewNotifier constructs a new Notifier
@@ -63,6 +73,7 @@ func NewNotifier() *Notifier {
 		eventQ:        make(chan *WebSocketEvent, 3),
 		newClientQ:    make(chan *WebSocketClient, 3),
 		removeClientQ: make(chan *WebSocketClient, 3),
+		readClientQ:   make(chan *ClientReader),
 	}
 	go n.start()
 	return n
@@ -72,8 +83,16 @@ func NewNotifier() *Notifier {
 // id. Will return nil and false if the id does not match a known
 // client, but will not report an error.
 func (n *Notifier) GetClient(id int64) (*WebSocketClient, bool) {
-	wsc, found := n.clients[id]
-	return wsc, found
+	client := <-n.getClientReader(id)
+	return client, client != nil
+}
+
+// getClientReader returns a channel that when read from returns the client
+// at the given id.
+func (n *Notifier) getClientReader(id int64) chan *WebSocketClient {
+	res := make(chan *WebSocketClient)
+	n.readClientQ <- &ClientReader{clientID: id, clientChan: res}
+	return res
 }
 
 // AddClient adds a new client to the Notifier
@@ -90,6 +109,11 @@ func (n *Notifier) Notify(event *WebSocketEvent) {
 
 // start starts the notification loop
 func (n *Notifier) start() {
+	// in the event that the notifier loop exits, restart the loop
+	defer func() {
+		log.Printf("notifier loop exited...restarting")
+		n.start()
+	}()
 	for {
 		select {
 		case event := <-n.eventQ:
@@ -108,6 +132,8 @@ func (n *Notifier) start() {
 			clientToRemove.mx.Lock()
 			delete(n.clients, clientToRemove.user.ID)
 			clientToRemove.mx.Unlock()
+		case readClient := <-n.readClientQ:
+			readClient.clientChan <- n.clients[readClient.clientID]
 		}
 	}
 }

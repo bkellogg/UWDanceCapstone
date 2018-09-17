@@ -3,8 +3,8 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"math"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
@@ -226,15 +226,17 @@ func (store *Database) RemoveUserFromAudition(userID, audID int) *DBError {
 
 // GetAllUsers returns a slice of users of every user in the database, active or not.
 // Returns an error if one occurred
-func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, *DBError) {
-	offset := strconv.Itoa((page - 1) * 25)
-	query := `SELECT * FROM Users U `
-	if !includeInactive {
-		query += `WHERE U.Active = true `
+func (store *Database) GetAllUsers(page int, includeInactive bool) ([]*User, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  "*",
+		Table: "Users U",
+		Page:  page,
 	}
-	query += `LIMIT 25 OFFSET ` + offset
+	if !includeInactive {
+		sqlStmnt.Where += `U.Active = TRUE`
+	}
 
-	return handleUsersFromDatabase(store.db.Query(query))
+	return store.processUserQuery(sqlStmnt)
 }
 
 // ContainsUser returns true if this database contains a user with the same
@@ -355,33 +357,41 @@ func (store *Database) UpdateUserByID(userID int, updates *UserUpdates, includeI
 }
 
 // DeactivateUserByID marks the user with the given userID as inactive. Returns
-// an error if one occured.
+// an error if one occurred.
 func (store *Database) DeactivateUserByID(userID int) *DBError {
+	return store.changeUserActivation(userID, false)
+}
+
+// ActivateUserByID marks the user with the given userID as active. Returns
+// an error if one occurred.
+func (store *Database) ActivateUserByID(userID int) *DBError {
+	return store.changeUserActivation(userID, true)
+}
+
+// changeUserActivation changes the given user's activation status to
+// match the given active status. Returns an error if one occurred.
+func (store *Database) changeUserActivation(userID int, active bool) *DBError {
 	tx, err := store.db.Begin()
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
 	}
 	defer tx.Rollback()
 
-	result, err := tx.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, false, userID)
+	result, err := tx.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, active, userID)
 	if err != nil {
-		return NewDBError(fmt.Sprintf("error deactivating user by id: %v", err), http.StatusInternalServerError)
+		return NewDBError(fmt.Sprintf("error changing user activation by id: %v", err), http.StatusInternalServerError)
 	}
 	numRows, err := result.RowsAffected()
 	if err != nil {
 		return NewDBError(fmt.Sprintf("error retrieving rows affected %v", err), http.StatusInternalServerError)
 	}
 	if numRows == 0 {
-		return NewDBError("no user exists with the given id", http.StatusNotFound)
+		return NewDBError("no user exists with the given id with a different activation than provided", http.StatusNotFound)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
 	}
 	return nil
-}
-
-// ActivateUserByID marks the user with the given userID as active. Returns
-// an error if one occured.
-func (store *Database) ActivateUserByID(userID int) *DBError {
-	_, err := store.db.Exec(`UPDATE Users SET Active = ? WHERE UserID = ?`, true, userID)
-	return NewDBError(fmt.Sprintf("error activating user: %v", err), http.StatusInternalServerError)
 }
 
 // TODO: Modularize these GetUsersByX functions...
@@ -413,55 +423,46 @@ func (store *Database) GetUsersByAuditionID(id, page int, includeDeleted bool) (
 
 // GetUsersByShowID returns a slice of users that are in the given show, if any.
 // Returns an error if one occurred.
-func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, *DBError) {
-	tx, err := store.db.Begin()
-	if err != nil {
-		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+func (store *Database) GetUsersByShowID(id, page int, includeDeleted bool) ([]*User, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  `DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt`,
+		Table: `Users U`,
+		Join:  `JOIN UserPiece UP ON U.UserID = UP.UserID JOIN Pieces P ON UP.PieceID = P.PieceID`,
+		Where: `P.ShowID = ? AND UP.IsDeleted = false`,
+		Page:  page,
 	}
-	defer tx.Rollback()
 
-	offset := getSQLPageOffset(page)
-	result, err := tx.Query(`
-		SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
-		JOIN UserPiece UP ON U.UserID = UP.UserID
-		JOIN Pieces P ON UP.PieceID = P.PieceID
-		WHERE P.ShowID = ? AND UP.IsDeleted = false
-		LIMIT 25 OFFSET ?`, id, offset)
-	users, dberr := handleUsersFromDatabase(result, err)
-	if dberr != nil {
-		return nil, dberr
-	}
-	if err = tx.Commit(); err != nil {
-		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
-	}
-	return users, nil
+	return store.processUserQuery(sqlStmnt, id)
 }
 
 // GetUsersByPieceID returns a slice of users that are in the given piece, if any, as well
 // as the current choreographer for that that piece if it exists.
 // Returns an error if one occurred.
-func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, *User, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
-	JOIN UserPiece UP On UP.UserID = U.UserID
-	WHERE UP.PieceID = ? AND UP.IsDeleted = FALSE`
-	query += ` LIMIT 25 OFFSET ?`
-	users, dberr := handleUsersFromDatabase(store.db.Query(query, id, offset))
-	if dberr != nil {
-		return nil, nil, dberr
+func (store *Database) GetUsersByPieceID(id, page int, includeDeleted bool) ([]*User, *User, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  `DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt`,
+		Table: `Users U`,
+		Join:  `JOIN UserPiece UP ON UP.UserID = U.UserID`,
+		Where: `UP.PieceID = ? AND UP.IsDeleted = FALSE`,
+		Page:  page,
 	}
-	query = `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
+
+	users, numPages, dberr := store.processUserQuery(sqlStmnt, id)
+	if dberr != nil {
+		return nil, nil, 0, dberr
+	}
+	query := `SELECT DISTINCT U.UserID, U.FirstName, U.LastName, U.Email, U.Bio, U.PassHash, U.RoleID, U.Active, U.CreatedAt FROM Users U
 	JOIN Pieces P On P.ChoreographerID = U.UserID
 	WHERE P.PieceID = ?`
 	chor, dberr := handleUsersFromDatabase(store.db.Query(query, id))
 	if dberr != nil {
-		return nil, nil, dberr
+		return nil, nil, 0, dberr
 	}
 	var chorToReturn *User
 	if len(chor) > 0 {
 		chorToReturn = chor[0]
 	}
-	return users, chorToReturn, nil
+	return users, chorToReturn, numPages, nil
 }
 
 // UpdatePasswordByID changes the user with the given IDs passhash to the given
@@ -495,19 +496,14 @@ func (store *Database) getUserRoleLevel(userID int64) (int, error) {
 
 // SearchForUsers returns a slice of users that match any of the given filters.
 // Returns a DBError if one occurred.
-func (store *Database) SearchForUsers(email, firstName, lastName string, page int) ([]*User, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT * FROM Users U WHERE 1 = 1
-		AND U.Email LIKE ?
-		AND U.FirstName LIKE ?
-		AND U.LastName LIKE ?
-		AND U.Active = TRUE
-		LIMIT 25 OFFSET ?`
-	return handleUsersFromDatabase(store.db.Query(query,
-		"%"+email+"%",
-		"%"+firstName+"%",
-		"%"+lastName+"%",
-		offset))
+func (store *Database) SearchForUsers(email, firstName, lastName string, page int) ([]*User, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  "*",
+		Table: "Users U",
+		Where: `1 = 1 AND U.Email LIKE ? AND U.FirstName LIKE ? AND U.LastName LIKE ? AND U.Active = TRUE`,
+		Page:  page,
+	}
+	return store.processUserQuery(sqlStmnt, "%"+email+"%", "%"+firstName+"%", "%"+lastName+"%")
 }
 
 // handleUsersFromDatabase compiles the given result and err into a slice of users or an error.
@@ -529,4 +525,27 @@ func handleUsersFromDatabase(result *sql.Rows, err error) ([]*User, *DBError) {
 		users = append(users, u)
 	}
 	return users, nil
+}
+
+// processUserQuery runs the query with the given args and returns a slice of users
+// that matched that query as well as the number of pages of users that matched
+// that query. Returns a DBError if an error occurred.
+func (store *Database) processUserQuery(sqlStmt *SQLStatement, args ...interface{}) ([]*User, int, *DBError) {
+	users, dberr := handleUsersFromDatabase(store.db.Query(sqlStmt.BuildQuery(), args...))
+	if dberr != nil {
+		return nil, 0, dberr
+	}
+	numResults := 0
+	rows, err := store.db.Query(sqlStmt.BuildCountQuery(), args...)
+	if err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error querying for number of results: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, 0, NewDBError("count query returned no results", http.StatusInternalServerError)
+	}
+	if err = rows.Scan(&numResults); err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error scanning rows into num results: %v", err), http.StatusInternalServerError)
+	}
+	return users, int(math.Ceil(float64(numResults) / 25.0)), nil
 }

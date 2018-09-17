@@ -28,7 +28,7 @@ func (ctx *AuthContext) handleUsersForShow(w http.ResponseWriter, r *http.Reques
 	}
 	includeDeleted := getIncludeDeletedParam(r)
 
-	users, dberr := ctx.store.GetUsersByShowID(showID, page, includeDeleted)
+	users, numPages, dberr := ctx.store.GetUsersByShowID(showID, page, includeDeleted)
 	if dberr != nil {
 		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
@@ -36,7 +36,7 @@ func (ctx *AuthContext) handleUsersForShow(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		return HTTPError(fmt.Sprintf("error converting users to user responses: %v", err), http.StatusInternalServerError)
 	}
-	return respond(w, models.PaginateUserResponses(userRespnses, page), http.StatusOK)
+	return respond(w, models.PaginateNumUserResponses(userRespnses, page, numPages), http.StatusOK)
 }
 
 // getPiecesForShow is helper function that handles getting users for
@@ -47,7 +47,7 @@ func (ctx *AuthContext) getPiecesForShow(w http.ResponseWriter, r *http.Request,
 	if err != nil {
 		return unparsableIDGiven()
 	}
-	if ctx.permChecker.UserCan(u, permissions.SeePieces) {
+	if !ctx.permChecker.UserCan(u, permissions.SeePieces) {
 		return permissionDenied()
 	}
 	includeDeleted := getIncludeDeletedParam(r)
@@ -56,9 +56,9 @@ func (ctx *AuthContext) getPiecesForShow(w http.ResponseWriter, r *http.Request,
 		return httperr
 	}
 
-	pieces, dberr := ctx.store.GetPiecesByShowID(showID, page, includeDeleted)
+	pieces, numPages, dberr := ctx.store.GetPiecesByShowID(showID, page, includeDeleted)
 	if dberr != nil {
 		return HTTPError(dberr.Message, dberr.HTTPStatus)
 	}
-	return respond(w, models.PaginatePieces(pieces, page), http.StatusOK)
+	return respond(w, models.PaginatePieces(pieces, page, numPages), http.StatusOK)
 }

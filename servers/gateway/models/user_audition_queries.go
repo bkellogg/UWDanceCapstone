@@ -48,9 +48,9 @@ func (store *Database) GetUserAuditionLink(userID, audID int) (*UserAuditionLink
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
 	}
+	defer tx.Rollback()
 
 	var dberr *DBError
-	defer txCleanup(tx, dberr)
 
 	ualr := &UserAuditionLinkResponse{}
 
@@ -87,7 +87,10 @@ func (store *Database) GetUserAuditionLink(userID, audID int) (*UserAuditionLink
 	}
 	ualr.Availability = wtb
 
-	dberr = nil // ensure the tx is committed by the cleanup func
+	if err := tx.Commit(); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+
 	return ualr, nil
 }
 
@@ -108,6 +111,7 @@ func (store *Database) GetUserAuditionAvailability(userID, audID int) (*WeekTime
 		}
 		return nil, err
 	}
+	defer result.Close()
 	if result.Next() {
 		if err := result.Scan(
 			&rawAvail.ID, &rawAvail.Sunday,

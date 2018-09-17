@@ -21,8 +21,9 @@ func PaginateUsers(users []*User, page int) *PaginatedUsers {
 // back to the client for requests that can contain multiple
 // pages of UserResponse.
 type PaginatedUserResponses struct {
-	Page  int             `json:"page"`
-	Users []*UserResponse `json:"users"`
+	Page     int             `json:"page"`
+	NumPages int             `json:"numPages,omitempty"`
+	Users    []*UserResponse `json:"users"`
 }
 
 // PaginateUsers returns the given slice of users and the page
@@ -31,6 +32,16 @@ func PaginateUserResponses(users []*UserResponse, page int) *PaginatedUserRespon
 	return &PaginatedUserResponses{
 		Users: users,
 		Page:  page,
+	}
+}
+
+// PaginateNumUsers returns the given slice of users and the page
+// as a PaginatedUsers struct.
+func PaginateNumUserResponses(users []*UserResponse, page, numPages int) *PaginatedUserResponses {
+	return &PaginatedUserResponses{
+		Users:    users,
+		Page:     page,
+		NumPages: numPages,
 	}
 }
 
@@ -55,16 +66,18 @@ func PaginateAuditions(auditions []*Audition, page int) *PaginatedAuditions {
 // back to the client for requests that can contain multiple
 // pages of shows.
 type PaginatedShows struct {
-	Page  int     `json:"page"`
-	Shows []*Show `json:"shows"`
+	Page     int     `json:"page"`
+	NumPages int     `json:"numPages,omitempty"`
+	Shows    []*Show `json:"shows"`
 }
 
-// PaginateShows returns the given slice of shows and the page
+// PaginateNumShows returns the given slice of shows and the page
 // as a PaginatedShows struct.
-func PaginateShows(shows []*Show, page int) *PaginatedShows {
+func PaginateNumShows(shows []*Show, page, numPages int) *PaginatedShows {
 	return &PaginatedShows{
-		Shows: shows,
-		Page:  page,
+		Shows:    shows,
+		Page:     page,
+		NumPages: numPages,
 	}
 }
 
@@ -72,16 +85,18 @@ func PaginateShows(shows []*Show, page int) *PaginatedShows {
 // back to the client for requests that can contain multiple
 // pages of pieces.
 type PaginatedPieces struct {
-	Page   int      `json:"page"`
-	Pieces []*Piece `json:"pieces"`
+	Page     int      `json:"page"`
+	NumPages int      `json:"numPages"`
+	Pieces   []*Piece `json:"pieces"`
 }
 
 // PaginatePieces returns the given slice of pieces and the page
 // as a PaginatedPieces struct.
-func PaginatePieces(pieces []*Piece, page int) *PaginatedPieces {
+func PaginatePieces(pieces []*Piece, page, numPages int) *PaginatedPieces {
 	return &PaginatedPieces{
-		Pieces: pieces,
-		Page:   page,
+		Pieces:   pieces,
+		Page:     page,
+		NumPages: numPages,
 	}
 }
 
@@ -90,6 +105,7 @@ func PaginatePieces(pieces []*Piece, page int) *PaginatedPieces {
 // pages of announcements.
 type PaginatedAnnouncementResponses struct {
 	Page          int                     `json:"page"`
+	NumPages      int                     `json:"numPages,omitempty"`
 	Announcements []*AnnouncementResponse `json:"announcements"`
 }
 
@@ -99,6 +115,16 @@ func PaginateAnnouncementResponses(announcements []*AnnouncementResponse, page i
 	return &PaginatedAnnouncementResponses{
 		Announcements: announcements,
 		Page:          page,
+	}
+}
+
+// PaginateAnnouncementResponses returns the given slice of pieces and the page as well as
+// the number of pages as a PaginatedAnnouncements struct.
+func PaginateNumAnnouncementResponses(announcements []*AnnouncementResponse, page, numPages int) *PaginatedAnnouncementResponses {
+	return &PaginatedAnnouncementResponses{
+		Announcements: announcements,
+		Page:          page,
+		NumPages:      numPages,
 	}
 }
 

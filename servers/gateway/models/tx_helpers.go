@@ -27,6 +27,7 @@ func txGetUser(tx *sql.Tx, userID int) (*User, *DBError) {
 	if err != nil && err != sql.ErrNoRows {
 		return nil, NewDBError(fmt.Sprintf("error querying user: %v", err), http.StatusInternalServerError)
 	}
+	defer rows.Close()
 
 	users, dberr := handleUsersFromDatabase(rows, err)
 	if dberr != nil {
@@ -38,7 +39,7 @@ func txGetUser(tx *sql.Tx, userID int) (*User, *DBError) {
 	return users[0], nil
 }
 
-// txGetUser gets the given userID with the given transaction
+// txGetAudition gets the given audition with the given transaction
 // returns an error if one occurred.
 func txGetAudition(tx *sql.Tx, audID int) (*Audition, *DBError) {
 	rows, err := tx.Query(`SELECT * FROM Auditions A WHERE A.AuditionID = ?`, audID)
@@ -58,6 +59,26 @@ func txGetAudition(tx *sql.Tx, audID int) (*Audition, *DBError) {
 		return nil, NewDBError(fmt.Sprintf("error scanning result into audition: %v", err), http.StatusInternalServerError)
 	}
 	return aud, nil
+}
+
+// txGetPiece gets the given piece with the given transaction
+// returns an error if one occurred.
+func txGetPiece(tx *sql.Tx, pieceID int) (*Piece, *DBError) {
+	rows, err := tx.Query(`SELECT * FROM Pieces P WHERE P.PieceID = ?`, pieceID)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, NewDBError(fmt.Sprintf("error querying piece: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, NewDBError("no piece found", http.StatusNotFound)
+	}
+	piece := &Piece{}
+	if err = rows.Scan(&piece.ID, &piece.InfoSheetID, &piece.ChoreographerID,
+		&piece.Name, &piece.ShowID, &piece.CreatedAt,
+		&piece.CreatedBy, &piece.IsDeleted); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error scanning result into piece: %v", err), http.StatusInternalServerError)
+	}
+	return piece, nil
 }
 
 // txGetUserAudition gets the UserAudition link between the given userID and
@@ -111,6 +132,7 @@ func txGetUserAuditionAvailability(tx *sql.Tx, availID int) (*WeekTimeBlock, *DB
 	if err != nil && err != sql.ErrNoRows {
 		return nil, NewDBError(fmt.Sprintf("error retrieving availability: %v", err), http.StatusInternalServerError)
 	}
+	defer rows.Close()
 	if !rows.Next() {
 		return nil, NewDBError("no availability found", http.StatusNotFound)
 	}
@@ -136,6 +158,7 @@ func txGetShow(tx *sql.Tx, showID int) (*Show, *DBError) {
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error retrieving show: %v", err), http.StatusInternalServerError)
 	}
+	defer rows.Close()
 	if !rows.Next() {
 		return nil, NewDBError("no show found", http.StatusNotFound)
 	}
@@ -147,7 +170,6 @@ func txGetShow(tx *sql.Tx, showID int) (*Show, *DBError) {
 		&show.IsDeleted); err != nil {
 		return nil, NewDBError(fmt.Sprintf("error scanning result into show: %v", err), http.StatusInternalServerError)
 	}
-	rows.Close()
 	return show, nil
 }
 
@@ -158,6 +180,7 @@ func txGetShowByAuditionID(tx *sql.Tx, audID int) (*Show, *DBError) {
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error retrieving show: %v", err), http.StatusInternalServerError)
 	}
+	defer rows.Close()
 	if !rows.Next() {
 		return nil, NewDBError("no show found", http.StatusNotFound)
 	}
@@ -169,7 +192,6 @@ func txGetShowByAuditionID(tx *sql.Tx, audID int) (*Show, *DBError) {
 		&show.IsDeleted); err != nil {
 		return nil, NewDBError(fmt.Sprintf("error scanning result into show: %v", err), http.StatusInternalServerError)
 	}
-	rows.Close()
 	return show, nil
 }
 

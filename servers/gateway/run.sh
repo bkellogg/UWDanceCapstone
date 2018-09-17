@@ -5,11 +5,21 @@ docker pull redis
 docker pull brendankellogg/dancegateway
 docker pull brendankellogg/dance-mysql
 
+if [ "$(docker ps -aq --filter name=redis)" ]; then
+    echo >&2 "stopping redis..."
+	docker rm -f redis
+fi
+
 echo >&2 "starting redis..."
 docker run -d \
 --name redis \
 --network dancenet \
 redis
+
+if [ "$(docker ps -aq --filter name=mysql)" ]; then
+    echo >&2 "stopping mysql..."
+	docker rm -f mysql
+fi
 
 echo >&2 "starting mysql..."
 docker run -d \
@@ -33,11 +43,11 @@ docker run -d \
 --restart unless-stopped \
 -p 443:443 \
 -p 80:80 \
--v /root/:/certs/dance/:ro \
+-v /certs/dance:/certs/dance/:ro \
 -v /static/:/static/ \
 -e ADDR=:443 \
--e TLSKEY=/certs/dance/privkey.pem \
--e TLSCERT=/certs/dance/fullchain.pem \
+-e TLSKEY=/certs/dance/dasc.capstone.ischool.uw.edu-key.pem \
+-e TLSCERT=/certs/dance/dasc.capstone.ischool.uw.edu-cert.pem \
 -e TEMPLATESPATH=/static/assets/tpl/ \
 -e HTTPREDIRADDR=:80 \
 -e REDISADDR=redis:6379 \
@@ -50,9 +60,10 @@ docker run -d \
 -e RESETPASSWORDCLIENTPATH=/static/clients/passwordreset/ \
 -e ADMINCONSOLEPATH=/static/clients/console/ \
 -e FRONTENDPATH=/static/clients/frontend/build/ \
+-e TERMSPATH=/static/clients/terms/ \
 -e ASSETSPATH=/static/assets/ \
 -e STAGE_ADMIN_FIRSTNAME=Brendan \
 -e STAGE_ADMIN_LASTNAME=Kellogg \
--e STAGE_ADMIN_EMAIL=brendan6@uw.edu \
+-e STAGE_ADMIN_EMAIL=brendan@dobsis.org \
 -e STAGE_ADMIN_PASSWORD=$STAGE_ADMIN_PASSWORD \
 brendankellogg/dancegateway

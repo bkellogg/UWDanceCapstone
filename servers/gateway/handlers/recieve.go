@@ -18,14 +18,14 @@ func receive(r *http.Request, v interface{}) *middleware.HTTPError {
 	if !strings.HasPrefix(contentType, appvars.ContentTypeJSON) {
 		return HTTPError(fmt.Sprintf("`%s` is not a supported Content-Type; must be `%s`",
 			contentType,
-			appvars.ContentTypeJSONUTF8),
+			appvars.ContentTypeJSON),
 			http.StatusBadRequest)
 	}
 
 	// decode the request body into v
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(v); err != nil {
-		return HTTPError("error processing request: invalid JSON", http.StatusBadRequest)
+		return HTTPError(fmt.Sprintf("error processing request: invalid JSON: %v", err), http.StatusBadRequest)
 	}
 
 	// if the request body is a validator, validate it

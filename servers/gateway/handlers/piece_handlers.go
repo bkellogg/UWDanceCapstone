@@ -86,6 +86,11 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 		return HTTPError("unparsable user ID given: "+err.Error(), http.StatusBadRequest)
 	}
 	object := vars["object"]
+	objectIDString := vars["objectID"]
+	objectID, err := strconv.Atoi(objectIDString)
+	if err != nil {
+		return unparsableIDGiven()
+	}
 	switch object {
 	case "choreographer":
 		if r.Method != "PUT" {
@@ -94,13 +99,8 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 		if !ctx.permChecker.UserCan(u, permissions.AddStaffToPiece) {
 			return permissionDenied()
 		}
-		choreographerIDString := vars["objectID"]
-		choreographerID, err := strconv.Atoi(choreographerIDString)
-		if err != nil {
-			return HTTPError("unparsable piece ID given: "+err.Error(), http.StatusBadRequest)
-		}
 
-		user, dberr := ctx.store.GetUserByID(choreographerID, false)
+		user, dberr := ctx.store.GetUserByID(objectID, false)
 		if err != nil {
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
@@ -111,11 +111,67 @@ func (ctx *AuthContext) PieceObjectIDHandler(w http.ResponseWriter, r *http.Requ
 			return HTTPError("cannot add non choreographers as choreographers to pieces", http.StatusBadRequest)
 		}
 
-		dberr = ctx.store.AssignChoreographerToPiece(choreographerID, pieceID)
+		dberr = ctx.store.AssignChoreographerToPiece(objectID, pieceID)
 		if dberr != nil {
 			return HTTPError(dberr.Message, dberr.HTTPStatus)
 		}
 		return respondWithString(w, "choreographer added", http.StatusOK)
+	case "rehearsals":
+		if r.Method == "GET" {
+			if !ctx.permChecker.UserCanSeePieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			rehearsal, dberr := ctx.store.GetPieceRehearsalByID(pieceID, objectID, false)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting rehearsal by piece and rehearsal id")
+			}
+			return respond(w, rehearsal, http.StatusOK)
+		} else if r.Method == "PATCH" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			updates := &models.NewRehearsalTime{}
+			if err := receive(r, updates); err != nil {
+				return err
+			}
+			dberr := ctx.store.UpdatePieceRehearsalsByID(pieceID, objectID, updates)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error updating rehearsal by id")
+			}
+			return respondWithString(w, "rehearsal updated", http.StatusOK)
+		} else {
+			return methodNotAllowed()
+		}
+	case "musicians":
+		if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+			return permissionDenied()
+		}
+		piece, dbErr := ctx.store.GetPieceByMusicianID(objectID)
+		if dbErr != nil {
+			return middleware.HTTPErrorFromDBErrorContext(dbErr, "error getting piece by musician ID")
+		}
+		if piece.ID != pieceID {
+			return HTTPError("musician is not part of this piece", http.StatusBadRequest)
+		}
+		if r.Method == "PATCH" {
+			updates := &models.MusicianUpdates{}
+			if httpErr := receive(r, updates); httpErr != nil {
+				return httpErr
+			}
+			dbErr := ctx.store.UpdateMusicianByID(objectID, updates)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error updating musician by id")
+			}
+			return respondWithString(w, "musician updated", http.StatusOK)
+		} else if r.Method == "DELETE" {
+			dbErr := ctx.store.DeleteMusicianByID(objectID)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error deleting musician by id")
+			}
+			return respondWithString(w, "musician deleted", http.StatusOK)
+		} else {
+			return methodNotAllowed()
+		}
 	default:
 		return objectTypeNotSupported()
 	}
@@ -143,7 +199,7 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 			return httperr
 		}
 
-		users, chor, dberr := ctx.store.GetUsersByPieceID(pieceID, page, getIncludeDeletedParam(r))
+		users, chor, numPages, dberr := ctx.store.GetUsersByPieceID(pieceID, page, getIncludeDeletedParam(r))
 		if dberr != nil {
 			return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting users by piece id")
 		}
@@ -156,7 +212,7 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 		if err != nil {
 			return HTTPError(fmt.Sprintf("error converting users to user responses: %v", err), http.StatusInternalServerError)
 		}
-		return respond(w, models.NewPieceUsersResponse(page, chorRes, userRes), http.StatusOK)
+		return respond(w, models.NewPieceUsersResponse(page, numPages, chorRes, userRes), http.StatusOK)
 	case "info":
 		if r.Method == "POST" {
 			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
@@ -188,6 +244,26 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting piece info sheet")
 			}
 			return respond(w, pieceInfo, http.StatusOK)
+		} else if r.Method == "PATCH" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			infoUpdates := &models.PieceInfoSheetUpdates{}
+			if dbErr := receive(r, infoUpdates); dbErr != nil {
+				return dbErr
+			}
+			piece, dbErr := ctx.store.GetPieceByID(pieceID, false)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error getting piece by id")
+			}
+			if piece.InfoSheetID == 0 {
+				return HTTPError("requested piece does not have an info sheet", http.StatusBadRequest)
+			}
+			dbErr = ctx.store.UpdatePieceInfoSheet(int64(piece.InfoSheetID), infoUpdates)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error updating piece info sheet")
+			}
+			return respondWithString(w, "info sheet updated", http.StatusOK)
 		} else if r.Method == "DELETE" {
 			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
 				return permissionDenied()
@@ -197,6 +273,78 @@ func (ctx *AuthContext) PieceObjectHandler(w http.ResponseWriter, r *http.Reques
 				return middleware.HTTPErrorFromDBErrorContext(dberr, "error deleting piece info sheet")
 			}
 			return respondWithString(w, fmt.Sprintf("piece %d's info sheet has been deleted", pieceID), http.StatusOK)
+		} else {
+			return methodNotAllowed()
+		}
+	case "rehearsals":
+		if r.Method == "POST" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			newRehearsals := models.NewRehearsalTimes{}
+			if err := receive(r, &newRehearsals); err != nil {
+				return err
+			}
+
+			rehearsals, dberr := ctx.store.InsertPieceRehearsals(u.ID, pieceID, newRehearsals)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error inserting piece rehearsals")
+			}
+			return respond(w, rehearsals, http.StatusCreated)
+		} else if r.Method == "GET" {
+			if !ctx.permChecker.UserCanSeePieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			rehearsals, dberr := ctx.store.GetPieceRehearsals(pieceID)
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error getting piece rehearsal times")
+			}
+			return respond(w, rehearsals, http.StatusOK)
+		} else if r.Method == "DELETE" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			ids, err := getIDsParam(r)
+			if err != nil {
+				return HTTPError("invalid ids given", http.StatusBadRequest)
+			}
+			var dberr *models.DBError
+			if ids == nil {
+				dberr = ctx.store.DeletePieceRehearsals(pieceID)
+			} else {
+				dberr = ctx.store.DeleteManyRehearsalsByID(pieceID, ids)
+			}
+			if dberr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dberr, "error deleting piece rehearsal times")
+			}
+			return respondWithString(w, "piece rehearsal times deleted", http.StatusOK)
+		} else {
+			return methodNotAllowed()
+		}
+	case "musicians":
+		if r.Method == "GET" {
+			if !ctx.permChecker.UserCanSeePieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+
+			musicians, dbErr := ctx.store.GetPieceMusicians(pieceID)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error getting piece musicians")
+			}
+			return respond(w, musicians, http.StatusOK)
+		} else if r.Method == "POST" {
+			if !ctx.permChecker.UserCanModifyPieceInfo(u, pieceID) {
+				return permissionDenied()
+			}
+			updates := &models.NewPieceMusician{}
+			if httpErr := receive(r, updates); httpErr != nil {
+				return httpErr
+			}
+			dbErr := ctx.store.InsertMusicianToPiece(pieceID, int(u.ID), updates)
+			if dbErr != nil {
+				return middleware.HTTPErrorFromDBErrorContext(dbErr, "error inserting musician to piece")
+			}
+			return respondWithString(w, "musician created", http.StatusCreated)
 		} else {
 			return methodNotAllowed()
 		}

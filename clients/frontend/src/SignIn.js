@@ -71,8 +71,8 @@ class SignIn extends Component {
         this.setState({
           error: true
         })
-        console.error(err)
-        Util.handleError(err)
+        console.error(err);
+        Util.handleError(err);
       })
   };
 

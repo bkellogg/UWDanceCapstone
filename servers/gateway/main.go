@@ -1,11 +1,13 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/startup"
 
@@ -33,27 +35,28 @@ func main() {
 	// Gateway server environment variables
 	addr := require("ADDR", ":443")
 	httpRedirAddr := require("HTTPREDIRADDR", ":80")
-	tlsKey := require("TLSKEY", "")
-	tlsCert := require("TLSCERT", "")
-	sessionKey := require("SESSIONKEY", "")
+	tlsKey := require("TLSKEY")
+	tlsCert := require("TLSCERT")
+	sessionKey := require("SESSIONKEY")
 
 	// MYSQL store environment variables
-	mySQLPass := require("MYSQLPASS", "")
-	mySQLAddr := require("MYSQLADDR", "")
+	mySQLPass := require("MYSQLPASS")
+	mySQLAddr := require("MYSQLADDR")
 	mySQLDBName := require("MYSQLDBNAME", "DanceDB")
 
 	// Redis store environment variables
-	redisAddr := require("REDISADDR", "")
+	redisAddr := require("REDISADDR")
 
 	// Mail Info
-	mailUser := require("MAILUSER", "")
-	mailPass := require("MAILPASS", "")
+	mailUser := require("MAILUSER")
+	mailPass := require("MAILPASS")
 
-	templatesPath := require("TEMPLATESPATH", "")
-	resetPasswordClientPath := require("RESETPASSWORDCLIENTPATH", "")
-	adminConsolePath := require("ADMINCONSOLEPATH", "")
-	frontEndPath := require("FRONTENDPATH", "")
-	assetsPath := require("ASSETSPATH", "")
+	templatesPath := require("TEMPLATESPATH")
+	resetPasswordClientPath := require("RESETPASSWORDCLIENTPATH")
+	adminConsolePath := require("ADMINCONSOLEPATH")
+	frontEndPath := require("FRONTENDPATH")
+	assetsPath := require("ASSETSPATH")
+	termsPath := require("TERMSPATH")
 
 	// determine if the app should be started in DEBUG mode
 	isDebug := require("STAGE_DEBUG", "false") == "true"
@@ -62,10 +65,10 @@ func main() {
 	}
 
 	// admin user info
-	adminFName := require("STAGE_ADMIN_FIRSTNAME", "")
-	adminLName := require("STAGE_ADMIN_LASTNAME", "")
-	adminEmail := require("STAGE_ADMIN_EMAIL", "")
-	adminPaswd := require("STAGE_ADMIN_PASSWORD", "")
+	adminFName := require("STAGE_ADMIN_FIRSTNAME")
+	adminLName := require("STAGE_ADMIN_LASTNAME")
+	adminEmail := require("STAGE_ADMIN_EMAIL")
+	adminPaswd := require("STAGE_ADMIN_PASSWORD")
 
 	// URL that the app is served from
 	// this will be used when generating links back to itself.
@@ -109,6 +112,7 @@ func main() {
 	baseRouter.HandleFunc(appvars.PasswordResetPath, authContext.PasswordResetHandler)
 	baseRouter.PathPrefix("/reset/").Handler(handlers.PreventDirListing(http.StripPrefix("/reset/", http.FileServer(http.Dir(resetPasswordClientPath)))))
 	baseRouter.PathPrefix("/admin").Handler(handlers.AddTrailingSlash(http.StripPrefix("/admin/", http.FileServer(http.Dir(adminConsolePath)))))
+	baseRouter.PathPrefix("/terms").Handler(handlers.AddTrailingSlash(http.StripPrefix("/terms/", http.FileServer(http.Dir(termsPath)))))
 	baseRouter.PathPrefix("/assets/tpl/").Handler(http.NotFoundHandler()) // don't serve the assets/tpl directory
 	baseRouter.PathPrefix("/assets/").Handler(handlers.PreventDirListing(http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsPath)))))
 	baseRouter.PathPrefix(appvars.BaseAPIPath + "/flushcasting").Handler(authorizer.Authorize(castingContext.FlushCastingHandler)).
@@ -117,7 +121,7 @@ func main() {
 		Methods(http.MethodGet)
 
 	updatesRouter := baseRouter.PathPrefix(appvars.UpdatesPath).Subrouter()
-	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey)).Schemes("wss")
+	updatesRouter.Handle(appvars.ResourceRoot, notify.NewWebSocketsHandler(notifier, redis, sessionKey))
 
 	announcementsRouter := baseRouter.PathPrefix(appvars.AnnouncementsPath).Subrouter()
 	announcementsRouter.Handle(appvars.ObjectTypesPath, authorizer.Authorize(authContext.AnnouncementTypesHandler))
@@ -131,7 +135,7 @@ func main() {
 	usersRouter.Handle(appvars.SpecificUserPath, authorizer.Authorize(authContext.SpecificUserHandler))
 	usersRouter.Handle(appvars.UserObjectsPath, authorizer.Authorize(authContext.UserObjectsHandler))
 	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserMemberShipHandler)).
-		Methods("LINK", "UNLINK")
+		Methods("LINK", "UNLINK", "DELETE")
 	usersRouter.Handle(appvars.UserMembershipPath, authorizer.Authorize(authContext.UserObjectDispatcher))
 	usersRouter.Handle(appvars.UserMembershipObjectPath, authorizer.Authorize(authContext.UserMembershipActionDispatcher))
 
@@ -158,13 +162,16 @@ func main() {
 
 	rolesRouter := baseRouter.PathPrefix(appvars.RolesPath).Subrouter()
 	rolesRouter.Handle(appvars.ResourceRoot, authorizer.Authorize(authContext.RolesHandler))
+	rolesRouter.Handle(appvars.ResourceRoot+"/", authorizer.Authorize(authContext.RolesHandler))
+	rolesRouter.Handle(appvars.ResourceID, authorizer.Authorize(authContext.SpecificRoleHandler))
 
 	baseRouter.Handle(appvars.BaseAPIPath, http.NotFoundHandler())
 	baseRouter.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir(frontEndPath+"static/"))))
 	baseRouter.PathPrefix("/").HandlerFunc(handlers.IndexHandler(frontEndPath)).Methods(http.MethodGet)
 
 	treatedRouter := middleware.EnsureHeaders(middleware.BlockIE(
-		middleware.LogErrors(baseRouter, db)))
+		middleware.LogErrors(
+			baseRouter, db)))
 
 	// redirect HTTP requests to HTTPS when appropriate
 	// this needs to be done since the gateway server will need to
@@ -174,22 +181,57 @@ func main() {
 	log.Printf("HTTP Redirect server is listen at http://%s\n", httpRedirAddr)
 	go http.ListenAndServe(httpRedirAddr, nil)
 
+	// define an http server with specific settings
+	// that are safer when using the go http server
+	// directly on the web.
+	server := http.Server{
+		Addr:    addr,
+		Handler: treatedRouter,
+		TLSConfig: &tls.Config{
+			PreferServerCipherSuites: true,
+			CurvePreferences: []tls.CurveID{
+				tls.CurveP256,
+				tls.X25519,
+			},
+			MinVersion: tls.VersionTLS12,
+			CipherSuites: []uint16{
+				tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
+				tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
+				tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+			},
+		},
+		ReadHeaderTimeout: time.Second * 5,
+		ReadTimeout:       time.Second * 5,
+		WriteTimeout:      time.Second * 10,
+		IdleTimeout:       time.Second * 120,
+	}
+
 	log.Printf("Gateway server is listen at https://%s...\n", addr)
 	if !strings.HasSuffix(addr, ":443") {
 		log.Println("WARNING: Gateway server listening on non-standard HTTPS port. HTTP Redirects only work when standard HTTP/S ports.")
 	}
-	log.Fatal(http.ListenAndServeTLS(addr, tlsCert, tlsKey, treatedRouter))
+	log.Fatal(server.ListenAndServeTLS(tlsCert, tlsKey))
 }
 
 // Gets the value of env from the environment or defaults it to the given
 // def. Exits the process if env and def are not set
-func require(env, def string) string {
+func require(env string, def ...string) string {
+	if len(def) > 1 {
+		return ""
+	}
+	defVal := ""
+	if len(def) > 0 {
+		defVal = def[0]
+	}
 	if envVal := os.Getenv(env); len(envVal) != 0 {
 		return envVal
 	}
 	if len(def) != 0 {
-		log.Printf("no value for %s, defaulting to %s\n", env, def)
-		return def
+		log.Printf("no value for %s, defaulting to %s\n", env, defVal)
+		return defVal
 	}
 	log.Fatalf("no value for %s and no default set. Please set a value for %s\n", env, env)
 	return ""

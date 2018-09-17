@@ -40,20 +40,21 @@ type Piece struct {
 // report all users in a piece.
 type PieceUsersResponse struct {
 	Page          int             `json:"page"`
+	NumPages      int             `json:"numPages,omitempty"`
 	Choreographer *UserResponse   `json:"choreographer"`
 	Dancers       []*UserResponse `json:"dancers"`
 }
 
 // NewPieceUsersResponse returns a new pointer to a PieceUsersResponse from the
 // given information.
-func NewPieceUsersResponse(page int, chor *UserResponse, dancers []*UserResponse) *PieceUsersResponse {
-	return &PieceUsersResponse{Page: page, Choreographer: chor, Dancers: dancers}
+func NewPieceUsersResponse(page, numPages int, chor *UserResponse, dancers []*UserResponse) *PieceUsersResponse {
+	return &PieceUsersResponse{Page: page, Choreographer: chor, Dancers: dancers, NumPages: numPages}
 }
 
 // PieceInfoSheet defines how a piece info sheet is
 // stored.
 type PieceInfoSheet struct {
-	PieceInfoID       int64            `json:"pieceInfoID"`
+	ID                int64            `json:"pieceInfoID"`
 	ChorPhone         string           `json:"choreographerPhone"`
 	Title             string           `json:"title"`
 	RunTime           string           `json:"runTime"`
@@ -61,7 +62,7 @@ type PieceInfoSheet struct {
 	MusicTitle        string           `json:"musicTitle"`
 	PerformedBy       string           `json:"performedBy"`
 	MusicSource       string           `json:"MusicSource"`
-	NumMusicians      int              `json:"numMusicians"`
+	NumMusicians      int              `json:"numMusicians,omitempty"`
 	RehearsalSchedule string           `json:"rehearsalSchedule"`
 	ChorNotes         string           `json:"chorNotes"`
 	Musicians         []*PieceMusician `json:"musicians"`
@@ -112,44 +113,46 @@ func (npis *NewPieceInfoSheet) Validate() error {
 	npis.LightingDesc = strings.TrimSpace(npis.LightingDesc)
 	npis.OtherNotes = strings.TrimSpace(npis.OtherNotes)
 
-	if len(npis.ChorPhone) < 10 || len(npis.ChorPhone) > 11 {
-		return errors.New("piece musician must have a valid phone number")
+	if len(npis.ChorPhone) > 0 {
+		if len(npis.ChorPhone) < 10 || len(npis.ChorPhone) > 11 {
+			return errors.New("choreographer must have a valid phone number")
+		}
 	}
-	if len(npis.Title) == 0 || len(npis.Title) > 25 {
-		return errors.New("title must exist and be fewer than 25 characters")
+	if len(npis.Title) > 25 {
+		return errors.New("title must be fewer than 25 characters")
 	}
-	if len(npis.RunTime) == 0 || len(npis.RunTime) > 25 {
-		return errors.New("run time must exist and be fewer than 25 characters")
+	if len(npis.RunTime) > 25 {
+		return errors.New("run time must be fewer than 25 characters")
 	}
-	if len(npis.Composers) == 0 || len(npis.Composers) > 75 {
-		return errors.New("composers must exist and be fewer than 75 characters")
+	if len(npis.Composers) > 75 {
+		return errors.New("composers must be fewer than 75 characters")
 	}
-	if len(npis.MusicTitle) == 0 || len(npis.MusicTitle) > 100 {
-		return errors.New("music title must exist and be fewer than 100 characters")
+	if len(npis.MusicTitle) > 100 {
+		return errors.New("music title must be fewer than 100 characters")
 	}
-	if len(npis.PerformedBy) == 0 || len(npis.PerformedBy) > 100 {
-		return errors.New("performed by must exist and be fewer than 100 characters")
+	if len(npis.PerformedBy) > 100 {
+		return errors.New("performed by and be fewer than 100 characters")
 	}
-	if len(npis.MusicSource) == 0 || len(npis.MusicSource) > 100 {
-		return errors.New("music source must exist and be fewer than 100 characters")
+	if len(npis.MusicSource) > 100 {
+		return errors.New("music source must be fewer than 100 characters")
 	}
-	if len(npis.RehearsalSchedule) == 0 || len(npis.RehearsalSchedule) > 100 {
-		return errors.New("rehearsal schedule must exist and be fewer than 100 characters")
+	if len(npis.RehearsalSchedule) > 500 {
+		return errors.New("rehearsal schedule must be fewer than 500 characters")
 	}
-	if len(npis.ChorNotes) == 0 || len(npis.ChorNotes) > 100 {
-		return errors.New("choreographer notes must exist and be fewer than 100 characters")
+	if len(npis.ChorNotes) > 100 {
+		return errors.New("choreographer notes must be fewer than 100 characters")
 	}
-	if len(npis.CostumeDesc) == 0 || len(npis.CostumeDesc) > 100 {
-		return errors.New("costume description must exist and be fewer than 100 characters")
+	if len(npis.CostumeDesc) > 100 {
+		return errors.New("costume description must be fewer than 100 characters")
 	}
-	if len(npis.ItemDesc) == 0 || len(npis.ItemDesc) > 100 {
-		return errors.New("item description must exist and be fewer than 100 characters")
+	if len(npis.ItemDesc) > 100 {
+		return errors.New("item description must be fewer than 100 characters")
 	}
-	if len(npis.LightingDesc) == 0 || len(npis.LightingDesc) > 100 {
-		return errors.New("lighting description must exist and be fewer than 100 characters")
+	if len(npis.LightingDesc) > 100 {
+		return errors.New("lighting description must be fewer than 100 characters")
 	}
-	if len(npis.OtherNotes) == 0 || len(npis.OtherNotes) > 100 {
-		return errors.New("other notes must exist and be fewer than 100 characters")
+	if len(npis.OtherNotes) > 100 {
+		return errors.New("other notes must be fewer than 100 characters")
 	}
 	if npis.NumMusicians != len(npis.Musicians) {
 		return errors.New("declared number of musicians does not match actual number of musicians")
@@ -161,6 +164,86 @@ func (npis *NewPieceInfoSheet) Validate() error {
 		if err := mus.Validate(); err != nil {
 			return fmt.Errorf("invalid musician given: %v", err)
 		}
+	}
+	return nil
+}
+
+// PieceInfoSheetUpdates defines how updates to a
+// piece info sheet are made.
+type PieceInfoSheetUpdates struct {
+	ChorPhone         string `json:"choreographerPhone"`
+	Title             string `json:"title"`
+	RunTime           string `json:"runTime"`
+	Composers         string `json:"composers"`
+	MusicTitle        string `json:"musicTitle"`
+	PerformedBy       string `json:"performedBy"`
+	MusicSource       string `json:"musicSource"`
+	RehearsalSchedule string `json:"rehearsalSchedule"`
+	ChorNotes         string `json:"chorNotes"`
+	CostumeDesc       string `json:"costumeDesc"`
+	ItemDesc          string `json:"itemDesc"`
+	LightingDesc      string `json:"lightingDesc"`
+	OtherNotes        string `json:"otherNotes"`
+}
+
+// Validate validates the PieceInfoSheetUpdates and returns
+// and error if one occurred. Also formats the various
+// fields to be consistent across all submissions.
+func (pisu *PieceInfoSheetUpdates) Validate() error {
+	pisu.ChorPhone = trimPhone(pisu.ChorPhone)
+	pisu.Title = strings.TrimSpace(pisu.Title)
+	pisu.RunTime = strings.TrimSpace(pisu.RunTime)
+	pisu.Composers = strings.TrimSpace(pisu.Composers)
+	pisu.MusicTitle = strings.TrimSpace(pisu.MusicTitle)
+	pisu.PerformedBy = strings.TrimSpace(pisu.PerformedBy)
+	pisu.MusicSource = strings.TrimSpace(pisu.MusicSource)
+	pisu.RehearsalSchedule = strings.TrimSpace(pisu.RehearsalSchedule)
+	pisu.ChorNotes = strings.TrimSpace(pisu.ChorNotes)
+	pisu.CostumeDesc = strings.TrimSpace(pisu.CostumeDesc)
+	pisu.ItemDesc = strings.TrimSpace(pisu.ItemDesc)
+	pisu.LightingDesc = strings.TrimSpace(pisu.LightingDesc)
+	pisu.OtherNotes = strings.TrimSpace(pisu.OtherNotes)
+
+	if len(pisu.ChorPhone) > 0 {
+		if len(pisu.ChorPhone) < 10 || len(pisu.ChorPhone) > 11 {
+			return errors.New("choreographer must have a valid phone number")
+		}
+	}
+	if len(pisu.Title) > 25 {
+		return errors.New("title must be fewer than 25 characters")
+	}
+	if len(pisu.RunTime) > 25 {
+		return errors.New("run time must be fewer than 25 characters")
+	}
+	if len(pisu.Composers) > 75 {
+		return errors.New("composers must be fewer than 75 characters")
+	}
+	if len(pisu.MusicTitle) > 100 {
+		return errors.New("music title must be fewer than 100 characters")
+	}
+	if len(pisu.PerformedBy) > 100 {
+		return errors.New("performed by and be fewer than 100 characters")
+	}
+	if len(pisu.MusicSource) > 100 {
+		return errors.New("music source must be fewer than 100 characters")
+	}
+	if len(pisu.RehearsalSchedule) > 500 {
+		return errors.New("rehearsal schedule must be fewer than 500 characters")
+	}
+	if len(pisu.ChorNotes) > 100 {
+		return errors.New("choreographer notes must be fewer than 100 characters")
+	}
+	if len(pisu.CostumeDesc) > 100 {
+		return errors.New("costume description must be fewer than 100 characters")
+	}
+	if len(pisu.ItemDesc) > 100 {
+		return errors.New("item description must be fewer than 100 characters")
+	}
+	if len(pisu.LightingDesc) > 100 {
+		return errors.New("lighting description must be fewer than 100 characters")
+	}
+	if len(pisu.OtherNotes) > 100 {
+		return errors.New("other notes must be fewer than 100 characters")
 	}
 	return nil
 }
@@ -205,18 +288,44 @@ func (npm *NewPieceMusician) Validate() error {
 		if len(npm.Phone) < 10 || len(npm.Phone) > 11 {
 			return errors.New("piece musician must have a valid phone number")
 		}
-	} else {
-		npm.Phone = "Not provided"
 	}
 	if len(npm.Email) > 0 {
 		if _, err := mail.ParseAddress(npm.Email); err != nil {
 			return errors.New("piece musicians must have a valid email address")
 		}
-	} else {
-		npm.Email = "Not provided"
 	}
 	npm.Name = strings.Title(npm.Name)
 	npm.Email = strings.ToLower(npm.Email)
+	return nil
+}
+
+// MusicianUpdates defines how updates for a musician
+// are sent to the server.
+type MusicianUpdates struct {
+	Name  string `json:"name"`
+	Phone string `json:"phone"`
+	Email string `json:"email"`
+}
+
+// Validate validates the current musician updates.
+// Returns an error if one occurred.
+func (mu *MusicianUpdates) Validate() error {
+	if len(mu.Name) > 50 {
+		return errors.New("piece musician name is too long")
+	}
+	if len(mu.Email) > 75 {
+		return errors.New("piece musician email is too long")
+	}
+	if len(mu.Phone) > 0 {
+		if len(mu.Phone) < 10 || len(mu.Phone) > 11 {
+			return errors.New("piece musician must have a valid phone number")
+		}
+	}
+	if len(mu.Email) > 0 {
+		if _, err := mail.ParseAddress(mu.Email); err != nil {
+			return errors.New("piece musicians must have a valid email address")
+		}
+	}
 	return nil
 }
 

@@ -3,7 +3,9 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
@@ -31,7 +33,10 @@ func NewDatabase(user, password, addr, dbName string) (*Database, error) {
 	if err != nil {
 		return nil, errors.New("error opening connection to store: " + err.Error())
 	}
-	return &Database{db: db}, nil
+	db.SetMaxOpenConns(100)
+	wrappedDB := &Database{db: db}
+	go wrappedDB.beginPieceInviteJanitor()
+	return wrappedDB, nil
 }
 
 // BootstrapInitialAdminUser adds an initial admin user with the given information
@@ -76,4 +81,43 @@ func (store *Database) LogError(err ErrorLog) {
 		log.Println("logging failed: " + dbErr.Error())
 		log.Println(err.Message)
 	}
+}
+
+// beginPieceInviteJanitor begins a never ending loop
+// that will check for expired pieces and mark them
+// as expired every x time defined by
+// appvars.PieceInviteJanitorRecheckDelay
+func (store *Database) beginPieceInviteJanitor() {
+	for {
+		_, err := store.ExpirePendingPieceInvites()
+		if err != nil {
+			log.Printf("invite janitor: error expiring pieces: %s", err.Message)
+		}
+		time.Sleep(appvars.PieceInviteJanitorRecheckDelay)
+	}
+}
+
+// SQLStatement represents a very basic
+// sql statement builder
+type SQLStatement struct {
+	Cols  string
+	Table string
+	Join  string
+	Where string
+	Page  int
+}
+
+func (ss *SQLStatement) BuildQuery() string {
+	return strings.TrimSpace(fmt.Sprintf("SELECT %s FROM %s %s WHERE %s LIMIT 25 OFFSET %d",
+		strings.TrimSpace(ss.Cols), strings.TrimSpace(ss.Table),
+		strings.TrimSpace(ss.Join), strings.TrimSpace(ss.Where), getSQLPageOffset(ss.Page)))
+}
+
+func (ss *SQLStatement) BuildCountQuery() string {
+	where := ss.Where
+	if len(ss.Where) == 0 {
+		where = "1 == 1"
+	}
+	return strings.TrimSpace(fmt.Sprintf("SELECT Count(*) FROM %s %s WHERE %s",
+		strings.TrimSpace(ss.Table), strings.TrimSpace(ss.Join), strings.TrimSpace(where)))
 }

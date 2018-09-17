@@ -4,8 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 	"strings"
+
+	"github.com/BKellogg/UWDanceCapstone/servers/gateway/appvars"
 )
 
 // passwordResetPrefix is a prefix that will be used for all keys stored

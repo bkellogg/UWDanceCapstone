@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"math"
 	"net/http"
 	"strconv"
 	"time"
@@ -147,10 +148,10 @@ func (store *Database) GetAnnouncementTypes(includeDeleted bool) ([]*Announcemen
 
 // GetAllAnnouncements gets the given page of announcements, optionally including deleted ones.
 // returns an error if one occurred.
-func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID, typeName string) ([]*AnnouncementResponse, *DBError) {
+func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID, typeName string) ([]*AnnouncementResponse, int, *DBError) {
 	tx, err := store.db.Begin()
 	if err != nil {
-		return nil, NewDBError("error beginning transaction: "+err.Error(), http.StatusInternalServerError)
+		return nil, 0, NewDBError("error beginning transaction: "+err.Error(), http.StatusInternalServerError)
 	}
 	defer tx.Rollback()
 	at := AnnouncementType{}
@@ -161,42 +162,46 @@ func (store *Database) GetAllAnnouncements(page int, includeDeleted bool, userID
 		res, err := tx.Query("SELECT AT.AnnouncementTypeID FROM AnnouncementType AT WHERE AT.AnnouncementTypeName = ?", typeName)
 		if err != nil {
 			if err == sql.ErrNoRows {
-				return nil, NewDBError(fmt.Sprintf("announcement type '%s' does not exist", typeName),
+				return nil, 0, NewDBError(fmt.Sprintf("announcement type '%s' does not exist", typeName),
 					http.StatusNotFound)
 			}
-			return nil, NewDBError(fmt.Sprintf("error looking up announcement type: %v", err),
+			return nil, 0, NewDBError(fmt.Sprintf("error looking up announcement type: %v", err),
 				http.StatusInternalServerError)
 		}
 		if !res.Next() {
 			res.Close()
-			return nil, NewDBError(fmt.Sprintf("announcement type '%s' does not exist", typeName),
+			return nil, 0, NewDBError(fmt.Sprintf("announcement type '%s' does not exist", typeName),
 				http.StatusNotFound)
 		}
 
 		err = res.Scan(&at.ID)
 		if err != nil {
-			return nil, NewDBError(fmt.Sprintf("error scanning result into announcement type: %v", err),
+			return nil, 0, NewDBError(fmt.Sprintf("error scanning result into announcement type: %v", err),
 				http.StatusInternalServerError)
 		}
 		res.Close()
 	}
+	tx.Commit()
 
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT A.AnnouncementID, A.AnnouncementTypeID, A.Message, A.CreatedAt, A.IsDeleted,
-		U.UserID, U.FirstName, U.LastName, U.Email, U.RoleID, U.Active FROM Announcements A
-		JOIN Users U ON A.CreatedBy = U.UserID`
+	sqlStmt := &SQLStatement{
+		Cols: `DISTINCT A.AnnouncementID, A.AnnouncementTypeID, A.Message, A.CreatedAt,
+		A.IsDeleted, U.UserID, U.FirstName, U.LastName, U.Email, U.RoleID, U.Active`,
+		Table: "Announcements A",
+		Join:  "JOIN Users U ON A.CreatedBy = U.UserID",
+		Where: "1 = 1",
+		Page:  page,
+	}
+
 	if !includeDeleted {
-		query += ` WHERE A.IsDeleted = FALSE`
+		sqlStmt.Where += ` AND A.IsDeleted = FALSE`
 	}
 	if len(userID) > 0 {
-		query += ` AND A.CreatedBy = ` + userID
+		sqlStmt.Where += ` AND A.CreatedBy = ` + userID
 	}
 	if len(typeName) > 0 {
-		query += ` AND A.AnnouncementTypeID = ` + strconv.Itoa(int(at.ID))
+		sqlStmt.Where += ` AND A.AnnouncementTypeID = ` + strconv.Itoa(int(at.ID))
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	tx.Commit()
-	return handleAnnouncementsFromDatabase(store.db.Query(query, offset))
+	return store.processAnnouncementQuery(sqlStmt)
 }
 
 // handleAnnouncementsFromDatabase compiles the given result and err into a slice of AnnouncementResponse or an error.
@@ -222,8 +227,28 @@ func handleAnnouncementsFromDatabase(result *sql.Rows, err error) ([]*Announceme
 		}
 		announcements = append(announcements, a)
 	}
-	if len(announcements) == 0 {
-		return nil, NewDBError("no announcements found", http.StatusNotFound)
-	}
 	return announcements, nil
+}
+
+// processUserQuery runs the query with the given args and returns a slice of users
+// that matched that query as well as the number of pages of users that matched
+// that query. Returns a DBError if an error occurred.
+func (store *Database) processAnnouncementQuery(sqlStmt *SQLStatement, args ...interface{}) ([]*AnnouncementResponse, int, *DBError) {
+	announcements, dberr := handleAnnouncementsFromDatabase(store.db.Query(sqlStmt.BuildQuery(), args...))
+	if dberr != nil {
+		return nil, 0, dberr
+	}
+	numResults := 0
+	rows, err := store.db.Query(sqlStmt.BuildCountQuery(), args...)
+	if err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error querying for number of results: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, 0, NewDBError("count query returned no results", http.StatusInternalServerError)
+	}
+	if err = rows.Scan(&numResults); err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error scanning rows into num results: %v", err), http.StatusInternalServerError)
+	}
+	return announcements, int(math.Ceil(float64(numResults) / 25.0)), nil
 }

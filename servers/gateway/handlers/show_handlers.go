@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -23,11 +22,11 @@ func (ctx *AuthContext) ShowsHandler(w http.ResponseWriter, r *http.Request, u *
 		if httperr != nil {
 			return httperr
 		}
-		shows, err := ctx.store.GetShows(page, getHistoryParam(r), getIncludeDeletedParam(r), getStringParam(r, "type"))
+		shows, numPages, err := ctx.store.GetShows(page, getHistoryParam(r), getIncludeDeletedParam(r), getStringParam(r, "type"))
 		if err != nil {
 			return HTTPError(err.Message, err.HTTPStatus)
 		}
-		return respond(w, models.PaginateShows(shows, page), http.StatusOK)
+		return respond(w, models.PaginateNumShows(shows, page, numPages), http.StatusOK)
 	case "POST":
 		if !ctx.permChecker.UserCan(u, permissions.CreateShows) {
 			return permissionDenied()
@@ -77,10 +76,7 @@ func (ctx *AuthContext) SpecificShowHandler(w http.ResponseWriter, r *http.Reque
 		if err == nil {
 			return respondWithString(w, "show deleted", http.StatusOK)
 		}
-		if err == sql.ErrNoRows {
-			return objectNotFound("show")
-		}
-		return HTTPError("error deleting show: "+err.Error(), http.StatusInternalServerError)
+		return middleware.HTTPErrorFromDBErrorContext(err, "error deleting show")
 	default:
 		return methodNotAllowed()
 	}

@@ -121,6 +121,10 @@
             padding: 10px;
         }
 
+        .schedule {
+            margin-bottom: 20px;
+        }
+
 
         @media only screen and (max-width: 768px) {
             body {
@@ -155,6 +159,10 @@
                     <div class="raw-url">{{.URL}}</div>
                 </div>
 
+                <div class="schedule">
+                    {{.Schedule}}
+                </div>
+
                 <div class="expiration-time-msg">
                         The invite to join this piece will expire on
                         <p class="expiry-time"><b>{{.ExpiryTime}}</b></p>
@@ -176,7 +184,7 @@
 
             <!-- FOOTER BANNER -->
             <div class="signature-wrapper">
-                <img class="stageLogo" src="../img/logoex.png" alt="STAGE Logo">
+                <img class="stageLogo" src="https://dasc.capstone.ischool.uw.edu/assets/img/logoex.png" alt="STAGE Logo">
             </div>
 
         </div>

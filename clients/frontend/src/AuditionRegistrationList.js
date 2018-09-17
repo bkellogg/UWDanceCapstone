@@ -70,7 +70,9 @@ class AuditionRegistrationList extends Component {
       <section className="main">
         <div className="mainView">
           <div className="pageContentWrap">
-          <h1>{this.props.name}: Audition Registration List</h1>
+          <h1>{this.props.name}: Audition Registration List
+          <button onClick= {() => Util.printPage()}> Print </button>
+          </h1>
             <div className="fullWidthCard">
               <div className="wrap">
                 <div className="peopleList">

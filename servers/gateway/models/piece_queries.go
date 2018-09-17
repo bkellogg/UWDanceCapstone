@@ -3,7 +3,10 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	"math"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -115,33 +118,55 @@ func (store *Database) AssignChoreographerToPiece(userID, pieceID int) *DBError 
 
 // DeletePieceByID marks the piece with the given ID as deleted.
 func (store *Database) DeletePieceByID(id int) *DBError {
-	_, err := store.db.Exec(`UPDATE Pieces SET IsDeleted = ? WHERE PieceID = ?`, true, id)
-	return NewDBError(fmt.Sprintf("error deleting piece: %v", err), http.StatusInternalServerError)
+	res, err := store.db.Exec(`UPDATE Pieces SET IsDeleted = ? WHERE PieceID = ?`, true, id)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error marking piece as deleted: %v", err), http.StatusInternalServerError)
+	}
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("either the show does not exist or it has already been deleted", http.StatusBadRequest)
+	}
+	return nil
 }
 
-// GetPiecesByUserID gets all pieces the given user is in.
-func (store *Database) GetPiecesByUserID(id, page int, includeDeleted bool) ([]*Piece, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT DISTINCT P.PieceID, P.InfoSheetID, P.ChoreographerID ,P.PieceName, P.ShowID, P.CreatedAt, P.CreatedBy,
-	P.IsDeleted FROM Pieces P 
-	JOIN UserPiece UP ON P.PieceID = UP.PieceID 
-	WHERE UP.UserID = ?`
-	if !includeDeleted {
-		query += ` AND UP.IsDeleted = false`
+// GetPiecesByUserID gets all pieces the given user is in. If showID is specified, then only pieces
+// the user is in in that show will be returned
+func (store *Database) GetPiecesByUserID(id, page, showID int, includeDeleted bool) ([]*Piece, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols: `DISTINCT P.PieceID, P.InfoSheetID, P.ChoreographerID ,P.PieceName, P.ShowID,
+		P.CreatedAt, P.CreatedBy, P.IsDeleted`,
+		Table: "Pieces P",
+		Join:  "JOIN UserPiece UP ON P.PieceID = UP.PieceID",
+		Where: "UP.UserID = ?",
+		Page:  page,
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
+
+	if !includeDeleted {
+		sqlStmnt.Where += ` AND UP.IsDeleted = false`
+	}
+	if showID > 0 {
+		sqlStmnt.Where += fmt.Sprintf(" AND P.ShowID = %s ", strconv.Itoa(showID))
+	}
+	return store.processPieceQuery(sqlStmnt, id)
 }
 
 // GetPiecesByShowID gets all pieces that are associated with the given show ID.
-func (store *Database) GetPiecesByShowID(id, page int, includeDeleted bool) ([]*Piece, *DBError) {
-	offset := getSQLPageOffset(page)
-	query := `SELECT * FROM Pieces P Where P.ShowID = ?`
-	if !includeDeleted {
-		query += ` AND P.IsDeleted = false`
+func (store *Database) GetPiecesByShowID(id, page int, includeDeleted bool) ([]*Piece, int, *DBError) {
+	sqlStmnt := &SQLStatement{
+		Cols:  "*",
+		Table: "Pieces P",
+		Where: "P.ShowID = ?",
+		Page:  page,
 	}
-	query += ` LIMIT 25 OFFSET ?`
-	return handlePiecesFromDatabase(store.db.Query(query, id, offset))
+
+	if !includeDeleted {
+		sqlStmnt.Where += ` AND P.IsDeleted = false`
+	}
+
+	return store.processPieceQuery(sqlStmnt, id)
 }
 
 // InsertNewPieceInfoSheet inserts the given pieceInfoSheet for the given PieceID.
@@ -202,7 +227,7 @@ func (store *Database) InsertNewPieceInfoSheet(creator int, pieceID int, info *N
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error getting piece info id: %v", err), http.StatusInternalServerError)
 	}
-	finalInfo.PieceInfoID = infoID
+	finalInfo.ID = infoID
 
 	for _, newMusician := range info.Musicians {
 		musician := &PieceMusician{
@@ -264,7 +289,7 @@ func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError
 		return nil, NewDBError("no piece info sheet found", http.StatusNotFound)
 	}
 	is := &PieceInfoSheet{}
-	if err = rows.Scan(&is.PieceInfoID, &is.ChorPhone, &is.Title, &is.RunTime,
+	if err = rows.Scan(&is.ID, &is.ChorPhone, &is.Title, &is.RunTime,
 		&is.Composers, &is.MusicTitle, &is.PerformedBy, &is.MusicSource,
 		&is.NumMusicians, &is.RehearsalSchedule, &is.ChorNotes,
 		&is.CostumeDesc, &is.ItemDesc, &is.LightingDesc, &is.OtherNotes,
@@ -275,7 +300,7 @@ func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError
 		M.Email, M.CreatedAt, M.CreatedBy,
 		M.IsDeleted FROM Musician M
 		JOIN PieceInfoMusician PIM ON M.MusicianID = PIM.MusicianID
-		WHERE PIM.PieceInfoID = ?`, is.PieceInfoID)
+		WHERE PIM.MusicianID = ?`, is.ID)
 	if err != nil {
 		return nil, NewDBError(fmt.Sprintf("error retrieving piece musicians: %v", err), http.StatusInternalServerError)
 	}
@@ -290,6 +315,41 @@ func (store *Database) GetPieceInfoSheet(pieceID int) (*PieceInfoSheet, *DBError
 	}
 	is.Musicians = musicians
 	return is, nil
+}
+
+// UpdatePieceInfoSheet updates an existing piece info sheet if it exists.
+// Returns a DBError if an error occurred.
+func (store *Database) UpdatePieceInfoSheet(infoSheetID int64, info *PieceInfoSheetUpdates) *DBError {
+	res, err := store.db.Exec(`UPDATE PieceInfoSheet PIS SET
+		PIS.ChoreographerPhone = COALESCE(NULLIF(?, ''), ChoreographerPhone),
+		PIS.Title = COALESCE(NULLIF(?, ''), Title),
+		PIS.RunTime = COALESCE(NULLIF(?, ''), RunTime),
+		PIS.Composers = COALESCE(NULLIF(?, ''), Composers),
+		PIS.MusicTitle = COALESCE(NULLIF(?, ''), MusicTitle),
+		PIS.PerformedBy = COALESCE(NULLIF(?, ''), PerformedBy),
+		PIS.MusicSource = COALESCE(NULLIF(?, ''), MusicSource),
+		PIS.RehearsalSchedule = COALESCE(NULLIF(?, ''), RehearsalSchedule),
+		PIS.ChorNotes = COALESCE(NULLIF(?, ''), ChorNotes),
+		PIS.CostumeDesc = COALESCE(NULLIF(?, ''), CostumeDesc),
+		PIS.ItemDesc = COALESCE(NULLIF(?, ''), ItemDesc),
+		PIS.LightingDesc = COALESCE(NULLIF(?, ''), LightingDesc),
+		PIS.OtherNotes = COALESCE(NULLIF(?, ''), OtherNotes)
+		WHERE PIS.PieceInfoID = ?`, info.ChorPhone, info.Title, info.RunTime,
+		info.Composers, info.MusicTitle, info.PerformedBy, info.MusicSource,
+		info.RehearsalSchedule, info.ChorNotes, info.CostumeDesc, info.ItemDesc,
+		info.LightingDesc, info.OtherNotes, infoSheetID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error applyong info sheet update: %v", err), http.StatusInternalServerError)
+	}
+
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving num rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("the piece info sheet doesn't exist or there were no changes made", http.StatusNotFound)
+	}
+	return nil
 }
 
 // DeletePieceInfoSheet deletes the given piece's info sheet, if it exists.
@@ -321,6 +381,322 @@ func (store *Database) DeletePieceInfoSheet(pieceID int) *DBError {
 	return nil
 }
 
+// GetPieceMusicians gets the musicians of the given piece. Returns a DBError if an error occurred.
+func (store *Database) GetPieceMusicians(pieceID int) ([]*PieceMusician, *DBError) {
+	_, dbErr := store.GetPieceByID(pieceID, false)
+	if dbErr != nil {
+		return nil, dbErr
+	}
+	rows, err := store.db.Query(`SELECT M.MusicianID, M.Name, M.Phone, M.Email, M.CreatedAt, M.CreatedBy, M.IsDeleted FROM Musician M
+		JOIN PieceInfoMusician PIM ON PIM.MusicianID = M.MusicianID
+		JOIN PieceInfoSheet PIS ON PIM.PieceInfoID = PIS.PieceInfoID
+		JOIN Pieces P ON P.InfoSheetID = PIM.PieceInfoID
+		WHERE P.PieceID = ? AND P.IsDeleted = FALSE AND PIS.IsDeleted = FALSE
+		AND PIM.IsDeleted = FALSE AND M.IsDeleted = FALSE`, pieceID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error executing query: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	musicians := make([]*PieceMusician, 0)
+	for rows.Next() {
+		musician := &PieceMusician{}
+		if err = rows.Scan(&musician.ID, &musician.Name, &musician.Phone,
+			&musician.Email, &musician.CreatedAt,
+			&musician.CreatedBy, &musician.IsDeleted); err != nil {
+			return nil, NewDBError(fmt.Sprintf("error scanning row into musician: %v", err), http.StatusInternalServerError)
+		}
+		musicians = append(musicians, musician)
+	}
+	return musicians, nil
+}
+
+// UpdateMusicianByID updates the musician with the given id to contain the values
+// of the given updates. Returns a DBError if an error occurred.
+func (store *Database) UpdateMusicianByID(id int, updates *MusicianUpdates) *DBError {
+	res, err := store.db.Exec(`UPDATE Musician M SET
+		M.Name = COALESCE(NULLIF(?, ''), Name),
+		M.Phone = COALESCE(NULLIF(?, ''), Phone),
+		M.Email = COALESCE(NULLIF(?, ''), Email)
+		WHERE M.MusicianID = ? AND M.IsDeleted = FALSE`, updates.Name, updates.Phone, updates.Email, id)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error executing updates: %v", err), http.StatusInternalServerError)
+	}
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("musician was either not found or the updates contained nothing new (no updates to apply)", http.StatusNotFound)
+	}
+	return nil
+}
+
+// DeleteMusicianByID deletes the musician with the given id.
+// Returns a DBError if an error occurred.
+func (store *Database) DeleteMusicianByID(id int) *DBError {
+	res, err := store.db.Exec(`UPDATE Musician M SET IsDeleted = TRUE WHERE MusicianID = ?`, id)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error executing update: %v", err), http.StatusInternalServerError)
+	}
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("given musician does not exist or has already been deleted", http.StatusNotFound)
+	}
+	return nil
+}
+
+// InsertMusicianToPiece inserts a new musician to the given piece. Returns a DBError if an error occurred.
+func (store *Database) InsertMusicianToPiece(pieceID, creator int, musician *NewPieceMusician) *DBError {
+	infoSheet, dberr := store.GetPieceInfoSheet(pieceID)
+	if dberr != nil {
+		return dberr
+	}
+
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+	insertTime := time.Now()
+	res, err := tx.Exec(`INSERT INTO Musician (Name, Phone, Email, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?, ?)`,
+		musician.Name, musician.Phone, musician.Email, insertTime, creator, false)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error inserting musician: %v", err), http.StatusInternalServerError)
+	}
+	musID, err := res.LastInsertId()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error getting musician ID: %v", err), http.StatusInternalServerError)
+	}
+	res, err = tx.Exec(`INSERT INTO PieceInfoMusician (PieceInfoID, MusicianID, CreatedAt, CreatedBy, IsDeleted) VALUES (?, ?, ?, ?, ?)`,
+		infoSheet.ID, musID, insertTime, creator, false)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error inserting link between musician and piece: %v", err), http.StatusInternalServerError)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
+// GetPieceByMusicianID returns the piece that the given musician is for. Returns a
+// DBError if an error occurred.
+func (store *Database) GetPieceByMusicianID(id int) (*Piece, *DBError) {
+	rows, err := store.db.Query(`SELECT P.PieceID, P.InfoSheetID, P.ChoreographerID, P.PieceName, P.ShowID,
+		P.CreatedAt, P.CreatedBy, P.IsDeleted FROM Pieces P
+		JOIN PieceInfoSheet PIS ON P.InfoSheetID = PIS.PieceInfoID
+		JOIN PieceInfoMusician Musician ON PIS.PieceInfoID = Musician.PieceInfoID
+		WHERE Musician.MusicianID = ?`, id)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error executing query: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	piece := &Piece{}
+	if !rows.Next() {
+		return nil, NewDBError("the musician does not exist or is not tied to a piece", http.StatusNotFound)
+	}
+	if err = rows.Scan(&piece.ID, &piece.InfoSheetID, &piece.ChoreographerID, &piece.Name, &piece.ShowID,
+		&piece.CreatedAt, &piece.CreatedBy, &piece.IsDeleted); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error scanning row into piece: %v", err), http.StatusInternalServerError)
+	}
+	return piece, nil
+}
+
+// InsertPieceRehearsals inserts the given rehearsals for the specified piece.
+// Returns the completed rehearsal times or a DBError if one occurred.
+func (store *Database) InsertPieceRehearsals(userID int64, pieceID int, rehearsals NewRehearsalTimes) (RehearsalTimes, *DBError) {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	_, dberr := txGetPiece(tx, pieceID)
+	if dberr != nil {
+		return nil, dberr
+	}
+	createTime := time.Now()
+
+	rts := RehearsalTimes{}
+
+	for _, nr := range rehearsals {
+		rt := &RehearsalTime{}
+		rt.CreatedBy = userID
+		rt.CreatedAt = createTime
+		rt.IsDeleted = false
+		rt.Title = nr.Title
+		rt.End = nr.End
+		rt.Start = nr.Start
+		rt.PieceID = pieceID
+		res, err := tx.Exec(`INSERT INTO RehearsalTime
+			(PieceID, Title, Start, End, CreatedAt, CreatedBy, IsDeleted)
+			VALUES (?, ?, ?, ?, ?, ?, ?)`, pieceID, nr.Title, nr.Start, nr.End, createTime, userID, false)
+		if err != nil {
+			return nil, NewDBError(fmt.Sprintf("error inserting rehearsal time: %v", err), http.StatusInternalServerError)
+		}
+		insertID, err := res.LastInsertId()
+		if err != nil {
+			return nil, NewDBError(fmt.Sprintf("error fetching last insert id of rehearsal time: %v", err), http.StatusInternalServerError)
+		}
+		rt.ID = insertID
+		rts = append(rts, rt)
+	}
+	if err := tx.Commit(); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return rts, nil
+}
+
+// GetPieceRehearsals gets the rehearsals for the given piece. Returns a DBError
+// if one occurred.
+func (store *Database) GetPieceRehearsals(pieceID int) (RehearsalTimes, *DBError) {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return nil, dberr
+	}
+
+	rows, err := store.db.Query(`SELECT * FROM RehearsalTime RT
+		WHERE RT.PieceID = ? AND RT.IsDeleted = FALSE`, pieceID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error fetching rehearsal times: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+
+	rehearsals := RehearsalTimes{}
+	for rows.Next() {
+		rehearsal := &RehearsalTime{}
+		if err = rows.Scan(&rehearsal.ID, &rehearsal.PieceID, &rehearsal.Title,
+			&rehearsal.Start, &rehearsal.End, &rehearsal.CreatedAt,
+			&rehearsal.CreatedBy, &rehearsal.IsDeleted); err != nil {
+			return nil, NewDBError(fmt.Sprintf("error scanning row into rehearsal time: %v", err), http.StatusInternalServerError)
+		}
+		rehearsals = append(rehearsals, rehearsal)
+	}
+	return rehearsals, nil
+}
+
+// GetPieceRehearsalByID gets the rehearsal time of the given piece and rehearsal ID.
+// If the rehearsal ID does not match the pieceID no rehearsal time will returned.
+// Returns the a DBError if one occurred.
+func (store *Database) GetPieceRehearsalByID(pieceID, rehearsalID int, includeDeleted bool) (*RehearsalTime, *DBError) {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return nil, dberr
+	}
+
+	rows, err := store.db.Query(`SELECT * FROM RehearsalTime RT
+		WHERE RT.PieceID = ? AND RT.RehearsalTimeID = ? AND RT.IsDeleted = FALSE`, pieceID, rehearsalID)
+	if err != nil {
+		return nil, NewDBError(fmt.Sprintf("error fetching rehearsal times: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		return nil, NewDBError(fmt.Sprintf("no rehearsal found"), http.StatusNotFound)
+	}
+
+	rehearsal := &RehearsalTime{}
+	if err = rows.Scan(&rehearsal.ID, &rehearsal.PieceID, &rehearsal.Title,
+		&rehearsal.Start, &rehearsal.End, &rehearsal.CreatedAt,
+		&rehearsal.CreatedBy, &rehearsal.IsDeleted); err != nil {
+		return nil, NewDBError(fmt.Sprintf("error scanning row into rehearsal time: %v", err), http.StatusInternalServerError)
+	}
+	return rehearsal, nil
+}
+
+// DeletePieceRehearsals deletes every rehearsal for the given piece.
+// Returns a DBError if one occurred.
+func (store *Database) DeletePieceRehearsals(pieceID int) *DBError {
+	_, dberr := store.GetPieceByID(pieceID, false)
+	if dberr != nil {
+		return dberr
+	}
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+	res, err := tx.Exec(`UPDATE RehearsalTime RT SET RT.IsDeleted = TRUE WHERE RT.PieceID = ?`, pieceID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error marking rehearsal times as deleted: %v", err), http.StatusInternalServerError)
+	}
+
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error determining number of rows affected: %v", err), http.StatusInternalServerError)
+	}
+
+	if numAffected == 0 {
+		return NewDBError(fmt.Sprintf("piece has no rehearsals to delete"), http.StatusNotFound)
+	}
+
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
+// UpdatePieceRehearsalsByID updates the rehearsal for the given piece and rehearsalID
+// to have the values of the given updates.
+func (store *Database) UpdatePieceRehearsalsByID(pieceID, rehearsalID int, updates *NewRehearsalTime) *DBError {
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+
+	res, err := tx.Exec(`UPDATE RehearsalTime RT SET
+		RT.Title = COALESCE(NULLIF(?, ''), Title),
+		RT.Start = ?, RT.End = ?
+		WHERE RT.PieceID = ? AND RT.RehearsalTimeID = ?`,
+		updates.Title, updates.Start, updates.End, pieceID, rehearsalID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error applying updates: %v", err), http.StatusInternalServerError)
+	}
+
+	numAffected, err := res.RowsAffected()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error retrieving num rows affected: %v", err), http.StatusInternalServerError)
+	}
+	if numAffected == 0 {
+		return NewDBError("no rehearsal time was found or there were no changes made", http.StatusNotFound)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
+// DeleteManyRehearsalsByID deletes all rehearsals that have IDs that are in the
+// rehearsals slice. Does not delete any rehearsal ID that does not match the given
+// piece ID. Returns a DBError if an error occurred.
+func (store *Database) DeleteManyRehearsalsByID(pieceID int, rehearsals []int) *DBError {
+	if len(rehearsals) == 0 {
+		return NewDBError("no rehearsal IDs given", http.StatusInternalServerError)
+	}
+	tx, err := store.db.Begin()
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error beginning transaction: %v", err), http.StatusInternalServerError)
+	}
+	defer tx.Rollback()
+	query := `UPDATE RehearsalTime RT SET IsDeleted = TRUE WHERE RT.PieceID = ? AND (`
+	for _, rehearsalID := range rehearsals {
+		query += fmt.Sprintf(" RT.RehearsalTimeID = %d OR", rehearsalID)
+	}
+	query = strings.TrimSuffix(query, " OR")
+	query += `)`
+	_, err = tx.Exec(query, pieceID)
+	if err != nil {
+		return NewDBError(fmt.Sprintf("error marking rehearsals as deleted: %v", err), http.StatusInternalServerError)
+	}
+	if err = tx.Commit(); err != nil {
+		return NewDBError(fmt.Sprintf("error committing transaction: %v", err), http.StatusInternalServerError)
+	}
+	return nil
+}
+
 // handlePiecesFromDatabase compiles the given result and err into a slice of pieces or an error.
 func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, *DBError) {
 	if err != nil {
@@ -339,4 +715,27 @@ func handlePiecesFromDatabase(result *sql.Rows, err error) ([]*Piece, *DBError) 
 		pieces = append(pieces, piece)
 	}
 	return pieces, nil
+}
+
+// processPieceQuery runs the query with the given args and returns a slice of pieces
+// that matched that query as well as the number of pages of pieces that matched
+// that query. Returns a DBError if an error occurred.
+func (store *Database) processPieceQuery(sqlStmt *SQLStatement, args ...interface{}) ([]*Piece, int, *DBError) {
+	pieces, dberr := handlePiecesFromDatabase(store.db.Query(sqlStmt.BuildQuery(), args...))
+	if dberr != nil {
+		return nil, 0, dberr
+	}
+	numResults := 0
+	rows, err := store.db.Query(sqlStmt.BuildCountQuery(), args...)
+	if err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error querying for number of results: %v", err), http.StatusInternalServerError)
+	}
+	defer rows.Close()
+	if !rows.Next() {
+		return nil, 0, NewDBError("count query returned no results", http.StatusInternalServerError)
+	}
+	if err = rows.Scan(&numResults); err != nil {
+		return nil, 0, NewDBError(fmt.Sprintf("error scanning rows into num results: %v", err), http.StatusInternalServerError)
+	}
+	return pieces, int(math.Ceil(float64(numResults) / 25.0)), nil
 }
