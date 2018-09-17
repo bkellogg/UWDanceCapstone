@@ -33,7 +33,7 @@
 }
 
 .scrollableCard, .restOfCast, .choreographersSelecteCast{
-    overflow: scroll;
+    overflow: visible;
     max-height: -webkit-fill-available;
     height: auto;
 }

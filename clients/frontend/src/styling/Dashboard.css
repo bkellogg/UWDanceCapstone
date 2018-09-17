@@ -20,8 +20,8 @@
 
 /*CAST MESSAGE -- BLUE TONES*/
 .completeProfileBorderColor, .castBorderColor{
-  border-left: 6px solid rgb(231, 76, 60);
-  background-color:rgb(253, 237, 236);
+  border-left: 6px solid #e74c3c;
+  background-color:#fdedec;
 }
 
 .completeProfileBorderColor{
