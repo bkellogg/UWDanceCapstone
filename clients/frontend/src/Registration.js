@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import * as Util from './util.js';
+import { compose } from 'ramda';
 
 //components
 import Availability from './Availability';
@@ -18,7 +19,8 @@ const styles = {
   customWidthText: {
     width: 500,
     marginTop: '10px',
-    paddingLeft: '10px'
+    paddingLeft: '10px',
+    marginBottom : '0px'
   },
   customWidth: {
     width: 80,
@@ -38,7 +40,8 @@ class Registration extends Component {
     this.state = {
       value: 1,
       registered: false,
-      clicked: false
+      clicked: false,
+      wordCount: 0
     }
   };
 
@@ -46,7 +49,10 @@ class Registration extends Component {
 
   setAvailability = (availability) => this.setState({ availability: availability });
 
-  addComment = (e) => this.setState({ comments: e.target.value })
+  addComment = (e) => {
+    this.setState({ comments: e.target.value });
+    this.setCounts(e.target.value);
+  }
 
   handleRegister() {
     let body = {
@@ -74,8 +80,51 @@ class Registration extends Component {
       })
   }
 
+  setCounts = value => {
+    const trimmedValue = value.trim();
+    const words = compose(this.removeEmptyElements, this.removeBreaks)(trimmedValue.split(' '));
+
+    this.setState({
+      comments: value,
+      wordCount: value === '' ? 0 : words.length,
+    });
+  }
+
+  removeEmptyElements = arr => {
+    const index = arr.findIndex(el => el.trim() === '');
+
+    if (index === -1)
+      return arr;
+
+    arr.splice(index, 1);
+
+    return this.removeEmptyElements(arr)
+  };
+
+  removeBreaks = arr => {
+    const index = arr.findIndex(el => el.match(/\r?\n|\r/g));
+
+    if (index === -1)
+      return arr;
+
+    const newArray = [
+      ...arr.slice(0, index),
+      ...arr[index].split(/\r?\n|\r/),
+      ...arr.slice(index + 1, arr.length)
+    ];
+
+    return this.removeBreaks(newArray);
+  }
+
+
   render() {
-    const disabled = !this.state.clicked
+    let disabled = !this.state.clicked
+
+    let wordColor = "black"
+    if (this.state.wordCount >= 200) {
+      wordColor = "red"
+      disabled = true
+    }
 
     return (
       <div className="auditionForm">
@@ -142,7 +191,7 @@ class Registration extends Component {
                 <div className="xtraInfo tooltip pieceTip">
                   <i className="fas fa-question-circle"></i>
                   <span className="tooltiptext">
-                    This could be known <b className="emphasis">dates</b> or general times you know you won't be available to rehearse.
+                    This could be known <b className="emphasis">dates</b> or general times you know you won't be available to rehearse. This must be 200 words or less.
                   </span>
                 </div>
               </div>
@@ -154,6 +203,7 @@ class Registration extends Component {
                 style={styles.customWidthText}
                 hintText="EX: I am not available on Saturday, April 29th"
               />
+              <p style={{fontSize: "13px", color: wordColor}}><strong>Word Count:</strong> {this.state.wordCount}</p>
             </div>
 
           </div>
