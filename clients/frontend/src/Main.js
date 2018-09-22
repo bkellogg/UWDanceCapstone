@@ -348,7 +348,7 @@ class Main extends Component {
                   key={i * 100}
                   exact
                   path={path + "/audition"}
-                  render={props => <AuditionRegistrationList {...props} name={show.name} audition={show.auditionID} />} />
+                  render={props => <AuditionRegistrationList {...props} name={show.name} auditionID={show.auditionID} show={show.show}/>} />
 
                 let route4 = <Route
                   key={i * 1000}
