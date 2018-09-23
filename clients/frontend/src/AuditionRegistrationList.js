@@ -35,12 +35,10 @@ class AuditionRegistrationList extends Component {
         done = json.users.length === 0 ? true : false
         page++;
         dancers = dancers.concat(json.users);
-        console.log(dancers)
       } catch (e) {
         console.error(e)
       }
     }
-    console.log(dancers)
     this.getAllUserAuditionLink(dancers)
   }
 
