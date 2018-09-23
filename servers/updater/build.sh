@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 GOOS=linux go build
-scp updater dance:/servers/
+scp updater stage:/servers/
 go clean
