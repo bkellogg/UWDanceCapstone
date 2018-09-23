@@ -9,33 +9,40 @@ class AuditionRegistrationList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      allDancers : []
+      allDancers: []
     }
   };
 
-  componentWillMount(){
+  componentWillMount() {
     this.getAllUsers()
   }
 
   getAllUsers = () => {
-    //TODO deal with pages
-    Util.makeRequest("auditions/" + this.props.auditionID + "/users", {}, "GET", true)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
-        if (res.status === 401) {
+    this.getPages()
+  };
+
+  async getPages() {
+    let dancers = [];
+    let page = 1;
+    let done = false;
+    while (!done) {
+      try {
+        let response = await Util.makeRequest('auditions/' + this.props.auditionID + '/users?page=' + page, "", "GET", true)
+        if (response.status === 401) {
           Util.signOut()
         }
-        return res.text().then((t) => Promise.reject(t));
-      })
-      .then(dancers => {
-        this.getAllUserAuditionLink(dancers.users)
-      })
-      .catch(err => {
-        console.error(err)
-      })
-  };
+        let json = await response.json();
+        done = json.users.length === 0 ? true : false
+        page++;
+        dancers = dancers.concat(json.users);
+        console.log(dancers)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    console.log(dancers)
+    this.getAllUserAuditionLink(dancers)
+  }
 
   async getAllUserAuditionLink(dancers) {
     const allDancersArray = dancers.map(async dancer => {
@@ -44,9 +51,9 @@ class AuditionRegistrationList extends Component {
     })
 
     const allDancers = await Promise.all(allDancersArray)
-    allDancers.sort((a,b) => {return a.regNum - b.regNum})
+    allDancers.sort((a, b) => { return a.regNum - b.regNum })
     this.setState({
-      allDancers : allDancers
+      allDancers: allDancers
     })
   }
 
@@ -55,7 +62,7 @@ class AuditionRegistrationList extends Component {
     let dancerRows = allDancers.map((dancer, i) => {
       return (
         <tr key={i} >
-          <td style={{textAlign: "center"}}>
+          <td style={{ textAlign: "center" }}>
             {dancer.regNum}
           </td>
           <td>
@@ -71,15 +78,15 @@ class AuditionRegistrationList extends Component {
       <section className="main">
         <div className="mainView">
           <div className="pageContentWrap">
-          <h1 className="printHeader">{this.props.name}: Audition Registration List</h1>
-          <Button className="printButton" onClick= {() => Util.printPage()}> Print </Button>
+            <h1 className="printHeader">{this.props.name}: Audition Registration List</h1>
+            <Button className="printButton" onClick={() => Util.printPage()}> Print </Button>
             <div className="fullWidthCard">
               <div className="wrap">
                 <div className="peopleList">
                   <table>
                     <tbody>
                       <tr className="categories">
-                        <th style={{width: "10%", textAlign:"center"}}>Registration Number</th>
+                        <th style={{ width: "10%", textAlign: "center" }}>Registration Number</th>
                         <th>Name</th>
                         <th>Email</th>
                       </tr>
