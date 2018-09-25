@@ -201,7 +201,7 @@ func (ctx *AuthContext) UserObjectsHandler(w http.ResponseWriter, r *http.Reques
 		}
 		return methodNotAllowed()
 	case "role":
-		if !ctx.permChecker.UserCan(u, permissions.ChangeUserRole) {
+		if !ctx.permChecker.UserCan(u, permissions.ChangeUserRole) || !ctx.permChecker.UserCanModifyUser(u, int64(userID)) {
 			return permissionDenied()
 		}
 		return ctx.handleUserRole(w, r, userID)
