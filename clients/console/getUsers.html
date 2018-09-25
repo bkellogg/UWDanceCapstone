@@ -1,66 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+    <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>STAGE Users</title>
-    <link rel="stylesheet" href="css/getUsers.css">
-    <link rel="stylesheet" href="css/common.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>STAGE Users</title>
+        <link rel="stylesheet" href="css/getUsers.css">
+        <link rel="stylesheet" href="css/common.css">
+    </head>
 
-<body>
-    <nav id='nav-bar'></nav>
-    <div class="page-wrap">
-        <h1>Users</h1>
-        <div class="search-users">
-            <p class="important-message">Search for users by any combination of first name, last name, and email. At least one field must be used.</p>
+    <body>
+        <nav id='nav-bar'></nav>
+        <div class="page-wrap">
+            <h1>Users</h1>
+            <div class="search-users">
+                <p class="important-message">Search for users by any combination of first name, last name, and email. At least one field must be used.</p>
 
-            <form class="search-users-form">
-                <div class="fname">
-                    <label class="short-input" for="fname-input">First Name</label>
-                    <input id="fname-input" type="text">
-                </div>
-                <div class="lname">
-                    <label class="short-input" for="lname-input">Last Name</label>
-                    <input id="lname-input" type="text">
-                </div>
-                <div class="email">
-                    <label class="short-input" for="email-input">Email</label>
-                    <input id="email-input" type="text">
-                </div>
-                <button id="search-submit" type="submit" disabled="true">Search</button>
-            </form>
-            <div class="js-error"></div>
+                <form class="search-users-form">
+                    <div class="fname">
+                        <label class="short-input" for="fname-input">First Name</label>
+                        <input id="fname-input" type="text">
+                    </div>
+                    <div class="lname">
+                        <label class="short-input" for="lname-input">Last Name</label>
+                        <input id="lname-input" type="text">
+                    </div>
+                    <div class="email">
+                        <label class="short-input" for="email-input">Email</label>
+                        <input id="email-input" type="text">
+                    </div>
+                    <button id="search-submit" type="submit" disabled="true">Search</button>
+                </form>
+                <div class="js-error"></div>
+            </div>
+            <table id="users_table" class="tablesorter"></table>
+            <div id="no-users-found"></div>
         </div>
-        <table id="users_table" class="tablesorter"></table>
-        <div id="no-users-found"></div>
-    </div>
-</body>
-<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.0.2/tablesort.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.0.2/sorts/tablesort.number.min.js"></script>
-<script src="js/common.js"></script>
-<script src="js/getUsers.js"></script>
-<script src="js/searchUsers.js"></script>
-<script>
-    $(function () {
-        $("#nav-bar").load("navigation.html");
-    });
-</script>
+    </body>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.0.2/tablesort.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.0.2/sorts/tablesort.number.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/getUsers.js"></script>
+    <script src="js/searchUsers.js"></script>
+    <script>
+        $(function () {
+            $("#nav-bar").load("navigation.html");
+        });
+    </script>
 
-<script type="text/javascript">
-    $(function () {
-        $("#fname-input, #lname-input, #email-input").bind("change keyup",
-            function () {
-                if ($("#fname-input").val() == "" && $("#lname-input").val() == "" && $("#email-input").val() == "") {
-                    document.getElementById("search-submit").disabled = true;
-                } else {
-                    document.getElementById("search-submit").disabled = false;
-                }
-            });
-    });
-</script>
-
+    <script type="text/javascript">
+        $(function () {
+            $("#fname-input, #lname-input, #email-input").bind("change keyup",
+                function () {
+                    if ($("#fname-input").val() == "" && $("#lname-input").val() == "" && $("#email-input").val() == "") {
+                        document.getElementById("search-submit").disabled = true;
+                    } else {
+                        document.getElementById("search-submit").disabled = false;
+                    }
+                });
+        });
+    </script>
 </html>

@@ -1,24 +1,31 @@
 
 
-.role-change{
+.role-change {
     margin-top: 30px;
 }
 
-.change-button{
+.change-button {
     margin-top: 15px;
     margin-bottom: 30px;
 }
 
+#delete-user-btn {
+    background-color: #ff5050;
+}
 
-.img-bio-resume, .name-bio-wrap{
+#delete-user-btn:hover {
+    background-color: #ff0000;
+}
+
+.img-bio-resume, .name-bio-wrap {
     display: inline-block;
     margin-top: 15px;
 }
 
-.name-bio-wrap{
+.name-bio-wrap {
     margin-left: 15px;
 }
 
-.email-resume, .resume-wrap, .show-history-wrap{
+.email-resume, .resume-wrap, .show-history-wrap {
     margin-top: 30px;
 }

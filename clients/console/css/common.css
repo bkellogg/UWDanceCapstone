@@ -166,6 +166,10 @@ h2.showName{
   background-color: #36acdf;
 }
 
+.change-button:hover {
+  cursor: pointer;
+}
+
 /*DELETE BUTTON*/
 .delete{
   background-color: #e65100;
