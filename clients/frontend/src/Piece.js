@@ -232,28 +232,58 @@ class Piece extends Component {
     })
   }
 
+  async getPages(pieceID) {
+    let dancers = [];
+    let choreographer = "";
+    let page = 1;
+    let done = false;
+    while(!done) {
+      try {
+          let response = await Util.makeRequest('pieces/' + pieceID + "/users?page=" + page, "", "GET", true);
+          if(response.status === 401) {
+            Util.signOut()
+          };
+          let json = await response.json();
+          console.log(json);
+          done = json.dancers.length === 0 ? true : false
+          page++;
+          dancers = dancers.concat(json.dancers);
+          choreographer = json.choreographer;
+      } catch(e) {
+        console.error(e)
+      }
+      console.log(dancers)
+    }
+    this.setState({
+      choreographer : choreographer,
+      dancers : dancers
+    })
+  }
+
   getPieceUsers = (pieceID) => {
     //TODO deal with pages
-    for(let i = 1; i <= Util.PAGEMAX; i++) {
-      Util.makeRequest("pieces/" + pieceID + "/users?page=" + i, "", "GET", true)
-        .then(res => {
-          if (res.ok) {
-            return res.json()
-          }
-          return res
-            .text()
-            .then((t) => Promise.reject(t));
-        })
-        .then(piece => {
-          this.setState({
-            choreographer: piece.choreographer,
-            dancers: piece.dancers
-          })
-        })
-        .catch((err) => {
-          console.error(err)
-        })
-    }
+    //todo test
+    // for(let i = 1; i <= Util.PAGEMAX; i++) {
+    //   Util.makeRequest("pieces/" + pieceID + "/users?page=" + i, "", "GET", true)
+    //     .then(res => {
+    //       if (res.ok) {
+    //         return res.json()
+    //       }
+    //       return res
+    //         .text()
+    //         .then((t) => Promise.reject(t));
+    //     })
+    //     .then(piece => {
+    //       this.setState({
+    //         choreographer: piece.choreographer,
+    //         dancers: piece.dancers
+    //       })
+    //     })
+    //     .catch((err) => {
+    //       console.error(err)
+    //     })
+    // }
+    this.getPages(pieceID);
   }
 
   updateMusician = (musicianID) => {

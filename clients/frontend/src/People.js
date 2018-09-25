@@ -18,31 +18,58 @@ class People extends Component {
     this.getPeople()
   }
 
+  async getPages() {
+    let users = [];
+    let page = 1;
+    let done = false;
+    while(!done) {
+      try {
+          let response = await Util.makeRequest('shows/' + this.props.show + "/users?page=" + page, "", "GET", true);
+          if(response.status === 401) {
+            Util.signOut()
+          };
+          let json = await response.json();
+          console.log(json);
+          done = json.users.length === 0 ? true : false
+          page++;
+          users = users.concat(json.users);
+      } catch(e) {
+        console.error(e)
+      }
+      console.log(users)
+    }
+    this.setState({
+      users: users
+    })
+  }
+
   getPeople = () => {
     //TODO deal with pages
-    for(let i = 1; i <= Util.PAGEMAX; i++) {
-      Util.makeRequest("shows/" + this.props.show + "/users?page=" + i, "", "GET", true)
-      .then(res => {
-        if (res.ok) {
-          return res.json()
-        }
-        if (res.status === 401) {
-          Util.signOut()
-        }
-        return res.text().then((t) => Promise.reject(t));
-      })
-      .then(data => {
-        let currUsers = this.state.users
-        let newUsers = currUsers.concat(data.users)
-        this.setState({ 
-          users: newUsers
-        })
-      })
-      .catch(err => {
-        console.err(err)
-        Util.handleError(err)
-      })
-    }
+    //todo test
+    // for(let i = 1; i <= Util.PAGEMAX; i++) {
+    //   Util.makeRequest("shows/" + this.props.show + "/users?page=" + i, "", "GET", true)
+    //   .then(res => {
+    //     if (res.ok) {
+    //       return res.json()
+    //     }
+    //     if (res.status === 401) {
+    //       Util.signOut()
+    //     }
+    //     return res.text().then((t) => Promise.reject(t));
+    //   })
+    //   .then(data => {
+    //     let currUsers = this.state.users
+    //     let newUsers = currUsers.concat(data.users)
+    //     this.setState({ 
+    //       users: newUsers
+    //     })
+    //   })
+    //   .catch(err => {
+    //     console.err(err)
+    //     Util.handleError(err)
+    //   })
+    // }
+    this.getPages()
   }
 
   render() {

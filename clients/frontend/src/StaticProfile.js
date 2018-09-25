@@ -23,7 +23,6 @@ class StaticProfile extends Component {
     this.getPhoto();
     this.getResume();
 
-    //TODO deal with the fact that there are going to be pages
     Util.makeRequest("users/" + this.state.userID + "/shows?history=all", {}, "GET", true)
       .then((res) => {
         if (res.ok) {

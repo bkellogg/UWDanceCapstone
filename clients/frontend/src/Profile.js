@@ -41,7 +41,6 @@ class Profile extends Component {
     this.getResume();
     this.setCounts(this.state.bio);
 
-    //TODO deal with the fact that there are going to be pages
     Util.makeRequest("users/" + this.state.user.id + "/shows?history=all", {}, "GET", true)
       .then((res) => {
         if (res.ok) {
