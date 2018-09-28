@@ -104,14 +104,16 @@ func (n *Notifier) AddClient(u *models.User, c *websocket.Conn) {
 
 // Notify broadcasts the event to all WebSocket clients
 func (n *Notifier) Notify(event *WebSocketEvent) {
+	log.Printf("adding event to the queue\n")
 	n.eventQ <- event
+	log.Printf("finished adding event to the queue\n")
 }
 
 // start starts the notification loop
 func (n *Notifier) start() {
 	// in the event that the notifier loop exits, restart the loop
 	defer func() {
-		log.Printf("notifier loop exited...restarting")
+		log.Printf("notifier loop exited...restarting\n")
 		n.start()
 	}()
 	for {

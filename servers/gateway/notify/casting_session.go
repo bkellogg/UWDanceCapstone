@@ -161,7 +161,9 @@ func (c *CastingSession) Handle(chorID int64, cu *ChoreographerUpdate) error {
 		return fmt.Errorf("error handling updates: %v", err)
 	}
 	log.Printf("right before sendupdates for chor: %d\n", chorID)
-	return c.sendUpdates()
+	err := c.sendUpdates()
+	log.Printf("right after sendupdates for chor: %d\n", chorID)
+	return err
 }
 
 // ConfirmCast confirms the given choreographer's currently selected cast
@@ -186,7 +188,7 @@ func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, int, error) {
 
 	// confirm that the choreographer does not have any dancer that
 	// is contested.
-	for dancerID, _ := range c.ChorCast[chor] {
+	for dancerID := range c.ChorCast[chor] {
 		if _, isContested := c.dancerIsContested(dancerID); isContested {
 			return nil, -1, errors.New("choreographer has dancers that are contested")
 		}
@@ -196,7 +198,7 @@ func (c *CastingSession) ConfirmCast(chorID int64) ([]int64, int, error) {
 
 	// Add the dancers id to the slice to be returned and purge
 	// other entries that they are in, if they exist.
-	for dancerID, _ := range c.ChorCast[chor] {
+	for dancerID := range c.ChorCast[chor] {
 		dancerIDSlice = append(dancerIDSlice, dancerID.int())
 
 		// remove the entry saying the choreographer has casted
@@ -245,6 +247,7 @@ func (c *CastingSession) beginJanitor() {
 		if c.lastUsedTime.Before(time.Now().Add(time.Duration(-1)*appvars.CastingSessionResetTime)) && c.HasBegun {
 			log.Println("casting session non-use detected; flushing...")
 			c.Flush()
+			log.Println("finished flushing session from non-use")
 		}
 		time.Sleep(appvars.CastingSessionExpireReCheckDelay)
 	}
@@ -274,7 +277,7 @@ func (c *CastingSession) choreographerExists(id int64) bool {
 // sendUpdates distributes updates to all choreographers
 // in the current casting session
 func (c *CastingSession) sendUpdates() error {
-	for chor, _ := range c.Choreographers {
+	for chor := range c.Choreographers {
 		updateToSend, err := c.toCastingUpdate(int64(chor))
 		if err != nil {
 			return fmt.Errorf("error generating casting update: %v", err)
@@ -316,7 +319,7 @@ func (c *CastingSession) dropAll(chorID int64, cu *ChoreographerUpdate) error {
 // representing if they are casted or not.
 func (c *CastingSession) dancerIsCasted(id int64) (Choreographer, bool) {
 	for chorID, chorDancers := range c.ChorCast {
-		for dancerID, _ := range chorDancers {
+		for dancerID := range chorDancers {
 			if dancerID == DancerID(id) {
 				return Choreographer(chorID), true
 			}
@@ -337,7 +340,7 @@ func (c *CastingSession) dancerIsContested(dancerID DancerID) ([]Choreographer, 
 		return nil, false
 	}
 	chorSlice := make([]Choreographer, 0, len(chors))
-	for chor, _ := range chors {
+	for chor := range chors {
 		chorSlice = append(chorSlice, chor)
 	}
 	return chorSlice, true
@@ -387,6 +390,7 @@ func (c *CastingSession) makeContestedDancer(id DancerID, rank int,
 // toCastingUpdate returns the casting session as a CastingUpdate
 // for the specified choreographer. Unsafe for concurrent access
 func (c *CastingSession) toCastingUpdate(chorID int64) (*CastingUpdate, error) {
+	log.Printf("beginning to build casting update for choreographer: %d\n", chorID)
 	if !c.HasBegun {
 		return nil, errors.New("casting session has not begun")
 	}
@@ -459,6 +463,7 @@ func (c *CastingSession) toCastingUpdate(chorID int64) (*CastingUpdate, error) {
 		})
 	}
 
+	log.Printf("finished building casting update for choreographer: %d\n", chorID)
 	return castingUpdate, nil
 }
 
