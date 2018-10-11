@@ -118,41 +118,41 @@ func (npis *NewPieceInfoSheet) Validate() error {
 			return errors.New("choreographer must have a valid phone number")
 		}
 	}
-	if len(npis.Title) > 25 {
-		return errors.New("title must be fewer than 25 characters")
+	if len(npis.Title) > 50 {
+		return errors.New("title must be fewer than 50 characters")
 	}
-	if len(npis.RunTime) > 25 {
-		return errors.New("run time must be fewer than 25 characters")
+	if len(npis.RunTime) > 50 {
+		return errors.New("run time must be fewer than 50 characters")
 	}
-	if len(npis.Composers) > 75 {
+	if len(npis.Composers) > 150 {
 		return errors.New("composers must be fewer than 75 characters")
 	}
-	if len(npis.MusicTitle) > 100 {
-		return errors.New("music title must be fewer than 100 characters")
+	if len(npis.MusicTitle) > 150 {
+		return errors.New("music title must be fewer than 150 characters")
 	}
-	if len(npis.PerformedBy) > 100 {
-		return errors.New("performed by and be fewer than 100 characters")
+	if len(npis.PerformedBy) > 200 {
+		return errors.New("performed by and be fewer than 200 characters")
 	}
-	if len(npis.MusicSource) > 100 {
-		return errors.New("music source must be fewer than 100 characters")
+	if len(npis.MusicSource) > 200 {
+		return errors.New("music source must be fewer than 200 characters")
 	}
 	if len(npis.RehearsalSchedule) > 500 {
 		return errors.New("rehearsal schedule must be fewer than 500 characters")
 	}
-	if len(npis.ChorNotes) > 100 {
-		return errors.New("choreographer notes must be fewer than 100 characters")
+	if len(npis.ChorNotes) > 500 {
+		return errors.New("choreographer notes must be fewer than 500 characters")
 	}
-	if len(npis.CostumeDesc) > 100 {
-		return errors.New("costume description must be fewer than 100 characters")
+	if len(npis.CostumeDesc) > 500 {
+		return errors.New("costume description must be fewer than 500 characters")
 	}
-	if len(npis.ItemDesc) > 100 {
-		return errors.New("item description must be fewer than 100 characters")
+	if len(npis.ItemDesc) > 500 {
+		return errors.New("item description must be fewer than 500 characters")
 	}
-	if len(npis.LightingDesc) > 100 {
-		return errors.New("lighting description must be fewer than 100 characters")
+	if len(npis.LightingDesc) > 500 {
+		return errors.New("lighting description must be fewer than 500 characters")
 	}
-	if len(npis.OtherNotes) > 100 {
-		return errors.New("other notes must be fewer than 100 characters")
+	if len(npis.OtherNotes) > 500 {
+		return errors.New("other notes must be fewer than 500 characters")
 	}
 	if npis.NumMusicians != len(npis.Musicians) {
 		return errors.New("declared number of musicians does not match actual number of musicians")

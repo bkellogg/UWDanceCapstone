@@ -19,3 +19,5 @@ tls
 mysql
 .idea
 dbdata
+.vscode/
+logs/
