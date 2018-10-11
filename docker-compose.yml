@@ -1,0 +1,27 @@
+version: '3'
+
+networks:
+  stagenet:
+
+services:
+  gateway:
+    container_name: stage_gateway
+    networks:
+      - stagenet
+    ports:
+      - 80:80
+      - 443:443
+    build:
+      context: ./servers/gateway
+      dockerfile: ${DOCKERFILE}
+    environment:
+      - ADDR=:443
+      - HTTPREDIRADDR=:80
+      - REDISADDR=stage_redis6379
+      - MYSQLADDR=stage_mysql:3306
+
+  redis:
+    container_name: stage_redis
+    image: redis
+    networks:
+      - stagenet
