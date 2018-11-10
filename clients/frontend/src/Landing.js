@@ -13,7 +13,7 @@ class App extends Component {
     this.state = {
       user: null,
       signUp: false,
-      authorized: false
+      authorized: false,
     };
   };
 
