@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 import Landing from './Landing';
 import SignUp from './SignUp.js';
 import SignIn from './SignIn.js';
-import Main from './Main.js'
+import Main from './Main.js';
+import UnderConstruction from './UnderConstruction.js';
 
 //styling
 import './styling/App.css';
@@ -16,7 +17,8 @@ class App extends Component {
       user: null,
       signUp: false,
       authorized: false,
-      landing: true
+      landing: true,
+      underConstruction: true,
     };
   };
 
@@ -91,21 +93,25 @@ class App extends Component {
   render() {
 
     return (  
-      <section>
+      <section style={{height: "100%"}}>
         {
-          this.state.landing && !this.state.authorized && !this.state.signUp && !this.state.showTerms &&
+          this.state.underConstruction &&
+            <UnderConstruction />
+        }
+        {
+          this.state.landing && !this.state.authorized && !this.state.signUp && !this.state.showTerms && !this.state.underConstruction &&
           <Landing logIn={this.showSignIn} signUp={this.showSignUp} />
         }
         {
-          !this.state.landing && !this.state.authorized && !this.state.signUp && !this.state.showTerms &&
+          !this.state.landing && !this.state.authorized && !this.state.signUp && !this.state.showTerms && !this.state.underConstruction &&
           <SignIn onSignIn={this.registerUser} onSignUp={this.handleSignUp} toLanding={this.toLanding}/>
         }
         {
-          !this.state.landing && !this.state.authorized && this.state.signUp && !this.state.showTerms &&
+          !this.state.landing && !this.state.authorized && this.state.signUp && !this.state.showTerms && !this.state.underConstruction &&
           <SignUp onSignUp={this.registerUser} goBack={this.goBack} toLanding={this.toLanding}/>
         }
         {
-          this.state.authorized && !this.state.showTerms &&
+          this.state.authorized && !this.state.showTerms && !this.state.underConstruction &&
           <Main auth={this.signOut}/>
         }
       </section>
