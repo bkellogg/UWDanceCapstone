@@ -30,7 +30,7 @@ class CheckAvailability extends Component {
       //total cast will track the IDs of everyone, no matter if they are conflicted or cast so that we only 
       //update when our user makes a change, not when we get websocket updates
       totalCast: filteredCast,
-      filteredCast: filteredCast,
+      filteredCast: [],
       cast: this.props.cast,
       contested: this.props.contested
     })
