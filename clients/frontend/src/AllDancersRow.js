@@ -11,6 +11,10 @@ import Checkbox from 'material-ui/Checkbox';
 class AllDancersRow extends Component {
     constructor(props) {
         super(props);
+        if (this.props.checkAvailability) {
+
+        }
+        let checkedDefault = this.props.checkAvailability ? false : true
         this.state = {
             cast: [],
             rank: "",
@@ -21,7 +25,7 @@ class AllDancersRow extends Component {
             },
             person: this.props.person,
             photoUrl: img,
-            filterChecked: true,
+            filterChecked: checkedDefault,
             toAddToCast: {
                 "action": "add",
                 "rank1": [],

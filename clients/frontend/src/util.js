@@ -1,7 +1,7 @@
 export const headerAuthorization = "Authorization";
 
 export const host = "dasc.capstone.ischool.uw.edu";
-export const API_URL_BASE = "https://"+ host +"/api/v1/";
+export const API_URL_BASE = "https://" + host + "/api/v1/";
 export const PAGEMAX = 1;
 
 export function saveAuth(auth) {
@@ -16,7 +16,7 @@ export function getLocalUser() {
     return JSON.parse(localStorage.getItem("user"));
 };
 
-export function getID(){
+export function getID() {
     return JSON.parse(localStorage.getItem("user")).id;
 }
 
@@ -56,18 +56,18 @@ export function makeRequest(resource, payload = "", method = "GET", useAuth = fa
 
 export function refreshLocalUser() {
     return makeRequest("users/me", {}, "GET", true)
-    .then((res) => {
-        if (res.ok) {
-            return res.json();
-        }
-        return res.text().then((t) => Promise.reject(t));
-    })
-    .then((data) => {
-        setLocalUser(JSON.stringify(data));
-    })
-    .catch((err) => {
-        signOut();
-    })
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+            return res.text().then((t) => Promise.reject(t));
+        })
+        .then((data) => {
+            setLocalUser(JSON.stringify(data));
+        })
+        .catch((err) => {
+            signOut();
+        })
 }
 
 export function signOut() {
@@ -77,48 +77,48 @@ export function signOut() {
     window.location = "/"
 }
 
-export function titleCase (str) {
-    if ((str===null) || (str===''))
-         return false;
+export function titleCase(str) {
+    if ((str === null) || (str === ''))
+        return false;
     else
-     str = str.toString();
-  
-   return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-  }
+        str = str.toString();
 
-export function uploadPhoto(val){
+    return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
+}
+
+export function uploadPhoto(val) {
     let file = val;
     let data = new FormData();
     data.append("image", file.files[0]);
     let xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
                 return xhr.responseText
-            } 
+            }
         }
     };
 
-    xhr.open("POST", API_URL_BASE+ "users/me/photo");
+    xhr.open("POST", API_URL_BASE + "users/me/photo");
     xhr.setRequestHeader("Authorization", getAuth());
     xhr.setRequestHeader("ImageFieldName", "image");
 
     xhr.send(data);
 }
 
-export function uploadResume(val){
+export function uploadResume(val) {
     let file = val;
     let data = new FormData();
     data.append("resume", file.files[0]);
 
     let xhr = new XMLHttpRequest();
 
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status < 400) {
                 return xhr.responseText
-            } 
+            }
         }
     };
 
@@ -129,7 +129,7 @@ export function uploadResume(val){
     xhr.send(data);
 }
 
-export function uploadBio(val){
+export function uploadBio(val) {
     let payload = {
         "bio": val
     };
@@ -149,7 +149,7 @@ export function uploadBio(val){
         })
 }
 
-export function uploadFName(val){
+export function uploadFName(val) {
     let payload = {
         "firstName": val
     };
@@ -169,7 +169,7 @@ export function uploadFName(val){
         })
 }
 
-export function uploadLName(val){
+export function uploadLName(val) {
     let payload = {
         "lastName": val
     };
@@ -190,37 +190,37 @@ export function uploadLName(val){
 }
 
 //TODO - needs to use the resume header? not sure how we're going to display this
-export function getResume(){
+export function getResume() {
     return makeRequest("users/me/resume", {}, "GET", true)
-    .then((res) => {
-        if (res.ok) {
-            return res.json();
-        }
-    })
-    .catch((err) => {
-        console.error(err);
-    })
+        .then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+        })
 }
 
 //TODO - this is a TEST, change uid 1 to me to get the actual current users history
-export function getDancerHistory(){
-  return makeRequest("users/1/shows?history=all", {}, "GET", true)
-  .then((res) => {
-      if(res.ok){
-          return res.json()
-      }
-  }).catch((err) => {
-    console.error(err)
-  })
+export function getDancerHistory() {
+    return makeRequest("users/1/shows?history=all", {}, "GET", true)
+        .then((res) => {
+            if (res.ok) {
+                return res.json()
+            }
+        }).catch((err) => {
+            console.error(err)
+        })
 }
 
-export function handleError(err){
-    if (err === "you must be signed in to use this resource"){
+export function handleError(err) {
+    if (err === "you must be signed in to use this resource") {
         signOut()
     }
 }
 
-export function printPage(){
+export function printPage() {
     window.print();
 }
 
