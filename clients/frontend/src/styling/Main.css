@@ -33,6 +33,20 @@
     margin: auto;
 }
 
+.footer {
+    width: 100%;
+    background: lightgrey;
+    position:fixed;
+    bottom:0;
+    height: 50px;
+}
+
+.footerLinks {
+    display: flex;
+    float: right;
+    padding: 0 20px 0 0;
+}
+
 @media only screen and (max-width : 992px) {
     .main {
       padding-left: 0;
@@ -41,6 +55,10 @@
     .mobile {
         visibility: visible;
         margin-bottom: 4%;
+    }
+
+    .footer {
+        z-index: 999;
     }
 
     .desktop {

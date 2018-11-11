@@ -71,7 +71,7 @@
 }
 .capstoneInfoContent{
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
 }
 .userRoleHeader{
     color: inherit;
@@ -99,7 +99,6 @@
     vertical-align: top;
     text-align:center;
     margin:2%;
-    padding:20px;
 }
 .teamMemberImage{
     max-width: 100%;

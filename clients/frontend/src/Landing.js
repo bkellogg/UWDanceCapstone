@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import Button from 'material-ui/RaisedButton';
 import logo from './imgs/logoex.png'
-import brendanKellog from './imgs/brendan.jpeg'
-import rosemaryAdams from './imgs/rosemary.png'
-import saniyaMazmanova from './imgs/saniya.jpg'
-import nathanSwanson from './imgs/nathan.png'
 import './styling/Landing.css';
 
 class App extends Component {
@@ -41,115 +37,56 @@ class App extends Component {
             </div>
             <div className="landingContent">
               <div className="capstoneInfoWrap">
-              <h1>STAGE: Simple Technology Assisting Genuine Expression</h1>
+              <h1>Production Management for the Department of Dance</h1>
                 <div className="capstoneInfo">
-                  <h2 className="capstoneInfoHeading"> About </h2>
-                  <p className="capstoneInfoContent"> STAGE is the modern solution to an age old practice in the arts - producing a show.  </p>
-                  <p>Our platform allows you to easily manage critical aspects of a production, by allowing every dancer to create a profile, every choreographer
-                    to easily select their star cast, and giving the director a comprehensive look at every piece.
-                    Our goal is to reduce the stress of scheduling and communication, and let you focus your
-                energy on what really matters - getting your work on <b> STAGE.</b></p>
+                  <h2 className="capstoneInfoHeading" style={{borderBottom: "1px grey solid"}}> About </h2>
+                  <p>STAGE is a resource that was developed for the University of Washington's Department of Dance. This tool is used to manage
+                    three main productions each year - Faculty Dance Concert, Dance Major's Concert, and the MFA Concert. STAGE provides a central hub 
+                    for artistic directors, choreographers and dancers to manage productions, pieces, and rehearsals.
+                  </p>
+                  <p>
+                  <b>You can visit the Department of Dance's main site <a href="https://dance.washington.edu/" target="_blank" rel="noopener noreferrer"> here.</a></b>
+                  </p>
                 </div>
                 <div className="capstoneInfo">
-                  <h2 className="capstoneInfoHeading"> Problem Space </h2>
-                  <p className="capstoneInfoContent"> The inspiration for STAGE comes from the Department of Dance at the University of Washington.
-                    Dancers repeatedly fill out availability forms during the audition
-                    process, choreographers must rely on the legibility of the forms
-                    during the casting process, and directors must painstakingly gather contact
-                    information from each choreographer. Auditions can have up to 100 people in them, and one piece
-                of paper per dancer leads to hours of headache inducing casting.  </p>
-                </div>
-                <div className="capstoneInfo">
-                  <h2 className="capstoneInfoHeading"> Features </h2>
-                  <div className="userSectionsBrokenDown">
-                    <p className="capstoneInfoContent"><b><u>Dancers</u></b></p>
-                    {/* DANCERS */}
-                    <table id="dancers">
-                      <tbody>
-                        <tr>
-                          <th className="capstoneInfoContent userRoleHeader">&#10003; Create a consistent online profile:</th>
-                        </tr>
-                        <tr>
-                          <td className="capstoneInfoContent indentContent">&#183; Headshots</td>
-                        </tr>
-                        <tr>
-                          <td className="capstoneInfoContent indentContent">&#183; Bios</td>
-                        </tr>
-                        <tr>
-                          <td className="capstoneInfoContent indentContent">&#183; Resumes</td>
-                        </tr>
-                        <tr>
-                          <th className="capstoneInfoContent userRoleHeader">&#10003; Easily register for auditions</th>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {/* CHOREOGRAPHERS */}
-                  <div className="userSectionsBrokenDown">
-                    <p className="capstoneInfoContent"><b><u>Choreographers</u></b></p>
-                    <table id="choreographers">
-                      <tbody>
-                        <tr>
-                          <th className="capstoneInfoContent userRoleHeader">&#10003; View dancer information </th>
-                        </tr>
-                        <tr>
-                          <th className="capstoneInfoContent userRoleHeader">&#10003; Resolve casting conflicts</th>
-                        </tr>
-                        <tr>
-                          <th className="capstoneInfoContent userRoleHeader">&#10003; Set rehearsal schedules</th>
-                        </tr>
-                        <tr>
-                          <th className="capstoneInfoContent userRoleHeader">&#10003; Send casting immediately</th>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  {/* DIRECTORS */}
-                  <div className="userSectionsBrokenDown">
-                    <p className="capstoneInfoContent" ><b><u>Directors</u></b></p>
-                    <table id="directors">
-                      <tbody>
-                        <tr>
-                          <th className="capstoneInfoContent userRoleHeader">&#10003; View all casts</th>
-                        </tr>
-                        <tr>
-                          <th className="capstoneInfoContent userRoleHeader">&#10003; Manage auditions and choreographers</th>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <p className="capstoneInfoContent"> The Artistic Director will be able to manage auditions and choreographers, view everyone involved in the show,
-                  and gather contact information for various production staff.</p>
-                  <p className="capstoneInfoContent" ><b><u>Admin</u></b></p>
-                  <p className="capstoneInfoContent"> The department administrator will be able to create shows and auditions, elevate users in to choreographer
-                  or director roles, see all contact information for everyone on the application.</p>
+                  <h2 className="capstoneInfoHeading" style={{borderBottom: "1px grey solid"}}> Use </h2>
+                  <p className="capstoneInfoContent"> Dancers</p>
+                  <p>As a dancer, you are able to build a profile and register for auditions. By filling out your audition registration ahead of time, you can 
+                    get yourself firmly into your audition headspace as you arrive at the audition. If you are cast in a piece, you will recieve an email as well as 
+                    a notification here on STAGE to accept your casting, and upon accepting, will have access to your choreographers contact information and rehearsal calendar.
+                  </p>
+                  <p className="capstoneInfoContent"> Choreographers</p>
+                  <p>As a choreographer, begin your process by signing up, and optionally filling out a profile. Contact your Artistic Director to have your permissions upgraded,
+                    and once that is done, you will be able to see everyone registered for auditions and go through our casting process. Upon selecting your cast, you will be able to
+                    view and manage critical aspects of your piece, including adding extra rehearsals, modifying your cast, adding production staff and filling out general piece information.
+                  </p>
+                  <p className="capstoneInfoContent"> Production Staff</p>
+                  <p>If you are a member of the production staff, such as a costume designer or lighting designer, begin by signing up here. Contact your choreographer to have your permissions
+                    appropriately elevated and get added to the piece(s) you are overseeing. Once this is done you will be able to see the cast, rehearsal schedule, and information about the piece.
+                  </p>
+                  <p className="capstoneInfoContent"> Artistic Director</p>
+                  <p>If you are an incoming artistic director, or other admin personell, please contact the STAGE team or current artistic director to have your account created.</p>
+                  <p className="capstoneInfoContent"> University of Washington Terms of Use </p>
+                  <p>For more information on how the University of Washington manages your privacy and your use of their sites, please visit their <a href="http://www.washington.edu/online/privacy/"  target="_blank" rel="noopener noreferrer">Online Privacy Statement</a> and their <a href="http://www.washington.edu/online/terms/"  target="_blank" rel="noopener noreferrer">Website Terms and Conditions of Use</a></p>
                 </div>
                 <div className="capstoneInfo theTeamCard">
-                  <h2 className="capstoneInfoHeading"> Meet The Team </h2>
+                  <h2 className="capstoneInfoHeading" style={{borderBottom: "1px grey solid"}}> Meet The Team </h2>
+                  <p>This product was developed by a team of 4 Informatics students as part of their senior capstone. Passion for the arts, and technological skill, drove their choices with the application. 
+                    We would like the thank the UW and the Department of Dance for their support and cooperation in making this project a success!
+                  </p>
                   <div className="teamMember">
-                    <img className="teamMemberImage" alt="Brendan Kellogg - Backend Developer" src={brendanKellog} />
-                    <p className="teamMemberName"><a href="https://www.linkedin.com/in/brendankellogg/">Brendan Kellogg</a></p>
-                    <p className="capstoneInfoContent"> Backend Developer</p>
+                    <p className="teamMemberName"><a href="https://www.linkedin.com/in/brendankellogg/"  target="_blank" rel="noopener noreferrer">Brendan Kellogg</a></p>
 
                   </div>
                   <div className="teamMember">
-                    <img className="teamMemberImage" alt="Rosemary Adams - Frontend Developer" src={rosemaryAdams} />
-                    <p className="teamMemberName"> <a href="https://www.linkedin.com/in/rosemary-adams-067499104/">Rosemary Adams</a></p>
-                    <p className="capstoneInfoContent"> Frontend Developer</p>
+                    <p className="teamMemberName"> <a href="https://www.linkedin.com/in/rosemary-adams-067499104/"  target="_blank" rel="noopener noreferrer">Rosemary Adams</a></p>
+                  </div>
+                  <div className="teamMember">
+                    <p className="teamMemberName"><a href="https://www.linkedin.com/in/mazmans"  target="_blank" rel="noopener noreferrer">Saniya Mazmanova</a></p>
 
                   </div>
                   <div className="teamMember">
-                    <img className="teamMemberImage" alt="Saniya Mazmanova - UX/UI Designer" src={saniyaMazmanova} />
-                    <p className="teamMemberName"><a href="https://www.linkedin.com/in/mazmans">Saniya Mazmanova</a></p>
-                    <p className="capstoneInfoContent"> UX/UI Designer</p>
-
-                  </div>
-                  <div className="teamMember">
-                    <img className="teamMemberImage" alt="Nathan Swanson - Project Manager" src={nathanSwanson} />
-                    <p className="teamMemberName"><a href="https://www.linkedin.com/in/nathan-swanson/">Nathan Swanson</a></p>
-                    <p className="capstoneInfoContent"> Project Manager</p>
+                    <p className="teamMemberName"><a href="https://www.linkedin.com/in/nathan-swanson/"  target="_blank" rel="noopener noreferrer">Nathan Swanson</a></p>
 
                   </div>
                   
