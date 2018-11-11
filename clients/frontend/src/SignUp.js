@@ -152,7 +152,7 @@ class SignUp extends Component {
                       </div>
                     </form>
 
-                    <div className="termsOfService"> <p>By using this product you are agreeing to our <a href="https://dasc.capstone.ischool.uw.edu/terms/" target="_blank" rel="noopener noreferrer">terms of service</a>.</p></div>
+                    <div className="termsOfService"> <p>By using this product you are agreeing to University of Washington's <a href="http://www.washington.edu/online/terms/" target="_blank" rel="noopener noreferrer">terms of service</a>.</p></div>
 
                     <div className="buttons">
                       <Button onClick={this.onClick}> Sign Up </Button>

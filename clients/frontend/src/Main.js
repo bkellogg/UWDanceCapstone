@@ -241,6 +241,10 @@ class Main extends Component {
               </Drawer>
             </div>
           </div>
+          <div className="footer">
+            <p className="footerLinks"><a href="http://www.washington.edu/online/terms/">Terms of Use</a></p>
+            <p className="footerLinks"><a href="http://www.washington.edu/online/privacy/">Privacy Policy</a></p>
+          </div>
         </section>
 
         <section className="routing">
@@ -400,6 +404,10 @@ class Main extends Component {
               </div>
               <Button id='signOut' className="signOutDesktop" onClick={() => this.signOut()}>Sign Out</Button>
             </ul>
+          </div>
+          <div className="footer">
+            <p className="footerLinks"><a href="http://www.washington.edu/online/terms/">Terms of Use</a></p>
+            <p className="footerLinks"><a href="http://www.washington.edu/online/privacy/">Privacy Policy</a></p>
           </div>
         </section>
       </section>
