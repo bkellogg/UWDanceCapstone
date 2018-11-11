@@ -11,7 +11,8 @@ class CheckAvailability extends Component {
     super(props);
     this.state = {
       cast: [],
-      contested: []
+      contested: [],
+      totalCast: [],
     }
   };
 
@@ -26,19 +27,42 @@ class CheckAvailability extends Component {
       return filteredCast
     })
     this.setState({
-      filteredCast: filteredCast,
+      //total cast will track the IDs of everyone, no matter if they are conflicted or cast so that we only 
+      //update when our user makes a change, not when we get websocket updates
+      totalCast: filteredCast,
+      filteredCast: [],
       cast: this.props.cast,
       contested: this.props.contested
     })
   }
 
+  //props are recieved when a user goes back and forth between casting and availability checker 
+  //AND when another user updates their cast list bc cast is updated when a websocket update is recieved 
+  //we only want to update our filter when the total cast for our user is affected, aka when a totalCast != the current totalCast
   componentWillReceiveProps(props) {
-    this.setState({
-      cast: props.cast,
-      contested: props.contested,
-      filteredCast: this.setFilteredCast(props.cast, props.contested)
-    })
+    let incomingTotalCast = this.setFilteredCast(props.cast, props.contested);
+    let incomingCastIsDifferentThanCurrentCast = this.checkIncoming(this.state.totalCast, incomingTotalCast);
+    if (!incomingCastIsDifferentThanCurrentCast) {
+      this.setState({
+        totalCast: this.setFilteredCast(props.cast, props.contested),
+        cast: props.cast,
+        contested: props.contested,
+        filteredCast: this.setFilteredCast(props.cast, props.contested)
+      })
+    }
   }
+
+  checkIncoming = (a, b) => {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+    a = a.sort();
+    b = b.sort();
+    for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
+  } 
 
   setFilteredCast = (cast, contested) => {
     let filteredCast = []
