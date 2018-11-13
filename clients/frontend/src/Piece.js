@@ -244,7 +244,6 @@ class Piece extends Component {
             Util.signOut()
           };
           let json = await response.json();
-          console.log(json);
           done = json.dancers.length === 0 ? true : false
           page++;
           dancers = dancers.concat(json.dancers);
@@ -252,7 +251,6 @@ class Piece extends Component {
       } catch(e) {
         console.error(e)
       }
-      console.log(dancers)
     }
     this.setState({
       choreographer : choreographer,
@@ -261,28 +259,6 @@ class Piece extends Component {
   }
 
   getPieceUsers = (pieceID) => {
-    //TODO deal with pages
-    //todo test
-    // for(let i = 1; i <= Util.PAGEMAX; i++) {
-    //   Util.makeRequest("pieces/" + pieceID + "/users?page=" + i, "", "GET", true)
-    //     .then(res => {
-    //       if (res.ok) {
-    //         return res.json()
-    //       }
-    //       return res
-    //         .text()
-    //         .then((t) => Promise.reject(t));
-    //     })
-    //     .then(piece => {
-    //       this.setState({
-    //         choreographer: piece.choreographer,
-    //         dancers: piece.dancers
-    //       })
-    //     })
-    //     .catch((err) => {
-    //       console.error(err)
-    //     })
-    // }
     this.getPages(pieceID);
   }
 
@@ -296,9 +272,6 @@ class Piece extends Component {
       return res
         .text()
         .then((t) => Promise.reject(t));
-    })
-    .then(res => {
-      console.log(res)
     })
     .catch((err) => {
       console.error(err)
@@ -316,8 +289,6 @@ class Piece extends Component {
         .then((t) => Promise.reject(t));
     })
     .then(res => {
-      console.log(res)
-      console.log(this.state.musicians)
       this.setState({
         musicians: res,
         numMusicians: res.length
