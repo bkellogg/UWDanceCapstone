@@ -66,7 +66,7 @@ func main() {
 	}
 
 	log.Println("update server is listenting on https://" + addr + "...")
-	log.Fatal(server.ListenAndServeTLS("/certs/dance/fullchain.pem", "/certs/dance/dasc.capstone.ischool.uw.edu-key.pem"))
+	log.Fatal(server.ListenAndServeTLS("/certs/dance/stage_fullchain.pem", "/certs/dance/stage.dance.uw.edu-key.pem"))
 }
 
 // UpdateHandler defines a handler function that pulls from master on the current

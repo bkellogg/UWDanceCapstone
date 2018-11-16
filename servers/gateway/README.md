@@ -1,6 +1,6 @@
 # Current APIs
 
-Base URL: **dasc.capstone.ischool.uw.edu**
+Base URL: **stage.dance.uw.edu**
 
 ## New User Signup
 #### **POST** to */api/v1/users*

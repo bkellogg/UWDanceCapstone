@@ -72,7 +72,7 @@ func main() {
 
 	// URL that the app is served from
 	// this will be used when generating links back to itself.
-	url := require("STAGE_HOST", "dasc.capstone.ischool.uw.edu")
+	url := require("STAGE_HOST", "stage.dance.uw.edu")
 	appvars.StageURL = "https://" + url
 
 	// Open connections to the databases

@@ -5,7 +5,7 @@
 
 const headerAuthorization = "Authorization";
 
-const HOST = "dasc.capstone.ischool.uw.edu";
+const HOST = "stage.dance.uw.edu";
 const API_URL_BASE = "https://" + HOST + "/api/v1/";
 
 function saveAuth(auth) {
