@@ -160,29 +160,45 @@ function getAllUsersInPiece(pieceID, pieceIDValue) {
                     return res.text().then((t) => Promise.reject(t));
                 })
                 .then((data) => {
+                    console.log(data)
                     var message = document.getElementById('no-' + pieceIDValue);
                     message.style.display = "none";
-                    $(data).each(function (index, value) {
-                        $("#info-" + pieceIDValue).append('<p>Choreographer Name: ' + userData.choreographer.firstName + ' ' + userData.choreographer.lastName + '</p>' +
-                            '<p>Choreographer Phone Number: ' + isEmpty(value.choreographerPhone) + '</p>' +
-                            '<p>Choreographer Email: ' + isEmpty(userData.choreographer.email) + '</p>' +
-                            '<p>Total Number of Dancers: ' + totalDancers + '</p>' +
-                            '<p>Dancer Contact Information: </p><table class="all-dancers-table" id=' + pieceIDValue + '-dancer-table-2 style= display:none><tbody><tr class=categories><th>Name</th><th>Email</th></tr></tbody></table>' +
-                            '<p>Dance Title: ' + isEmpty(value.title) + '</p>' +
-                            '<p>Dance Runtime: ' + isEmpty(value.runTime) + '</p>' +
-                            '<p>Composer(s): ' + isEmpty(value.composers) + '</p>' +
-                            '<p>Music Title(s): ' + isEmpty(value.musicTitle) + '</p>' +
-                            '<p>Performed By: ' + isEmpty(value.performedBy) + '</p>' +
-                            '<p>Music Source: ' + isEmpty(value.MusicSource) + '</p>' +
-                            '<p>Number of Live Musician: ' + value.musicians.length  + '</p>' +
-                            '<p>Contact Information for Musicians: </p><table class="all-musicians-table" id=' + pieceIDValue + '-musician-table style= display:none><tbody><tr class=categories><th>Name</th><th>Email</th><th>Phone</th></tr></tbody></table>' +
-                            '<p>Rehearsal Schedule: ' + isEmpty(value.rehearsalSchedule) + '</p>' +
-                            '<p>Choreographers Notes: ' + isEmpty(value.chorNotes) + '</p>' +
-                            '<p>Costume Descriptions: ' + isEmpty(value.costumeDesc) + '</p>' +
-                            '<p>Props/Scenic Items Description: ' + isEmpty(value.itemDesc) + '</p>' +
-                            '<p>Lighting Description: ' + isEmpty(value.lightingDesc) + '</p>' +
-                            '<p>Other special needs: ' + isEmpty(value.otherNotes) + '</p>'
-                        )
+                    return data;
+                })
+                .then((data) => {
+                    makeRequest("pieces/" + pieceID + "/musicians", {}, "GET", true)
+                    .then((res) => {
+                        if (res.ok) {
+                            return res.json();
+                        }
+                        return res.text().then((t) => Promise.reject(t));
+                    }).then((res) => {
+                        data.musicians = res;
+                        console.log(data)
+                        return data;
+                    })
+                    .then((data) => {
+                        $(data).each(function (index, value) {
+                            $("#info-" + pieceIDValue).append('<p>Choreographer Name: ' + userData.choreographer.firstName + ' ' + userData.choreographer.lastName + '</p>' +
+                                '<p>Choreographer Phone Number: ' + isEmpty(value.choreographerPhone) + '</p>' +
+                                '<p>Choreographer Email: ' + isEmpty(userData.choreographer.email) + '</p>' +
+                                '<p>Total Number of Dancers: ' + totalDancers + '</p>' +
+                                '<p>Dancer Contact Information: </p><table class="all-dancers-table" id=' + pieceIDValue + '-dancer-table-2 style= display:none><tbody><tr class=categories><th>Name</th><th>Email</th></tr></tbody></table>' +
+                                '<p>Dance Title: ' + isEmpty(value.title) + '</p>' +
+                                '<p>Dance Runtime: ' + isEmpty(value.runTime) + '</p>' +
+                                '<p>Composer(s): ' + isEmpty(value.composers) + '</p>' +
+                                '<p>Music Title(s): ' + isEmpty(value.musicTitle) + '</p>' +
+                                '<p>Performed By: ' + isEmpty(value.performedBy) + '</p>' +
+                                '<p>Music Source: ' + isEmpty(value.MusicSource) + '</p>' +
+                                '<p>Number of Live Musician: ' + value.musicians.length  + '</p>' +
+                                '<p>Contact Information for Musicians: </p><table class="all-musicians-table" id=' + pieceIDValue + '-musician-table style= display:none><tbody><tr class=categories><th>Name</th><th>Email</th><th>Phone</th></tr></tbody></table>' +
+                                '<p>Rehearsal Schedule: ' + isEmpty(value.rehearsalSchedule) + '</p>' +
+                                '<p>Choreographers Notes: ' + isEmpty(value.chorNotes) + '</p>' +
+                                '<p>Costume Descriptions: ' + isEmpty(value.costumeDesc) + '</p>' +
+                                '<p>Props/Scenic Items Description: ' + isEmpty(value.itemDesc) + '</p>' +
+                                '<p>Lighting Description: ' + isEmpty(value.lightingDesc) + '</p>' +
+                                '<p>Other special needs: ' + isEmpty(value.otherNotes) + '</p>'
+                            )
                     });
                     $(data.musicians).each(function (index, value) {
                         if (value != "") {
@@ -212,6 +228,35 @@ function getAllUsersInPiece(pieceID, pieceIDValue) {
                             }
                         });
                     }
+                });
+                    // $(data.musicians).each(function (index, value) {
+                    //     if (value != "") {
+                    //         var message3 = document.getElementById(pieceIDValue + '-musician-table');
+                    //         message3.style.display = "block";
+                    //     }
+                    //     var musicianTable = document.getElementById(pieceIDValue + '-musician-table');
+                    //     var row = musicianTable.insertRow();
+                    //     var cell1 = row.insertCell(0);
+                    //     var cell2 = row.insertCell(1);
+                    //     var cell3 = row.insertCell(2)
+                    //     cell1.innerHTML = value.name;
+                    //     cell2.innerHTML = value.email;
+                    //     cell3.innerHTML = value.phone;
+                    // });
+                    // if (totalDancers > 0) {
+                    //     var dancerTable = document.getElementById(pieceIDValue + '-dancer-table-2');
+                    //     dancerTable.style.display = "block";
+                    //     $(userData.dancers).each(function (index, value) {
+
+                    //         if (value.role.displayName === "Dancer") {
+                    //             var row = dancerTable.insertRow();
+                    //             var cell1 = row.insertCell(0);
+                    //             var cell2 = row.insertCell(1);
+                    //             cell1.innerHTML = value.firstName + " " + value.lastName;
+                    //             cell2.innerHTML = value.email;
+                    //         }
+                    //     });
+                    // }
                 })
         })
 }
