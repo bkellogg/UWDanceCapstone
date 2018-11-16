@@ -24,7 +24,7 @@ resetform.addEventListener("submit", function (event) {
     if (!validateForm()) {
         return;
     }
-    var url = "https://dasc.capstone.ischool.uw.edu/api/v1/passwordreset?email=" + email;
+    var url = "https://stage.dance.uw.edu/api/v1/passwordreset?email=" + email;
     var payload = {
         "token": token,
         "password": passwordInput.value,
