@@ -172,7 +172,7 @@ func (store *Database) GetPiecesByShowID(id, page int, includeDeleted bool) ([]*
 // InsertNewPieceInfoSheet inserts the given pieceInfoSheet for the given PieceID.
 // Returns the completed PieceInfoSheet if successful and a DBError if otherwise.
 func (store *Database) InsertNewPieceInfoSheet(creator int, pieceID int, info *NewPieceInfoSheet) (*PieceInfoSheet, *DBError) {
-	// validate that the piece exists
+	// Validate that the piece exists
 	_, dberr := store.GetPieceByID(pieceID, false)
 	if dberr != nil {
 		return nil, dberr

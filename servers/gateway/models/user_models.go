@@ -18,6 +18,7 @@ type NewUserRequest struct {
 	LastName     string `json:"lastName"`
 	Email        string `json:"email"`
 	Bio          string `json:"bio"`
+	Phone        string `json:"phone"`
 	Password     string `json:"password"`
 	PasswordConf string `json:"passwordConf"`
 }
@@ -29,6 +30,7 @@ type User struct {
 	LastName  string    `json:"lastName"`
 	Email     string    `json:"email"`
 	Bio       string    `json:"bio"`
+	Phone     string    `json:"phone"`
 	PassHash  []byte    `json:"-"`
 	RoleID    int       `json:"roleID"`
 	Active    bool      `json:"active"`
@@ -43,6 +45,7 @@ type UserResponse struct {
 	LastName  string    `json:"lastName"`
 	Email     string    `json:"email"`
 	Bio       string    `json:"bio"`
+	Phone     string    `json:"phone"`
 	Role      *Role     `json:"role"`
 	Active    bool      `json:"active"`
 	CreatedAt time.Time `json:"createdAt"`
@@ -54,6 +57,7 @@ type UserUpdates struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Bio       string `json:"bio"`
+	Phone     string `json:"phone"`
 }
 
 // UserAuditionLink defines the body of a request to
@@ -97,7 +101,7 @@ func (ual *UserAuditionLink) Validate() error {
 // ToUser takes this *NewUserRequest and returns
 // a *User from it
 func (u *NewUserRequest) ToUser() (*User, error) {
-	if err := u.validate(); err != nil {
+	if err := u.Validate(); err != nil {
 		return nil, errors.New("new user validation failed: " + err.Error())
 	}
 	if err := u.checkBioLength(); err != nil {
@@ -108,6 +112,7 @@ func (u *NewUserRequest) ToUser() (*User, error) {
 		LastName:  u.LastName,
 		Email:     u.Email,
 		Bio:       u.Bio,
+		Phone:     u.Phone,
 		RoleID:    appvars.UserDefaultRole,
 		Active:    true,
 		CreatedAt: time.Now(),
@@ -127,10 +132,17 @@ func (u *UserUpdates) CheckBioLength() error {
 	return checkBioLength(u.Bio)
 }
 
-// validate returns nil if this NewUserRequest is able to
+func (u *UserUpdates) Validate() error {
+	if len(u.Phone) > 0 {
+		u.Phone = trimPhone(u.Phone)
+	}
+	return nil
+}
+
+// Validate returns nil if this NewUserRequest is able to
 // be turned into a user, otherwise returns an error stating
 // why it cannot be.
-func (u *NewUserRequest) validate() error {
+func (u *NewUserRequest) Validate() error {
 	if len(u.FirstName) == 0 {
 		return errors.New("new user first name must exist")
 	}
@@ -145,6 +157,9 @@ func (u *NewUserRequest) validate() error {
 	}
 	if len(u.Password) != len(u.PasswordConf) {
 		return errors.New("passwords do not match")
+	}
+	if len(u.Phone) > 0 {
+		u.Phone = trimPhone(u.Phone)
 	}
 	u.FirstName = strings.Title(u.FirstName)
 	u.LastName = strings.Title(u.LastName)
