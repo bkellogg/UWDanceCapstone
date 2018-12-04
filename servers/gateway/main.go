@@ -181,39 +181,7 @@ func main() {
 	log.Printf("HTTP Redirect server is listen at http://%s\n", httpRedirAddr)
 	go http.ListenAndServe(httpRedirAddr, nil)
 
-	// define an http server with specific settings
-	// that are safer when using the go http server
-	// directly on the web.
-	server := http.Server{
-		Addr:    addr,
-		Handler: treatedRouter,
-		TLSConfig: &tls.Config{
-			PreferServerCipherSuites: true,
-			CurvePreferences: []tls.CurveID{
-				tls.CurveP256,
-				tls.X25519,
-			},
-			MinVersion: tls.VersionTLS12,
-			CipherSuites: []uint16{
-				tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
-				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-				tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
-				tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
-				tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-				tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-			},
-		},
-		ReadHeaderTimeout: time.Second * 5,
-		ReadTimeout:       time.Second * 5,
-		WriteTimeout:      time.Second * 10,
-		IdleTimeout:       time.Second * 120,
-	}
-
-	log.Printf("Gateway server is listen at https://%s...\n", addr)
-	if !strings.HasSuffix(addr, ":443") {
-		log.Println("WARNING: Gateway server listening on non-standard HTTPS port. HTTP Redirects only work when standard HTTP/S ports.")
-	}
-	log.Fatal(server.ListenAndServeTLS(tlsCert, tlsKey))
+	start(getTLSConfig(tlsCert, tlsKey), treatedRouter, addr)
 }
 
 // Gets the value of env from the environment or defaults it to the given
@@ -235,4 +203,70 @@ func require(env string, def ...string) string {
 	}
 	log.Fatalf("no value for %s and no default set. Please set a value for %s\n", env, env)
 	return ""
+}
+
+func start(tlsConf *tls.Config, handler http.Handler, addr string) {
+	// define an http server with specific settings
+	// that are safer when using the go http server
+	// directly on the web.
+	server := http.Server{
+		Handler:           handler,
+		TLSConfig:         tlsConf,
+		ReadHeaderTimeout: time.Second * 5,
+		ReadTimeout:       time.Second * 5,
+		WriteTimeout:      time.Second * 10,
+		IdleTimeout:       time.Second * 120,
+	}
+
+	listener, err := tls.Listen("tcp", addr, tlsConf)
+	if err != nil {
+		log.Fatalf("error starting tls listener: %v", err)
+	}
+
+	log.Printf("Gateway server is listen at https://%s...\n", addr)
+	if !strings.HasSuffix(addr, ":443") {
+		log.Println("WARNING: Gateway server listening on non-standard HTTPS port. HTTP Redirects only work when standard HTTP/S ports.")
+	}
+	log.Fatal(server.Serve(listener))
+}
+
+func getTLSConfig(tlsCerts, tlsKeys string) *tls.Config {
+	tlsCerts = strings.Replace(tlsCerts, " ", "", -1)
+	tlsKeys = strings.Replace(tlsKeys, " ", "", -1)
+	certs := strings.Split(tlsCerts, ",")
+	keys := strings.Split(tlsKeys, ",")
+
+	if len(certs) != len(keys) {
+		log.Fatal("number of key files does not match number of cert files")
+	}
+
+	numCerts := len(certs)
+
+	tlsConfig := &tls.Config{
+		PreferServerCipherSuites: true,
+		CurvePreferences: []tls.CurveID{
+			tls.CurveP256,
+			tls.X25519,
+		},
+		MinVersion: tls.VersionTLS12,
+		CipherSuites: []uint16{
+			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,
+			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+		},
+	}
+	tlsConfig.Certificates = make([]tls.Certificate, numCerts)
+
+	var err error
+	for i := 0; i < numCerts; i++ {
+		tlsConfig.Certificates[i], err = tls.LoadX509KeyPair(certs[i], keys[i])
+		if err != nil {
+			log.Fatalf("error loading key par: %v", err)
+		}
+	}
+	tlsConfig.BuildNameToCertificate()
+	return tlsConfig
 }

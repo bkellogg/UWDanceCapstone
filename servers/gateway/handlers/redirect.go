@@ -21,7 +21,7 @@ func HTTPSRedirectHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	target := "https://" + r.Host + r.URL.Path
+	target := "https://stage.dance.uw.edu" + r.URL.Path
 	if len(r.URL.RawQuery) > 0 {
 		target += "?" + r.URL.RawQuery
 	}
