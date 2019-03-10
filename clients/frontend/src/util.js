@@ -1,6 +1,6 @@
 export const headerAuthorization = "Authorization";
 
-export const host = "dasc.capstone.ischool.uw.edu";
+export const host = "stage.dance.uw.edu";
 export const API_URL_BASE = "https://" + host + "/api/v1/";
 export const PAGEMAX = 1;
 
