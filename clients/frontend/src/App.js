@@ -17,8 +17,8 @@ class App extends Component {
       user: null,
       signUp: false,
       authorized: false,
-      landing: false,
-      underConstruction: true,
+      landing: true,
+      underConstruction: false,
     };
   };
 
