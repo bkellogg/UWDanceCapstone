@@ -26,11 +26,12 @@ class CheckAvailability extends Component {
       filteredCast.push(dancer.rankedDancer.dancer.user.id)
       return filteredCast
     })
+    console.log(filteredCast)
     this.setState({
       //total cast will track the IDs of everyone, no matter if they are conflicted or cast so that we only 
       //update when our user makes a change, not when we get websocket updates
       totalCast: filteredCast,
-      filteredCast: [],
+      filteredCast: filteredCast,
       cast: this.props.cast,
       contested: this.props.contested
     })
@@ -80,6 +81,7 @@ class CheckAvailability extends Component {
   filterCast = (id) => {
 
     let filteredCast = this.state.filteredCast //this will initially have all the ids of all the cast members, because they are all selected
+    console.log(filteredCast)
     //we are going to take the id from a check, and if the id is in the list already, we'll remove it, and if it isn't then we'll add it
     let index = filteredCast.indexOf(id)
     if (index !== -1) { //if the id is already in the cast

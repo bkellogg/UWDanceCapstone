@@ -14,7 +14,7 @@ class AllDancersRow extends Component {
         if (this.props.checkAvailability) {
 
         }
-        let checkedDefault = this.props.checkAvailability ? false : true
+        let checkedDefault = this.props.checkAvailability ? true : false
         this.state = {
             cast: [],
             rank: "",
@@ -143,6 +143,7 @@ class AllDancersRow extends Component {
         this.setState({
             filterChecked: !this.state.filterChecked
         })
+        console.log(this.state)
         this.props.filterCast(this.state.person.id)
     }
 

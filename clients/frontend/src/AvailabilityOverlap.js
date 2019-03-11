@@ -79,7 +79,7 @@ class AvailabilityOverlap extends Component {
     cast.forEach((dancer, i) => { //go through each dancer
       let days = dancer.dancer.availability.days
       let id = dancer.dancer.user.id
-      let firstName = dancer.dancer.user.firstName
+      let name = dancer.dancer.user.firstName + " " + dancer.dancer.user.lastName
       if (filteredCast.indexOf(id) >= 0 && days !== undefined) { //check to see that they are in the filtered cast and did have an availability
 
         days.forEach((day, j) => { 
@@ -102,7 +102,7 @@ class AvailabilityOverlap extends Component {
             //bug?? cannot read property push or undefined, looks like an issue with a user not having any availability
             while (incrementIndex !== (endIndex)) { //plus one added to include the end index
               let currPlace = dayTimes[dayIndex][incrementIndex]
-              currPlace.push({"id" : id, "name" : firstName})
+              currPlace.push({"id" : id, "name" : name})
               incrementIndex++
             }
           })
