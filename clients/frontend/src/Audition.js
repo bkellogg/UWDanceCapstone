@@ -55,8 +55,7 @@ class Audition extends Component {
 
   checkAuditionDate = (audition) => {
     let auditionTime = moment(audition.time)
-    let today = moment()
-    if (!today.isBefore(auditionTime)) {
+    if (auditionTime.isBefore()) {
       this.setState({
         auditionPassed: true
       })
